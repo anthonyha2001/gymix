@@ -1,0 +1,17 @@
+# Dependencies & build output
+node_modules/
+.next/
+out/
+
+# Env files with keys (web/.env.example is committed)
+.env*
+!.env.example
+
+# Supabase local state
+supabase/.branches/
+supabase/.temp/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log

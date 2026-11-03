@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Gymix design tokens. Light theme only for now. */
+@theme {
+  --color-canvas: #f4f5f2;
+  --color-surface: #ffffff;
+  --color-line: #e2e4de;
+  --color-ink: #0d1117;
+  --color-muted: #5d6470;
+  --color-brand: #c8f135;
+  --color-brand-strong: #a9d10f;
+  --color-danger: #c0362c;
+  --color-danger-soft: #fdecea;
+  --color-success: #1f7a3f;
+  --color-success-soft: #e7f6ec;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
