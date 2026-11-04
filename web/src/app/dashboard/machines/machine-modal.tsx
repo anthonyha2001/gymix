@@ -1,5 +1,6 @@
+import { NfcWriteButton } from "@/components/nfc-write";
+import { QrDownload, qrFor } from "@/components/qr-tools";
 import Image from "next/image";
-import QRCode from "qrcode";
 import { Plus } from "lucide-react";
 import { Dialog } from "@/components/dialog";
 import { ExerciseAnimation } from "@/components/exercise-media";
@@ -26,7 +27,7 @@ export async function MachineModal({ machineId, gymId, canManage }: { machineId:
 
   const exercises = machine.machine_exercises.map((me) => me.exercises).filter((e) => e !== null);
   const stickerUrl = `${await requestOrigin()}/m/${machine.id}`;
-  const qrSvg = await QRCode.toString(stickerUrl, { type: "svg", margin: 1, width: 140 });
+  const qr = await qrFor(stickerUrl, 140);
 
   return (
     <RouteModal param="machine" title={machine.name} size="xl">
@@ -123,14 +124,16 @@ export async function MachineModal({ machineId, gymId, canManage }: { machineId:
         <div className="space-y-3">
           <h2 className="font-semibold">Machine sticker</h2>
           <p className="text-sm text-muted">
-            Put an NFC sticker on the machine with this link (write it with the free NFC Tools app, like the check-in
-            sticker). Members tap it and see how to use the machine and their last weights on it.
+            Put an NFC sticker on the machine with this link. Members tap it (or scan the QR code from their app) and the
+            machine slides up in their app: how to use it and their last weights on it.
           </p>
+          <NfcWriteButton url={stickerUrl} />
           <CopyLink url={stickerUrl} />
+          <QrDownload png={qr.png} name={machine.name} />
         </div>
         <figure className="text-center">
-          <div className="mx-auto w-[140px] rounded-lg border border-line bg-white p-1" dangerouslySetInnerHTML={{ __html: qrSvg }} />
-          <figcaption className="mt-1 text-xs text-muted">Printable backup</figcaption>
+          <div className="mx-auto w-[140px] rounded-lg border border-line bg-white p-1" dangerouslySetInnerHTML={{ __html: qr.svg }} />
+          <figcaption className="mt-1 text-xs text-muted">For phones without NFC</figcaption>
         </figure>
       </Card>
 

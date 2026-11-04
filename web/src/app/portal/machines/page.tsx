@@ -5,8 +5,7 @@ import { Suspense } from "react";
 import { Nfc } from "lucide-react";
 import { ExerciseAnimation } from "@/components/exercise-media";
 import { Card, Skeleton } from "@/components/ui";
-import { MachineDetail } from "@/components/machine-detail";
-import { RouteModal } from "@/components/route-modal";
+import { MachineSheet } from "@/components/machine-sheet";
 import { mediaUrl, musclesLabel } from "@/lib/exercises";
 import { requirePortalPage } from "@/lib/portal";
 import { createClient } from "@/lib/supabase/server";
@@ -45,11 +44,7 @@ async function Machines({ searchParams }: { searchParams: PageProps<"/portal/mac
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      {open && (
-        <RouteModal param="machine" title={open.name} size="lg">
-          <MachineDetail id={open.id} viewer={viewer} showName={false} />
-        </RouteModal>
-      )}
+      {open && <MachineSheet machineId={open.id} viewer={viewer} />}
       {machines.map((m) => {
         const exercises = m.machine_exercises.map((me) => me.exercises).filter((e) => e !== null);
         const muscles = [...new Set(exercises.flatMap((e) => e.primary_muscles))];

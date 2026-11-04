@@ -20,6 +20,7 @@ export function Modal({
   title,
   description,
   size = "md",
+  sheet = false,
   children,
 }: {
   open: boolean;
@@ -27,9 +28,13 @@ export function Modal({
   title: string;
   description?: string;
   size?: Size;
+  // Bottom sheet: slides up from the foot of the screen on every screen size,
+  // with a grab handle that can be dragged down to close it.
+  sheet?: boolean;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const drag = useRef<{ startY: number; dy: number } | null>(null);
   // Set when the dialog is closed by unmounting/hiding rather than by the user,
   // so the resulting "close" event isn't reported as the user closing it.
   const silentClose = useRef(false);
@@ -63,6 +68,34 @@ export function Modal({
 
   const width = { md: "sm:max-w-lg", lg: "sm:max-w-2xl", xl: "sm:max-w-4xl" }[size];
 
+  // Dragging the sheet's top bar down follows the finger; far enough closes it.
+  const dragProps = sheet
+    ? {
+        onTouchStart: (e: React.TouchEvent) => {
+          drag.current = { startY: e.touches[0].clientY, dy: 0 };
+          ref.current?.style.setProperty("transition", "none");
+        },
+        onTouchMove: (e: React.TouchEvent) => {
+          if (!drag.current || !ref.current) return;
+          drag.current.dy = Math.max(0, e.touches[0].clientY - drag.current.startY);
+          ref.current.style.transform = `translateY(${drag.current.dy}px)`;
+        },
+        onTouchEnd: () => {
+          const el = ref.current;
+          const dy = drag.current?.dy ?? 0;
+          drag.current = null;
+          if (!el) return;
+          el.style.transition = "transform 200ms ease-out";
+          if (dy > 120) {
+            el.style.transform = "translateY(100%)";
+            setTimeout(onClose, 180);
+          } else {
+            el.style.transform = "";
+          }
+        },
+      }
+    : {};
+
   return (
     <dialog
       ref={ref}
@@ -70,11 +103,24 @@ export function Modal({
       // A click on the backdrop (the dialog element itself, outside the panel) closes it.
       onClick={(e) => e.target === e.currentTarget && onClose()}
       aria-label={title}
-      className={`m-0 mt-auto max-h-[92vh] w-full max-w-none overflow-hidden rounded-t-2xl bg-surface p-0 text-ink shadow-2xl backdrop:bg-ink/50 sm:m-auto sm:rounded-2xl ${width}`}
+      data-sheet={sheet || undefined}
+      className={
+        sheet
+          ? "sheet mx-auto mt-auto mb-0 max-h-[90dvh] w-full max-w-xl overflow-hidden rounded-t-3xl bg-surface p-0 text-ink shadow-2xl backdrop:bg-ink/50"
+          : `m-0 mt-auto max-h-[92vh] w-full max-w-none overflow-hidden rounded-t-2xl bg-surface p-0 text-ink shadow-2xl backdrop:bg-ink/50 sm:m-auto sm:rounded-2xl ${width}`
+      }
     >
       {open && (
-        <div className="flex max-h-[92vh] flex-col">
-          <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
+        <div className={`flex flex-col ${sheet ? "max-h-[90dvh]" : "max-h-[92vh]"}`}>
+          {sheet && (
+            <div {...dragProps} className="flex cursor-grab touch-none justify-center pt-3 pb-1" aria-hidden>
+              <span className="h-1.5 w-10 rounded-full bg-line" />
+            </div>
+          )}
+          <div
+            {...dragProps}
+            className={`flex items-start justify-between gap-4 border-b border-line px-5 ${sheet ? "touch-none pt-1 pb-3" : "py-4"}`}
+          >
             <div>
               <h2 className="text-lg font-semibold">{title}</h2>
               {description && <p className="text-sm text-muted">{description}</p>}
@@ -83,7 +129,7 @@ export function Modal({
               <X className="size-5" />
             </button>
           </div>
-          <div className="overflow-y-auto px-5 py-5">
+          <div className={`overflow-y-auto px-5 ${sheet ? "pt-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]" : "py-5"}`}>
             <CloseDialog value={close}>{children}</CloseDialog>
           </div>
         </div>

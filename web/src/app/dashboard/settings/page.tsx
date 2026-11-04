@@ -1,3 +1,5 @@
+import { NfcWriteButton } from "@/components/nfc-write";
+import { QrDownload, qrFor } from "@/components/qr-tools";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { requestOrigin } from "@/lib/origin";
@@ -91,7 +93,9 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
                 instantly. iPhone XS and newer read stickers automatically; on Android, NFC must be on.
               </li>
             </ol>
+            <NfcWriteButton url={url} label="Write the check-in sticker" />
             <CopyLink url={url} />
+            <QrDownload png={(await qrFor(url)).png} name="check-in" />
             <p className="text-xs text-muted">
               Only members with an active membership get in — the tap is checked like a front-desk check-in, and every tap
               shows in your live check-in feed. Running Gymix on your own computer? Phones can only open this link once

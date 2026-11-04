@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MachineSheet } from "@/components/machine-sheet";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ChevronRight, ListPlus, Nfc, Play } from "lucide-react";
@@ -23,7 +24,7 @@ export default function TrainPage({ searchParams }: PageProps<"/portal/train">) 
 }
 
 async function Train({ searchParams }: { searchParams: PageProps<"/portal/train">["searchParams"] }) {
-  const { workout } = await searchParams;
+  const { workout, machine } = await searchParams;
   const { viewer, membership } = await requirePortalPage("train");
   const supabase = await createClient();
   const { data: me } = await supabase.from("members").select("id, full_name").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle();
@@ -50,6 +51,7 @@ async function Train({ searchParams }: { searchParams: PageProps<"/portal/train"
 
   return (
     <div className="space-y-6">
+      {typeof machine === "string" && <MachineSheet machineId={machine} viewer={viewer} />}
       {typeof workout === "string" && <WorkoutModal sessionId={workout} memberId={me.id} timeZone={membership.timezone} />}
       <div>
         <p className="text-sm text-muted">{membership.gymName}</p>

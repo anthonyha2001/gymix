@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { MachineDetail } from "@/components/machine-detail";
 import { Logo, Skeleton } from "@/components/ui";
 import { getViewer, homePathFor } from "@/lib/session";
-import { accountStatus } from "@/lib/portal";
+import { accountStatus, hiddenPortalPages } from "@/lib/portal";
 
 export const metadata: Metadata = { title: "Machine" };
 
@@ -31,9 +31,14 @@ async function Machine({ params }: { params: PageProps<"/m/[id]">["params"] }) {
   const { id } = await params;
   const viewer = await getViewer();
   if (!viewer) redirect(`/login?next=${encodeURIComponent(`/m/${id}`)}`);
-  // Frozen for an unpaid balance: the member app is closed except its home.
+  // Members: open their app with the machine slid up over the Train screen
+  // (or the home page if the gym switched Train off, or the account is frozen).
   const asMember = viewer.memberships.find((m) => m.role === "member");
-  if (asMember && viewer.memberships.length === 1 && (await accountStatus(asMember.gymId)).frozen) redirect("/portal");
+  if (asMember && viewer.memberships.length === 1) {
+    if ((await accountStatus(asMember.gymId)).frozen) redirect("/portal");
+    const trainHidden = (await hiddenPortalPages(asMember.gymId)).includes("train");
+    redirect(`${trainHidden ? "/portal" : "/portal/train"}?machine=${encodeURIComponent(id)}`);
+  }
   const detail = await MachineDetail({ id, viewer });
   // RLS hides machines from other gyms.
   if (!detail) notFound();

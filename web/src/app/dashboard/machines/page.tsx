@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Plus } from "lucide-react";
+import { Plus, QrCode } from "lucide-react";
 import { ExerciseAnimation } from "@/components/exercise-media";
 import { Dialog } from "@/components/dialog";
 import { Card, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
@@ -13,6 +13,7 @@ import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { activeTab, PageTabs } from "@/components/page-tabs";
 import { MachineModal } from "./machine-modal";
+import { MachineStickers } from "./machine-stickers";
 import { EquipmentForm } from "./equipment-form";
 
 export const metadata: Metadata = { title: "Equipment" };
@@ -96,11 +97,26 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
       <Card>
         <SectionTitle
           action={
-            canManage && (
-              <Dialog label="Add machine" icon={<Plus className="size-4" />} title="Add a machine" size="xl" triggerClassName="h-9">
-                <NewMachineForm />
-              </Dialog>
-            )
+            <div className="flex flex-wrap gap-2">
+              {!!machines?.length && (
+                <Dialog
+                  label="Stickers & QR codes"
+                  icon={<QrCode className="size-4" />}
+                  title="Stickers & QR codes"
+                  description="One per machine. Write each NFC sticker from your phone, or print the QR codes for phones without NFC."
+                  size="xl"
+                  variant="secondary"
+                  triggerClassName="h-9"
+                >
+                  <MachineStickers machines={machines.map((m) => ({ id: m.id, name: m.name }))} />
+                </Dialog>
+              )}
+              {canManage && (
+                <Dialog label="Add machine" icon={<Plus className="size-4" />} title="Add a machine" size="xl" triggerClassName="h-9">
+                  <NewMachineForm />
+                </Dialog>
+              )}
+            </div>
           }
         >
           Machines

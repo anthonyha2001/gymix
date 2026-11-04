@@ -8,6 +8,7 @@ import { readNewLogin } from "@/lib/member-login";
 import { requestOrigin } from "@/lib/origin";
 import { NewLoginDialog } from "./new-login-dialog";
 import { WeeklyChart } from "@/components/weekly-chart";
+import { MachineSheet } from "@/components/machine-sheet";
 import { loadWeeklyBars } from "@/lib/weekly";
 import { accountStatus } from "@/lib/portal";
 import { formatUSD } from "@/lib/format";
@@ -15,17 +16,18 @@ import { Lock, Nfc } from "lucide-react";
 
 export const metadata: Metadata = { title: "My gym" };
 
-export default function PortalPage() {
+export default function PortalPage({ searchParams }: PageProps<"/portal">) {
   return (
     <div className="space-y-6">
       <Suspense fallback={<Skeleton className="h-80" />}>
-        <PortalContent />
+        <PortalContent searchParams={searchParams} />
       </Suspense>
     </div>
   );
 }
 
-async function PortalContent() {
+async function PortalContent({ searchParams }: { searchParams: PageProps<"/portal">["searchParams"] }) {
+  const { machine } = await searchParams;
   const { viewer, membership } = await requireMember();
   const supabase = await createClient();
   const { data: me } = await supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle();
@@ -47,6 +49,7 @@ async function PortalContent() {
           loginUrl={`${await requestOrigin()}/login`}
         />
       )}
+      {typeof machine === "string" && !account.frozen && <MachineSheet machineId={machine} viewer={viewer} />}
       {account.frozen && <FrozenNotice owed={account.overdueUsd || account.balanceUsd} />}
       <MemberHome supabase={supabase} memberId={me.id} gymName={membership.gymName} timeZone={membership.timezone} />
       <Card className="mt-6 p-5">

@@ -12,12 +12,14 @@ export function RouteModal({
   title,
   description,
   size = "lg",
+  sheet = false,
   children,
 }: {
   param: string | string[];
   title: string;
   description?: string;
   size?: "md" | "lg" | "xl";
+  sheet?: boolean;
   children: ReactNode;
 }) {
   const router = useRouter();
@@ -32,7 +34,7 @@ export function RouteModal({
   }
 
   return (
-    <Modal open onClose={close} title={title} description={description} size={size}>
+    <Modal open onClose={close} title={title} description={description} size={size} sheet={sheet}>
       {children}
     </Modal>
   );

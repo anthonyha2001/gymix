@@ -9,6 +9,7 @@ import { signOut } from "../(auth)/actions";
 import { accountStatus, hiddenPortalPages } from "@/lib/portal";
 import { PortalNav } from "./portal-nav";
 import { InstallPrompt } from "@/components/install-prompt";
+import { QrScanButton } from "@/components/qr-scanner";
 import { NotificationBell } from "@/components/notification-bell";
 import { loadNotifications } from "@/lib/notifications";
 
@@ -24,6 +25,7 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
             <Suspense>
               <Simulator />
             </Suspense>
+            <QrScanButton />
             <Suspense fallback={<div className="size-9" />}>
               <MemberBell />
             </Suspense>
