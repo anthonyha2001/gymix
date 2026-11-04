@@ -232,6 +232,21 @@ export function ShakeSetting() {
   );
 }
 
+// The dropped-phone animation, without dropping the phone.
+export function DropPreview() {
+  return (
+    <div className="flex items-center justify-between gap-4 py-3">
+      <span className="text-sm">
+        <span className="block font-medium">Dropped your phone?</span>
+        <span className="text-muted">Gymix notices when it hits the floor. See what happens.</span>
+      </span>
+      <Button type="button" variant="secondary" className="h-9 shrink-0" onClick={() => window.dispatchEvent(new Event("gymix:drop"))}>
+        Try it
+      </Button>
+    </div>
+  );
+}
+
 export function PasswordForm() {
   const [state, action, pending] = useActionState(changePassword, {});
   return (

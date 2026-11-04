@@ -7,7 +7,7 @@ import { requireMember } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { loadTrainingPlan } from "@/lib/training-plan";
 import { signOut } from "../../(auth)/actions";
-import { NotificationPrefsForm, PasswordForm, PhotoForm, ProfileForm, ShakeSetting, TrainingDaysForm } from "./forms";
+import { NotificationPrefsForm, PasswordForm, PhotoForm, ProfileForm, ShakeSetting, DropPreview, TrainingDaysForm } from "./forms";
 
 export const metadata: Metadata = { title: "Profile" };
 
@@ -73,6 +73,7 @@ async function Profile() {
             <span className="rounded-lg bg-canvas px-3 py-1.5 font-medium">English</span>
           </div>
           <ShakeSetting />
+          <DropPreview />
         </div>
       </Card>
 
