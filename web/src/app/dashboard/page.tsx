@@ -72,7 +72,7 @@ async function Overview() {
 
   const setup = [
     { done: (planCount ?? 0) > 0, label: "Create your membership plans", href: "/dashboard/plans", show: membership.role === "owner" || membership.role === "manager" },
-    { done: (memberCount ?? 0) > 0, label: "Add your first member and sell a membership", href: "/dashboard/members/new", show: canBill },
+    { done: (memberCount ?? 0) > 0, label: "Add your first member and sell a membership", href: "/dashboard/members", show: canBill },
     { done: (stats?.checkins_today ?? 0) > 0 || (recent?.length ?? 0) > 0, label: "Set up the tap-to-check-in sticker", href: "/dashboard/settings", show: membership.role === "owner" },
   ].filter((s) => s.show);
   const setupDone = setup.every((s) => s.done);

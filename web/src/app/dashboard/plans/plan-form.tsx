@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
-import { Alert, Button, Field, inputClass } from "@/components/ui";
+import { useDialogAction } from "@/components/dialog";
+import { Alert, Button, Field, inputClass, inputWidth } from "@/components/ui";
 import { PLAN_PERIODS, type PlanPeriod } from "@/lib/format";
 import type { ActionState } from "@/lib/action-result";
+import { SearchSelect } from "@/components/search-select";
 
 export type PlanValues = {
   name: string;
@@ -23,7 +24,7 @@ export function PlanForm({
   initial?: PlanValues;
   submitLabel: string;
 }) {
-  const [state, formAction, pending] = useActionState(action, {});
+  const [state, formAction, pending] = useDialogAction(action, {});
 
   return (
     <form action={formAction} className="space-y-4">
@@ -52,15 +53,15 @@ export function PlanForm({
               max={36}
               required
               defaultValue={initial?.period_count ?? 1}
-              className={`${inputClass} w-20`}
+              className={inputWidth("w-20")}
             />
-            <select name="period" defaultValue={initial?.period ?? "month"} className={inputClass}>
+            <SearchSelect name="period" defaultValue={initial?.period ?? "month"} className={inputClass}>
               {PLAN_PERIODS.map((p) => (
                 <option key={p.value} value={p.value}>
                   {p.plural}
                 </option>
               ))}
-            </select>
+            </SearchSelect>
           </div>
         </Field>
         <Field label="Visit limit" hint="Leave empty for unlimited visits. Set it for punch cards (e.g. 10 visits).">

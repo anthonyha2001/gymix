@@ -3,8 +3,13 @@ import { LogOut } from "lucide-react";
 import { Skeleton } from "@/components/ui";
 import { ROLE_LABELS } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
+import { unreadCount } from "@/lib/chat";
+import { createClient } from "@/lib/supabase/server";
 import { signOut } from "../(auth)/actions";
 import { navFor } from "./nav-items";
+import { InstallPrompt } from "@/components/install-prompt";
+import { NotificationBell } from "@/components/notification-bell";
+import { loadNotifications } from "@/lib/notifications";
 import { NavLinks, NavSkeleton, Sidebar } from "./sidebar";
 
 export default function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
@@ -26,8 +31,14 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
             <AccountCard />
           </Suspense>
         }
+        bell={
+          <Suspense fallback={<div className="size-9" />}>
+            <Bell />
+          </Suspense>
+        }
       />
       <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">{children}</main>
+      <InstallPrompt />
     </div>
   );
 }
@@ -48,8 +59,28 @@ async function GymCard() {
 }
 
 async function RoleNav() {
+  const { viewer, membership } = await requireStaff();
+  const supabase = await createClient();
+  const [unread, { data: counts }] = await Promise.all([
+    unreadCount(supabase, viewer.id),
+    supabase.rpc("staff_counts", { p_gym_id: membership.gymId }).maybeSingle(),
+  ]);
+  return (
+    <NavLinks
+      items={navFor(membership.role, {
+        messages: unread,
+        programs: counts?.program_requests ?? 0,
+        nutrition: counts?.nutrition_requests ?? 0,
+        schedule: counts?.pt_requests ?? 0,
+      })}
+    />
+  );
+}
+
+async function Bell() {
   const { membership } = await requireStaff();
-  return <NavLinks items={navFor(membership.role)} />;
+  const { items, unread } = await loadNotifications(membership.gymId, false);
+  return <NotificationBell items={items} unread={unread} />;
 }
 
 async function AccountCard() {

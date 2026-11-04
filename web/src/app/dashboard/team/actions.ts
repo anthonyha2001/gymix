@@ -46,7 +46,7 @@ export async function inviteToGym(_prev: InviteState, formData: FormData): Promi
 
   refresh();
   return {
-    success: `Invite saved. ${email} gets access as soon as they sign up or log in with that email.`,
+    success: `Invite created for ${email} — send them the link on WhatsApp from Pending invites.`,
   };
 }
 

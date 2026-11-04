@@ -168,7 +168,13 @@ begin
   assert s.collected_month = 35, 'collected this month = 35, got ' || s.collected_month;
   assert s.outstanding = 15, 'outstanding = punch card 15, got ' || s.outstanding;
   assert s.active_members = 1, 'one active (walk-in), got ' || s.active_members;
-  assert s.checkins_today = 3, 'three allowed check-ins today, got ' || s.checkins_today;
+  -- Some check-ins were backdated 4 hours; just after midnight those fall on
+  -- yesterday, so count what is really "today" in the gym's time zone.
+  assert s.checkins_today = (select count(*) from public.checkins ch join public.gyms gy on gy.id = ch.gym_id
+                              where gy.name = 'Pulse Fitness' and ch.allowed
+                                and (ch.checked_in_at at time zone gy.timezone)::date = public.gym_today(gy.id)),
+    'allowed check-ins today, got ' || s.checkins_today;
+  assert s.checkins_today between 1 and 3, 'one to three check-ins today, got ' || s.checkins_today;
 end $$;
 reset role;
 select pg_temp.act_as('t2@test.lb');

@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireStaff } from "@/lib/session";
 import { errorMessage, money, text, type ActionState } from "@/lib/action-result";
+import { PORTAL_PAGES } from "@/lib/portal-pages";
 
 export async function saveGymSettings(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const { membership } = await requireStaff(["owner"]);
@@ -26,4 +27,25 @@ export async function rotateStickerLink(): Promise<ActionState> {
   if (error) return { error: errorMessage(error) };
   refresh();
   return { success: "New link created. Rewrite your stickers with it — the old ones no longer work." };
+}
+
+export async function setTapSimulator(enabled: boolean): Promise<ActionState> {
+  const { membership } = await requireStaff(["owner"]);
+  const supabase = await createClient();
+  const { error } = await supabase.from("gyms").update({ tap_simulator: enabled }).eq("id", membership.gymId);
+  if (error) return { error: errorMessage(error) };
+  refresh();
+  return { success: enabled ? "Tap simulator on (testing mode)." : "Tap simulator off. Only real stickers work now." };
+}
+
+// The owner chooses which portal pages members see: every page left unticked is hidden.
+export async function setPortalPages(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const { membership } = await requireStaff(["owner"]);
+  const shown = new Set(formData.getAll("page").map(String));
+  const hidden = PORTAL_PAGES.map((p) => p.id).filter((id) => !shown.has(id));
+  const supabase = await createClient();
+  const { error } = await supabase.from("gyms").update({ portal_hidden: hidden }).eq("id", membership.gymId);
+  if (error) return { error: errorMessage(error) };
+  refresh();
+  return { success: "Saved. Members see the new set of pages right away." };
 }

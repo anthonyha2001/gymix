@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/portal", "/onboarding"];
+const PROTECTED_PREFIXES = ["/dashboard", "/portal", "/onboarding", "/admin"];
 
 // Refreshes the Supabase session cookie on every request and bounces
 // signed-out users away from app pages. Pages still check auth themselves;

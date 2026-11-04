@@ -1,10 +1,12 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useState } from "react";
+import { useDialogAction } from "@/components/dialog";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
 import { addDays, formatDate, formatUSD, planLength, type PlanPeriod } from "@/lib/format";
 import type { ActionState } from "@/lib/action-result";
 import { PaymentFields } from "./payment-fields";
+import { SearchSelect } from "@/components/search-select";
 
 export type SellablePlan = {
   id: string;
@@ -35,7 +37,7 @@ export function SellForm({
   defaultStart: string;
   rate: number;
 }) {
-  const [state, formAction, pending] = useActionState(action, {});
+  const [state, formAction, pending] = useDialogAction(action, {});
   const [planId, setPlanId] = useState(plans[0]?.id ?? "");
   const [start, setStart] = useState(defaultStart);
   const [discount, setDiscount] = useState("0");
@@ -55,7 +57,7 @@ export function SellForm({
       {state.success && <Alert tone="success">{state.success}</Alert>}
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Plan">
-          <select
+          <SearchSelect
             name="plan_id"
             value={planId}
             onChange={(e) => {
@@ -69,7 +71,7 @@ export function SellForm({
                 {p.name} — {formatUSD(p.price_usd)}
               </option>
             ))}
-          </select>
+          </SearchSelect>
         </Field>
         <Field label="Starts on">
           <input name="starts_on" type="date" required value={start} onChange={(e) => setStart(e.target.value)} className={inputClass} />

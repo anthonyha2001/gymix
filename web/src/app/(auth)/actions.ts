@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured, isUnreachable, UNREACHABLE_MESSAGE } from "@/lib/supabase/config";
 import { homePathForUser } from "@/lib/session";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export type AuthFormState = { error?: string; message?: string; email?: string };
 
@@ -21,22 +22,33 @@ function safeNext(formData: FormData) {
   return next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : null;
 }
 
-export async function signIn(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
-  const email = text(formData, "email");
-  const password = formData.get("password");
-  if (!email || typeof password !== "string" || !password) {
-    return { error: "Enter your email and password.", email };
-  }
-  if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED, email };
+// Members can log in with their phone number or member code instead of an
+// email; this finds the account's email for them (server-side only).
+async function loginEmail(identifier: string) {
+  if (identifier.includes("@")) return identifier;
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  const { data } = await createAdminClient().rpc("member_login_email", { p_identifier: identifier });
+  return data ?? null;
+}
 
+export async function signIn(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const identifier = text(formData, "email");
+  const password = formData.get("password");
+  if (!identifier || typeof password !== "string" || !password) {
+    return { error: "Enter your email, phone or member code, and your password.", email: identifier };
+  }
+  if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED, email: identifier };
+
+  const email = await loginEmail(identifier);
+  if (!email) return { error: "Wrong login or password.", email: identifier };
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    if (isUnreachable(error)) return { error: UNREACHABLE_MESSAGE, email };
+    if (isUnreachable(error)) return { error: UNREACHABLE_MESSAGE, email: identifier };
     if (error.code === "email_not_confirmed") {
-      return { error: "Confirm your email first — check your inbox for the link.", email };
+      return { error: "Confirm your email first — check your inbox for the link.", email: identifier };
     }
-    return { error: "Wrong email or password.", email };
+    return { error: "Wrong login or password.", email: identifier };
   }
 
   // Pick up any gym invites sent to this email since the account was created.

@@ -32,12 +32,12 @@ function readPayment(formData: FormData, prefix = "") {
   return { payment: { amountUsd, method, amountLbp } };
 }
 
-async function inviteEmail(gymId: string, invitedBy: string, email: string) {
+// Gets (or creates) the member's personal invite link. Email isn't required:
+// the link itself is the invite, shared by WhatsApp or copied.
+async function memberInvite(memberId: string) {
   const supabase = await createClient();
-  const { error } = await supabase.from("invites").insert({ gym_id: gymId, email, role: "member", invited_by: invitedBy });
-  // An open invite for this email already exists: that's fine.
-  if (error && error.code !== "23505") return errorMessage(error, "Couldn't send the portal invite.");
-  return null;
+  const { error } = await supabase.rpc("member_invite_token", { p_member_id: memberId });
+  return error ? errorMessage(error, "Couldn't create the invite link.") : null;
 }
 
 export async function createMember(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -45,7 +45,6 @@ export async function createMember(_prev: ActionState, formData: FormData): Prom
   const parsed = readDetails(formData);
   if (!parsed.details) return { error: parsed.error };
   const wantsInvite = formData.get("invite") === "on";
-  if (wantsInvite && !parsed.details.email) return { error: "Add an email to invite them to the member portal." };
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -58,11 +57,12 @@ export async function createMember(_prev: ActionState, formData: FormData): Prom
     return { error: errorMessage(error, "Couldn't add the member.") };
   }
 
-  if (wantsInvite && parsed.details.email) {
-    const inviteError = await inviteEmail(membership.gymId, viewer.id, parsed.details.email);
+  if (wantsInvite) {
+    const inviteError = await memberInvite(data.id);
     if (inviteError) return { error: inviteError };
   }
-  redirect(`/dashboard/members/${data.id}`);
+  // Stay on the list: a "Member added" dialog offers the invite and the profile.
+  redirect(`/dashboard/members?added=${data.id}`);
 }
 
 export async function updateMember(memberId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -85,19 +85,11 @@ export async function updateMember(memberId: string, _prev: ActionState, formDat
 }
 
 export async function inviteToPortal(memberId: string): Promise<ActionState> {
-  const { viewer, membership } = await requireStaff(BILLING_ROLES);
-  const supabase = await createClient();
-  const { data: member } = await supabase
-    .from("members")
-    .select("email")
-    .eq("id", memberId)
-    .eq("gym_id", membership.gymId)
-    .single();
-  if (!member?.email) return { error: "Add an email address first." };
-  const inviteError = await inviteEmail(membership.gymId, viewer.id, member.email);
+  await requireStaff(BILLING_ROLES);
+  const inviteError = await memberInvite(memberId);
   if (inviteError) return { error: inviteError };
   refresh();
-  return { success: `Invited. They get portal access when they sign up or log in with ${member.email}.` };
+  return { success: "Invite link ready — send it on WhatsApp or copy it." };
 }
 
 export async function removePortalAccess(memberId: string) {
@@ -264,4 +256,59 @@ export async function checkIn(input: { code?: string; memberId?: string }): Prom
     visitsLeft: data.visits_left,
     balanceUsd: Number(data.balance_usd ?? 0),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Admin controls (the database checks roles and logs each action)
+// ---------------------------------------------------------------------------
+
+export async function setArchived(memberId: string, archived: boolean): Promise<ActionState> {
+  await requireStaff(BILLING_ROLES);
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_member_archived", { p_member_id: memberId, p_archived: archived });
+  if (error) return { error: errorMessage(error) };
+  refresh();
+  return { success: archived ? "Member archived." : "Member restored." };
+}
+
+export async function deleteMember(memberId: string): Promise<ActionState> {
+  await requireStaff(MANAGER_ROLES);
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("delete_member", { p_member_id: memberId });
+  if (error) return { error: errorMessage(error) };
+  redirect("/dashboard/members");
+}
+
+export async function refundPayment(paymentId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requireStaff(MANAGER_ROLES);
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("refund_payment", { p_payment_id: paymentId, p_reason: text(formData, "reason") });
+  if (error) return { error: errorMessage(error, "Couldn't refund.") };
+  refresh();
+  return { success: "Payment refunded — the amount is owed again." };
+}
+
+export async function adjustMembership(membershipId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requireStaff(MANAGER_ROLES);
+  const limitRaw = text(formData, "visit_limit");
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("adjust_membership", {
+    p_membership_id: membershipId,
+    p_starts_on: text(formData, "starts_on"),
+    p_ends_on: text(formData, "ends_on"),
+    p_visit_limit: limitRaw ? Number(limitRaw) : (null as unknown as number),
+    p_visits_used: Number(text(formData, "visits_used") || "0"),
+  });
+  if (error) return { error: errorMessage(error, "Couldn't save.") };
+  refresh();
+  return { success: "Membership updated." };
+}
+
+export async function deleteCheckin(checkinId: string): Promise<ActionState> {
+  await requireStaff(MANAGER_ROLES);
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("delete_checkin", { p_checkin_id: checkinId });
+  if (error) return { error: errorMessage(error) };
+  refresh();
+  return { success: "Check-in deleted." };
 }

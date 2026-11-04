@@ -5,7 +5,9 @@ import { Nfc } from "lucide-react";
 import { AutoRefresh } from "@/components/auto-refresh";
 import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
 import { formatTime } from "@/lib/format";
-import { BILLING_ROLES } from "@/lib/roles";
+import { BILLING_ROLES, MANAGER_ROLES } from "@/lib/roles";
+import { RowMenu } from "@/components/row-menu";
+import { deleteCheckin } from "../members/actions";
 import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { CheckInStation } from "./station";
@@ -38,6 +40,7 @@ async function Station() {
 
 async function LiveFeed() {
   const { membership } = await requireStaff(BILLING_ROLES);
+  const canManage = MANAGER_ROLES.includes(membership.role);
   const supabase = await createClient();
   const { data: rows } = await supabase
     .from("checkins")
@@ -73,6 +76,20 @@ async function LiveFeed() {
                 </span>
               )}
               {r.allowed ? <Badge tone="green">In</Badge> : <Badge tone="red">Denied</Badge>}
+              {canManage && (
+                <RowMenu
+                  label="Check-in actions"
+                  items={[
+                    {
+                      kind: "action",
+                      label: "Delete check-in",
+                      danger: true,
+                      action: deleteCheckin.bind(null, r.id),
+                      confirm: "Delete this check-in? If it used a punch-card visit, the visit is given back.",
+                    },
+                  ]}
+                />
+              )}
             </li>
           ))}
         </ul>

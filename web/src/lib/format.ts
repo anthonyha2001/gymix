@@ -75,6 +75,11 @@ export function formatTime(value: string, timeZone: string) {
   return new Date(value).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone });
 }
 
+// An instant `hours` before now, as ISO (for "since yesterday"-style query bounds).
+export function hoursAgoIso(hours: number) {
+  return new Date(Date.now() - hours * 3600_000).toISOString();
+}
+
 // Today's date (YYYY-MM-DD) in the gym's timezone.
 export function todayIn(timeZone: string) {
   return new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date());

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useDialogAction } from "@/components/dialog";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
 import type { ActionState } from "@/lib/action-result";
 
@@ -17,7 +17,7 @@ export function MemberForm({
   submitLabel: string;
   showInvite?: boolean;
 }) {
-  const [state, formAction, pending] = useActionState(action, {});
+  const [state, formAction, pending] = useDialogAction(action, {});
 
   return (
     <form action={formAction} className="space-y-4">
@@ -39,8 +39,8 @@ export function MemberForm({
       </div>
       {showInvite && (
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="invite" className="size-4 accent-ink" />
-          Invite them to the member portal (they&apos;ll see their membership, invoices and check-in QR)
+          <input type="checkbox" name="invite" defaultChecked className="size-4 accent-ink" />
+          Create a member portal invite (you can send it on WhatsApp next)
         </label>
       )}
       <Button type="submit" disabled={pending}>

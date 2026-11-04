@@ -23,7 +23,83 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "checkins": {
+            "activity_log": {
+                  Row: {
+                    "action": string,"actor_id": string | null,"created_at": string,"details": NonNullable<Json>,"gym_id": string,"id": string,"summary": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "action": string,"actor_id"?: string | null,"created_at"?: string,"details"?: NonNullable<Json>,"gym_id": string,"id"?: string,"summary": string
+                  }
+                  Update: {
+                    "action"?: string,"actor_id"?: string | null,"created_at"?: string,"details"?: NonNullable<Json>,"gym_id"?: string,"id"?: string,"summary"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "activity_log_actor_id_fkey"
+      columns: ["actor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "activity_log_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "activity_log_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"body_measurements": {
+                  Row: {
+                    "arm_cm": number | null,"body_fat_pct": number | null,"chest_cm": number | null,"created_at": string,"gym_id": string,"hips_cm": number | null,"id": string,"measured_on": string,"member_id": string,"muscle_mass_kg": number | null,"notes": string | null,"recorded_by": string | null,"source": string,"thigh_cm": number | null,"waist_cm": number | null,"weight_kg": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "arm_cm"?: number | null,"body_fat_pct"?: number | null,"chest_cm"?: number | null,"created_at"?: string,"gym_id": string,"hips_cm"?: number | null,"id"?: string,"measured_on": string,"member_id": string,"muscle_mass_kg"?: number | null,"notes"?: string | null,"recorded_by"?: string | null,"source"?: string,"thigh_cm"?: number | null,"waist_cm"?: number | null,"weight_kg"?: number | null
+                  }
+                  Update: {
+                    "arm_cm"?: number | null,"body_fat_pct"?: number | null,"chest_cm"?: number | null,"created_at"?: string,"gym_id"?: string,"hips_cm"?: number | null,"id"?: string,"measured_on"?: string,"member_id"?: string,"muscle_mass_kg"?: number | null,"notes"?: string | null,"recorded_by"?: string | null,"source"?: string,"thigh_cm"?: number | null,"waist_cm"?: number | null,"weight_kg"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "body_measurements_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "body_measurements_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "body_measurements_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "body_measurements_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "body_measurements_recorded_by_fkey"
+      columns: ["recorded_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"checkins": {
                   Row: {
                     "allowed": boolean,"checked_in_at": string,"checked_in_by": string | null,"gym_id": string,"id": string,"member_id": string,"membership_id": string | null,"reason": string | null,"source": string
                   }
@@ -41,6 +117,12 @@ export type Database = {
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "checkins_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
     },{
       foreignKeyName: "checkins_gym_id_fkey"
       columns: ["gym_id"]
@@ -73,6 +155,234 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"class_bookings": {
+                  Row: {
+                    "class_id": string,"created_at": string,"gym_id": string,"id": string,"member_id": string,"session_date": string,"status": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "class_id": string,"created_at"?: string,"gym_id": string,"id"?: string,"member_id": string,"session_date": string,"status": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "class_id"?: string,"created_at"?: string,"gym_id"?: string,"id"?: string,"member_id"?: string,"session_date"?: string,"status"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "class_bookings_class_id_fkey"
+      columns: ["class_id"]
+isOneToOne: false
+      referencedRelation: "classes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_bookings_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "class_bookings_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_bookings_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_bookings_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"class_subscriptions": {
+                  Row: {
+                    "class_id": string,"created_at": string,"created_by": string | null,"ends_on": string,"gym_id": string,"id": string,"invoice_id": string | null,"member_id": string,"price_usd": number,"starts_on": string,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "class_id": string,"created_at"?: string,"created_by"?: string | null,"ends_on": string,"gym_id": string,"id"?: string,"invoice_id"?: string | null,"member_id": string,"price_usd"?: number,"starts_on": string,"status"?: string
+                  }
+                  Update: {
+                    "class_id"?: string,"created_at"?: string,"created_by"?: string | null,"ends_on"?: string,"gym_id"?: string,"id"?: string,"invoice_id"?: string | null,"member_id"?: string,"price_usd"?: number,"starts_on"?: string,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "class_subscriptions_class_id_fkey"
+      columns: ["class_id"]
+isOneToOne: false
+      referencedRelation: "classes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_subscriptions_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_subscriptions_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "class_subscriptions_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_subscriptions_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoice_summary"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_subscriptions_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_subscriptions_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "class_subscriptions_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"classes": {
+                  Row: {
+                    "capacity": number,"created_at": string,"description": string | null,"duration_min": number,"gym_id": string,"id": string,"is_active": boolean,"location": string | null,"monthly_price_usd": number | null,"name": string,"start_time": string,"trainer_id": string | null,"weekday": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "capacity"?: number,"created_at"?: string,"description"?: string | null,"duration_min"?: number,"gym_id": string,"id"?: string,"is_active"?: boolean,"location"?: string | null,"monthly_price_usd"?: number | null,"name": string,"start_time": string,"trainer_id"?: string | null,"weekday": number
+                  }
+                  Update: {
+                    "capacity"?: number,"created_at"?: string,"description"?: string | null,"duration_min"?: number,"gym_id"?: string,"id"?: string,"is_active"?: boolean,"location"?: string | null,"monthly_price_usd"?: number | null,"name"?: string,"start_time"?: string,"trainer_id"?: string | null,"weekday"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "classes_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "classes_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "classes_trainer_id_fkey"
+      columns: ["trainer_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"conversations": {
+                  Row: {
+                    "created_at": string,"gym_id": string,"id": string,"last_message_at": string | null,"member_id": string,"staff_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"gym_id": string,"id"?: string,"last_message_at"?: string | null,"member_id": string,"staff_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"gym_id"?: string,"id"?: string,"last_message_at"?: string | null,"member_id"?: string,"staff_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "conversations_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "conversations_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "conversations_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "conversations_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "conversations_staff_id_fkey"
+      columns: ["staff_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"exercises": {
+                  Row: {
+                    "category": string | null,"equipment": string | null,"force": string | null,"id": string,"image_paths": (string)[],"instructions": (string)[],"level": string | null,"mechanic": string | null,"name": string,"primary_muscles": (string)[],"secondary_muscles": (string)[],"source": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "category"?: string | null,"equipment"?: string | null,"force"?: string | null,"id": string,"image_paths"?: (string)[],"instructions"?: (string)[],"level"?: string | null,"mechanic"?: string | null,"name": string,"primary_muscles"?: (string)[],"secondary_muscles"?: (string)[],"source"?: string
+                  }
+                  Update: {
+                    "category"?: string | null,"equipment"?: string | null,"force"?: string | null,"id"?: string,"image_paths"?: (string)[],"instructions"?: (string)[],"level"?: string | null,"mechanic"?: string | null,"name"?: string,"primary_muscles"?: (string)[],"secondary_muscles"?: (string)[],"source"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"gym_machines": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"description": string | null,"gym_id": string,"id": string,"name": string,"photo_path": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"gym_id": string,"id"?: string,"name": string,"photo_path"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"gym_id"?: string,"id"?: string,"name"?: string,"photo_path"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "gym_machines_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "gym_machines_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "gym_machines_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"gym_users": {
                   Row: {
                     "created_at": string,"gym_id": string,"role": Database["public"]['Enums']["gym_role"],"user_id": string
@@ -89,6 +399,12 @@ isOneToOne: false
       foreignKeyName: "gym_users_gym_id_fkey"
       columns: ["gym_id"]
 isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "gym_users_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
       referencedRelation: "gyms"
       referencedColumns: ["id"]
     },{
@@ -101,35 +417,53 @@ isOneToOne: false
                   ]
                 },"gyms": {
                   Row: {
-                    "checkin_token": string,"created_at": string,"created_by": string | null,"id": string,"lbp_rate": number,"name": string,"next_invoice_number": number,"slug": string,"timezone": string
+                    "checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"lbp_rate": number,"name": string,"next_invoice_number": number,"portal_hidden": (string)[],"program_price_usd": number,"slug": string,"tap_simulator": boolean,"timezone": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"slug": string,"timezone"?: string
+                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"portal_hidden"?: (string)[],"program_price_usd"?: number,"slug": string,"tap_simulator"?: boolean,"timezone"?: string
                   }
                   Update: {
-                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"slug"?: string,"timezone"?: string
+                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"portal_hidden"?: (string)[],"program_price_usd"?: number,"slug"?: string,"tap_simulator"?: boolean,"timezone"?: string
                   }
                   Relationships: [
                     
                   ]
                 },"invites": {
                   Row: {
-                    "accepted_at": string | null,"created_at": string,"email": string,"gym_id": string,"id": string,"invited_by": string | null,"role": Database["public"]['Enums']["gym_role"]
+                    "accepted_at": string | null,"created_at": string,"email": string | null,"expires_at": string,"gym_id": string,"id": string,"invited_by": string | null,"member_id": string | null,"role": Database["public"]['Enums']["gym_role"],"token": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "accepted_at"?: string | null,"created_at"?: string,"email": string,"gym_id": string,"id"?: string,"invited_by"?: string | null,"role": Database["public"]['Enums']["gym_role"]
+                    "accepted_at"?: string | null,"created_at"?: string,"email"?: string | null,"expires_at"?: string,"gym_id": string,"id"?: string,"invited_by"?: string | null,"member_id"?: string | null,"role": Database["public"]['Enums']["gym_role"],"token"?: string
                   }
                   Update: {
-                    "accepted_at"?: string | null,"created_at"?: string,"email"?: string,"gym_id"?: string,"id"?: string,"invited_by"?: string | null,"role"?: Database["public"]['Enums']["gym_role"]
+                    "accepted_at"?: string | null,"created_at"?: string,"email"?: string | null,"expires_at"?: string,"gym_id"?: string,"id"?: string,"invited_by"?: string | null,"member_id"?: string | null,"role"?: Database["public"]['Enums']["gym_role"],"token"?: string
                   }
                   Relationships: [
                     {
       foreignKeyName: "invites_gym_id_fkey"
       columns: ["gym_id"]
 isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "invites_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
       referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "invites_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "invites_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
       referencedColumns: ["id"]
     }
                   ]
@@ -151,6 +485,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "invoices_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
     },{
       foreignKeyName: "invoices_gym_id_fkey"
       columns: ["gym_id"]
@@ -183,16 +523,48 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"members": {
+                },"machine_exercises": {
                   Row: {
-                    "checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"full_name": string,"gym_id": string,"id": string,"notes": string | null,"phone": string | null,"user_id": string | null
+                    "exercise_id": string,"machine_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name": string,"gym_id": string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"user_id"?: string | null
+                    "exercise_id": string,"machine_id": string
                   }
                   Update: {
-                    "checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name"?: string,"gym_id"?: string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"user_id"?: string | null
+                    "exercise_id"?: string,"machine_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "machine_exercises_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "machine_exercises_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "machine_exercises_machine_id_fkey"
+      columns: ["machine_id"]
+isOneToOne: false
+      referencedRelation: "gym_machines"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"members": {
+                  Row: {
+                    "archived_at": string | null,"checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"full_name": string,"gym_id": string,"id": string,"notes": string | null,"phone": string | null,"user_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name": string,"gym_id": string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"user_id"?: string | null
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name"?: string,"gym_id"?: string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"user_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -201,6 +573,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "members_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
     },{
       foreignKeyName: "members_gym_id_fkey"
       columns: ["gym_id"]
@@ -231,6 +609,12 @@ isOneToOne: false
       foreignKeyName: "membership_plans_gym_id_fkey"
       columns: ["gym_id"]
 isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "membership_plans_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
       referencedRelation: "gyms"
       referencedColumns: ["id"]
     }
@@ -257,6 +641,12 @@ isOneToOne: false
       foreignKeyName: "memberships_gym_id_fkey"
       columns: ["gym_id"]
 isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "memberships_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
       referencedRelation: "gyms"
       referencedColumns: ["id"]
     },{
@@ -279,6 +669,184 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"messages": {
+                  Row: {
+                    "body": string,"conversation_id": string,"created_at": string,"id": string,"read_at": string | null,"sender_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"conversation_id": string,"created_at"?: string,"id"?: string,"read_at"?: string | null,"sender_id"?: string | null
+                  }
+                  Update: {
+                    "body"?: string,"conversation_id"?: string,"created_at"?: string,"id"?: string,"read_at"?: string | null,"sender_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "messages_conversation_id_fkey"
+      columns: ["conversation_id"]
+isOneToOne: false
+      referencedRelation: "conversations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "messages_sender_id_fkey"
+      columns: ["sender_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"notifications": {
+                  Row: {
+                    "body": string | null,"created_at": string,"dedupe_key": string | null,"gym_id": string,"id": string,"kind": string,"link": string | null,"read_at": string | null,"title": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: string | null,"created_at"?: string,"dedupe_key"?: string | null,"gym_id": string,"id"?: string,"kind": string,"link"?: string | null,"read_at"?: string | null,"title": string,"user_id": string
+                  }
+                  Update: {
+                    "body"?: string | null,"created_at"?: string,"dedupe_key"?: string | null,"gym_id"?: string,"id"?: string,"kind"?: string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "notifications_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "notifications_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "notifications_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"nutrition_meals": {
+                  Row: {
+                    "calories": number | null,"created_at": string,"id": string,"items": string,"name": string,"plan_id": string,"position": number,"time_label": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "calories"?: number | null,"created_at"?: string,"id"?: string,"items"?: string,"name": string,"plan_id": string,"position"?: number,"time_label"?: string | null
+                  }
+                  Update: {
+                    "calories"?: number | null,"created_at"?: string,"id"?: string,"items"?: string,"name"?: string,"plan_id"?: string,"position"?: number,"time_label"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "nutrition_meals_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "nutrition_plans"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"nutrition_plans": {
+                  Row: {
+                    "calories": number | null,"carbs_g": number | null,"created_at": string,"dietitian_id": string | null,"fat_g": number | null,"guidelines": string | null,"gym_id": string,"id": string,"member_id": string,"name": string,"protein_g": number | null,"request_id": string | null,"sent_at": string | null,"status": string,"updated_at": string,"water_l": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "calories"?: number | null,"carbs_g"?: number | null,"created_at"?: string,"dietitian_id"?: string | null,"fat_g"?: number | null,"guidelines"?: string | null,"gym_id": string,"id"?: string,"member_id": string,"name"?: string,"protein_g"?: number | null,"request_id"?: string | null,"sent_at"?: string | null,"status"?: string,"updated_at"?: string,"water_l"?: number | null
+                  }
+                  Update: {
+                    "calories"?: number | null,"carbs_g"?: number | null,"created_at"?: string,"dietitian_id"?: string | null,"fat_g"?: number | null,"guidelines"?: string | null,"gym_id"?: string,"id"?: string,"member_id"?: string,"name"?: string,"protein_g"?: number | null,"request_id"?: string | null,"sent_at"?: string | null,"status"?: string,"updated_at"?: string,"water_l"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "nutrition_plans_dietitian_id_fkey"
+      columns: ["dietitian_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "nutrition_plans_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "nutrition_plans_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "nutrition_plans_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "nutrition_plans_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "nutrition_plans_request_id_fkey"
+      columns: ["request_id"]
+isOneToOne: false
+      referencedRelation: "nutrition_requests"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"nutrition_requests": {
+                  Row: {
+                    "activity": string,"allergies": string | null,"created_at": string,"dietitian_id": string | null,"goal": string,"gym_id": string,"height_cm": number | null,"id": string,"member_id": string,"notes": string | null,"plan_id": string | null,"preferences": string | null,"status": string,"updated_at": string,"weight_kg": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "activity"?: string,"allergies"?: string | null,"created_at"?: string,"dietitian_id"?: string | null,"goal": string,"gym_id": string,"height_cm"?: number | null,"id"?: string,"member_id": string,"notes"?: string | null,"plan_id"?: string | null,"preferences"?: string | null,"status"?: string,"updated_at"?: string,"weight_kg"?: number | null
+                  }
+                  Update: {
+                    "activity"?: string,"allergies"?: string | null,"created_at"?: string,"dietitian_id"?: string | null,"goal"?: string,"gym_id"?: string,"height_cm"?: number | null,"id"?: string,"member_id"?: string,"notes"?: string | null,"plan_id"?: string | null,"preferences"?: string | null,"status"?: string,"updated_at"?: string,"weight_kg"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "nutrition_requests_dietitian_id_fkey"
+      columns: ["dietitian_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "nutrition_requests_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "nutrition_requests_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "nutrition_requests_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "nutrition_requests_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "nutrition_requests_plan_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "nutrition_plans"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"payments": {
                   Row: {
                     "amount_lbp": number | null,"amount_usd": number,"gym_id": string,"id": string,"invoice_id": string,"lbp_rate": number | null,"member_id": string,"method": Database["public"]['Enums']["payment_method"],"note": string | null,"paid_at": string,"received_by": string | null
@@ -292,6 +860,12 @@ isOneToOne: false
                   }
                   Relationships: [
                     {
+      foreignKeyName: "payments_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
       foreignKeyName: "payments_gym_id_fkey"
       columns: ["gym_id"]
 isOneToOne: false
@@ -329,6 +903,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"platform_admins": {
+                  Row: {
+                    "created_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "platform_admins_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: true
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "created_at": string,"email": string,"full_name": string,"id": string,"phone": string | null,"updated_at": string
@@ -343,10 +937,432 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"program_days": {
+                  Row: {
+                    "created_at": string,"id": string,"name": string,"position": number,"program_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"name": string,"position"?: number,"program_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"name"?: string,"position"?: number,"program_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "program_days_program_id_fkey"
+      columns: ["program_id"]
+isOneToOne: false
+      referencedRelation: "programs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"program_exercises": {
+                  Row: {
+                    "day_id": string,"exercise_id": string,"id": string,"notes": string | null,"position": number,"reps": string,"rest_seconds": number,"sets": number,"swapped_at": string | null,"swapped_from": string | null,"target_weight_kg": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "day_id": string,"exercise_id": string,"id"?: string,"notes"?: string | null,"position"?: number,"reps"?: string,"rest_seconds"?: number,"sets"?: number,"swapped_at"?: string | null,"swapped_from"?: string | null,"target_weight_kg"?: number | null
+                  }
+                  Update: {
+                    "day_id"?: string,"exercise_id"?: string,"id"?: string,"notes"?: string | null,"position"?: number,"reps"?: string,"rest_seconds"?: number,"sets"?: number,"swapped_at"?: string | null,"swapped_from"?: string | null,"target_weight_kg"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "program_exercises_day_id_fkey"
+      columns: ["day_id"]
+isOneToOne: false
+      referencedRelation: "program_days"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_exercises_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_exercises_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_exercises_swapped_from_fkey"
+      columns: ["swapped_from"]
+isOneToOne: false
+      referencedRelation: "exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_exercises_swapped_from_fkey"
+      columns: ["swapped_from"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"program_requests": {
+                  Row: {
+                    "created_at": string,"days_per_week": number,"experience": Database["public"]['Enums']["experience_level"],"goal": Database["public"]['Enums']["program_goal"],"gym_id": string,"id": string,"injuries": string | null,"invoice_id": string | null,"member_id": string,"notes": string | null,"preferred_trainer_id": string | null,"program_id": string | null,"status": string,"trainer_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"days_per_week": number,"experience": Database["public"]['Enums']["experience_level"],"goal": Database["public"]['Enums']["program_goal"],"gym_id": string,"id"?: string,"injuries"?: string | null,"invoice_id"?: string | null,"member_id": string,"notes"?: string | null,"preferred_trainer_id"?: string | null,"program_id"?: string | null,"status"?: string,"trainer_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"days_per_week"?: number,"experience"?: Database["public"]['Enums']["experience_level"],"goal"?: Database["public"]['Enums']["program_goal"],"gym_id"?: string,"id"?: string,"injuries"?: string | null,"invoice_id"?: string | null,"member_id"?: string,"notes"?: string | null,"preferred_trainer_id"?: string | null,"program_id"?: string | null,"status"?: string,"trainer_id"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "program_requests_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "program_requests_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_requests_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoice_summary"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_requests_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_requests_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_requests_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_requests_preferred_trainer_id_fkey"
+      columns: ["preferred_trainer_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_requests_program_fkey"
+      columns: ["program_id"]
+isOneToOne: false
+      referencedRelation: "programs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "program_requests_trainer_id_fkey"
+      columns: ["trainer_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"programs": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"gym_id": string,"id": string,"is_active": boolean,"kind": string,"member_id": string | null,"name": string,"notes": string | null,"request_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"gym_id": string,"id"?: string,"is_active"?: boolean,"kind": string,"member_id"?: string | null,"name": string,"notes"?: string | null,"request_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"gym_id"?: string,"id"?: string,"is_active"?: boolean,"kind"?: string,"member_id"?: string | null,"name"?: string,"notes"?: string | null,"request_id"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "programs_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "programs_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "programs_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "programs_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "programs_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "programs_request_id_fkey"
+      columns: ["request_id"]
+isOneToOne: false
+      referencedRelation: "program_requests"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"pt_sessions": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"duration_min": number,"gym_id": string,"id": string,"member_id": string,"note": string | null,"starts_at": string,"status": string,"trainer_id": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"duration_min"?: number,"gym_id": string,"id"?: string,"member_id": string,"note"?: string | null,"starts_at": string,"status": string,"trainer_id": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"duration_min"?: number,"gym_id"?: string,"id"?: string,"member_id"?: string,"note"?: string | null,"starts_at"?: string,"status"?: string,"trainer_id"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "pt_sessions_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pt_sessions_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "pt_sessions_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pt_sessions_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pt_sessions_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pt_sessions_trainer_id_fkey"
+      columns: ["trainer_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"set_logs": {
+                  Row: {
+                    "exercise_id": string,"id": string,"logged_at": string,"member_id": string,"reps": number,"session_id": string,"set_number": number,"weight_kg": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "exercise_id": string,"id"?: string,"logged_at"?: string,"member_id": string,"reps": number,"session_id": string,"set_number": number,"weight_kg"?: number
+                  }
+                  Update: {
+                    "exercise_id"?: string,"id"?: string,"logged_at"?: string,"member_id"?: string,"reps"?: number,"session_id"?: string,"set_number"?: number,"weight_kg"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "set_logs_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "set_logs_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "set_logs_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "set_logs_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "set_logs_session_id_fkey"
+      columns: ["session_id"]
+isOneToOne: false
+      referencedRelation: "workout_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"workout_exercises": {
+                  Row: {
+                    "added_via": string,"created_at": string,"exercise_id": string,"id": string,"machine_id": string | null,"member_id": string,"position": number,"program_exercise_id": string | null,"session_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "added_via"?: string,"created_at"?: string,"exercise_id": string,"id"?: string,"machine_id"?: string | null,"member_id": string,"position"?: number,"program_exercise_id"?: string | null,"session_id": string
+                  }
+                  Update: {
+                    "added_via"?: string,"created_at"?: string,"exercise_id"?: string,"id"?: string,"machine_id"?: string | null,"member_id"?: string,"position"?: number,"program_exercise_id"?: string | null,"session_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "workout_exercises_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_exercises_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_exercises_machine_id_fkey"
+      columns: ["machine_id"]
+isOneToOne: false
+      referencedRelation: "gym_machines"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_exercises_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_exercises_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_exercises_program_exercise_id_fkey"
+      columns: ["program_exercise_id"]
+isOneToOne: false
+      referencedRelation: "program_exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_exercises_session_id_fkey"
+      columns: ["session_id"]
+isOneToOne: false
+      referencedRelation: "workout_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"workout_sessions": {
+                  Row: {
+                    "day_id": string | null,"day_name": string | null,"finished_at": string | null,"gym_id": string,"id": string,"member_id": string,"notes": string | null,"program_id": string | null,"started_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "day_id"?: string | null,"day_name"?: string | null,"finished_at"?: string | null,"gym_id": string,"id"?: string,"member_id": string,"notes"?: string | null,"program_id"?: string | null,"started_at"?: string
+                  }
+                  Update: {
+                    "day_id"?: string | null,"day_name"?: string | null,"finished_at"?: string | null,"gym_id"?: string,"id"?: string,"member_id"?: string,"notes"?: string | null,"program_id"?: string | null,"started_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "workout_sessions_day_id_fkey"
+      columns: ["day_id"]
+isOneToOne: false
+      referencedRelation: "program_days"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_sessions_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "workout_sessions_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_sessions_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_sessions_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "workout_sessions_program_id_fkey"
+      columns: ["program_id"]
+isOneToOne: false
+      referencedRelation: "programs"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
-            "invoice_summary": {
+            "exercise_bests": {
+                  Row: {
+                    "best_bodyweight_reps": number | null,"best_est_1rm_kg": number | null,"best_weight_kg": number | null,"exercise_id": string,"last_logged_at": string | null,"member_id": string,"sessions": number | null
+                  }
+                  ComputedFields: never
+                  Relationships: [
+                    {
+      foreignKeyName: "set_logs_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "set_logs_exercise_id_fkey"
+      columns: ["exercise_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "set_logs_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "set_logs_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"gym_exercises": {
+                  Row: {
+                    "category": string | null,"equipment": string | null,"force": string | null,"gym_id": string,"id": string,"image_paths": (string)[],"instructions": (string)[],"level": string | null,"mechanic": string | null,"name": string,"primary_muscles": (string)[],"secondary_muscles": (string)[],"source": string
+                  }
+                  ComputedFields: never
+                  Relationships: [
+                    
+                  ]
+                },"invoice_summary": {
                   Row: {
                     "amount_usd": number,"balance_usd": number | null,"created_at": string,"created_by": string | null,"description": string,"discount_usd": number,"gym_id": string,"id": string,"issued_on": string,"member_id": string,"membership_id": string | null,"number": number,"paid_usd": number | null,"status": string | null,"total_usd": number | null,"void_reason": string | null,"voided_at": string | null
                   }
@@ -358,6 +1374,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "invoices_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
     },{
       foreignKeyName: "invoices_gym_id_fkey"
       columns: ["gym_id"]
@@ -392,7 +1414,7 @@ isOneToOne: false
                   ]
                 },"member_overview": {
                   Row: {
-                    "balance_usd": number | null,"checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"ends_on": string | null,"frozen_on": string | null,"full_name": string,"gym_id": string,"id": string,"last_checkin_at": string | null,"membership_id": string | null,"notes": string | null,"phone": string | null,"plan_name": string | null,"starts_on": string | null,"status": string | null,"user_id": string | null,"visit_limit": number | null,"visits_used": number | null
+                    "archived_at": string | null,"balance_usd": number | null,"checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"ends_on": string | null,"frozen_on": string | null,"full_name": string,"gym_id": string,"id": string,"last_checkin_at": string | null,"membership_id": string | null,"notes": string | null,"phone": string | null,"plan_name": string | null,"starts_on": string | null,"status": string | null,"user_id": string | null,"visit_limit": number | null,"visits_used": number | null
                   }
                   ComputedFields: never
                   Relationships: [
@@ -402,6 +1424,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "members_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
     },{
       foreignKeyName: "members_gym_id_fkey"
       columns: ["gym_id"]
@@ -419,14 +1447,58 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "add_payment":
+            "accept_invite":
+{ Args: { "p_token": string }; Returns: Database["public"]['Enums']["gym_role"]
+                           },
+"add_payment":
 { Args: { "p_amount_lbp"?: number,"p_amount_usd": number,"p_invoice_id": string,"p_method": Database["public"]['Enums']["payment_method"],"p_note"?: string }; Returns: string
+                           },
+"adjust_membership":
+{ Args: { "p_ends_on": string,"p_membership_id": string,"p_starts_on": string,"p_visit_limit": number,"p_visits_used": number }; Returns: undefined
+                           },
+"admin_gym_overview":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "active_members": number,"checkins_30d": number,"collected_30d": number,"created_at": string,"gym_id": string,"last_checkin_at": string,"members": number,"name": string,"owner_email": string,"owner_name": string,"staff": number
+            }[]
+                           },
+"archive_nutrition_plan":
+{ Args: { "p_plan_id": string }; Returns: undefined
+                           },
+"book_class":
+{ Args: { "p_class_id": string,"p_date": string,"p_member_id"?: string }; Returns: string
                            },
 "can_assign_role":
 { Args: { "p_gym_id": string,"p_role": Database["public"]['Enums']["gym_role"] }; Returns: boolean
                            },
+"can_coach":
+{ Args: { "p_gym_id": string }; Returns: boolean
+                           },
+"can_diet":
+{ Args: { "p_gym_id": string }; Returns: boolean
+                           },
+"can_edit_program":
+{ Args: { "p_program_id": string }; Returns: boolean
+                           },
 "can_handle_billing":
 { Args: { "p_gym_id": string }; Returns: boolean
+                           },
+"can_view_nutrition_plan":
+{ Args: { "p_plan_id": string }; Returns: boolean
+                           },
+"can_view_program":
+{ Args: { "p_program_id": string }; Returns: boolean
+                           },
+"cancel_booking":
+{ Args: { "p_booking_id": string }; Returns: undefined
+                           },
+"cancel_course_subscription":
+{ Args: { "p_subscription_id": string }; Returns: undefined
+                           },
+"cancel_nutrition_request":
+{ Args: { "p_request_id": string }; Returns: undefined
+                           },
+"cancel_program_request":
+{ Args: { "p_request_id": string }; Returns: undefined
                            },
 "check_in":
 { Args: { "p_code"?: string,"p_gym_id": string,"p_member_id"?: string }; Returns: {
@@ -439,11 +1511,41 @@ isOneToOne: false
 "claim_my_invites":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"class_spots":
+{ Args: { "p_from": string,"p_gym_id": string,"p_to": string }; Returns: {
+              "class_id": string,"session_date": string,"taken": number,"waiting": number
+            }[]
+                           },
+"copy_program":
+{ Args: { "p_source_id": string,"p_target_id": string }; Returns: undefined
+                           },
 "create_gym":
 { Args: { "p_name": string }; Returns: string
                            },
+"create_member_program":
+{ Args: { "p_member_id": string,"p_name": string,"p_request_id"?: string,"p_template_id"?: string }; Returns: string
+                           },
+"day_program":
+{ Args: { "p_day_id": string }; Returns: string
+                           },
+"delete_checkin":
+{ Args: { "p_checkin_id": string }; Returns: undefined
+                           },
+"delete_member":
+{ Args: { "p_member_id": string }; Returns: undefined
+                           },
 "get_checkin_token":
 { Args: { "p_gym_id": string }; Returns: string
+                           },
+"gym_coaches":
+{ Args: { "p_gym_id": string }; Returns: {
+              "full_name": string,"id": string
+            }[]
+                           },
+"gym_staff_names":
+{ Args: { "p_gym_id": string }; Returns: {
+              "full_name": string,"id": string,"role": Database["public"]['Enums']["gym_role"]
+            }[]
                            },
 "gym_stats":
 { Args: { "p_gym_id": string }; Returns: {
@@ -456,11 +1558,55 @@ isOneToOne: false
 "has_gym_role":
 { Args: { "p_gym_id": string,"p_roles": (Database["public"]['Enums']["gym_role"])[] }; Returns: boolean
                            },
+"invite_preview":
+{ Args: { "p_token": string }; Returns: {
+              "accepted": boolean,"email": string,"expired": boolean,"gym_name": string,"member_name": string,"role": Database["public"]['Enums']["gym_role"]
+            }[]
+                           },
+"is_coach_of":
+{ Args: { "p_gym_id": string,"p_user_id": string }; Returns: boolean
+                           },
+"is_conversation_participant":
+{ Args: { "p_conversation_id": string }; Returns: boolean
+                           },
 "is_gym_staff":
 { Args: { "p_gym_id": string }; Returns: boolean
                            },
 "is_my_member":
 { Args: { "p_member_id": string }; Returns: boolean
+                           },
+"is_my_member_at":
+{ Args: { "p_gym_id": string,"p_member_id": string }; Returns: boolean
+                           },
+"is_platform_admin":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"log_activity":
+{ Args: { "p_action": string,"p_details"?: Json,"p_gym_id": string,"p_summary": string }; Returns: undefined
+                           },
+"machine_gym":
+{ Args: { "p_machine_id": string }; Returns: string
+                           },
+"make_my_reminders":
+{ Args: { "p_gym_id": string }; Returns: undefined
+                           },
+"mark_attendance":
+{ Args: { "p_attended": boolean,"p_booking_id": string }; Returns: undefined
+                           },
+"mark_conversation_read":
+{ Args: { "p_conversation_id": string }; Returns: undefined
+                           },
+"mark_notifications_read":
+{ Args: { "p_ids"?: (string)[] }; Returns: undefined
+                           },
+"member_invite_token":
+{ Args: { "p_member_id": string }; Returns: string
+                           },
+"member_login_email":
+{ Args: { "p_identifier": string }; Returns: string
+                           },
+"member_user":
+{ Args: { "p_member_id": string }; Returns: string
                            },
 "membership_rank":
 { Args: { "ms": Omit<Database["public"]['Tables']["memberships"]['Row'], Database["public"]['Tables']["memberships"]['ComputedFields']>,"p_today": string }; Returns: number
@@ -468,19 +1614,61 @@ isOneToOne: false
 "my_gym_role":
 { Args: { "p_gym_id": string }; Returns: Database["public"]['Enums']["gym_role"]
                            },
+"my_member_id":
+{ Args: { "p_gym_id": string }; Returns: string
+                           },
 "new_checkin_code":
 { Args: Record<PropertyKey, never>; Returns: string
+                           },
+"normalize_phone":
+{ Args: { "p": string }; Returns: string
+                           },
+"notify":
+{ Args: { "p_body": string,"p_gym_id": string,"p_key"?: string,"p_kind": string,"p_link": string,"p_title": string,"p_user_id": string }; Returns: undefined
+                           },
+"notify_roles":
+{ Args: { "p_body": string,"p_gym_id": string,"p_kind": string,"p_link": string,"p_roles": (Database["public"]['Enums']["gym_role"])[],"p_title": string }; Returns: undefined
+                           },
+"nutrition_plan_gym":
+{ Args: { "p_plan_id": string }; Returns: string
+                           },
+"open_conversation":
+{ Args: { "p_gym_id": string,"p_member_id"?: string,"p_staff_id"?: string }; Returns: string
+                           },
+"publish_program":
+{ Args: { "p_program_id": string }; Returns: undefined
                            },
 "record_check_in":
 { Args: { "p_gym_id": string,"p_member_id": string,"p_source": string }; Returns: {
               "allowed": boolean,"already_in": boolean,"balance_usd": number,"ends_on": string,"full_name": string,"member_id": string,"plan_name": string,"reason": string,"visits_left": number
             }[]
                            },
+"refund_payment":
+{ Args: { "p_payment_id": string,"p_reason": string }; Returns: undefined
+                           },
+"request_nutrition_plan":
+{ Args: { "p_activity"?: string,"p_allergies"?: string,"p_goal": string,"p_gym_id": string,"p_height_cm"?: number,"p_notes"?: string,"p_preferences"?: string,"p_weight_kg"?: number }; Returns: string
+                           },
+"request_program":
+{ Args: { "p_days_per_week": number,"p_experience": Database["public"]['Enums']["experience_level"],"p_goal": Database["public"]['Enums']["program_goal"],"p_gym_id": string,"p_injuries"?: string,"p_notes"?: string,"p_preferred_trainer_id"?: string }; Returns: string
+                           },
+"request_pt_session":
+{ Args: { "p_duration"?: number,"p_gym_id": string,"p_note"?: string,"p_starts_at": string,"p_trainer_id": string }; Returns: string
+                           },
 "require_billing":
+{ Args: { "p_gym_id": string }; Returns: undefined
+                           },
+"require_manager":
 { Args: { "p_gym_id": string }; Returns: undefined
                            },
 "rotate_checkin_token":
 { Args: { "p_gym_id": string }; Returns: string
+                           },
+"save_as_template":
+{ Args: { "p_name": string,"p_program_id": string }; Returns: string
+                           },
+"schedule_pt_session":
+{ Args: { "p_duration"?: number,"p_member_id": string,"p_note"?: string,"p_starts_at": string,"p_trainer_id": string }; Returns: string
                            },
 "self_check_in":
 { Args: { "p_token": string }; Returns: {
@@ -490,15 +1678,55 @@ isOneToOne: false
 "sell_membership":
 { Args: { "p_amount_lbp"?: number,"p_discount_usd"?: number,"p_member_id": string,"p_method"?: Database["public"]['Enums']["payment_method"],"p_paid_usd"?: number,"p_plan_id": string,"p_starts_on": string }; Returns: string
                            },
+"send_nutrition_plan":
+{ Args: { "p_plan_id": string }; Returns: undefined
+                           },
+"session_gym":
+{ Args: { "p_session_id": string }; Returns: string
+                           },
+"session_member":
+{ Args: { "p_session_id": string }; Returns: string
+                           },
+"set_gym_equipment":
+{ Args: { "p_equipment": (string)[],"p_gym_id": string }; Returns: undefined
+                           },
+"set_member_archived":
+{ Args: { "p_archived": boolean,"p_member_id": string }; Returns: undefined
+                           },
+"simulated_check_in":
+{ Args: { "p_gym_id": string }; Returns: {
+              "allowed": boolean,"already_in": boolean,"balance_usd": number,"ends_on": string,"full_name": string,"member_id": string,"plan_name": string,"reason": string,"visits_left": number
+            }[]
+                           },
+"staff_counts":
+{ Args: { "p_gym_id": string }; Returns: {
+              "nutrition_requests": number,"program_requests": number,"pt_requests": number
+            }[]
+                           },
+"start_nutrition_plan":
+{ Args: { "p_member_id": string,"p_request_id"?: string }; Returns: string
+                           },
+"subscribe_to_course":
+{ Args: { "p_class_id": string,"p_member_id"?: string,"p_starts_on"?: string }; Returns: string
+                           },
+"swap_program_exercise":
+{ Args: { "p_exercise_id": string,"p_program_exercise_id": string }; Returns: undefined
+                           },
+"trainer_is_free":
+{ Args: { "p_duration": number,"p_except"?: string,"p_starts_at": string,"p_trainer_id": string }; Returns: boolean
+                           },
 "update_membership":
 { Args: { "p_action": string,"p_membership_id": string }; Returns: undefined
+                           },
+"update_pt_session":
+{ Args: { "p_action": string,"p_session_id": string }; Returns: undefined
                            },
 "void_invoice":
 { Args: { "p_invoice_id": string,"p_reason": string }; Returns: undefined
                            }
           }
           Enums: {
-            "gym_role": "owner"|"manager"|"front_desk"|"trainer"|"member","payment_method": "cash_usd"|"cash_lbp"|"card"|"whish"|"omt"|"bank_transfer"|"other","plan_period": "day"|"week"|"month"|"year"
+            "experience_level": "beginner"|"intermediate"|"advanced","gym_role": "owner"|"manager"|"front_desk"|"trainer"|"dietitian"|"member","payment_method": "cash_usd"|"cash_lbp"|"card"|"whish"|"omt"|"bank_transfer"|"other","plan_period": "day"|"week"|"month"|"year","program_goal": "lose_fat"|"build_muscle"|"strength"|"general_fitness"|"rehab"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -618,7 +1846,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "gym_role": ["owner", "manager", "front_desk", "trainer", "member"],"payment_method": ["cash_usd", "cash_lbp", "card", "whish", "omt", "bank_transfer", "other"],"plan_period": ["day", "week", "month", "year"]
+            "experience_level": ["beginner", "intermediate", "advanced"],"gym_role": ["owner", "manager", "front_desk", "trainer", "dietitian", "member"],"payment_method": ["cash_usd", "cash_lbp", "card", "whish", "omt", "bank_transfer", "other"],"plan_period": ["day", "week", "month", "year"],"program_goal": ["lose_fat", "build_muscle", "strength", "general_fitness", "rehab"]
           }
         }
 } as const

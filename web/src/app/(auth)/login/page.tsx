@@ -21,9 +21,10 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
 }
 
 async function LoginBody({ searchParams }: { searchParams: PageProps<"/login">["searchParams"] }) {
-  const { error, next } = await searchParams;
+  const { error, next, email } = await searchParams;
   const nextPath = typeof next === "string" ? next : undefined;
   const isTap = nextPath?.startsWith("/c/");
+  const isInvite = nextPath?.startsWith("/join/");
 
   return (
     <>
@@ -31,7 +32,8 @@ async function LoginBody({ searchParams }: { searchParams: PageProps<"/login">["
       {isTap && (
         <Alert tone="success">Log in once on this phone — after that, tapping the sticker checks you in instantly.</Alert>
       )}
-      <LoginForm next={nextPath} />
+      {isInvite && <Alert tone="success">Log in to accept your gym&apos;s invite.</Alert>}
+      <LoginForm next={nextPath} email={typeof email === "string" ? email : undefined} />
       <p className="text-sm text-muted">
         New to Gymix?{" "}
         <Link

@@ -1,0 +1,45 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
+import { MachineDetail } from "@/components/machine-detail";
+import { Logo, Skeleton } from "@/components/ui";
+import { getViewer, homePathFor } from "@/lib/session";
+
+export const metadata: Metadata = { title: "Machine" };
+
+// Opened by tapping the NFC sticker on a machine: how to use it + your numbers.
+export default function MachineStickerPage({ params }: PageProps<"/m/[id]">) {
+  return (
+    <div className="flex flex-1 flex-col">
+      <header className="border-b border-line bg-surface">
+        <div className="mx-auto flex h-14 max-w-2xl items-center px-4">
+          <Logo />
+        </div>
+      </header>
+      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">
+        <Suspense fallback={<Skeleton className="h-96" />}>
+          <Machine params={params} />
+        </Suspense>
+      </main>
+    </div>
+  );
+}
+
+async function Machine({ params }: { params: PageProps<"/m/[id]">["params"] }) {
+  const { id } = await params;
+  const viewer = await getViewer();
+  if (!viewer) redirect(`/login?next=${encodeURIComponent(`/m/${id}`)}`);
+  const detail = await MachineDetail({ id, viewer });
+  // RLS hides machines from other gyms.
+  if (!detail) notFound();
+
+  return (
+    <div className="space-y-4">
+      {detail}
+      <Link href={homePathFor(viewer)} className="block text-center text-sm text-muted underline underline-offset-4">
+        Back to Gymix
+      </Link>
+    </div>
+  );
+}

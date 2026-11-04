@@ -12,7 +12,10 @@ import {
   type InvoiceStatus,
   type PaymentMethod,
 } from "@/lib/format";
-import { BILLING_ROLES } from "@/lib/roles";
+import { BILLING_ROLES, MANAGER_ROLES } from "@/lib/roles";
+import { RowMenu } from "@/components/row-menu";
+import { refundPayment, voidInvoice } from "../members/actions";
+import { RefundForm } from "../members/admin-forms";
 import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,6 +26,7 @@ const TABS = [
   { value: "all", label: "All invoices" },
   { value: "paid", label: "Paid" },
   { value: "void", label: "Void" },
+  { value: "payments", label: "Payments" },
 ];
 
 export default function BillingPage({ searchParams }: PageProps<"/dashboard/billing">) {
@@ -38,6 +42,7 @@ export default function BillingPage({ searchParams }: PageProps<"/dashboard/bill
 
 async function BillingContent({ searchParams }: { searchParams: PageProps<"/dashboard/billing">["searchParams"] }) {
   const { membership } = await requireStaff(BILLING_ROLES);
+  const canManage = MANAGER_ROLES.includes(membership.role);
   const { tab: rawTab } = await searchParams;
   const tab = TABS.some((t) => t.value === rawTab) ? (rawTab as string) : "owing";
   const tz = membership.timezone;
@@ -115,22 +120,24 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
         </Card>
       )}
 
+      <div className="flex flex-wrap gap-2">
+        {TABS.map((t) => (
+          <Link
+            key={t.value}
+            href={`/dashboard/billing?tab=${t.value}`}
+              scroll={false}
+            className={`rounded-full border px-3 py-1 text-sm ${
+              tab === t.value ? "border-ink bg-ink text-white" : "border-line bg-surface text-muted hover:text-ink"
+            }`}
+          >
+            {t.label}
+          </Link>
+        ))}
+      </div>
+      {tab !== "payments" && (
       <Card className="overflow-hidden">
-        <div className="flex flex-wrap gap-2 px-5 pt-4 pb-3">
-          {TABS.map((t) => (
-            <Link
-              key={t.value}
-              href={`/dashboard/billing?tab=${t.value}`}
-              className={`rounded-full border px-3 py-1 text-sm ${
-                tab === t.value ? "border-ink bg-ink text-white" : "border-line bg-surface text-muted hover:text-ink"
-              }`}
-            >
-              {t.label}
-            </Link>
-          ))}
-        </div>
         {!invoices?.length ? (
-          <EmptyState>{tab === "owing" ? "Nobody owes anything. 🎉" : "No invoices here yet."}</EmptyState>
+          <EmptyState>{tab === "owing" ? "Nobody owes anything." : "No invoices here yet."}</EmptyState>
         ) : (
           <div className="overflow-x-auto border-t border-line">
             <table className="w-full text-sm">
@@ -142,6 +149,7 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
                   <th className="px-5 py-3 font-medium">Status</th>
                   <th className="px-5 py-3 text-right font-medium">Total</th>
                   <th className="px-5 py-3 text-right font-medium">Due</th>
+                  <th className="w-12 px-3 py-3" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
@@ -164,6 +172,23 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
                       <td className={`px-5 py-3 text-right tabular-nums ${Number(inv.balance_usd) > 0 && inv.status !== "void" ? "font-medium text-danger" : "text-muted"}`}>
                         {Number(inv.balance_usd) > 0 && inv.status !== "void" ? formatUSD(inv.balance_usd) : "—"}
                       </td>
+                      <td className="px-3 py-3 text-right">
+                        <RowMenu
+                          label={`Actions for invoice ${inv.number}`}
+                          items={[
+                            { kind: "link", label: "Open member", href: `/dashboard/members/${inv.member_id}` },
+                            canManage &&
+                              inv.status !== "void" &&
+                              Number(inv.paid_usd) === 0 && {
+                                kind: "action",
+                                label: "Void invoice",
+                                danger: true,
+                                action: voidInvoice.bind(null, inv.id!),
+                                confirm: "Void this invoice? Its membership will be cancelled too.",
+                              },
+                          ]}
+                        />
+                      </td>
                     </tr>
                   );
                 })}
@@ -172,7 +197,9 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
           </div>
         )}
       </Card>
+      )}
 
+      {tab === "payments" && (
       <Card>
         <SectionTitle>Latest payments</SectionTitle>
         {!payments?.length ? (
@@ -190,12 +217,29 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
                     {p.amount_lbp ? ` · ${formatLBP(p.amount_lbp)}` : ""}
                   </span>
                 </span>
-                <span className="font-medium tabular-nums">{formatUSD(p.amount_usd)}</span>
+                <span className="flex items-center gap-1">
+                  <span className="font-medium tabular-nums">{formatUSD(p.amount_usd)}</span>
+                  {canManage && (
+                    <RowMenu
+                      label="Payment actions"
+                      items={[
+                        {
+                          kind: "dialog",
+                          label: "Refund",
+                          danger: true,
+                          title: "Refund payment",
+                          content: <RefundForm action={refundPayment.bind(null, p.id)} amountUsd={Number(p.amount_usd)} />,
+                        },
+                      ]}
+                    />
+                  )}
+                </span>
               </li>
             ))}
           </ul>
         )}
       </Card>
+      )}
     </div>
   );
 }

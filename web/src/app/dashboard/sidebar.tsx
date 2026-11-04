@@ -6,9 +6,11 @@ import { createContext, use, useRef, useState, type ReactNode } from "react";
 import {
   CalendarDays,
   ClipboardList,
+  Apple,
   Dumbbell,
   LayoutDashboard,
   Menu,
+  MessageCircle,
   Receipt,
   ScanLine,
   Settings,
@@ -32,6 +34,8 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   schedule: CalendarDays,
   machines: Dumbbell,
   programs: ClipboardList,
+  messages: MessageCircle,
+  nutrition: Apple,
 };
 
 // Lets nav links (rendered in a server slot) close the mobile drawer.
@@ -39,7 +43,7 @@ const CloseDrawer = createContext<() => void>(() => {});
 
 // Fixed sidebar on desktop; slide-in drawer behind a menu button on mobile.
 // `gym`, `nav` and `account` are server-rendered slots (they read the session).
-export function Sidebar({ gym, nav, account }: { gym: ReactNode; nav: ReactNode; account: ReactNode }) {
+export function Sidebar({ gym, nav, account, bell }: { gym: ReactNode; nav: ReactNode; account: ReactNode; bell: ReactNode }) {
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
@@ -70,6 +74,7 @@ export function Sidebar({ gym, nav, account }: { gym: ReactNode; nav: ReactNode;
           <Menu className="size-5" />
         </button>
         <Logo />
+        <div className="ml-auto">{bell}</div>
       </div>
 
       {/* Backdrop (mobile only) */}
@@ -85,6 +90,7 @@ export function Sidebar({ gym, nav, account }: { gym: ReactNode; nav: ReactNode;
           <Link href="/dashboard" onClick={close}>
             <Logo />
           </Link>
+          <div className="hidden md:block">{bell}</div>
           <button
             ref={closeButton}
             type="button"
@@ -101,7 +107,9 @@ export function Sidebar({ gym, nav, account }: { gym: ReactNode; nav: ReactNode;
         <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Main">
           {nav}
 
-          <p className="mt-6 mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted">Coming soon</p>
+          {COMING_SOON.length > 0 && (
+            <p className="mt-6 mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted">Coming soon</p>
+          )}
           <ul className="space-y-1">
             {COMING_SOON.map(({ label, icon }) => {
               const Icon = ICONS[icon];
@@ -134,7 +142,7 @@ export function NavLinks({ items }: { items: NavItem[] }) {
 
   return (
     <ul className="space-y-1">
-      {items.map(({ href, label, icon }) => {
+      {items.map(({ href, label, icon, badge }) => {
         const Icon = ICONS[icon];
         const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
         return (
@@ -148,7 +156,12 @@ export function NavLinks({ items }: { items: NavItem[] }) {
               }`}
             >
               <Icon className={`size-[18px] ${active ? "text-brand" : "text-muted"}`} />
-              {label}
+              <span className="flex-1">{label}</span>
+              {badge !== undefined && (
+                <span className="grid min-w-5 place-items-center rounded-full bg-brand px-1.5 text-xs font-semibold text-ink" aria-label={`${badge} new`}>
+                  {badge}
+                </span>
+              )}
             </Link>
           </li>
         );

@@ -16,6 +16,8 @@ export type Viewer = {
   email: string;
   fullName: string;
   memberships: Membership[];
+  // Runs the Gymix platform itself (see /admin).
+  isPlatformAdmin: boolean;
 };
 
 export async function getViewer(): Promise<Viewer | null> {
@@ -25,13 +27,14 @@ export async function getViewer(): Promise<Viewer | null> {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [{ data: profile }, { data: rows }] = await Promise.all([
+  const [{ data: profile }, { data: rows }, { data: isPlatformAdmin }] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
     supabase
       .from("gym_users")
       .select("gym_id, role, gyms(name, timezone, lbp_rate)")
       .eq("user_id", user.id)
       .order("created_at"),
+    supabase.rpc("is_platform_admin"),
   ]);
 
   return {
@@ -45,23 +48,34 @@ export async function getViewer(): Promise<Viewer | null> {
       timezone: r.gyms?.timezone ?? "Asia/Beirut",
       lbpRate: Number(r.gyms?.lbp_rate ?? 89500),
     })),
+    isPlatformAdmin: isPlatformAdmin === true,
   };
 }
 
 // Where a signed-in user belongs: staff go to the dashboard, members to the portal,
 // and people with no gym yet set one up.
-export function homePathFor(viewer: { memberships: Pick<Membership, "role">[] }) {
+export function homePathFor(viewer: { memberships: Pick<Membership, "role">[]; isPlatformAdmin?: boolean }) {
   if (viewer.memberships.some((m) => isStaffRole(m.role))) return "/dashboard";
   if (viewer.memberships.length > 0) return "/portal";
+  if (viewer.isPlatformAdmin) return "/admin";
   return "/onboarding";
 }
 
 // Same as homePathFor, for use right after sign-in with the client that holds the new session.
 export async function homePathForUser(supabase: Awaited<ReturnType<typeof createClient>>, userId: string) {
-  const { data } = await supabase.from("gym_users").select("role").eq("user_id", userId);
-  return homePathFor({
-    memberships: (data ?? []).map((r) => ({ role: r.role })),
-  });
+  const [{ data }, { data: isPlatformAdmin }] = await Promise.all([
+    supabase.from("gym_users").select("role").eq("user_id", userId),
+    supabase.rpc("is_platform_admin"),
+  ]);
+  // Super admins land on the platform console.
+  if (isPlatformAdmin === true) return "/admin";
+  return homePathFor({ memberships: (data ?? []).map((r) => ({ role: r.role })) });
+}
+
+export async function requirePlatformAdmin() {
+  const viewer = await requireViewer();
+  if (!viewer.isPlatformAdmin) redirect(homePathFor(viewer));
+  return viewer;
 }
 
 export async function requireViewer() {
@@ -76,6 +90,14 @@ export async function requireStaff(roles?: GymRole[]) {
   const membership = viewer.memberships.find((m) => isStaffRole(m.role));
   if (!membership) redirect(homePathFor(viewer));
   if (roles && !roles.includes(membership.role)) redirect("/dashboard");
+  return { viewer, membership };
+}
+
+// Anyone in a gym (staff first, else member).
+export async function requireGymUser() {
+  const viewer = await requireViewer();
+  const membership = viewer.memberships.find((m) => isStaffRole(m.role)) ?? viewer.memberships[0];
+  if (!membership) redirect(homePathFor(viewer));
   return { viewer, membership };
 }
 

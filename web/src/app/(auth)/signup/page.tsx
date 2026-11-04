@@ -21,11 +21,11 @@ export default function SignupPage({ searchParams }: PageProps<"/signup">) {
 }
 
 async function SignupBody({ searchParams }: { searchParams: PageProps<"/signup">["searchParams"] }) {
-  const { next } = await searchParams;
+  const { next, email } = await searchParams;
   const nextPath = typeof next === "string" ? next : undefined;
   return (
     <>
-      <SignupForm next={nextPath} />
+      <SignupForm next={nextPath} email={typeof email === "string" ? email : undefined} />
       <p className="text-sm text-muted">
         Already have an account?{" "}
         <Link

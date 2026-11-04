@@ -77,3 +77,12 @@ export async function setPlanActive(planId: string, isActive: boolean) {
     .eq("gym_id", membership.gymId);
   refresh();
 }
+
+export async function deletePlan(planId: string): Promise<ActionState> {
+  const { membership } = await requireStaff(MANAGER_ROLES);
+  const supabase = await createClient();
+  const { error } = await supabase.from("membership_plans").delete().eq("id", planId).eq("gym_id", membership.gymId);
+  if (error) return { error: errorMessage(error, "Couldn't delete the plan.") };
+  refresh();
+  return { success: "Plan deleted. Memberships already sold keep its name." };
+}

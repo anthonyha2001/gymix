@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useState } from "react";
+import { useDialogAction } from "@/components/dialog";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
 import type { ActionState } from "@/lib/action-result";
 import { PaymentFields } from "./payment-fields";
@@ -14,7 +15,7 @@ export function PaymentForm({
   balance: number;
   rate: number;
 }) {
-  const [state, formAction, pending] = useActionState(action, {});
+  const [state, formAction, pending] = useDialogAction(action, {});
   const [amount, setAmount] = useState(balance.toFixed(2));
 
   return (

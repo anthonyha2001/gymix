@@ -1,12 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
-import { inviteToGym, type InviteState } from "./actions";
+import { useDialogAction } from "@/components/dialog";
+import { inviteToGym } from "./actions";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
 import { ROLE_LABELS, type GymRole } from "@/lib/roles";
+import { SearchSelect } from "@/components/search-select";
 
 export function InviteForm({ roles }: { roles: GymRole[] }) {
-  const [state, action, pending] = useActionState<InviteState, FormData>(inviteToGym, {});
+  const [state, action, pending] = useDialogAction(inviteToGym, {});
 
   return (
     <form action={action} className="space-y-4">
@@ -17,13 +18,13 @@ export function InviteForm({ roles }: { roles: GymRole[] }) {
           <input name="email" type="email" required placeholder="name@example.com" className={inputClass} />
         </Field>
         <Field label="Role">
-          <select name="role" defaultValue={roles.includes("trainer") ? "trainer" : roles[0]} className={inputClass}>
+          <SearchSelect name="role" defaultValue={roles.includes("trainer") ? "trainer" : roles[0]} className={inputClass}>
             {roles.map((r) => (
               <option key={r} value={r}>
                 {ROLE_LABELS[r]}
               </option>
             ))}
-          </select>
+          </SearchSelect>
         </Field>
         <Button type="submit" disabled={pending}>
           {pending ? "Inviting…" : "Invite"}

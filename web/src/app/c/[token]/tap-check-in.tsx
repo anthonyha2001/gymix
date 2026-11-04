@@ -1,23 +1,31 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { buttonClass } from "@/components/ui";
 import { formatDate } from "@/lib/format";
-import { selfCheckIn, type TapResult } from "./actions";
+import { selfCheckIn, simulatedCheckIn, type TapResult } from "./actions";
 
-// Checks the member in as soon as the page opens (they just tapped the sticker).
-// Running twice is harmless: the database treats a repeat within 3 hours as "already in".
-export function TapCheckIn({ token }: { token: string }) {
+// Runs the check-in as soon as the page opens (the member just tapped), shows a
+// welcome screen, then moves on to the training screen.
+// Running twice is harmless: a repeat within 3 hours counts as "already in".
+export function TapCheckIn({ token, simulated = false }: { token?: string; simulated?: boolean }) {
   const [result, setResult] = useState<TapResult | null>(null);
   const [, startTransition] = useTransition();
+  const router = useRouter();
 
   useEffect(() => {
     startTransition(async () => {
-      const r = await selfCheckIn(token);
+      const r = simulated || !token ? await simulatedCheckIn() : await selfCheckIn(token);
       setResult(r);
-      if (r.ok && r.allowed) navigator.vibrate?.(80);
+      if (r.ok && r.allowed) {
+        navigator.vibrate?.(80);
+        setTimeout(() => router.push("/portal/train"), 2500);
+      }
     });
-  }, [token]);
+  }, [token, simulated, router]);
 
   if (!result) {
     return (
@@ -34,6 +42,9 @@ export function TapCheckIn({ token }: { token: string }) {
         <XCircle className="size-20" />
         <p className="text-2xl font-semibold">Couldn&apos;t check you in</p>
         <p className="max-w-xs text-base opacity-90">{result.error}</p>
+        <Link href="/portal" className={buttonClass("secondary", "mt-4")}>
+          Go to my portal
+        </Link>
       </Screen>
     );
   }
@@ -45,15 +56,19 @@ export function TapCheckIn({ token }: { token: string }) {
         <p className="text-3xl font-bold">Not allowed in</p>
         <p className="text-lg font-medium">{result.fullName}</p>
         <p className="max-w-xs text-base opacity-90">{result.reason}. Please see the front desk.</p>
+        <Link href="/portal" className={buttonClass("secondary", "mt-4")}>
+          Go to my portal
+        </Link>
       </Screen>
     );
   }
 
+  const firstName = result.fullName?.split(" ")[0] ?? "";
   return (
     <Screen tone="good">
       <CheckCircle2 className="size-20" />
-      <p className="text-3xl font-bold">{result.alreadyIn ? "You're already in" : "Welcome!"}</p>
-      <p className="text-xl font-medium">{result.fullName}</p>
+      <p className="text-sm font-medium uppercase tracking-widest opacity-80">{result.alreadyIn ? "Already checked in" : "Checked in"}</p>
+      <p className="text-4xl font-bold">Welcome back{firstName ? `, ${firstName}` : ""}</p>
       <p className="text-base opacity-90">
         {[
           result.planName,
@@ -63,7 +78,10 @@ export function TapCheckIn({ token }: { token: string }) {
           .filter(Boolean)
           .join(" · ")}
       </p>
-      <p className="mt-6 text-sm opacity-75">Have a great workout 💪</p>
+      <Link href="/portal/train" className={buttonClass("secondary", "mt-6 h-12 px-8 text-base")}>
+        Start training
+      </Link>
+      <p className="text-xs opacity-75">Opening your training screen…</p>
     </Screen>
   );
 }

@@ -21,3 +21,24 @@ body {
   background: var(--color-canvas);
   color: var(--color-ink);
 }
+
+/* Height of the member portal's bottom tab bar while it is on screen; other
+   bottom-pinned things (toasts, action bars, rest timer) sit above it. */
+:root {
+  --bottom-bar: 0px;
+}
+:root:has(nav[data-bottom-bar]) {
+  --bottom-bar: calc(4rem + env(safe-area-inset-bottom));
+}
+
+/* Two-frame exercise animation: the second photo blinks over the first. */
+.ex-anim > img:nth-child(2) {
+  animation: ex-swap 1.6s steps(1, end) infinite;
+}
+@keyframes ex-swap {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ex-anim > img:nth-child(2) { animation: none; opacity: 0; }
+}

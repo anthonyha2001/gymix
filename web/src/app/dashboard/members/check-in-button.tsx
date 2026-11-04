@@ -17,7 +17,7 @@ export function CheckInButton({ memberId }: { memberId: string }) {
       {result && (
         <span role="status" className={`text-xs ${result.allowed ? "text-success" : "text-danger"}`}>
           {result.error ??
-            (result.allowed ? (result.alreadyIn ? "Already checked in." : "Checked in ✓") : `Denied: ${result.reason}`)}
+            (result.allowed ? (result.alreadyIn ? "Already checked in." : "Checked in.") : `Denied: ${result.reason}`)}
         </span>
       )}
     </form>

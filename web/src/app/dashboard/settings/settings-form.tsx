@@ -4,7 +4,8 @@ import { useActionState, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Alert, Button, Field, buttonClass, inputClass } from "@/components/ui";
 import { formatLBP } from "@/lib/format";
-import { saveGymSettings } from "./actions";
+import { PORTAL_PAGES } from "@/lib/portal-pages";
+import { saveGymSettings, setPortalPages } from "./actions";
 
 export function SettingsForm({ name, lbpRate }: { name: string; lbpRate: number }) {
   const [state, action, pending] = useActionState(saveGymSettings, {});
@@ -45,5 +46,34 @@ export function CopyLink({ url }: { url: string }) {
         {copied ? "Copied" : "Copy"}
       </button>
     </div>
+  );
+}
+
+// Switches for the member portal's pages. Home is always on.
+export function PortalPagesForm({ hidden }: { hidden: string[] }) {
+  const [state, action, pending] = useActionState(setPortalPages, {});
+  return (
+    <form action={action} className="space-y-4">
+      {state.error && <Alert tone="error">{state.error}</Alert>}
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {PORTAL_PAGES.map((p) => (
+          <li key={p.id}>
+            <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-line px-4 py-3 hover:bg-canvas has-[:checked]:border-ink/40">
+              <input type="checkbox" name="page" value={p.id} defaultChecked={!hidden.includes(p.id)} className="mt-1 size-4 accent-ink" />
+              <span>
+                <span className="block text-sm font-medium">{p.label}</span>
+                <span className="block text-xs text-muted">{p.description}</span>
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+      <div className="flex items-center justify-end gap-3">
+        {state.success && <span className="text-sm text-success">{state.success}</span>}
+        <Button type="submit" disabled={pending}>
+          {pending ? "Saving…" : "Save pages"}
+        </Button>
+      </div>
+    </form>
   );
 }

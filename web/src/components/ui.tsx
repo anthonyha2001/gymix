@@ -2,10 +2,11 @@ import type { ComponentProps, ReactNode } from "react";
 
 // Small set of shared primitives. Server-safe (no hooks), so usable anywhere.
 
-type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "whatsapp";
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
   primary: "bg-ink text-white hover:bg-ink/85",
+  whatsapp: "bg-[#1fa855] text-white hover:bg-[#1a9049]",
   secondary: "bg-surface text-ink border border-line hover:bg-canvas",
   danger: "bg-surface text-danger border border-line hover:bg-danger-soft",
   ghost: "text-muted hover:text-ink hover:bg-canvas",
@@ -26,6 +27,11 @@ export function Button({
 export const inputClass =
   "w-full h-10 rounded-lg border border-line bg-surface px-3 text-sm outline-none focus:border-ink focus:ring-2 focus:ring-brand";
 
+// inputClass with a different width (appending a width class doesn't reliably beat w-full).
+export function inputWidth(width: string) {
+  return inputClass.replace("w-full", width);
+}
+
 export function Field({
   label,
   hint,
@@ -44,8 +50,11 @@ export function Field({
   );
 }
 
+// Pass a bg-*/border-* class to override the defaults (appending one doesn't reliably win).
 export function Card({ className = "", ...props }: ComponentProps<"div">) {
-  return <div className={`rounded-xl border border-line bg-surface ${className}`} {...props} />;
+  const bg = /(^|\s)bg-/.test(className) ? "" : "bg-surface";
+  const border = /(^|\s)border-(?!t\b|b\b|l\b|r\b|x\b|y\b|dashed)/.test(className) ? "border" : "border border-line";
+  return <div className={`rounded-xl ${border} ${bg} ${className}`} {...props} />;
 }
 
 export function Alert({ tone, children }: { tone: "error" | "success"; children: ReactNode }) {

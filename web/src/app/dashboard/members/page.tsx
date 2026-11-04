@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, UserRound } from "lucide-react";
+import { Dialog } from "@/components/dialog";
 import { Badge, Card, EmptyState, PageHeader, Skeleton, buttonClass, inputClass } from "@/components/ui";
+import { InviteShare } from "@/components/invite-share";
+import { RouteModal } from "@/components/route-modal";
+import { memberInviteMessage } from "@/lib/invite-link";
+import { requestOrigin } from "@/lib/origin";
+import { RowMenu } from "@/components/row-menu";
+import { createMember, deleteMember, setArchived } from "./actions";
+import { MemberForm } from "./member-form";
 import { MEMBER_STATUS, formatDate, formatUSD, type MemberStatus } from "@/lib/format";
-import { BILLING_ROLES } from "@/lib/roles";
+import { BILLING_ROLES, MANAGER_ROLES } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -17,6 +25,7 @@ const FILTERS: { value: string; label: string }[] = [
   { value: "frozen", label: "Frozen" },
   { value: "none", label: "No membership" },
   { value: "owing", label: "Owing money" },
+  { value: "archived", label: "Archived" },
 ];
 
 export default function MembersPage({ searchParams }: PageProps<"/dashboard/members">) {
@@ -27,6 +36,9 @@ export default function MembersPage({ searchParams }: PageProps<"/dashboard/memb
       </Suspense>
       <Suspense fallback={<Skeleton className="h-96" />}>
         <MemberList searchParams={searchParams} />
+      </Suspense>
+      <Suspense>
+        <AddedDialog searchParams={searchParams} />
       </Suspense>
     </div>
   );
@@ -40,9 +52,15 @@ async function Header() {
       description="Everyone with a membership at your gym — with or without a portal account."
       action={
         BILLING_ROLES.includes(membership.role) && (
-          <Link href="/dashboard/members/new" className={buttonClass("primary")}>
-            <Plus className="size-4" /> Add member
-          </Link>
+          <Dialog
+            label="Add member"
+            icon={<Plus className="size-4" />}
+            title="Add member"
+            description="Only the name is required. You can sell a membership on the next screen."
+            size="lg"
+          >
+            <MemberForm action={createMember} submitLabel="Add member" showInvite />
+          </Dialog>
         )
       }
     />
@@ -55,11 +73,12 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
   const q = typeof params.q === "string" ? params.q.trim() : "";
   const status = typeof params.status === "string" ? params.status : "";
   const showMoney = BILLING_ROLES.includes(membership.role);
+  const canDelete = MANAGER_ROLES.includes(membership.role);
 
   const supabase = await createClient();
   let query = supabase
     .from("member_overview")
-    .select("id, full_name, phone, email, user_id, plan_name, ends_on, status, balance_usd, last_checkin_at")
+    .select("id, full_name, phone, email, user_id, plan_name, ends_on, status, balance_usd, last_checkin_at, archived_at")
     .eq("gym_id", membership.gymId)
     .order("full_name")
     .limit(300);
@@ -67,9 +86,11 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
   // Strip characters PostgREST uses as filter syntax.
   const term = q.replace(/[%,()*\\]/g, " ").trim();
   if (term) query = query.or(`full_name.ilike.%${term}%,phone.ilike.%${term}%,email.ilike.%${term}%`);
+  // Archived members are hidden unless that filter is picked.
+  query = status === "archived" ? query.not("archived_at", "is", null) : query.is("archived_at", null);
   if (status === "owing") query = query.gt("balance_usd", 0);
   else if (status === "expired") query = query.in("status", ["expired", "used_up"]);
-  else if (status) query = query.eq("status", status);
+  else if (status && status !== "archived") query = query.eq("status", status);
 
   const { data: members } = await query;
 
@@ -124,6 +145,7 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
                   <th className="px-5 py-3 font-medium">Status</th>
                   <th className="hidden px-5 py-3 font-medium md:table-cell">Last visit</th>
                   {showMoney && <th className="px-5 py-3 text-right font-medium">Owes</th>}
+                  <th className="w-12 px-3 py-3" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
@@ -158,6 +180,27 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
                           {Number(m.balance_usd) > 0 ? formatUSD(m.balance_usd) : "—"}
                         </td>
                       )}
+                      <td className="px-3 py-3 text-right">
+                        <RowMenu
+                          label={`Actions for ${m.full_name}`}
+                          items={[
+                            { kind: "link", label: "Open profile", href: `/dashboard/members/${m.id}` },
+                            { kind: "link", label: "View as member", href: `/dashboard/members/${m.id}?preview=${m.id}` },
+                            showMoney && {
+                              kind: "action",
+                              label: m.archived_at ? "Restore" : "Archive",
+                              action: setArchived.bind(null, m.id!, !m.archived_at),
+                            },
+                            canDelete && {
+                              kind: "action",
+                              label: "Delete permanently",
+                              danger: true,
+                              action: deleteMember.bind(null, m.id!),
+                              confirm: `Delete ${m.full_name} permanently? Only possible if they were never billed — otherwise archive them.`,
+                            },
+                          ]}
+                        />
+                      </td>
                     </tr>
                   );
                 })}
@@ -167,5 +210,35 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
         )}
       </Card>
     </div>
+  );
+}
+
+// Shown right after adding a member (?added=<id>): share the portal invite, or open the profile.
+async function AddedDialog({ searchParams }: { searchParams: PageProps<"/dashboard/members">["searchParams"] }) {
+  const { added } = await searchParams;
+  if (typeof added !== "string") return null;
+  const { membership } = await requireStaff();
+  const supabase = await createClient();
+  const [{ data: member }, { data: invite }] = await Promise.all([
+    supabase.from("members").select("id, full_name, phone").eq("id", added).eq("gym_id", membership.gymId).maybeSingle(),
+    supabase.from("invites").select("token").eq("member_id", added).is("accepted_at", null).limit(1).maybeSingle(),
+  ]);
+  if (!member) return null;
+  const url = invite ? `${await requestOrigin()}/join/${invite.token}` : null;
+
+  return (
+    <RouteModal param="added" title={`${member.full_name} added`} description="Next: invite them to the member app, or open their profile to sell a membership." size="md">
+      <div className="space-y-5">
+        {url && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Send the member app invite</p>
+            <InviteShare url={url} message={memberInviteMessage(member.full_name.split(" ")[0], membership.gymName, url)} phone={member.phone} />
+          </div>
+        )}
+        <Link href={`/dashboard/members/${member.id}`} className={buttonClass("primary", "w-full")}>
+          <UserRound className="size-4" /> Open profile
+        </Link>
+      </div>
+    </RouteModal>
   );
 }

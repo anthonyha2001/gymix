@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Field, inputClass } from "@/components/ui";
 import { PAYMENT_METHODS, formatLBP, usdToLbp, type PaymentMethod } from "@/lib/format";
+import { SearchSelect } from "@/components/search-select";
 
 // Amount + method, plus the lira amount when paid in LBP cash (pre-filled from
 // the gym's rate, editable for what was actually handed over).
@@ -35,7 +36,7 @@ export function PaymentFields({
         />
       </Field>
       <Field label="Paid by">
-        <select
+        <SearchSelect
           name="method"
           value={method}
           onChange={(e) => setMethod(e.target.value as PaymentMethod)}
@@ -46,7 +47,7 @@ export function PaymentFields({
               {m.label}
             </option>
           ))}
-        </select>
+        </SearchSelect>
       </Field>
       {method === "cash_lbp" && (
         <Field label="Received in LBP" hint={`At your rate of ${formatLBP(rate)} per $1.`}>
