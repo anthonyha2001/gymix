@@ -39,8 +39,8 @@ export function MarketingNav() {
           <Link href="/login" className="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:text-white">
             Log in
           </Link>
-          <Link href="/signup" className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-brand px-4 text-sm font-semibold text-ink hover:bg-brand-strong">
-            Start free<span className="hidden sm:inline">trial</span>
+          <Link href="/signup" className="inline-flex h-10 items-center rounded-xl bg-brand px-4 text-sm font-semibold whitespace-pre text-ink hover:bg-brand-strong">
+            Start free<span className="hidden sm:inline"> trial</span>
           </Link>
         </div>
       </div>

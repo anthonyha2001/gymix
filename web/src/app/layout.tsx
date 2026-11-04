@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "The operating system for your gym.",
   // Installed on a phone's home screen: full screen, Gymix icon and name.
   appleWebApp: { capable: true, title: "Gymix", statusBarStyle: "default" },
-  icons: { apple: "/icons/180" },
+  icons: { icon: { url: "/icon.svg", type: "image/svg+xml" }, apple: "/icons/180" },
 };
 
 export const viewport: Viewport = { themeColor: "#0d1117" };

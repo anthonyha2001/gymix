@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
+import { LogoMark } from "@/components/logo-mark";
 
 // Small set of shared primitives. Server-safe (no hooks), so usable anywhere.
 
@@ -68,8 +69,10 @@ export function Alert({ tone, children }: { tone: "error" | "success"; children:
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-2 font-semibold tracking-tight ${className}`}>
-      <span className="grid size-7 place-items-center rounded-md bg-brand text-ink text-sm font-black">G</span>
+    <span className={`inline-flex items-center gap-2 font-bold tracking-tight ${className}`}>
+      <span className="grid size-[1.75em] shrink-0 place-items-center rounded-[22%] bg-brand text-ink">
+        <LogoMark className="size-full" />
+      </span>
       Gymix
     </span>
   );
