@@ -16,6 +16,7 @@ export function ActionButton({
   variant = "secondary",
   confirm: confirmMessage,
   className = "h-9",
+  icon,
 }: {
   action: () => Promise<ActionState>;
   label: string;
@@ -23,6 +24,8 @@ export function ActionButton({
   variant?: "primary" | "secondary" | "danger" | "ghost";
   confirm?: string;
   className?: string;
+  // Icon-only button: the label becomes its accessible name and tooltip.
+  icon?: React.ReactNode;
 }) {
   const [state, dispatch, pending] = useActionState(async () => {
     const result = await action();
@@ -40,8 +43,15 @@ export function ActionButton({
 
   return (
     <div className="inline-flex flex-col items-start gap-1">
-      <button type="button" onClick={onClick} disabled={pending} className={buttonClass(variant, className)}>
-        {pending ? (pendingLabel ?? "Working…") : label}
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={pending}
+        aria-label={icon ? label : undefined}
+        title={icon ? label : undefined}
+        className={buttonClass(variant, className)}
+      >
+        {icon ? icon : pending ? (pendingLabel ?? "Working…") : label}
       </button>
       {state.error && <span role="alert" className="text-xs text-danger">{state.error}</span>}
       {confirmDialog}

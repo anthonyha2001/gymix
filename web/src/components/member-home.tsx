@@ -34,13 +34,17 @@ export async function MemberHome({
   gymName,
   timeZone,
   preview = false,
+  locked = false,
 }: {
   supabase: Client;
   memberId: string;
   gymName: string;
   timeZone: string;
   preview?: boolean;
+  // Membership not active (or frozen for an unpaid balance): training parts are blurred out.
+  locked?: boolean;
 }) {
+  const dim = locked ? "pointer-events-none select-none opacity-60 blur-[3px] transition" : "";
   const today = todayIn(timeZone);
   const nowIso = new Date().toISOString();
   const [{ data: me }, { data: invoices }, { data: visits }, { data: nextClass }, { data: nextPt }, { data: workouts }, plan] = await Promise.all([
@@ -126,10 +130,12 @@ export async function MemberHome({
         <p className="rounded-2xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger">You have {formatUSD(balance)} to pay at the front desk.</p>
       )}
 
-      <TodayWorkout plan={plan} weekdayName={WEEKDAYS[todayDow]} preview={preview} />
+      <div className={dim} aria-hidden={locked || undefined} inert={locked || undefined}>
+        <TodayWorkout plan={plan} weekdayName={WEEKDAYS[todayDow]} preview={preview} />
+      </div>
 
       {/* This week */}
-      <Card className="p-5">
+      <Card className={`p-5 ${dim}`} aria-hidden={locked || undefined} inert={locked || undefined}>
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm text-muted">This week</p>
@@ -217,7 +223,7 @@ export async function MemberHome({
       </Card>
 
       {/* Next up */}
-      <Card>
+      <Card className={dim} aria-hidden={locked || undefined} inert={locked || undefined}>
         <SectionTitle>Next up</SectionTitle>
         <ul className="divide-y divide-line border-t border-line text-sm">
           {upcomingClass && (

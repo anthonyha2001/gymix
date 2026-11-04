@@ -49,7 +49,7 @@ async function PortalContent({ searchParams }: { searchParams: PageProps<"/porta
       {typeof machine === "string" && !account.locked && <MachineSheet machineId={machine} viewer={viewer} />}
       {account.frozen && <FrozenNotice owed={account.overdueUsd || account.balanceUsd} />}
       {!account.frozen && account.locked && <InactiveNotice status={account.membership} />}
-      <MemberHome supabase={supabase} memberId={me.id} gymName={membership.gymName} timeZone={membership.timezone} />
+      <MemberHome supabase={supabase} memberId={me.id} gymName={membership.gymName} timeZone={membership.timezone} locked={account.locked} />
 
     </>
   );

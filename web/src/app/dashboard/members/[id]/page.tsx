@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { HoverLink } from "@/components/hover-link";
 import { notFound } from "next/navigation";
-import { Eye, Lock, Plus } from "lucide-react";
+import { Eye, Lock, MessageCircle, Pencil, Plus } from "lucide-react";
 import { RowMenu } from "@/components/row-menu";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { ProgramEditorModal } from "@/components/program-editor-modal";
@@ -358,13 +358,16 @@ async function MemberContent({
               <ActionButton
                 action={openChatAsStaff.bind(null, member.id!, here)}
                 label="Message"
+                icon={<MessageCircle className="size-4" />}
                 variant="secondary"
-                className="h-10"
+                className="h-10 w-10 px-0"
               />
             )}
             {canBill && (
               <Dialog
-                label="Edit details"
+                label={<span className="sr-only">Edit details</span>}
+                icon={<Pencil className="size-4" />}
+                triggerClassName="h-10 w-10 px-0"
                 title="Edit member"
                 variant="secondary"
                 size="lg"
