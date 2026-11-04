@@ -3,87 +3,86 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light" />
-    <title>Confirm your Gymix account</title>
+    <meta name="color-scheme" content="light only" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>Confirm your email</title>
   </head>
   <body style="margin:0; padding:0; background-color:#f4f5f2; -webkit-text-size-adjust:100%;">
-    <!-- Inbox preview line -->
-    <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
-      Confirm your email to finish setting up your Gymix account.
-    </div>
-
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0; mso-hide:all;">One click and your Gymix account is ready.&#8203;&nbsp;&#8203;&nbsp;&#8203;&nbsp;&#8203;&nbsp;&#8203;&nbsp;</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f5f2;">
       <tr>
-        <td align="center" style="padding:40px 16px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
-            <!-- Logo -->
+        <td align="center" style="padding:32px 12px 40px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
             <tr>
-              <td align="center" style="padding-bottom:24px;">
+              <td style="background-color:#0d1117; border-radius:20px 20px 0 0; padding:28px 40px 36px;">
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td style="vertical-align:middle;">
-                      <img src="{{ .SiteURL }}/icons/192" width="44" height="44" alt="Gymix" style="display:block; border:0; border-radius:12px;" />
-                    </td>
-                    <td style="vertical-align:middle; padding-left:12px; font-family:Arial, Helvetica, sans-serif; font-size:24px; font-weight:700; color:#0d1117; letter-spacing:-0.5px;">
-                      Gymix
-                    </td>
+                    <td style="vertical-align:middle;"><img src="{{ .SiteURL }}/icons/192" width="40" height="40" alt="" style="display:block; border:0; border-radius:10px;" /></td>
+                    <td style="vertical-align:middle; padding-left:12px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:22px; font-weight:800; color:#ffffff; letter-spacing:-0.5px;">Gymix</td>
                   </tr>
                 </table>
+                <p style="margin:32px 0 10px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#c8f135;">Welcome to Gymix</p>
+                <h1 style="margin:0; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:28px; line-height:34px; font-weight:800; letter-spacing:-0.5px; color:#ffffff;">One click and you're in.</h1>
               </td>
             </tr>
-
-            <!-- Card -->
             <tr>
-              <td style="background-color:#ffffff; border:1px solid #e2e4de; border-radius:16px; overflow:hidden;">
+              <td style="background-color:#ffffff; border:1px solid #e2e4de; border-top:0; border-radius:0 0 20px 20px;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td style="height:6px; background-color:#c8f135; font-size:0; line-height:0;">&nbsp;</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:40px 40px 32px; font-family:Arial, Helvetica, sans-serif; color:#0d1117;">
-                      <h1 style="margin:0 0 16px; font-size:22px; line-height:30px; font-weight:700;">
-                        Confirm your email address
-                      </h1>
-                      <p style="margin:0 0 24px; font-size:15px; line-height:24px; color:#5d6470;">
-                        Thanks for signing up for Gymix. Confirm that <strong style="color:#0d1117;">{{ .Email }}</strong>
-                        is your email address to activate your account.
-                      </p>
-
-                      <!-- Button -->
-                      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <td style="padding:32px 40px 32px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; color:#0d1117;">
+                      <p style="margin:0 0 20px; font-size:16px; line-height:25px; color:#0d1117;">Thanks for signing up. Confirm that <strong>{{ .Email }}</strong> is your email address and we'll take you straight to setting up your gym.</p>
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 0;">
                         <tr>
-                          <td align="center" bgcolor="#c8f135" style="border-radius:10px;">
-                            <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"
-                               target="_blank"
-                               style="display:inline-block; padding:14px 32px; font-family:Arial, Helvetica, sans-serif; font-size:15px; font-weight:700; color:#0d1117; text-decoration:none; border-radius:10px;">
-                              Confirm my email
-                            </a>
+                          <td align="center" bgcolor="#c8f135" style="border-radius:12px;">
+                            <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email" target="_blank" style="display:inline-block; padding:16px 36px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:16px; font-weight:700; color:#0d1117; text-decoration:none; border-radius:12px;">Confirm my email &rarr;</a>
                           </td>
                         </tr>
                       </table>
-
-                      <p style="margin:28px 0 8px; font-size:13px; line-height:20px; color:#5d6470;">
-                        If the button doesn't work, copy this link into your browser:
-                      </p>
-                      <p style="margin:0; font-size:13px; line-height:20px; word-break:break-all;">
-                        <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email" target="_blank" style="color:#0d1117; text-decoration:underline;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email</a>
-                      </p>
+                      <p style="margin:28px 0 6px; font-size:13px; line-height:20px; color:#5d6470;">Button not working? Copy this link into your browser:</p>
+                      <p style="margin:0; font-size:12px; line-height:18px; word-break:break-all;"><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email" target="_blank" style="color:#5d6470; text-decoration:underline;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email</a></p>
                     </td>
                   </tr>
                   <tr>
-                    <td style="padding:20px 40px; border-top:1px solid #e2e4de; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#5d6470;">
-                      This link expires in 1 hour. If you didn't create a Gymix account, you can safely ignore this email.
+                    <td style="padding:8px 40px 24px; border-top:1px solid #e2e4de;">
+                      <p style="margin:24px 0 16px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#5d6470;">What happens next</p>
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tr>
+                          <td valign="top" style="padding:0 14px 16px 0; width:28px;">
+                            <div style="width:28px; height:28px; border-radius:14px; background-color:#0d1117; color:#c8f135; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; font-weight:700; line-height:28px; text-align:center;">1</div>
+                          </td>
+                          <td valign="top" style="padding:3px 0 16px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:14px; line-height:21px; color:#5d6470;">
+                            <strong style="color:#0d1117;">Name your gym</strong><br />It takes ten seconds, and your free trial starts right away.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" style="padding:0 14px 16px 0; width:28px;">
+                            <div style="width:28px; height:28px; border-radius:14px; background-color:#0d1117; color:#c8f135; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; font-weight:700; line-height:28px; text-align:center;">2</div>
+                          </td>
+                          <td valign="top" style="padding:3px 0 16px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:14px; line-height:21px; color:#5d6470;">
+                            <strong style="color:#0d1117;">Add your plans and team</strong><br />Monthly, yearly or visit packs, in dollars or lira.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" style="padding:0 14px 16px 0; width:28px;">
+                            <div style="width:28px; height:28px; border-radius:14px; background-color:#0d1117; color:#c8f135; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; font-weight:700; line-height:28px; text-align:center;">3</div>
+                          </td>
+                          <td valign="top" style="padding:3px 0 16px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:14px; line-height:21px; color:#5d6470;">
+                            <strong style="color:#0d1117;">Invite your members on WhatsApp</strong><br />They tap in at the door with their phone.
+                          </td>
+                        </tr>
+                      </table>
                     </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:18px 40px; background-color:#fafbf8; border-top:1px solid #e2e4de; border-radius:0 0 20px 20px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; line-height:20px; color:#5d6470;">This link works once and expires in 1 hour. If this wasn't you, you can safely ignore this email.</td>
                   </tr>
                 </table>
               </td>
             </tr>
-
-            <!-- Footer -->
             <tr>
-              <td align="center" style="padding:24px 16px 0; font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#8a909a;">
-                Gymix · The operating system for gyms<br />
-                <a href="{{ .SiteURL }}" target="_blank" style="color:#8a909a; text-decoration:underline;">{{ .SiteURL }}</a>
+              <td align="center" style="padding:24px 16px 0; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:12px; line-height:18px; color:#8a909a;">
+                Gymix, the operating system for gyms in Lebanon<br />
+                <a href="{{ .SiteURL }}" target="_blank" style="color:#8a909a; text-decoration:underline;">Visit Gymix</a>
               </td>
             </tr>
           </table>

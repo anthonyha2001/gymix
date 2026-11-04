@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { signIn, signUp, type AuthFormState } from "./actions";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
@@ -17,6 +18,11 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
       <Field label="Password">
         <input name="password" type="password" autoComplete="current-password" required className={inputClass} />
       </Field>
+      <p className="-mt-2 text-right text-sm">
+        <Link href="/forgot-password" className="text-muted underline underline-offset-4 hover:text-ink">
+          Forgot password?
+        </Link>
+      </p>
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Logging in…" : "Log in"}
       </Button>
@@ -26,8 +32,6 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
 
 export function SignupForm({ next, email }: { next?: string; email?: string }) {
   const [state, action, pending] = useActionState<AuthFormState, FormData>(signUp, {});
-
-  if (state.message) return <Alert tone="success">{state.message}</Alert>;
 
   return (
     <form action={action} className="space-y-4">

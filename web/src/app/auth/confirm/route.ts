@@ -15,10 +15,11 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
     if (!error) {
       await logAuthEvent({ kind: "login", path: "/auth/confirm", user_id: data.user?.id ?? null, message: "email link", detail: { type } });
-      redirect("/start");
+      const next = searchParams.get("next");
+      redirect(next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : "/start");
     }
     await logAuthEvent({ kind: "login_failed", path: "/auth/confirm", message: "email link", detail: { reason: error.code ?? "invalid or expired link", type } });
   }
 
-  redirect("/login?error=link");
+  redirect(searchParams.get("next") === "/reset-password" ? "/forgot-password?error=link" : "/login?error=link");
 }

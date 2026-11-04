@@ -24,6 +24,14 @@ function safeNext(formData: FormData) {
   return next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : null;
 }
 
+// The public site address for links in emails, so they never point at localhost.
+async function siteOrigin() {
+  return (process.env.NEXT_PUBLIC_SITE_URL || (await headers()).get("origin") || "").replace(/\/+$/, "");
+}
+
+const checkEmailPath = (email: string, kind: "signup" | "recovery") =>
+  `/check-email?${new URLSearchParams({ email, kind })}`;
+
 // Members can log in with their phone number or member code instead of an
 // email; this finds the account's email for them (server-side only).
 async function loginEmail(identifier: string) {
@@ -56,7 +64,7 @@ export async function signIn(_prev: AuthFormState, formData: FormData): Promise<
     if (isUnreachable(error)) return { error: UNREACHABLE_MESSAGE, email: identifier };
     if (error.code === "email_not_confirmed") {
       await failed("email not confirmed");
-      return { error: "Confirm your email first — check your inbox for the link.", email: identifier };
+      redirect(checkEmailPath(email, "signup"));
     }
     await failed(error.code ?? "wrong password");
     return { error: "Wrong login or password.", email: identifier };
@@ -81,8 +89,7 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
   }
   if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED, email };
 
-  // The public site URL wins so confirmation links never point at localhost in production.
-  const origin = (process.env.NEXT_PUBLIC_SITE_URL || (await headers()).get("origin") || "").replace(/\/+$/, "");
+  const origin = await siteOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -104,10 +111,65 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
   if (data.user) await logAuthEvent({ kind: "signup", path: "/signup", user_id: data.user.id, message: "email" });
 
   // Email confirmation is on: no session until they click the link.
-  if (!data.session || !data.user) {
-    return { message: `We sent a confirmation link to ${email}. Open it to finish signing up.` };
-  }
+  if (!data.session || !data.user) redirect(checkEmailPath(email, "signup"));
   redirect(safeNext(formData) ?? (await homePathForUser(supabase, data.user.id)));
+}
+
+export type ResendState = { error?: string; sentAt?: number };
+
+// "Resend email" on the check-your-inbox page.
+export async function resendEmail(email: string, kind: "signup" | "recovery"): Promise<ResendState> {
+  if (!email.includes("@")) return { error: "Go back and enter your email again." };
+  if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED };
+  const supabase = await createClient();
+  const origin = await siteOrigin();
+  const { error } =
+    kind === "signup"
+      ? await supabase.auth.resend({ type: "signup", email, options: { emailRedirectTo: `${origin}/auth/confirm` } })
+      : await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/auth/confirm?next=/reset-password` });
+  if (error) {
+    if (isUnreachable(error)) return { error: UNREACHABLE_MESSAGE };
+    if (error.status === 429 || error.code === "over_email_send_rate_limit") {
+      return { error: "Too many emails were sent just now. Wait a minute, then try again." };
+    }
+    return { error: "Couldn't send the email. Please try again in a moment." };
+  }
+  return { sentAt: Date.now() };
+}
+
+// "Forgot password": sends a reset link. Always shows the same next page, so
+// nobody can use it to find out which emails have an account.
+export async function requestPasswordReset(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const email = text(formData, "email");
+  if (!email.includes("@")) return { error: "Enter the email you sign in with.", email };
+  if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED, email };
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${await siteOrigin()}/auth/confirm?next=/reset-password`,
+  });
+  if (error && isUnreachable(error)) return { error: UNREACHABLE_MESSAGE, email };
+  if (error && (error.status === 429 || error.code === "over_email_send_rate_limit")) {
+    return { error: "Too many emails were sent just now. Wait a minute, then try again.", email };
+  }
+  redirect(checkEmailPath(email, "recovery"));
+}
+
+// After the reset link: the visitor is signed in and picks a new password.
+export async function setNewPassword(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const password = formData.get("password");
+  const confirm = formData.get("confirm");
+  if (typeof password !== "string" || password.length < 8) return { error: "Password must be at least 8 characters." };
+  if (password !== confirm) return { error: "The two passwords don't match." };
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    if (isUnreachable(error)) return { error: UNREACHABLE_MESSAGE };
+    if (error.code === "same_password") return { error: "Choose a password different from your old one." };
+    if (error.code === "weak_password") return { error: error.message };
+    return { error: "Your reset link has expired. Ask for a new one." };
+  }
+  await logAuthEvent({ kind: "login", path: "/reset-password", user_id: data.user.id, message: "password reset" });
+  redirect(await homePathForUser(supabase, data.user.id));
 }
 
 export async function signOut() {
