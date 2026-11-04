@@ -1307,14 +1307,14 @@ isOneToOne: false
                   ]
                 },"whatsapp_log": {
                   Row: {
-                    "created_at": string,"error": string | null,"gym_id": string,"id": string,"kind": string,"member_id": string | null,"ref": string,"status": string
+                    "body": string | null,"created_at": string,"error": string | null,"gym_id": string,"id": string,"kind": string,"member_id": string | null,"ref": string,"status": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"error"?: string | null,"gym_id": string,"id"?: string,"kind": string,"member_id"?: string | null,"ref": string,"status"?: string
+                    "body"?: string | null,"created_at"?: string,"error"?: string | null,"gym_id": string,"id"?: string,"kind": string,"member_id"?: string | null,"ref": string,"status"?: string
                   }
                   Update: {
-                    "created_at"?: string,"error"?: string | null,"gym_id"?: string,"id"?: string,"kind"?: string,"member_id"?: string | null,"ref"?: string,"status"?: string
+                    "body"?: string | null,"created_at"?: string,"error"?: string | null,"gym_id"?: string,"id"?: string,"kind"?: string,"member_id"?: string | null,"ref"?: string,"status"?: string
                   }
                   Relationships: [
                     {

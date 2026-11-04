@@ -17,6 +17,13 @@ const TEMPLATES = {
 
 export type WhatsAppKind = keyof typeof TEMPLATES;
 
+// The approved template text, filled in: what the member reads (kept in the log).
+const BODIES: Record<WhatsAppKind, (p: string[]) => string> = {
+  renewal: (p) => `Hi ${p[0]}, your ${p[1]} membership ends on ${p[2]}. Renew at the front desk to keep training.`,
+  payment: (p) => `Hi ${p[0]}, ${p[1]} received your payment of ${p[2]}. Thank you!`,
+  welcome: (p) => `Hi ${p[0]}, ${p[1]} has set up your Gymix account. Open your portal: ${p[2]}`,
+};
+
 export function whatsappConfigured() {
   return Boolean(process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID);
 }
@@ -36,7 +43,7 @@ export async function sendWhatsApp(msg: {
   const admin = createAdminClient();
   const { data: row } = await admin
     .from("whatsapp_log")
-    .upsert({ gym_id: msg.gymId, member_id: msg.memberId, kind: msg.kind, ref: msg.ref }, { onConflict: "kind,ref", ignoreDuplicates: true })
+    .upsert({ gym_id: msg.gymId, member_id: msg.memberId, kind: msg.kind, ref: msg.ref, body: BODIES[msg.kind](msg.params) }, { onConflict: "kind,ref", ignoreDuplicates: true })
     .select("id")
     .maybeSingle();
   if (!row) return; // already sent

@@ -7,16 +7,19 @@ import { inputClass } from "@/components/ui";
 import { sendMessage } from "@/app/chat-actions";
 
 type Message = { id: string; sender_id: string | null; body: string; created_at: string; read_at: string | null };
+type WhatsAppMessage = { id: string; body: string | null; created_at: string; status: string; error: string | null };
 
 export function ChatThread({
   conversationId,
   messages,
+  whatsapp = [],
   meId,
   otherName,
   timeZone,
 }: {
   conversationId: string;
   messages: Message[];
+  whatsapp?: WhatsAppMessage[];
   meId: string;
   otherName: string;
   timeZone: string;
@@ -27,16 +30,38 @@ export function ChatThread({
   // Keep the newest message in view.
   useEffect(() => {
     bottom.current?.scrollIntoView({ block: "end" });
-  }, [messages.length]);
+  }, [messages.length, whatsapp.length]);
+
+  // Chat and WhatsApp messages in one timeline.
+  const timeline = [
+    ...messages.map((m) => ({ ...m, wa: null as WhatsAppMessage | null })),
+    ...whatsapp.map((w) => ({ id: `wa-${w.id}`, sender_id: meId, body: w.body ?? "", created_at: w.created_at, read_at: null, wa: w })),
+  ].sort((a, b) => a.created_at.localeCompare(b.created_at));
+  const when = (iso: string) =>
+    new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone });
 
   return (
     <div className="flex flex-col rounded-xl border border-line bg-surface">
       <AutoRefresh seconds={4} />
       <div className="max-h-[60vh] min-h-64 space-y-2 overflow-y-auto p-4" aria-live="polite">
-        {messages.length === 0 && (
+        {timeline.length === 0 && (
           <p className="py-10 text-center text-sm text-muted">No messages yet. Start the conversation with {otherName}.</p>
         )}
-        {messages.map((m) => {
+        {timeline.map((m) => {
+          if (m.wa) {
+            const failed = m.wa.status === "failed";
+            return (
+              <div key={m.id} className="flex justify-end">
+                <div className="max-w-[80%] rounded-2xl rounded-br-sm border border-[#25D366]/40 bg-[#25D366]/10 px-3.5 py-2 text-sm text-ink">
+                  <p className="mb-0.5 text-[10px] font-semibold tracking-wide text-[#128C7E] uppercase">WhatsApp · automatic</p>
+                  <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                  <p className={`mt-0.5 text-[10px] ${failed ? "text-danger" : "text-muted"}`} title={m.wa.error ?? undefined}>
+                    {when(m.created_at)} · {failed ? "Not delivered" : m.wa.status === "sent" ? "Sent" : "Sending…"}
+                  </p>
+                </div>
+              </div>
+            );
+          }
           const mine = m.sender_id === meId;
           return (
             <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>

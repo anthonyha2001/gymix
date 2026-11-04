@@ -20,6 +20,16 @@ export async function ChatModal({
   const supabase = await createClient();
   const thread = await loadThread(supabase, conversationId);
   if (!thread) return null;
+  // Staff also see the automatic WhatsApp messages this member was sent.
+  const { data: whatsapp } =
+    as === "staff"
+      ? await supabase
+          .from("whatsapp_log")
+          .select("id, body, created_at, status, error")
+          .eq("member_id", thread.conv.member_id)
+          .order("created_at")
+          .limit(200)
+      : { data: null };
   const name = as === "staff" ? (thread.conv.members?.full_name ?? "Member") : thread.staffName || "Trainer";
 
   return (
@@ -30,7 +40,7 @@ export async function ChatModal({
           Member profile
         </Link>
       )}
-      <ChatThread conversationId={conversationId} messages={thread.messages} meId={viewerId} otherName={name} timeZone={timeZone} />
+      <ChatThread conversationId={conversationId} messages={thread.messages} whatsapp={whatsapp ?? []} meId={viewerId} otherName={name} timeZone={timeZone} />
     </RouteModal>
   );
 }
