@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Modal } from "@/components/dialog";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
-// Shake the phone (twice, quickly) to bring up today's workout. Works while
+// Shake the phone (twice, quickly) to open today's program. Works while
 // the app is open; iPhones need motion permission once (Profile → Shake to start).
-export function ShakeQuickStart({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+export function ShakeQuickStart({ href }: { href: string }) {
+  const router = useRouter();
   const peaks = useRef<number[]>([]);
   const last = useRef(0);
 
@@ -35,7 +35,7 @@ export function ShakeQuickStart({ children }: { children: React.ReactNode }) {
         peaks.current = [];
         last.current = now;
         navigator.vibrate?.(40);
-        setOpen(true);
+        router.push(href);
       }
     };
     window.addEventListener("devicemotion", onMotion);
@@ -51,11 +51,7 @@ export function ShakeQuickStart({ children }: { children: React.ReactNode }) {
       window.removeEventListener("devicemotion", onMotion);
       if (needsAsk) window.removeEventListener("touchend", ask);
     };
-  }, []);
+  }, [href, router]);
 
-  return (
-    <Modal open={open} onClose={() => setOpen(false)} title="Quick start" sheet>
-      {children}
-    </Modal>
-  );
+  return null;
 }

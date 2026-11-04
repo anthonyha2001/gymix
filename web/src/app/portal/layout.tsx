@@ -10,10 +10,7 @@ import { accountStatus, hiddenPortalPages } from "@/lib/portal";
 import { PortalNav } from "./portal-nav";
 import { InstallPrompt } from "@/components/install-prompt";
 import { ShakeQuickStart } from "@/components/shake-quick-start";
-import { TodayWorkout } from "@/components/today-workout";
 import { loadTrainingPlan } from "@/lib/training-plan";
-import { WEEKDAYS, weekdayOf } from "@/lib/schedule";
-import { todayIn } from "@/lib/format";
 import { QrScanButton } from "@/components/qr-scanner";
 import { NotificationBell } from "@/components/notification-bell";
 import { loadNotifications } from "@/lib/notifications";
@@ -78,7 +75,7 @@ async function MemberBell() {
   return <NotificationBell items={items} unread={unread} />;
 }
 
-// Shake the phone for today's workout (not while frozen for an unpaid balance).
+// Shake the phone to open today's program (not while frozen for an unpaid balance).
 async function QuickStart() {
   const { viewer, membership } = await requireMember();
   const supabase = await createClient();
@@ -88,9 +85,8 @@ async function QuickStart() {
   ]);
   if (!me || account.locked) return null;
   const plan = await loadTrainingPlan(supabase, me.id, membership.timezone);
+  const programId = plan.today?.programId ?? plan.programDays[0]?.programId;
   return (
-    <ShakeQuickStart>
-      <TodayWorkout plan={plan} weekdayName={WEEKDAYS[weekdayOf(todayIn(membership.timezone))]} />
-    </ShakeQuickStart>
+    <ShakeQuickStart href={`/portal/programs${programId ? `?program=${programId}` : ""}`} />
   );
 }
