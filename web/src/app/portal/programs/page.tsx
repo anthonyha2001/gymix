@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
-import { ChevronRight, Play, Plus, UserRoundPlus } from "lucide-react";
+import { ChevronRight, Play, Plus, UserRoundPlus , Pencil } from "lucide-react";
 import { Dialog } from "@/components/dialog";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { ExerciseItem } from "@/components/program-card";
@@ -187,8 +187,8 @@ async function ProgramModal({ programId, memberId }: { programId: string; member
       <div className="space-y-5">
         {program.notes && <p className="rounded-lg bg-canvas p-3 text-sm">{program.notes}</p>}
         {program.kind === "self" && (
-          <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace className={buttonClass("secondary", "h-9")}>
-            Edit program
+          <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace aria-label="Edit program" title="Edit program" className={buttonClass("secondary", "h-10 w-10 px-0")}>
+            <Pencil className="size-4" />
           </HoverLink>
         )}
         {program.days.length === 0 && <p className="text-sm text-muted">No training days yet.</p>}

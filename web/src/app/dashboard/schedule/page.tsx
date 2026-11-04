@@ -80,7 +80,7 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
   const [{ data: classes }, { data: bookings }, { data: pt }, { data: calPt }] = await Promise.all([
     supabase
       .from("classes")
-      .select("id, name, weekday, start_time, duration_min, capacity, location, monthly_price_usd, trainer:profiles(full_name)")
+      .select("id, name, weekday, start_time, duration_min, capacity, location, monthly_price_usd, trainer_id, trainer:profiles(full_name)")
       .eq("gym_id", membership.gymId)
       .eq("is_active", true)
       .order("start_time"),
@@ -98,9 +98,11 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
   const count = (classId: string, date: string, statuses: string[]) =>
     (bookings ?? []).filter((b) => b.class_id === classId && b.session_date === date && statuses.includes(b.status)).length;
   const requests = (pt ?? []).filter((s) => s.status === "requested");
+  // Trainers see the classes they teach; owners and managers see every class.
+  const myClasses = (classes ?? []).filter((c) => isManager || c.trainer_id === viewer.id);
 
   const calendarEvents: CalEvent[] = [
-    ...classSessions(classes ?? [], win.from, win.to, (c, date, base) => {
+    ...classSessions(myClasses, win.from, win.to, (c, date, base) => {
       const booked = count(c.id, date, ["booked", "attended"]);
       const waiting = count(c.id, date, ["waitlist"]);
       return {
@@ -155,13 +157,13 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
       </TabPanel>
       <TabPanel id="week" tabs={tabs}>{(
       <div className="space-y-4">
-        {!classes?.length && (
+        {!myClasses.length && (
           <Card className="p-6 text-sm text-muted">
             No classes on the timetable yet.{isManager && " Use “Edit timetable” to add your weekly classes."}
           </Card>
         )}
         {days.map((date) => {
-          const todays = (classes ?? []).filter((c) => c.weekday === weekdayOf(date));
+          const todays = myClasses.filter((c) => c.weekday === weekdayOf(date));
           if (!todays.length) return null;
           return (
             <Card key={date}>

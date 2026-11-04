@@ -46,8 +46,9 @@ async function PortalContent({ searchParams }: { searchParams: PageProps<"/porta
           loginUrl={`${await requestOrigin()}/login`}
         />
       )}
-      {typeof machine === "string" && !account.frozen && <MachineSheet machineId={machine} viewer={viewer} />}
+      {typeof machine === "string" && !account.locked && <MachineSheet machineId={machine} viewer={viewer} />}
       {account.frozen && <FrozenNotice owed={account.overdueUsd || account.balanceUsd} />}
+      {!account.frozen && account.locked && <InactiveNotice status={account.membership} />}
       <MemberHome supabase={supabase} memberId={me.id} gymName={membership.gymName} timeZone={membership.timezone} />
 
     </>
@@ -73,6 +74,28 @@ function FrozenNotice({ owed }: { owed: number }) {
       <div className="flex items-center gap-3 border-t border-danger/15 bg-surface/60 px-5 py-3 text-sm">
         <Nfc className="size-5 shrink-0 text-muted" />
         <span>Pay at the front desk, then tap the check-in sticker at the entrance to unfreeze it.</span>
+      </div>
+    </section>
+  );
+}
+
+// No active membership: only this page is open until they renew.
+function InactiveNotice({ status }: { status: string }) {
+  const text: Record<string, string> = {
+    none: "You don't have a membership yet.",
+    expired: "Your membership has ended.",
+    frozen: "Your membership is paused.",
+    upcoming: "Your membership hasn't started yet.",
+    used_up: "You've used all the visits on your membership.",
+  };
+  return (
+    <section role="alert" className="mb-6 flex gap-4 rounded-2xl border border-line bg-surface p-5">
+      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-canvas">
+        <Lock className="size-5" />
+      </span>
+      <div className="min-w-0 space-y-1">
+        <h2 className="text-lg font-semibold">{text[status] ?? "Your membership isn't active."}</h2>
+        <p className="text-sm text-muted">Until it&apos;s active, only this page is open. Renew at the front desk and everything opens again.</p>
       </div>
     </section>
   );

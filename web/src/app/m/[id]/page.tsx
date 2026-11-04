@@ -35,7 +35,7 @@ async function Machine({ params }: { params: PageProps<"/m/[id]">["params"] }) {
   // (or the home page if the gym switched Train off, or the account is frozen).
   const asMember = viewer.memberships.find((m) => m.role === "member");
   if (asMember && viewer.memberships.length === 1) {
-    if ((await accountStatus(asMember.gymId)).frozen) redirect("/portal");
+    if ((await accountStatus(asMember.gymId)).locked) redirect("/portal");
     const trainHidden = (await hiddenPortalPages(asMember.gymId)).includes("train");
     redirect(`${trainHidden ? "/portal" : "/portal/train"}?machine=${encodeURIComponent(id)}`);
   }

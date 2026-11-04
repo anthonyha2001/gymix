@@ -60,7 +60,7 @@ async function NavWithUnread() {
     hiddenPortalPages(membership.gymId),
     accountStatus(membership.gymId),
   ]);
-  return <PortalNav unread={unread} hidden={hidden} frozen={account.frozen} />;
+  return <PortalNav unread={unread} hidden={hidden} frozen={account.locked} />;
 }
 
 // Double-space NFC tap simulator, while the gym has it switched on.
@@ -86,7 +86,7 @@ async function QuickStart() {
     supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle(),
     accountStatus(membership.gymId),
   ]);
-  if (!me || account.frozen) return null;
+  if (!me || account.locked) return null;
   const plan = await loadTrainingPlan(supabase, me.id, membership.timezone);
   return (
     <ShakeQuickStart>
