@@ -56,9 +56,14 @@ export default function AdminPage({ searchParams }: PageProps<"/admin">) {
               <ShieldCheck className="size-3.5" /> Super admin
             </span>
           </span>
-          <form action={signOut}>
-            <button className="h-9 rounded-lg px-3 text-sm text-white/70 hover:bg-white/10 hover:text-white">Log out</button>
-          </form>
+          <div className="flex items-center gap-1">
+            <Suspense>
+              <MyGymLink />
+            </Suspense>
+            <form action={signOut}>
+              <button className="h-9 rounded-lg px-3 text-sm text-white/70 hover:bg-white/10 hover:text-white">Log out</button>
+            </form>
+          </div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 py-8">
@@ -890,5 +895,19 @@ async function Revenue({ days }: { days: number }) {
         <PruneForm />
       </Card>
     </div>
+  );
+}
+
+// The super admin's own gym, if they run one; otherwise a way to create one.
+async function MyGymLink() {
+  const viewer = await requirePlatformAdmin();
+  const hasGym = viewer.memberships.length > 0;
+  return (
+    <Link
+      href={hasGym ? "/dashboard" : "/onboarding"}
+      className="inline-flex h-9 items-center rounded-lg px-3 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white"
+    >
+      {hasGym ? "My gym dashboard" : "Create a gym"}
+    </Link>
   );
 }

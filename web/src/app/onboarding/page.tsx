@@ -1,6 +1,7 @@
 import { formatPrice } from "@/lib/pricing";
 import { getPricing } from "@/lib/pricing-server";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { Card, Logo, Skeleton } from "@/components/ui";
@@ -42,7 +43,19 @@ export default async function OnboardingPage() {
 async function OnboardingGate() {
   const viewer = await requireViewer();
   if (viewer.memberships.length > 0) redirect(homePathFor(viewer));
-  // Super admins don't need a gym: send them to the console instead.
-  if (viewer.isPlatformAdmin || (await promoteConfiguredSuperAdmin(viewer.id, viewer.email))) redirect("/admin");
-  return <CreateGymForm />;
+  // Super admins don't need a gym, but may create one (their own, or a demo).
+  const superAdmin = viewer.isPlatformAdmin || (await promoteConfiguredSuperAdmin(viewer.id, viewer.email));
+  return (
+    <>
+      <CreateGymForm />
+      {superAdmin && (
+        <p className="text-sm text-muted">
+          You&apos;re a Gymix super admin.{" "}
+          <Link href="/admin" className="font-medium text-ink underline underline-offset-4">
+            Back to the console
+          </Link>
+        </p>
+      )}
+    </>
+  );
 }
