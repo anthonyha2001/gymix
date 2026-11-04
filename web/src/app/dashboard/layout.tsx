@@ -11,6 +11,7 @@ import { InstallPrompt } from "@/components/install-prompt";
 import { NotificationBell } from "@/components/notification-bell";
 import { loadNotifications } from "@/lib/notifications";
 import { NavLinks, NavSkeleton, Sidebar } from "./sidebar";
+import { SubscriptionGate } from "./subscription-gate";
 
 export default function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
   return (
@@ -37,7 +38,11 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
           </Suspense>
         }
       />
-      <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">{children}</main>
+      <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">
+        <Suspense fallback={<Skeleton className="h-96" />}>
+          <SubscriptionGate>{children}</SubscriptionGate>
+        </Suspense>
+      </main>
       <InstallPrompt />
     </div>
   );

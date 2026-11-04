@@ -1,3 +1,4 @@
+import { TRIAL_DAYS } from "@/lib/pricing";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -11,7 +12,7 @@ export default function SignupPage({ searchParams }: PageProps<"/signup">) {
     <Card className="p-6 space-y-5">
       <div>
         <h1 className="text-xl font-semibold">Create your account</h1>
-        <p className="text-sm text-muted">For gym owners, staff and members.</p>
+        <p className="text-sm text-muted">Gym owners: your first {TRIAL_DAYS} days are free. Staff and members: use the invite your gym sent you.</p>
       </div>
       <Suspense fallback={<Skeleton className="h-72" />}>
         <SignupBody searchParams={searchParams} />

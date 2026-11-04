@@ -1,3 +1,4 @@
+import { PRICE_USD, TRIAL_DAYS } from "@/lib/pricing";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
@@ -17,6 +18,7 @@ export default function OnboardingPage() {
           <div>
             <h1 className="text-xl font-semibold">Set up your gym</h1>
             <p className="text-sm text-muted">You&apos;ll be the owner. You can invite your team and members next.</p>
+            <p className="mt-3 inline-flex rounded-full bg-brand px-3 py-1 text-xs font-semibold">{TRIAL_DAYS} days free, then ${PRICE_USD}/month. No card needed.</p>
           </div>
           <Suspense fallback={<Skeleton className="h-24" />}>
             <OnboardingGate />

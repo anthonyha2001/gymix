@@ -43,6 +43,14 @@ SUPABASE_SERVICE_ROLE_KEY=... ADMIN_PASSWORD='...' node scripts/create-super-adm
 
 `npx supabase db reset` wipes accounts, so rerun this after a reset.
 
+## Selling Gymix (subscriptions)
+
+Each gym pays $10 a month (`web/src/lib/pricing.ts`) after a 14-day free trial. There is no card processor:
+gyms pay by Whish, OMT or bank transfer and a super admin records it in `/admin` ("Record payment"), which
+extends the gym's paid-until date. Also in `/admin`: extend a trial, and the payment instructions and WhatsApp
+number every owner sees on Settings, Subscription. Three days after a subscription ends the staff dashboard locks
+(the owner can still open the Subscription tab); members keep using their app.
+
 ## How access works
 
 Every user has a role per gym: `owner`, `manager`, `front_desk`, `trainer`, `dietitian` or `member`.

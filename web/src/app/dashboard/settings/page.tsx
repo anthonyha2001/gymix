@@ -1,3 +1,4 @@
+import { SubscriptionPanel } from "./subscription-panel";
 import { NfcWriteButton } from "@/components/nfc-write";
 import { QrDownload, qrFor } from "@/components/qr-tools";
 import type { Metadata } from "next";
@@ -14,7 +15,7 @@ import { CopyLink, PortalPagesForm, SettingsForm } from "./settings-form";
 
 export const metadata: Metadata = { title: "Settings" };
 
-const TABS = ["gym", "app", "checkin"] as const;
+const TABS = ["gym", "app", "checkin", "subscription"] as const;
 
 export default function SettingsPage({ searchParams }: PageProps<"/dashboard/settings">) {
   return (
@@ -48,8 +49,11 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
           { id: "gym", label: "Gym" },
           { id: "app", label: "Member app" },
           { id: "checkin", label: "Check-in sticker" },
+          { id: "subscription", label: "Subscription" },
         ]}
       />
+      {tab === "subscription" && <SubscriptionPanel gymId={membership.gymId} gymName={membership.gymName} />}
+
       {tab === "gym" && (
       <Card className="space-y-4 p-5">
         <h2 className="font-semibold">Gym</h2>
