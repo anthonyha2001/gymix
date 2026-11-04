@@ -9,7 +9,7 @@ import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { updatePtSession } from "@/app/schedule-actions";
 import { ActionButton } from "../members/action-button";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { SessionModal } from "./session-modal";
 import { Timetable } from "./timetable";
 
@@ -46,7 +46,6 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
   const { viewer, membership } = await requireStaff();
   const tabs = TABS.filter((t) => t !== "timetable" || MANAGER_ROLES.includes(membership.role));
   const tab = activeTab(query.tab, tabs);
-  const here = `${BASE}?tab=${tab}`;
   const tz = membership.timezone;
   const today = todayIn(tz);
   const days = nextDays(today, 7);
@@ -88,7 +87,7 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
 
   return (
     <div className="space-y-6">
-      <PageTabs
+      <PageTabs instant
         base={BASE}
         active={tab}
         tabs={tabs.map((t) => ({
@@ -98,8 +97,8 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
         }))}
       />
       {typeof query.session === "string" && <SessionModal session={query.session} membership={membership} />}
-      {tab === "timetable" && <Timetable />}
-      {tab === "week" && (
+      {tabs.includes("timetable") && <TabPanel id="timetable" tabs={tabs}><Timetable /></TabPanel>}
+      <TabPanel id="week" tabs={tabs}>{(
       <div className="space-y-4">
         {!classes?.length && (
           <Card className="p-6 text-sm text-muted">
@@ -119,7 +118,7 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
                   const full = booked >= c.capacity;
                   return (
                     <li key={c.id}>
-                      <Link href={`${here}&session=${c.id}_${date}`} scroll={false} className="flex flex-wrap items-center gap-4 px-5 py-3 hover:bg-canvas/50">
+                      <Link href={`${BASE}?tab=week&session=${c.id}_${date}`} scroll={false} className="flex flex-wrap items-center gap-4 px-5 py-3 hover:bg-canvas/50">
                         <span className="w-24 text-sm font-semibold tabular-nums">
                           {hhmm(c.start_time)}–{endTime(c.start_time, c.duration_min)}
                         </span>
@@ -143,9 +142,9 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
           );
         })}
       </div>
-      )}
+      )}</TabPanel>
 
-      {tab === "pt" && (
+      <TabPanel id="pt" tabs={tabs}>{(
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <SectionTitle>PT requests</SectionTitle>
@@ -206,7 +205,7 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
           )}
         </Card>
       </div>
-      )}
+      )}</TabPanel>
     </div>
   );
 }

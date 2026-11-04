@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Apple } from "lucide-react";
 import { Dialog } from "@/components/dialog";
 import { NutritionPlanView } from "@/components/nutrition-plan-view";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { Badge, Card, Skeleton } from "@/components/ui";
 import { formatDate } from "@/lib/format";
 import { NUTRITION_GOAL_LABELS, loadNutritionPlan } from "@/lib/nutrition";
@@ -66,7 +66,7 @@ async function Nutrition({ searchParams }: { searchParams: PageProps<"/portal/nu
         )}
       </div>
 
-      <PageTabs
+      <PageTabs instant
         base={BASE}
         active={tab}
         tabs={[
@@ -75,8 +75,7 @@ async function Nutrition({ searchParams }: { searchParams: PageProps<"/portal/nu
         ]}
       />
 
-      {tab === "plan" &&
-        (plan ? (
+      <TabPanel id="plan" tabs={TABS}>{(plan ? (
           <div className="space-y-4">
             <Card className="bg-ink p-5 text-white">
               <p className="text-sm text-white/70">Your nutrition plan</p>
@@ -96,10 +95,9 @@ async function Nutrition({ searchParams }: { searchParams: PageProps<"/portal/nu
               {openRequest ? "Your request is with the dietitian. Your plan shows here once it's ready." : "Ask the dietitian and your meal plan shows up here."}
             </p>
           </Card>
-        ))}
+        ))}</TabPanel>
 
-      {tab === "requests" &&
-        (!requests?.length ? (
+      <TabPanel id="requests" tabs={TABS}>{(!requests?.length ? (
           <Card className="space-y-2 p-8 text-center">
             <p className="font-medium">No requests</p>
             <p className="text-sm text-muted">Use “Ask the dietitian” to get a meal plan.</p>
@@ -131,7 +129,7 @@ async function Nutrition({ searchParams }: { searchParams: PageProps<"/portal/nu
               ))}
             </ul>
           </Card>
-        ))}
+        ))}</TabPanel>
     </div>
   );
 }

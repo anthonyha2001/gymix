@@ -55,19 +55,20 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getClaims checks the token's signature locally; it only calls the auth
+  // server to refresh an expired session.
+  const { data } = await supabase.auth.getClaims();
+  const userId = data?.claims.sub ?? null;
 
   const { pathname } = request.nextUrl;
-  if (!user && PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+  if (!userId && PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
     const login = request.nextUrl.clone();
     login.pathname = "/login";
     login.search = "";
     response = NextResponse.redirect(login);
   }
 
-  track(request, event, response, user?.id ?? null);
+  track(request, event, response, userId);
   return response;
 }
 

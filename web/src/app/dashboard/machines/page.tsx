@@ -11,7 +11,7 @@ import { mediaUrl, musclesLabel } from "@/lib/exercises";
 import { MANAGER_ROLES } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { MachineModal } from "./machine-modal";
 import { MachineStickers } from "./machine-stickers";
 import { EquipmentForm } from "./equipment-form";
@@ -38,7 +38,6 @@ const BASE = "/dashboard/machines";
 async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/dashboard/machines">["searchParams"] }) {
   const query = await searchParams;
   const tab = activeTab(query.tab, TABS);
-  const here = `${BASE}?tab=${tab}`;
   const { membership } = await requireStaff();
   const canManage = MANAGER_ROLES.includes(membership.role);
   const supabase = await createClient();
@@ -73,7 +72,7 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
         </p>
       </Card>
 
-      <PageTabs
+      <PageTabs instant
         base={BASE}
         active={tab}
         tabs={[
@@ -84,16 +83,16 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
 
       {typeof query.machine === "string" && <MachineModal machineId={query.machine} gymId={membership.gymId} canManage={canManage} />}
 
-      {tab === "equipment" && (
+      <TabPanel id="equipment" tabs={TABS}>{(
       <Card>
         <SectionTitle>Free weights & equipment</SectionTitle>
         <div className="border-t border-line p-5">
           <EquipmentForm selected={gym?.equipment ?? []} counts={counts} canEdit={canManage} />
         </div>
       </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "machines" && (
+      <TabPanel id="machines" tabs={TABS}>{(
       <Card>
         <SectionTitle
           action={
@@ -133,7 +132,7 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
               const exercises = m.machine_exercises.map((me) => me.exercises).filter((e) => e !== null);
               const muscles = [...new Set(exercises.flatMap((e) => e.primary_muscles))];
               return (
-                <Link key={m.id} href={`${here}&machine=${m.id}`} scroll={false}>
+                <Link key={m.id} href={`${BASE}?tab=machines&machine=${m.id}`} scroll={false}>
                   <div className="flex h-full gap-4 rounded-xl border border-line p-4 transition-colors hover:border-ink/30">
                     {m.photo_path ? (
                       <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-canvas">
@@ -156,7 +155,7 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
           </div>
         )}
       </Card>
-      )}
+      )}</TabPanel>
     </div>
   );
 }

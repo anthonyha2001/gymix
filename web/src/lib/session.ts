@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isStaffRole, type GymRole } from "@/lib/roles";
@@ -20,12 +21,14 @@ export type Viewer = {
   isPlatformAdmin: boolean;
 };
 
-export async function getViewer(): Promise<Viewer | null> {
+// Who is signed in, their gyms and roles. Cached for the request, so the many
+// components that ask share one lookup. The session token is verified locally.
+export const getViewer = cache(async (): Promise<Viewer | null> => {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (!claims?.sub) return null;
+  const user = { id: claims.sub, email: typeof claims.email === "string" ? claims.email : "" };
 
   const [{ data: profile }, { data: rows }, { data: isPlatformAdmin }] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
@@ -50,7 +53,7 @@ export async function getViewer(): Promise<Viewer | null> {
     })),
     isPlatformAdmin: isPlatformAdmin === true,
   };
-}
+});
 
 // Where a signed-in user belongs: staff go to the dashboard, members to the portal,
 // and people with no gym yet set one up.

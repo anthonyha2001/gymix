@@ -9,7 +9,7 @@ import { Badge, Card, PageHeader, Skeleton } from "@/components/ui";
 import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { ActionButton } from "../members/action-button";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { rotateStickerLink, setTapSimulator } from "./actions";
 import { CopyLink, PortalPagesForm, SettingsForm } from "./settings-form";
 
@@ -42,7 +42,7 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
 
   return (
     <>
-      <PageTabs
+      <PageTabs instant
         base="/dashboard/settings"
         active={tab}
         tabs={[
@@ -52,16 +52,16 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
           { id: "subscription", label: "Subscription" },
         ]}
       />
-      {tab === "subscription" && <SubscriptionPanel gymId={membership.gymId} gymName={membership.gymName} />}
+      <TabPanel id="subscription" tabs={TABS}>{<SubscriptionPanel gymId={membership.gymId} gymName={membership.gymName} />}</TabPanel>
 
-      {tab === "gym" && (
+      <TabPanel id="gym" tabs={TABS}>{(
       <Card className="space-y-4 p-5">
         <h2 className="font-semibold">Gym</h2>
         <SettingsForm name={membership.gymName} lbpRate={membership.lbpRate} graceDays={gym?.unpaid_grace_days ?? 3} />
       </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "app" && (
+      <TabPanel id="app" tabs={TABS}>{(
       <Card className="space-y-4 p-5">
         <div>
           <h2 className="font-semibold">Member portal pages</h2>
@@ -69,9 +69,9 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
         </div>
         <PortalPagesForm hidden={gym?.portal_hidden ?? []} />
       </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "checkin" && (
+      <TabPanel id="checkin" tabs={TABS}>{(
       <Card className="space-y-5 p-5">
         <div>
           <h2 className="font-semibold">Tap-to-check-in sticker</h2>
@@ -127,9 +127,9 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
           <span className="text-xs text-muted">Only needed if the link was shared outside the gym.</span>
         </div>
       </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "app" && (
+      <TabPanel id="app" tabs={TABS}>{(
       <Card className="flex flex-wrap items-center justify-between gap-4 p-5">
         <div className="max-w-xl">
           <div className="flex items-center gap-2">
@@ -147,7 +147,7 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
           variant={gym?.tap_simulator ? "danger" : "secondary"}
         />
       </Card>
-      )}
+      )}</TabPanel>
     </>
   );
 }

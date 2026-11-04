@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Plus } from "lucide-react";
 import { Dialog } from "@/components/dialog";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { ProgramEditorModal } from "@/components/program-editor-modal";
 import {
   Badge,
@@ -149,7 +149,7 @@ async function ProgramsContent({
         }
       />
 
-      <PageTabs
+      <PageTabs instant
         base={BASE}
         active={tab}
         tabs={[
@@ -166,7 +166,7 @@ async function ProgramsContent({
         />
       )}
 
-      {tab === "requests" && (
+      <TabPanel id="requests" tabs={TABS}>{(
         <Card>
           <SectionTitle>Requests from members</SectionTitle>
           {!requests?.length ? (
@@ -249,7 +249,7 @@ async function ProgramsContent({
                     ) : (
                       r.program_id && (
                         <Link
-                          href={`${here}&program=${r.program_id}`}
+                          href={`${BASE}?tab=requests&program=${r.program_id}`}
                           scroll={false}
                           className="text-sm font-medium underline underline-offset-4"
                         >
@@ -263,9 +263,9 @@ async function ProgramsContent({
             </ul>
           )}
         </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "programs" && (
+      <TabPanel id="programs" tabs={TABS}>{(
         <>
           <Card>
             <SectionTitle>Member programs</SectionTitle>
@@ -282,7 +282,7 @@ async function ProgramsContent({
                     className="flex items-center pr-3 hover:bg-canvas/50"
                   >
                     <Link
-                      href={`${here}&program=${p.id}`}
+                      href={`${BASE}?tab=programs&program=${p.id}`}
                       scroll={false}
                       className="flex min-w-0 flex-1 flex-wrap items-center gap-3 px-5 py-3"
                     >
@@ -310,7 +310,7 @@ async function ProgramsContent({
                         {
                           kind: "link",
                           label: "Open",
-                          href: `${here}&program=${p.id}`,
+                          href: `${BASE}?tab=programs&program=${p.id}`,
                         },
                         p.is_active && {
                           kind: "action",
@@ -353,7 +353,7 @@ async function ProgramsContent({
                     className="flex items-center pr-3 hover:bg-canvas/50"
                   >
                     <Link
-                      href={`${here}&program=${t.id}`}
+                      href={`${BASE}?tab=programs&program=${t.id}`}
                       scroll={false}
                       className="block flex-1 px-5 py-3 font-medium"
                     >
@@ -365,7 +365,7 @@ async function ProgramsContent({
                         {
                           kind: "link",
                           label: "Open",
-                          href: `${here}&program=${t.id}`,
+                          href: `${BASE}?tab=programs&program=${t.id}`,
                         },
                         {
                           kind: "action",
@@ -382,7 +382,7 @@ async function ProgramsContent({
             )}
           </Card>
         </>
-      )}
+      )}</TabPanel>
     </div>
   );
 }

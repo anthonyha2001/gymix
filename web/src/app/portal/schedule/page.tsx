@@ -10,7 +10,7 @@ import { requirePortalPage } from "@/lib/portal";
 import { createClient } from "@/lib/supabase/server";
 import { bookClass, cancelBooking, requestPtSession, subscribeToCourse, updatePtSession } from "@/app/schedule-actions";
 import { ActionButton } from "../../dashboard/members/action-button";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 
 export const metadata: Metadata = { title: "Schedule" };
 
@@ -81,7 +81,7 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight">Schedule</h1>
-      <PageTabs
+      <PageTabs instant
         base="/portal/schedule"
         active={tab}
         tabs={[
@@ -91,7 +91,7 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
         ]}
       />
 
-      {tab === "classes" && (
+      <TabPanel id="classes" tabs={TABS}>{(
       <>
       {!classes?.length && <Card className="p-5 text-sm text-muted">Your gym hasn&apos;t published a class timetable yet.</Card>}
 
@@ -142,10 +142,9 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
         );
       })}
       </>
-      )}
+      )}</TabPanel>
 
-      {tab === "courses" &&
-        (courses.length === 0 ? (
+      <TabPanel id="courses" tabs={TABS}>{(courses.length === 0 ? (
           <Card className="p-5 text-sm text-muted">Your gym has no monthly courses yet.</Card>
         ) : (
           <Card>
@@ -184,9 +183,9 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
               })}
             </ul>
           </Card>
-        ))}
+        ))}</TabPanel>
 
-      {tab === "pt" && (
+      <TabPanel id="pt" tabs={TABS}>{(
       <Card>
         <SectionTitle
           action={
@@ -220,7 +219,7 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
           </ul>
         )}
       </Card>
-      )}
+      )}</TabPanel>
     </div>
   );
 }

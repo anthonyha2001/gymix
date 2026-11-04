@@ -1,25 +1,40 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
+
+// The tab in the address bar, if it is one of `ids`; otherwise `fallback`.
+function useTabParam(ids: readonly string[], fallback: string) {
+  const value = useSearchParams().get("tab");
+  return value && ids.includes(value) ? value : fallback;
+}
 
 // In-page tabs. Each tab is a ?tab= link on the same page (so the choice
 // survives a refresh and the back button), never a different page.
-// A white pill slides under the chosen tab; it moves on click, before the
-// server has answered, so switching feels instant.
+// With `instant`, every panel is already on the page (see TabPanel): a click
+// just shows another one and updates the address, with no server round trip.
+// Without it, the click loads the tab from the server; the white pill moves
+// right away either way.
 export function PageTabs({
   tabs,
   active,
   base,
+  instant = false,
 }: {
   tabs: { id: string; label: string; count?: number }[];
   active: string;
   // Path of the page, plus any query to keep (e.g. "/dashboard/programs").
   base: string;
+  instant?: boolean;
 }) {
   const [pending, setPending] = useState<{ id: string; from: string } | null>(null);
+  const fromUrl = useTabParam(
+    tabs.map((t) => t.id),
+    active,
+  );
   // A click is only "pending" until the page reports a different tab.
-  const current = pending && pending.from === active ? pending.id : active;
+  const current = instant ? fromUrl : pending && pending.from === active ? pending.id : active;
 
   const listRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef(new Map<string, HTMLAnchorElement>());
@@ -80,8 +95,16 @@ export function PageTabs({
             href={`${base}${sep}tab=${t.id}`}
             scroll={false}
             replace
-            onClick={() => {
-              if (t.id !== current) setPending({ id: t.id, from: active });
+            onClick={(e) => {
+              if (t.id === current) return;
+              if (instant && !e.metaKey && !e.ctrlKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                const url = new URL(window.location.href);
+                url.searchParams.set("tab", t.id);
+                window.history.replaceState(null, "", url);
+                return;
+              }
+              setPending({ id: t.id, from: active });
             }}
             className={`relative z-10 flex flex-1 shrink-0 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm sm:px-4 whitespace-nowrap transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${
               on ? "font-semibold text-ink" : "font-medium text-muted hover:text-ink"
@@ -100,6 +123,18 @@ export function PageTabs({
           </Link>
         );
       })}
+    </div>
+  );
+}
+
+// One tab's content. Every panel is rendered with the page; only the one
+// matching ?tab= is shown, so switching is instant and nothing reloads.
+// `display: contents` keeps grid and spacing layouts exactly as before.
+export function TabPanel({ id, tabs, children }: { id: string; tabs: readonly string[]; children: React.ReactNode }) {
+  const current = useTabParam(tabs, tabs[0]);
+  return (
+    <div className={current === id ? "contents" : "hidden"} role="tabpanel" aria-hidden={current !== id || undefined}>
+      {children}
     </div>
   );
 }

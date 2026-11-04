@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Plus } from "lucide-react";
 import { Dialog } from "@/components/dialog";
 import { NutritionEditorModal } from "@/components/nutrition-editor-modal";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { RowMenu } from "@/components/row-menu";
 import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
 import { formatDate } from "@/lib/format";
@@ -69,7 +69,7 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
         }
       />
 
-      <PageTabs
+      <PageTabs instant
         base={BASE}
         active={tab}
         tabs={[
@@ -80,7 +80,7 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
 
       {openPlan && <NutritionEditorModal planId={openPlan} gymId={membership.gymId} closePath={here} />}
 
-      {tab === "requests" && (
+      <TabPanel id="requests" tabs={TABS}>{(
         <Card>
           <SectionTitle>Requests from members</SectionTitle>
           {!requests?.length ? (
@@ -116,7 +116,7 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
                       </Dialog>
                     ) : (
                       r.plan_id && (
-                        <Link href={`${here}&plan=${r.plan_id}`} scroll={false} className="inline-flex h-9 items-center text-sm font-medium underline underline-offset-4">
+                        <Link href={`${BASE}?tab=requests&plan=${r.plan_id}`} scroll={false} className="inline-flex h-9 items-center text-sm font-medium underline underline-offset-4">
                           Continue building
                         </Link>
                       )
@@ -134,9 +134,9 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
             </ul>
           )}
         </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "plans" && (
+      <TabPanel id="plans" tabs={TABS}>{(
         <Card>
           <SectionTitle>Nutrition plans</SectionTitle>
           {!plans?.length ? (
@@ -147,7 +147,7 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
                 const status = PLAN_STATUS[p.status] ?? PLAN_STATUS.draft;
                 return (
                   <li key={p.id} className="flex items-center pr-3 hover:bg-canvas/50">
-                    <Link href={`${here}&plan=${p.id}`} scroll={false} className="flex min-w-0 flex-1 flex-wrap items-center gap-3 px-5 py-3">
+                    <Link href={`${BASE}?tab=plans&plan=${p.id}`} scroll={false} className="flex min-w-0 flex-1 flex-wrap items-center gap-3 px-5 py-3">
                       <span className="min-w-0 flex-1">
                         <span className="block font-medium">{p.name}</span>
                         <span className="block text-xs text-muted">
@@ -160,7 +160,7 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
                     <RowMenu
                       label={`Actions for ${p.name}`}
                       items={[
-                        { kind: "link", label: "Open", href: `${here}&plan=${p.id}` },
+                        { kind: "link", label: "Open", href: `${BASE}?tab=plans&plan=${p.id}` },
                         p.status === "active" && { kind: "action", label: "Archive", action: archiveNutritionPlan.bind(null, p.id) },
                         p.status !== "active" && {
                           kind: "action",
@@ -177,7 +177,7 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
             </ul>
           )}
         </Card>
-      )}
+      )}</TabPanel>
     </div>
   );
 }

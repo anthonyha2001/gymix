@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Trophy } from "lucide-react";
 import { MeasurementsPanel } from "@/components/measurements-panel";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { Alert, Card, EmptyState, Skeleton } from "@/components/ui";
 import { WorkoutModal } from "@/components/workout-modal";
 import { WeeklyChart } from "@/components/weekly-chart";
@@ -32,7 +32,6 @@ export default function ProgressPage({ searchParams }: PageProps<"/portal/progre
 async function Progress({ searchParams }: { searchParams: PageProps<"/portal/progress">["searchParams"] }) {
   const query = await searchParams;
   const tab = activeTab(query.tab, TABS);
-  const here = `${BASE}?tab=${tab}`;
   const { viewer, membership } = await requirePortalPage("progress");
   const supabase = await createClient();
   const { data: me } = await supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle();
@@ -69,7 +68,7 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
         </Alert>
       )}
 
-      <PageTabs
+      <PageTabs instant
         base={BASE}
         active={tab}
         tabs={[
@@ -81,7 +80,7 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
 
       {typeof query.workout === "string" && <WorkoutModal sessionId={query.workout} memberId={me.id} timeZone={membership.timezone} />}
 
-      {tab === "workouts" && (
+      <TabPanel id="workouts" tabs={TABS}>{(
         <>
           <Card className="p-5">
             <WeeklyChart weeks={weeks} />
@@ -107,7 +106,7 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
                   return (
                     <li key={s.id}>
                       <Link
-                        href={`${here}&workout=${s.id}`}
+                        href={`${BASE}?tab=workouts&workout=${s.id}`}
                         scroll={false}
                         className="flex items-center justify-between gap-3 px-5 py-3 text-sm hover:bg-canvas/50"
                       >
@@ -130,9 +129,9 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
             )}
           </Card>
         </>
-      )}
+      )}</TabPanel>
 
-      {tab === "records" && (
+      <TabPanel id="records" tabs={TABS}>{(
         <Card>
           <p className="flex items-center gap-2 px-5 pt-4 pb-2 font-semibold">
             <Trophy className="size-4 text-amber-600" /> Personal records
@@ -164,11 +163,11 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
             </ul>
           )}
         </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "body" && (
+      <TabPanel id="body" tabs={TABS}>{(
         <MeasurementsPanel supabase={supabase} memberId={me.id} viewerId={viewer.id} timeZone={membership.timezone} canRecord recordFor={null} />
-      )}
+      )}</TabPanel>
     </div>
   );
 }

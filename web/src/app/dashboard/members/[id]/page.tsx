@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Eye, Lock, Plus } from "lucide-react";
 import { RowMenu } from "@/components/row-menu";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { ProgramEditorModal } from "@/components/program-editor-modal";
 import { NutritionEditorModal } from "@/components/nutrition-editor-modal";
 import { NutritionPlanView } from "@/components/nutrition-plan-view";
@@ -259,7 +259,7 @@ async function MemberContent({
   ]);
   const activePlanId = nutritionPlans?.find((p) => p.status === "active")?.id;
   const activePlan =
-    tab === "nutrition" && activePlanId
+    activePlanId
       ? await loadNutritionPlan(supabase, activePlanId)
       : null;
 
@@ -410,7 +410,7 @@ async function MemberContent({
         </div>
       </Card>
 
-      <PageTabs
+      <PageTabs instant
         base={base}
         active={tab}
         tabs={tabs.map((t) => ({
@@ -445,7 +445,7 @@ async function MemberContent({
       )}
 
       {/* Portal access */}
-      {tab === "overview" && canBill && (
+      <TabPanel id="overview" tabs={tabs}>{canBill && (
         <Card className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
           {member.user_id ? (
             <>
@@ -514,10 +514,10 @@ async function MemberContent({
             </>
           )}
         </Card>
-      )}
+      )}</TabPanel>
 
       {/* Current membership */}
-      {tab === "overview" && (
+      <TabPanel id="overview" tabs={tabs}>{(
         <Card>
           <SectionTitle>Current membership</SectionTitle>
           {!current ? (
@@ -593,9 +593,9 @@ async function MemberContent({
             </div>
           )}
         </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "billing" && canBill && (
+      <TabPanel id="billing" tabs={tabs}>{canBill && (
         <Card>
           <SectionTitle>Invoices</SectionTitle>
           {!invoices?.data?.length ? (
@@ -677,10 +677,10 @@ async function MemberContent({
             </ul>
           )}
         </Card>
-      )}
+      )}</TabPanel>
 
       <div className="space-y-6">
-        {tab === "billing" && canBill && (
+        <TabPanel id="billing" tabs={tabs}>{canBill && (
           <Card>
             <SectionTitle>
               <span id="payments">Payments</span>
@@ -731,9 +731,9 @@ async function MemberContent({
               </ul>
             )}
           </Card>
-        )}
+        )}</TabPanel>
 
-        {tab === "overview" && (
+        <TabPanel id="overview" tabs={tabs}>{(
           <Card>
             <SectionTitle>Recent visits</SectionTitle>
             {!checkins.data?.length ? (
@@ -775,10 +775,10 @@ async function MemberContent({
               </ul>
             )}
           </Card>
-        )}
+        )}</TabPanel>
       </div>
 
-      {tab === "training" && (
+      <TabPanel id="training" tabs={tabs}>{(
         <Card>
           <SectionTitle
             action={
@@ -825,7 +825,7 @@ async function MemberContent({
                     >
                       {canCoach ? (
                         <Link
-                          href={`${here}&program=${p.id}`}
+                          href={`${base}?tab=training&program=${p.id}`}
                           scroll={false}
                           className="font-medium hover:underline"
                         >
@@ -850,7 +850,7 @@ async function MemberContent({
                               {
                                 kind: "link",
                                 label: "Open",
-                                href: `${here}&program=${p.id}`,
+                                href: `${base}?tab=training&program=${p.id}`,
                               },
                               p.is_active && {
                                 kind: "action",
@@ -909,9 +909,9 @@ async function MemberContent({
             </div>
           </div>
         </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "training" && (canBill || (courseSubs?.length ?? 0) > 0) && (
+      <TabPanel id="training" tabs={tabs}>{(canBill || (courseSubs?.length ?? 0) > 0) && (
         <Card>
           <SectionTitle
             action={
@@ -979,9 +979,9 @@ async function MemberContent({
             </ul>
           )}
         </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "training" && (canCoach || canBill) && (
+      <TabPanel id="training" tabs={tabs}>{(canCoach || canBill) && (
         <Card>
           <SectionTitle
             action={
@@ -1052,9 +1052,9 @@ async function MemberContent({
             </ul>
           )}
         </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "nutrition" && (
+      <TabPanel id="nutrition" tabs={tabs}>{(
         <NutritionSection
           memberName={member.full_name ?? "member"}
           memberId={member.id!}
@@ -1064,9 +1064,9 @@ async function MemberContent({
           request={nutritionRequest}
           activePlan={activePlan}
         />
-      )}
+      )}</TabPanel>
 
-      {tab === "body" && (
+      <TabPanel id="body" tabs={tabs}>{(
         <section className="space-y-3">
           <h2 className="font-semibold">Body measurements</h2>
           <MeasurementsPanel
@@ -1078,10 +1078,9 @@ async function MemberContent({
             recordFor={canCoach ? member.id! : null}
           />
         </section>
-      )}
+      )}</TabPanel>
 
-      {tab === "overview" &&
-        memberships.data &&
+      <TabPanel id="overview" tabs={tabs}>{memberships.data &&
         memberships.data.length > 0 && (
           <Card>
             <SectionTitle>Membership history</SectionTitle>
@@ -1139,7 +1138,7 @@ async function MemberContent({
               ))}
             </ul>
           </Card>
-        )}
+        )}</TabPanel>
     </div>
   );
 }

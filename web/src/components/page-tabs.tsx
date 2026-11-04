@@ -1,4 +1,4 @@
-export { PageTabs } from "./page-tabs-bar";
+export { PageTabs, TabPanel } from "./page-tabs-bar";
 
 // Reads ?tab= against the allowed ids, falling back to the first.
 export function activeTab<T extends string>(value: string | string[] | undefined, ids: readonly T[]): T {

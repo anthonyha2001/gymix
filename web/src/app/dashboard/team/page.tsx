@@ -11,7 +11,7 @@ import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { cancelInvite, changeRole, removeFromGym } from "./actions";
 import { InviteForm } from "./invite-form";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { SearchSelect } from "@/components/search-select";
 
 export const metadata: Metadata = { title: "Team" };
@@ -79,7 +79,7 @@ async function TeamContent({ searchParams }: { searchParams: PageProps<"/dashboa
         }
       />
 
-      <PageTabs
+      <PageTabs instant
         base="/dashboard/team"
         active={tab}
         tabs={[
@@ -88,8 +88,8 @@ async function TeamContent({ searchParams }: { searchParams: PageProps<"/dashboa
         ]}
       />
 
-      {tab === "invites" && !invites?.length && <Card className="p-6 text-sm text-muted">No pending invites.</Card>}
-      {tab === "invites" && invites && invites.length > 0 && (
+      <TabPanel id="invites" tabs={TABS}>{!invites?.length && <Card className="p-6 text-sm text-muted">No pending invites.</Card>}</TabPanel>
+      <TabPanel id="invites" tabs={TABS}>{invites && invites.length > 0 && (
         <Card>
           <h2 className="px-6 pt-5 pb-3 font-semibold">Pending invites ({invites.length})</h2>
           <ul className="divide-y divide-line">
@@ -120,9 +120,9 @@ async function TeamContent({ searchParams }: { searchParams: PageProps<"/dashboa
             })}
           </ul>
         </Card>
-      )}
+      )}</TabPanel>
 
-      {tab === "staff" && <PeopleList title="Staff" people={staff} canManage={canManage} assignable={canAssign} viewerId={viewer.id} />}
+      <TabPanel id="staff" tabs={TABS}>{<PeopleList title="Staff" people={staff} canManage={canManage} assignable={canAssign} viewerId={viewer.id} />}</TabPanel>
     </div>
   );
 }

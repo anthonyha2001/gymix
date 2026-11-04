@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
     ];
   },
   experimental: {
+    // Keep pages the user has opened in the browser for a while, so going back
+    // to them (or switching tabs) is instant. Edits refresh the page anyway.
+    staleTimes: { dynamic: 30, static: 300 },
     // Machine photos (max 5 MB, enforced by the storage bucket) are uploaded via a Server Action.
     serverActions: { bodySizeLimit: "6mb" },
   },

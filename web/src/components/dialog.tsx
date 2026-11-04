@@ -53,7 +53,9 @@ export function Modal({
     };
   }, [open]);
 
-  function handleNativeClose() {
+  function handleNativeClose(e: React.SyntheticEvent<HTMLDialogElement>) {
+    // React passes a nested dialog's "close" up the tree; only our own counts.
+    if (e.target !== e.currentTarget) return;
     if (silentClose.current) {
       silentClose.current = false;
       return;

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ChevronRight, Play, Plus, UserRoundPlus } from "lucide-react";
 import { Dialog } from "@/components/dialog";
-import { activeTab, PageTabs } from "@/components/page-tabs";
+import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { ExerciseItem } from "@/components/program-card";
 import { ProgramBuilder } from "@/components/program-builder";
 import { RouteModal } from "@/components/route-modal";
@@ -88,7 +88,7 @@ async function Programs({ searchParams }: { searchParams: PageProps<"/portal/pro
         </div>
       </div>
 
-      <PageTabs
+      <PageTabs instant
         base={BASE}
         active={tab}
         tabs={[
@@ -100,8 +100,7 @@ async function Programs({ searchParams }: { searchParams: PageProps<"/portal/pro
       {typeof query.program === "string" && <ProgramModal programId={query.program} memberId={me.id} />}
       {typeof query.edit === "string" && <EditModal programId={query.edit} closePath={here} />}
 
-      {tab === "programs" &&
-        (!programs?.length ? (
+      <TabPanel id="programs" tabs={TABS}>{(!programs?.length ? (
           <Card className="space-y-2 p-8 text-center">
             <p className="font-medium">No programs yet</p>
             <p className="text-sm text-muted">Create your own from your gym&apos;s equipment, or ask a trainer to build one for you.</p>
@@ -111,7 +110,7 @@ async function Programs({ searchParams }: { searchParams: PageProps<"/portal/pro
             {programs.map((p) => {
               const exercises = p.program_days.reduce((n, d) => n + (d.program_exercises[0]?.count ?? 0), 0);
               return (
-                <Link key={p.id} href={`${here}&program=${p.id}`} scroll={false}>
+                <Link key={p.id} href={`${BASE}?tab=programs&program=${p.id}`} scroll={false}>
                   <Card className="flex items-center gap-4 p-5 transition-colors hover:border-ink/30">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
@@ -128,10 +127,9 @@ async function Programs({ searchParams }: { searchParams: PageProps<"/portal/pro
               );
             })}
           </div>
-        ))}
+        ))}</TabPanel>
 
-      {tab === "requests" &&
-        (!requests?.length ? (
+      <TabPanel id="requests" tabs={TABS}>{(!requests?.length ? (
           <Card className="space-y-2 p-8 text-center">
             <p className="font-medium">No requests</p>
             <p className="text-sm text-muted">Use “Ask a trainer” and a trainer will build a program for you.</p>
@@ -163,7 +161,7 @@ async function Programs({ searchParams }: { searchParams: PageProps<"/portal/pro
               ))}
             </ul>
           </Card>
-        ))}
+        ))}</TabPanel>
     </div>
   );
 }
