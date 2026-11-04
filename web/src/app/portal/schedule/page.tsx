@@ -247,7 +247,7 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
         <SectionTitle
           action={
             <Dialog label="Request session" title="Request a PT session" description="Your trainer confirms or suggests another time." size="lg" triggerClassName="h-9">
-              <PtSessionForm action={requestPtSession} coaches={coaches ?? []} defaultDate={addDays(today, 1)} submitLabel="Send request" />
+              <PtSessionForm action={requestPtSession} coaches={coaches ?? []} defaultDate={addDays(today, 1)} today={today} submitLabel="Send request" />
             </Dialog>
           }
         >

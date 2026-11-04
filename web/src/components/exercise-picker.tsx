@@ -111,7 +111,7 @@ export function ExercisePicker({
         {results?.length === 0 && (
           <p className="col-span-full py-6 text-center text-sm text-muted">
             {source === "gym"
-              ? "No matching exercises with your gym's equipment. Tick more equipment or add machines under Equipment."
+              ? "No exercises match your gym's equipment. The gym owner adds machines and equipment under Equipment; only those exercises can be chosen."
               : "No exercises found. Try another word or filter."}
           </p>
         )}

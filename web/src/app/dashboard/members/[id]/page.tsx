@@ -348,6 +348,7 @@ async function MemberContent({
                     price_usd: Number(p.price_usd),
                   }))}
                   defaultStart={defaultStart}
+                  today={today}
                   rate={staff.lbpRate}
                 />
               </Dialog>
@@ -996,6 +997,7 @@ async function MemberContent({
                   action={schedulePtSession.bind(null, member.id!)}
                   coaches={coaches ?? []}
                   defaultDate={today}
+                  today={today}
                   submitLabel="Book session"
                 />
               </Dialog>

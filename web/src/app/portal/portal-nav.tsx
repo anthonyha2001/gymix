@@ -56,7 +56,7 @@ export function PortalNav({ unread = 0, hidden = [], frozen = false }: { unread?
               aria-current={active ? "page" : undefined}
               className={`relative flex min-w-0 flex-col items-center justify-center gap-1 ${active ? "text-ink" : "text-muted hover:text-ink"}`}
             >
-              <span className={`grid h-7 w-10 place-items-center rounded-full ${active ? "bg-brand" : ""}`}>
+              <span className={`grid h-7 w-10 place-items-center rounded-full transition-colors duration-200 ${active ? "nav-bounce bg-brand" : ""}`}>
                 <Icon className="size-5" strokeWidth={active ? 2.25 : 1.75} />
               </span>
               <span className="w-full truncate text-center text-[9px] font-medium leading-none tracking-tight min-[400px]:text-[10px]">{t.label}</span>

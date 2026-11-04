@@ -14,7 +14,7 @@ const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
 };
 
 export function buttonClass(variant: ButtonVariant = "primary", extra = "") {
-  return `inline-flex items-center justify-center gap-2 rounded-lg px-4 h-10 text-sm font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none ${BUTTON_VARIANTS[variant]} ${extra}`;
+  return `inline-flex items-center justify-center gap-2 rounded-lg px-4 h-10 text-sm font-medium transition duration-150 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none ${BUTTON_VARIANTS[variant]} ${extra}`;
 }
 
 export function Button({
@@ -26,27 +26,46 @@ export function Button({
 }
 
 export const inputClass =
-  "w-full h-10 rounded-lg border border-line bg-surface px-3 text-sm outline-none focus:border-ink focus:ring-2 focus:ring-brand";
+  "w-full h-11 rounded-xl border border-line bg-surface px-3.5 text-sm outline-none transition duration-150 placeholder:text-muted/70 hover:border-ink/25 focus:border-ink focus:ring-4 focus:ring-brand/40";
 
 // inputClass with a different width (appending a width class doesn't reliably beat w-full).
 export function inputWidth(width: string) {
   return inputClass.replace("w-full", width);
 }
 
+// A labelled field. `group` is for controls that aren't a single input
+// (choice chips, steppers with their own labels), which can't sit in a <label>.
 export function Field({
   label,
   hint,
+  optional = false,
+  group = false,
   children,
 }: {
   label: string;
   hint?: string;
+  optional?: boolean;
+  group?: boolean;
   children: ReactNode;
 }) {
-  return (
-    <label className="block space-y-1.5">
-      <span className="text-sm font-medium">{label}</span>
+  const head = (
+    <span className="flex items-baseline gap-2 text-sm font-medium">
+      {label}
+      {optional && <span className="text-xs font-normal text-muted">Optional</span>}
+    </span>
+  );
+  const tail = hint && <span className="block text-xs text-muted">{hint}</span>;
+  return group ? (
+    <div role="group" aria-label={label} className="block space-y-1.5">
+      {head}
       {children}
-      {hint && <span className="block text-xs text-muted">{hint}</span>}
+      {tail}
+    </div>
+  ) : (
+    <label className="block space-y-1.5">
+      {head}
+      {children}
+      {tail}
     </label>
   );
 }
@@ -79,7 +98,7 @@ export function Logo({ className = "" }: { className?: string }) {
 }
 
 export function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded-md bg-line/70 ${className}`} />;
+  return <div className={`skeleton rounded-md bg-line/70 ${className}`} />;
 }
 
 const BADGE_TONES = {

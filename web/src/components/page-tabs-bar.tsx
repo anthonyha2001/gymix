@@ -133,7 +133,7 @@ export function PageTabs({
 export function TabPanel({ id, tabs, children }: { id: string; tabs: readonly string[]; children: React.ReactNode }) {
   const current = useTabParam(tabs, tabs[0]);
   return (
-    <div className={current === id ? "contents" : "hidden"} role="tabpanel" aria-hidden={current !== id || undefined}>
+    <div className={current === id ? "contents tab-enter" : "hidden"} role="tabpanel" aria-hidden={current !== id || undefined}>
       {children}
     </div>
   );

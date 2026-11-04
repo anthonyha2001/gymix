@@ -43,7 +43,7 @@ export function Toaster() {
       className="pointer-events-none fixed inset-auto bottom-[calc(var(--bottom-bar)+1.5rem)] left-1/2 m-0 flex -translate-x-1/2 flex-col items-center gap-2 overflow-visible border-0 bg-transparent p-0"
     >
       {toasts.map((t) => (
-        <div key={t.id} role="status" className="flex items-center gap-2 rounded-xl bg-ink px-4 py-3 text-sm text-white shadow-lg">
+        <div key={t.id} role="status" className="toast-in flex items-center gap-2 rounded-xl bg-ink px-4 py-3 text-sm text-white shadow-lg">
           {t.tone === "success" ? <CheckCircle2 className="size-4 text-brand" /> : <XCircle className="size-4 text-red-300" />}
           {t.message}
         </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CountUp } from "@/components/count-up";
 import Link from "next/link";
 import { Suspense } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
@@ -36,7 +37,7 @@ async function Overview() {
   const today = todayIn(tz);
   const supabase = await createClient();
 
-  const [{ data: stats }, { data: expiring }, { data: recent }, { count: planCount }, { count: memberCount }] =
+  const [{ data: stats }, { data: expiring }, { data: recent }, { count: planCount }, { count: memberCount }, { count: exerciseCount }] =
     await Promise.all([
       supabase.rpc("gym_stats", { p_gym_id: membership.gymId }).single(),
       supabase
@@ -56,6 +57,7 @@ async function Overview() {
         .limit(8),
       supabase.from("membership_plans").select("id", { count: "exact", head: true }).eq("gym_id", membership.gymId),
       supabase.from("members").select("id", { count: "exact", head: true }).eq("gym_id", membership.gymId),
+      supabase.from("gym_exercises").select("id", { count: "exact", head: true }).eq("gym_id", membership.gymId),
     ]);
 
   const tiles = [
@@ -71,6 +73,7 @@ async function Overview() {
   ];
 
   const setup = [
+    { done: (exerciseCount ?? 0) > 0, label: "Add your machines and equipment (members can only use what you add)", href: "/dashboard/machines", show: membership.role === "owner" || membership.role === "manager" },
     { done: (planCount ?? 0) > 0, label: "Create your membership plans", href: "/dashboard/plans", show: membership.role === "owner" || membership.role === "manager" },
     { done: (memberCount ?? 0) > 0, label: "Add your first member and sell a membership", href: "/dashboard/members", show: canBill },
     { done: (stats?.checkins_today ?? 0) > 0 || (recent?.length ?? 0) > 0, label: "Set up the tap-to-check-in sticker", href: "/dashboard/settings", show: membership.role === "owner" },
@@ -82,9 +85,9 @@ async function Overview() {
       <div className={`grid gap-4 sm:grid-cols-2 ${canBill ? "lg:grid-cols-5" : "lg:grid-cols-3"}`}>
         {tiles.map((t) => {
           const body = (
-            <Card className={`h-full p-5 ${t.href ? "transition-colors hover:border-ink/30" : ""}`}>
+            <Card className={`h-full p-5 ${t.href ? "transition duration-200 hover:-translate-y-0.5 hover:border-ink/30 hover:shadow-md" : ""}`}>
               <p className="text-sm text-muted">{t.label}</p>
-              <p className={`mt-2 text-3xl font-semibold tabular-nums ${"alert" in t && t.alert ? "text-danger" : ""}`}>{t.value}</p>
+              <p className={`mt-2 text-3xl font-semibold tabular-nums ${"alert" in t && t.alert ? "text-danger" : ""}`}><CountUp value={t.value} /></p>
             </Card>
           );
           return t.href ? (

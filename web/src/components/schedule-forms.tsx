@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useDialogAction } from "@/components/dialog";
+import { AffixInput, ChoiceChips, DateField, FormSection, Stepper } from "@/components/form-controls";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
+import { addDays } from "@/lib/format";
 import { WEEKDAYS, hhmm } from "@/lib/schedule";
 import type { ActionState } from "@/lib/action-result";
 import { SearchSelect } from "@/components/search-select";
@@ -20,6 +23,12 @@ export type ClassValues = {
   monthly_price_usd?: number | null;
 };
 
+// Monday first, as gyms plan their week.
+const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
+const LENGTHS = [30, 45, 60, 75, 90];
+
+const lengthLabel = (m: number) => (m % 60 === 0 ? `${m / 60} h` : m > 60 ? `${Math.floor(m / 60)} h ${m % 60}` : `${m} min`);
+
 export function ClassForm({
   action,
   coaches,
@@ -32,61 +41,88 @@ export function ClassForm({
   submitLabel: string;
 }) {
   const [state, formAction, pending] = useDialogAction(action, {});
+  const [course, setCourse] = useState(initial?.monthly_price_usd != null);
+  const lengths = initial && !LENGTHS.includes(initial.duration_min) ? [...LENGTHS, initial.duration_min].sort((a, b) => a - b) : LENGTHS;
+
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} className="space-y-6">
       {state.error && <Alert tone="error">{state.error}</Alert>}
       {state.success && <Alert tone="success">{state.success}</Alert>}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Field label="Class">
-          <input name="name" required maxLength={60} defaultValue={initial?.name} placeholder="e.g. Spinning" className={inputClass} />
-        </Field>
-        <Field label="Day">
-          <SearchSelect name="weekday" defaultValue={initial?.weekday ?? 1} className={inputClass}>
-            {WEEKDAYS.map((d, i) => (
-              <option key={d} value={i}>
-                {d}
-              </option>
-            ))}
-          </SearchSelect>
-        </Field>
-        <Field label="Starts at">
-          <input name="start_time" type="time" required defaultValue={initial ? hhmm(initial.start_time) : "18:00"} className={inputClass} />
-        </Field>
-        <Field label="Length (minutes)">
-          <input name="duration_min" type="number" min={10} max={240} step={5} defaultValue={initial?.duration_min ?? 60} className={inputClass} />
-        </Field>
-        <Field label="Spots">
-          <input name="capacity" type="number" min={1} max={500} defaultValue={initial?.capacity ?? 20} className={inputClass} />
-        </Field>
-        <Field label="Trainer">
-          <SearchSelect name="trainer_id" defaultValue={initial?.trainer_id ?? ""} className={inputClass}>
-            <option value="">—</option>
-            {coaches.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.full_name || "Trainer"}
-              </option>
-            ))}
-          </SearchSelect>
-        </Field>
-        <Field label="Room (optional)">
-          <input name="location" maxLength={60} defaultValue={initial?.location ?? ""} placeholder="e.g. Studio 1" className={inputClass} />
-        </Field>
-        <Field label="Monthly course price (USD)" hint="Leave empty for a normal class booked per session.">
-          <input
-            name="monthly_price_usd"
-            inputMode="decimal"
-            defaultValue={initial?.monthly_price_usd ?? ""}
-            placeholder="e.g. 50"
-            className={inputClass}
+
+      <Field label="Class">
+        <input name="name" required maxLength={60} autoFocus={!initial} defaultValue={initial?.name} placeholder="e.g. Spinning" className={inputClass} />
+      </Field>
+
+      <FormSection title="When">
+        <Field label="Day" group hint="It repeats every week.">
+          <ChoiceChips
+            name="weekday"
+            label="Day"
+            defaultValue={String(initial?.weekday ?? 1)}
+            options={WEEK_ORDER.map((d) => ({ value: String(d), label: WEEKDAYS[d].slice(0, 3) }))}
           />
         </Field>
-        <div className="sm:col-span-2">
-          <Field label="Description (optional)">
-            <input name="description" maxLength={500} defaultValue={initial?.description ?? ""} className={inputClass} />
+        <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
+          <Field label="Starts at">
+            <input name="start_time" type="time" required defaultValue={initial ? hhmm(initial.start_time) : "18:00"} className={inputClass} />
+          </Field>
+          <Field label="Length" group>
+            <ChoiceChips
+              name="duration_min"
+              label="Length"
+              defaultValue={String(initial?.duration_min ?? 60)}
+              options={lengths.map((m) => ({ value: String(m), label: lengthLabel(m) }))}
+            />
           </Field>
         </div>
-      </div>
-      <Button type="submit" disabled={pending}>
+      </FormSection>
+
+      <FormSection title="Who and where">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Field label="Spots" group>
+            <Stepper name="capacity" label="Spots" defaultValue={initial?.capacity ?? 20} min={1} max={500} />
+          </Field>
+          <Field label="Trainer">
+            <SearchSelect name="trainer_id" defaultValue={initial?.trainer_id ?? ""} className={inputClass}>
+              <option value="">No trainer</option>
+              {coaches.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.full_name || "Trainer"}
+                </option>
+              ))}
+            </SearchSelect>
+          </Field>
+          <Field label="Room" optional>
+            <input name="location" maxLength={60} defaultValue={initial?.location ?? ""} placeholder="e.g. Studio 1" className={inputClass} />
+          </Field>
+        </div>
+      </FormSection>
+
+      <FormSection title="How members join">
+        <ChoiceChips
+          name="join_mode"
+          label="How members join"
+          size="lg"
+          columns={2}
+          value={course ? "course" : "session"}
+          onChange={(v) => setCourse(v === "course")}
+          options={[
+            { value: "session", label: "Book each session", hint: "Free with their membership" },
+            { value: "course", label: "Monthly course", hint: "They subscribe and pay per month" },
+          ]}
+        />
+        {course && (
+          <Field label="Price per month (USD)">
+            <AffixInput prefix="$" name="monthly_price_usd" required inputMode="decimal" defaultValue={initial?.monthly_price_usd ?? ""} placeholder="50" />
+          </Field>
+        )}
+      </FormSection>
+
+      <Field label="Description" optional>
+        <input name="description" maxLength={500} defaultValue={initial?.description ?? ""} placeholder="e.g. Bring a towel" className={inputClass} />
+      </Field>
+
+      <Button type="submit" disabled={pending} className="h-11 w-full">
         {pending ? "Saving…" : submitLabel}
       </Button>
     </form>
@@ -98,50 +134,60 @@ export function PtSessionForm({
   action,
   coaches,
   defaultDate,
+  today,
   submitLabel,
 }: {
   action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
   coaches: Coach[];
   defaultDate: string;
+  today: string;
   submitLabel: string;
 }) {
   const [state, formAction, pending] = useDialogAction(action, {});
+  const weekdayName = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" });
+  const shortcuts = [
+    ...(defaultDate <= today ? [{ label: "Today", value: today }] : []),
+    { label: "Tomorrow", value: addDays(today, 1) },
+    { label: weekdayName(addDays(today, 2)), value: addDays(today, 2) },
+    { label: weekdayName(addDays(today, 3)), value: addDays(today, 3) },
+  ];
+
   return (
-    <form action={formAction} className="space-y-3">
+    <form action={formAction} className="space-y-5">
       {state.error && <Alert tone="error">{state.error}</Alert>}
       {state.success && <Alert tone="success">{state.success}</Alert>}
-      <div className="grid gap-3 sm:grid-cols-4">
-        <Field label="Trainer">
-          <SearchSelect name="trainer_id" required defaultValue="" className={inputClass}>
-            <option value="" disabled>
-              Choose…
+      <Field label="Trainer">
+        <SearchSelect name="trainer_id" required defaultValue="" className={inputClass}>
+          <option value="" disabled>
+            Choose a trainer…
+          </option>
+          {coaches.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.full_name || "Trainer"}
             </option>
-            {coaches.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.full_name || "Trainer"}
-              </option>
-            ))}
-          </SearchSelect>
-        </Field>
-        <Field label="Date">
-          <input name="date" type="date" required min={defaultDate} defaultValue={defaultDate} className={inputClass} />
+          ))}
+        </SearchSelect>
+      </Field>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Date" group>
+          <DateField name="date" label="Date" min={defaultDate} defaultValue={defaultDate} shortcuts={shortcuts} />
         </Field>
         <Field label="Time">
           <input name="time" type="time" required defaultValue="18:00" className={inputClass} />
         </Field>
-        <Field label="Length">
-          <SearchSelect name="duration_min" defaultValue="60" className={inputClass}>
-            <option value="30">30 min</option>
-            <option value="45">45 min</option>
-            <option value="60">1 hour</option>
-            <option value="90">1.5 hours</option>
-          </SearchSelect>
-        </Field>
       </div>
-      <Field label="Note (optional)">
+      <Field label="Length" group>
+        <ChoiceChips
+          name="duration_min"
+          label="Length"
+          defaultValue="60"
+          options={[30, 45, 60, 90].map((m) => ({ value: String(m), label: lengthLabel(m) }))}
+        />
+      </Field>
+      <Field label="Note" optional>
         <input name="note" maxLength={500} placeholder="e.g. Want to work on squat technique" className={inputClass} />
       </Field>
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending} className="h-11 w-full">
         {pending ? "Sending…" : submitLabel}
       </Button>
     </form>

@@ -68,7 +68,7 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
           <p className="text-3xl font-bold tabular-nums text-brand">{available ?? 0}</p>
         </div>
         <p className="max-w-md text-sm text-white/80">
-          Tick your free equipment below and register your machines. Programs only offer exercises your gym can actually do.
+          Members and trainers can only choose exercises for what you add here: the machines you register and the free equipment you tick. Nothing is added until you do.
         </p>
       </Card>
 
@@ -133,7 +133,7 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
               const muscles = [...new Set(exercises.flatMap((e) => e.primary_muscles))];
               return (
                 <HoverLink key={m.id} href={`${BASE}?tab=machines&machine=${m.id}`} scroll={false}>
-                  <div className="flex h-full gap-4 rounded-xl border border-line p-4 transition-colors hover:border-ink/30">
+                  <div className="flex h-full gap-4 rounded-xl border border-line p-4 transition duration-200 hover:-translate-y-0.5 hover:border-ink/30 hover:shadow-md">
                     {m.photo_path ? (
                       <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-canvas">
                         <Image src={mediaUrl(m.photo_path)} alt="" fill unoptimized sizes="80px" className="object-cover" />

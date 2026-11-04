@@ -59,6 +59,8 @@ select id as n3 from public.members where email = 'n3@test.lb' \gset
 
 -- Available exercises = ticked equipment + registered machines. This gym has no barbell yet.
 select pg_temp.act_as('o3@test.lb');
+select pg_temp.ok((select array_agg(id order by id) from public.gym_exercises where gym_id = :'gym')
+                  = array['Hack_Squat', 'Leg_Press'], 'new gym: only its registered machines until equipment is added');
 select public.set_gym_equipment(:'gym', array['body only', 'dumbbell']);
 select pg_temp.fails(format('select public.set_gym_equipment(%L, array[''spaceship''])', :'gym')) as bad_equipment \gset
 \echo unknown equipment rejected: :bad_equipment
