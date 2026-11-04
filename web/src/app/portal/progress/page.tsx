@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TrendChart } from "@/components/trend-chart";
 import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Trophy } from "lucide-react";
@@ -9,7 +10,7 @@ import { WorkoutModal } from "@/components/workout-modal";
 import { WeeklyChart } from "@/components/weekly-chart";
 import { loadWeeklyBars } from "@/lib/weekly";
 import { formatKg } from "@/lib/exercises";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { formatDate, formatDateTime, hoursAgoIso } from "@/lib/format";
 import { requirePortalPage } from "@/lib/portal";
 import { createClient } from "@/lib/supabase/server";
 
@@ -37,7 +38,7 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
   const { data: me } = await supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle();
   if (!me) return <Card className="p-5 text-sm text-muted">Your account isn&apos;t linked to a membership yet.</Card>;
 
-  const [{ data: sessions }, { data: bests }, weeks] = await Promise.all([
+  const [{ data: sessions }, { data: bests }, weeks, { data: history }] = await Promise.all([
     supabase
       .from("workout_sessions")
       .select("id, day_name, started_at, finished_at, set_logs(weight_kg, reps)")
@@ -51,7 +52,28 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
       .order("last_logged_at", { ascending: false })
       .limit(30),
     loadWeeklyBars(supabase, me.id, membership.timezone, 12),
+    // Every logged set of the last six months, for the per-exercise charts.
+    supabase
+      .from("set_logs")
+      .select("exercise_id, weight_kg, reps, logged_at")
+      .eq("member_id", me.id)
+      .gt("reps", 0)
+      .gte("logged_at", hoursAgoIso(183 * 24))
+      .order("logged_at")
+      .limit(3000),
   ]);
+
+  // Best weight per day, per exercise.
+  const dayOf = new Intl.DateTimeFormat("en-CA", { timeZone: membership.timezone });
+  const progressByExercise = new Map<string, Map<string, number>>();
+  for (const l of history ?? []) {
+    const byDay = progressByExercise.get(l.exercise_id) ?? new Map<string, number>();
+    const day = dayOf.format(new Date(l.logged_at));
+    byDay.set(day, Math.max(byDay.get(day) ?? 0, Number(l.weight_kg)));
+    progressByExercise.set(l.exercise_id, byDay);
+  }
+  const pointsFor = (exerciseId: string) =>
+    [...(progressByExercise.get(exerciseId) ?? new Map())].map(([date, value]) => ({ date, value })).filter((p) => p.value > 0);
 
   const doneSession = typeof query.done === "string" ? sessions?.find((s) => s.id === query.done) : undefined;
   const now = new Date();
@@ -140,8 +162,10 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
             <EmptyState>Log your first workout to start tracking records.</EmptyState>
           ) : (
             <ul className="divide-y divide-line border-t border-line">
-              {bests.map((b) => (
-                <li key={b.exercise_id} className="flex items-center justify-between gap-3 px-5 py-2.5 text-sm">
+              {bests.map((b) => {
+                const points = pointsFor(b.exercise_id);
+                const row = (
+                <div className="flex items-center justify-between gap-3 px-5 py-2.5 text-sm">
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{b.exercises?.name ?? b.exercise_id}</span>
                     <span className="block text-xs text-muted">
@@ -158,8 +182,23 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
                       <span className="font-semibold tabular-nums">{b.best_bodyweight_reps} reps</span>
                     )}
                   </span>
-                </li>
-              ))}
+                </div>
+                );
+                return (
+                  <li key={b.exercise_id}>
+                    {points.length >= 2 ? (
+                      <details className="group">
+                        <summary className="cursor-pointer list-none hover:bg-canvas/50 [&::-webkit-details-marker]:hidden">{row}</summary>
+                        <div className="px-5 pb-4">
+                          <TrendChart title="Best weight per workout" unit="kg" points={points} />
+                        </div>
+                      </details>
+                    ) : (
+                      row
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </Card>

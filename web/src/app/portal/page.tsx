@@ -7,9 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { readNewLogin } from "@/lib/member-login";
 import { requestOrigin } from "@/lib/origin";
 import { NewLoginDialog } from "./new-login-dialog";
-import { WeeklyChart } from "@/components/weekly-chart";
 import { MachineSheet } from "@/components/machine-sheet";
-import { loadWeeklyBars } from "@/lib/weekly";
 import { accountStatus } from "@/lib/portal";
 import { formatUSD } from "@/lib/format";
 import { Lock, Nfc } from "lucide-react";
@@ -34,9 +32,8 @@ async function PortalContent({ searchParams }: { searchParams: PageProps<"/porta
   if (!me) {
     return <Card className="p-5 text-sm text-muted">Your account isn&apos;t linked to a membership yet. Ask the front desk.</Card>;
   }
-  const [newLogin, weeks, account] = await Promise.all([
+  const [newLogin, account] = await Promise.all([
     readNewLogin(),
-    loadWeeklyBars(supabase, me.id, membership.timezone),
     accountStatus(membership.gymId),
   ]);
   return (
@@ -52,9 +49,7 @@ async function PortalContent({ searchParams }: { searchParams: PageProps<"/porta
       {typeof machine === "string" && !account.frozen && <MachineSheet machineId={machine} viewer={viewer} />}
       {account.frozen && <FrozenNotice owed={account.overdueUsd || account.balanceUsd} />}
       <MemberHome supabase={supabase} memberId={me.id} gymName={membership.gymName} timeZone={membership.timezone} />
-      <Card className="mt-6 p-5">
-        <WeeklyChart weeks={weeks} />
-      </Card>
+
     </>
   );
 }

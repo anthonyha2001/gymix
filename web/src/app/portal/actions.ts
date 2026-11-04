@@ -207,7 +207,7 @@ export async function logSet(
   weightKg: number,
   reps: number,
 ): Promise<SetResult> {
-  const { supabase, memberId } = await myMember();
+  const { supabase, memberId, membership } = await myMember();
   if (!memberId) return { ok: false, pr: false, error: "Not linked to a membership." };
   if (!Number.isFinite(weightKg) || weightKg < 0 || weightKg > 1000) return { ok: false, pr: false, error: "Check the weight." };
   if (!Number.isInteger(reps) || reps < 0 || reps > 500) return { ok: false, pr: false, error: "Check the reps." };
@@ -245,7 +245,12 @@ export async function logSet(
           reps,
         });
   if (error) return { ok: false, pr: false, error: errorMessage(error, "Couldn't save the set.") };
-  return { ok: true, pr: prev !== null && reps > 0 && weightKg > Number(prev.weight_kg) };
+  const pr = prev !== null && reps > 0 && weightKg > Number(prev.weight_kg);
+  if (pr) {
+    const { data: ex } = await supabase.from("exercises").select("name").eq("id", exerciseId).maybeSingle();
+    await supabase.rpc("note_personal_record", { p_gym_id: membership.gymId, p_exercise: ex?.name ?? "Exercise", p_weight: weightKg });
+  }
+  return { ok: true, pr };
 }
 
 export async function removeSet(sessionId: string, exerciseId: string, setNumber: number) {

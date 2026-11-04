@@ -96,7 +96,7 @@ export function WorkoutLogger({
 
       {!finished && (
         <Card className="space-y-3 p-5">
-          <form action={finish} className="space-y-3">
+          <form id="finish-workout" action={finish} className="space-y-3">
             {finishState.error && <Alert tone="error">{finishState.error}</Alert>}
             <textarea
               name="notes"
@@ -106,9 +106,6 @@ export function WorkoutLogger({
               aria-label="Workout notes"
               className={`${inputClass} h-auto py-2`}
             />
-            <Button type="submit" disabled={finishing || totalSets === 0} className="h-12 w-full text-base">
-              {finishing ? "Saving…" : `Finish workout (${totalSets} ${totalSets === 1 ? "set" : "sets"})`}
-            </Button>
           </form>
           <button
             type="button"
@@ -125,7 +122,20 @@ export function WorkoutLogger({
         </Card>
       )}
 
-      {restEndsAt && <RestTimer endsAt={restEndsAt} onDone={() => setRestEndsAt(null)} />}
+      {/* Always on screen: the rest timer while it runs, and Finish. */}
+      {!finished && (
+        <>
+          <div aria-hidden className={restEndsAt ? "h-32" : "h-20"} />
+          <div className="fixed inset-x-0 bottom-(--bottom-bar) z-40 border-t border-line bg-surface/95 backdrop-blur">
+            {restEndsAt && <RestTimer endsAt={restEndsAt} onDone={() => setRestEndsAt(null)} />}
+            <div className="mx-auto max-w-3xl px-4 py-3">
+              <Button type="submit" form="finish-workout" disabled={finishing || totalSets === 0} className="h-12 w-full text-base">
+                {finishing ? "Saving…" : `Finish workout (${totalSets} ${totalSets === 1 ? "set" : "sets"})`}
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -304,7 +314,7 @@ function RestTimer({ endsAt, onDone }: { endsAt: number; onDone: () => void }) {
   const left = Math.max(0, Math.ceil((endsAt - now) / 1000));
 
   return (
-    <div className="fixed inset-x-0 bottom-(--bottom-bar) z-40 border-t border-line bg-ink text-white">
+    <div className="bg-ink text-white">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
         <span className="flex items-center gap-2">
           <Timer className="size-5 text-brand" />

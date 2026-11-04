@@ -9,6 +9,11 @@ import { signOut } from "../(auth)/actions";
 import { accountStatus, hiddenPortalPages } from "@/lib/portal";
 import { PortalNav } from "./portal-nav";
 import { InstallPrompt } from "@/components/install-prompt";
+import { ShakeQuickStart } from "@/components/shake-quick-start";
+import { TodayWorkout } from "@/components/today-workout";
+import { loadTrainingPlan } from "@/lib/training-plan";
+import { WEEKDAYS, weekdayOf } from "@/lib/schedule";
+import { todayIn } from "@/lib/format";
 import { QrScanButton } from "@/components/qr-scanner";
 import { NotificationBell } from "@/components/notification-bell";
 import { loadNotifications } from "@/lib/notifications";
@@ -16,7 +21,7 @@ import { loadNotifications } from "@/lib/notifications";
 export default function PortalLayout({ children }: LayoutProps<"/portal">) {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-30 border-b border-line bg-surface">
+      <header className="sticky top-0 z-30 border-b border-line bg-surface pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
           <Link href="/portal">
             <Logo />
@@ -39,6 +44,9 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
       {/* Bottom tab bar. Reads the URL and the unread count, neither known ahead of time. */}
       <Suspense fallback={<div className="fixed inset-x-0 bottom-0 h-16 border-t border-line bg-surface" />}>
         <NavWithUnread />
+      </Suspense>
+      <Suspense>
+        <QuickStart />
       </Suspense>
       <InstallPrompt />
     </div>
@@ -68,4 +76,21 @@ async function MemberBell() {
   const { membership } = await requireMember();
   const { items, unread } = await loadNotifications(membership.gymId, true);
   return <NotificationBell items={items} unread={unread} />;
+}
+
+// Shake the phone for today's workout (not while frozen for an unpaid balance).
+async function QuickStart() {
+  const { viewer, membership } = await requireMember();
+  const supabase = await createClient();
+  const [{ data: me }, account] = await Promise.all([
+    supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle(),
+    accountStatus(membership.gymId),
+  ]);
+  if (!me || account.frozen) return null;
+  const plan = await loadTrainingPlan(supabase, me.id, membership.timezone);
+  return (
+    <ShakeQuickStart>
+      <TodayWorkout plan={plan} weekdayName={WEEKDAYS[weekdayOf(todayIn(membership.timezone))]} />
+    </ShakeQuickStart>
+  );
 }

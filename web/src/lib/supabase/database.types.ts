@@ -555,6 +555,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"member_training_days": {
+                  Row: {
+                    "created_at": string,"member_id": string,"program_day_id": string | null,"weekday": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"member_id": string,"program_day_id"?: string | null,"weekday": number
+                  }
+                  Update: {
+                    "created_at"?: string,"member_id"?: string,"program_day_id"?: string | null,"weekday"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "member_training_days_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "member_training_days_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "member_training_days_program_day_id_fkey"
+      columns: ["program_day_id"]
+isOneToOne: false
+      referencedRelation: "program_days"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"members": {
                   Row: {
                     "archived_at": string | null,"checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"full_name": string,"gym_id": string,"id": string,"notes": string | null,"phone": string | null,"unpaid_frozen_at": string | null,"user_id": string | null
@@ -985,14 +1017,14 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "created_at": string,"email": string,"full_name": string,"id": string,"phone": string | null,"updated_at": string
+                    "avatar_path": string | null,"created_at": string,"email": string,"full_name": string,"id": string,"language": string,"notify_prefs": NonNullable<Json>,"phone": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"email"?: string,"full_name"?: string,"id": string,"phone"?: string | null,"updated_at"?: string
+                    "avatar_path"?: string | null,"created_at"?: string,"email"?: string,"full_name"?: string,"id": string,"language"?: string,"notify_prefs"?: NonNullable<Json>,"phone"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "created_at"?: string,"email"?: string,"full_name"?: string,"id"?: string,"phone"?: string | null,"updated_at"?: string
+                    "avatar_path"?: string | null,"created_at"?: string,"email"?: string,"full_name"?: string,"id"?: string,"language"?: string,"notify_prefs"?: NonNullable<Json>,"phone"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -1692,6 +1724,9 @@ isOneToOne: false
 "make_my_reminders":
 { Args: { "p_gym_id": string }; Returns: undefined
                            },
+"make_training_reminder":
+{ Args: { "p_gym_id": string }; Returns: undefined
+                           },
 "mark_attendance":
 { Args: { "p_attended": boolean,"p_booking_id": string }; Returns: undefined
                            },
@@ -1729,6 +1764,9 @@ isOneToOne: false
                            },
 "normalize_phone":
 { Args: { "p": string }; Returns: string
+                           },
+"note_personal_record":
+{ Args: { "p_exercise": string,"p_gym_id": string,"p_weight": number }; Returns: undefined
                            },
 "notify":
 { Args: { "p_body": string,"p_gym_id": string,"p_key"?: string,"p_kind": string,"p_link": string,"p_title": string,"p_user_id": string }; Returns: undefined
@@ -1844,6 +1882,9 @@ isOneToOne: false
                            },
 "void_invoice":
 { Args: { "p_invoice_id": string,"p_reason": string }; Returns: undefined
+                           },
+"wants_notification":
+{ Args: { "p_kind": string }; Returns: boolean
                            }
           }
           Enums: {

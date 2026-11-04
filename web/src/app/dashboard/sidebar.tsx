@@ -62,7 +62,7 @@ export function Sidebar({ gym, nav, account, bell }: { gym: ReactNode; nav: Reac
   return (
     <CloseDrawer value={close}>
       {/* Mobile top bar */}
-      <div className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-surface px-4 md:hidden">
+      <div className="sticky top-0 z-30 flex h-[calc(3.5rem+env(safe-area-inset-top))] items-center gap-3 border-b border-line bg-surface px-4 pt-[env(safe-area-inset-top)] md:hidden">
         <button
           ref={menuButton}
           type="button"

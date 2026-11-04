@@ -16,7 +16,9 @@ export const metadata: Metadata = {
   icons: { icon: { url: "/icon.svg", type: "image/svg+xml" }, apple: "/icons/180" },
 };
 
-export const viewport: Viewport = { themeColor: "#0d1117" };
+// viewportFit "cover" lets the app use the whole iPhone screen, so the bottom
+// bar can pad itself clear of the home indicator (env(safe-area-inset-bottom)).
+export const viewport: Viewport = { themeColor: "#0d1117", viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

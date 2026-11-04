@@ -57,7 +57,7 @@ export async function MemberPreviewModal({
       {/* The portal itself, at phone-ish width. */}
       <div className="mx-auto max-w-3xl space-y-10">
         <section id="home" className="scroll-mt-32">
-          <MemberHome supabase={supabase} memberId={id} gymName={membership.gymName} timeZone={tz} />
+          <MemberHome supabase={supabase} memberId={id} gymName={membership.gymName} timeZone={tz} preview />
         </section>
 
         <section id="program" className="scroll-mt-32 space-y-4">

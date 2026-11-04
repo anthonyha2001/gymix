@@ -26,7 +26,7 @@ export function Button({
 }
 
 export const inputClass =
-  "w-full h-11 rounded-xl border border-line bg-surface px-3.5 text-sm outline-none transition duration-150 placeholder:text-muted/70 hover:border-ink/25 focus:border-ink focus:ring-4 focus:ring-brand/40";
+  "w-full h-11 rounded-xl border border-line bg-surface px-3.5 text-base sm:text-sm outline-none transition duration-150 placeholder:text-muted/70 hover:border-ink/25 focus:border-ink focus:ring-4 focus:ring-brand/40";
 
 // inputClass with a different width (appending a width class doesn't reliably beat w-full).
 export function inputWidth(width: string) {

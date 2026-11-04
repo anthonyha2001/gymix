@@ -28,7 +28,7 @@ body {
   --bottom-bar: 0px;
 }
 :root:has(nav[data-bottom-bar]) {
-  --bottom-bar: calc(4rem + env(safe-area-inset-bottom));
+  --bottom-bar: calc(4.25rem + max(env(safe-area-inset-bottom), 0.5rem));
 }
 
 /* Two-frame exercise animation: the second photo blinks over the first. */

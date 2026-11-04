@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { TodayWorkout } from "@/components/today-workout";
+import { loadTrainingPlan } from "@/lib/training-plan";
+import { WEEKDAYS, weekdayOf } from "@/lib/schedule";
 import { MachineSheet } from "@/components/machine-sheet";
 import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
@@ -8,7 +11,7 @@ import { WorkoutModal } from "@/components/workout-modal";
 import { Card, Skeleton, buttonClass } from "@/components/ui";
 import { loadActivePrograms } from "@/lib/programs";
 import { requirePortalPage } from "@/lib/portal";
-import { formatDateTime, hoursAgoIso } from "@/lib/format";
+import { formatDateTime, hoursAgoIso , todayIn } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import { startFreeWorkout, startWorkout } from "../actions";
 
@@ -30,7 +33,7 @@ async function Train({ searchParams }: { searchParams: PageProps<"/portal/train"
   const { data: me } = await supabase.from("members").select("id, full_name").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle();
   if (!me) return <Card className="p-5 text-sm text-muted">Your account isn&apos;t linked to a membership yet. Ask the front desk.</Card>;
 
-  const [{ data: open }, { data: recent }] = await Promise.all([
+  const [{ data: open }, { data: recent }, plan] = await Promise.all([
     supabase
       .from("workout_sessions")
       .select("id, day_name, started_at, set_logs(count)")
@@ -47,6 +50,7 @@ async function Train({ searchParams }: { searchParams: PageProps<"/portal/train"
       .not("finished_at", "is", null)
       .order("started_at", { ascending: false })
       .limit(3),
+    loadTrainingPlan(supabase, me.id, membership.timezone),
   ]);
 
   return (
@@ -72,14 +76,10 @@ async function Train({ searchParams }: { searchParams: PageProps<"/portal/train"
           </HoverLink>
         </Card>
       ) : (
-        <Card className="space-y-4 bg-ink p-6 text-white">
-          <div>
-            <p className="text-sm text-white/70">No workout running</p>
-            <p className="text-xl font-semibold">Start today&apos;s training</p>
-          </div>
+        <div className="space-y-3">
+          <TodayWorkout plan={plan} weekdayName={WEEKDAYS[weekdayOf(todayIn(membership.timezone))]} />
           <Dialog
-            label="Start workout"
-            icon={<Play className="size-5" />}
+            label="Choose a different workout"
             title="What are you training today?"
             variant="secondary"
             size="lg"
@@ -87,7 +87,7 @@ async function Train({ searchParams }: { searchParams: PageProps<"/portal/train"
           >
             <StartChoices memberId={me.id} />
           </Dialog>
-        </Card>
+        </div>
       )}
 
       <Card className="flex items-center gap-3 p-4 text-sm text-muted">
