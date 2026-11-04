@@ -35,7 +35,7 @@ export async function MachineStickers({ machines }: { machines: { id: string; na
               <p className="truncate font-mono text-xs text-muted">{m.url}</p>
               <div className="flex flex-wrap items-start gap-2">
                 <NfcWriteButton url={m.url} label={`Write ${m.name} sticker`} />
-                <QrDownload png={m.qr.png} name={m.name} />
+                <QrDownload text={m.url} name={m.name} />
               </div>
             </div>
           </li>

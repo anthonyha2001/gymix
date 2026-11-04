@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Dialog } from "@/components/dialog";
@@ -128,9 +128,9 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
                         )}
                       </span>
                     ) : c.monthly_price_usd !== null ? (
-                      <Link href="/portal/schedule?tab=courses" scroll={false} className="shrink-0 text-xs font-medium underline underline-offset-4">
+                      <HoverLink href="/portal/schedule?tab=courses" scroll={false} className="shrink-0 text-xs font-medium underline underline-offset-4">
                         Monthly course
-                      </Link>
+                      </HoverLink>
                     ) : (
                       <ActionButton action={bookClass.bind(null, c.id, date, undefined)} label={left > 0 ? "Book" : "Join waitlist"} variant={left > 0 ? "primary" : "secondary"} className="h-8 shrink-0 px-3" />
                     )}

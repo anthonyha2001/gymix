@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MachineSheet } from "@/components/machine-sheet";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { ChevronRight, ListPlus, Nfc, Play } from "lucide-react";
 import { Dialog } from "@/components/dialog";
@@ -67,9 +67,9 @@ async function Train({ searchParams }: { searchParams: PageProps<"/portal/train"
               Started {formatDateTime(open.started_at, membership.timezone)} · {open.set_logs[0]?.count ?? 0} sets logged
             </p>
           </div>
-          <Link href={`/portal/workout/${open.id}`} className={buttonClass("primary", "h-12 w-full text-base")}>
+          <HoverLink href={`/portal/workout/${open.id}`} className={buttonClass("primary", "h-12 w-full text-base")}>
             <Play className="size-5" /> Continue workout
-          </Link>
+          </HoverLink>
         </Card>
       ) : (
         <Card className="space-y-4 bg-ink p-6 text-white">
@@ -101,13 +101,13 @@ async function Train({ searchParams }: { searchParams: PageProps<"/portal/train"
           <ul className="divide-y divide-line border-t border-line">
             {recent.map((s) => (
               <li key={s.id}>
-                <Link href={`/portal/train?workout=${s.id}`} scroll={false} className="flex items-center justify-between gap-3 px-5 py-3 text-sm hover:bg-canvas/50">
+                <HoverLink href={`/portal/train?workout=${s.id}`} scroll={false} className="flex items-center justify-between gap-3 px-5 py-3 text-sm hover:bg-canvas/50">
                   <span>
                     {s.day_name ?? "Workout"}
                     <span className="block text-xs text-muted">{formatDateTime(s.started_at, membership.timezone)}</span>
                   </span>
                   <span className="text-xs text-muted">{s.set_logs[0]?.count ?? 0} sets</span>
-                </Link>
+                </HoverLink>
               </li>
             ))}
           </ul>
@@ -161,9 +161,9 @@ async function StartChoices({ memberId }: { memberId: string }) {
         <Card className="space-y-3 p-5">
           <p className="font-medium">You don&apos;t have a program yet</p>
           <p className="text-sm text-muted">Build your own or ask a trainer — or just start a free workout below.</p>
-          <Link href="/portal/programs" className={buttonClass("secondary", "h-9")}>
+          <HoverLink href="/portal/programs" className={buttonClass("secondary", "h-9")}>
             Go to my programs
-          </Link>
+          </HoverLink>
         </Card>
       )}
 

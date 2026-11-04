@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Plus } from "lucide-react";
 import { Dialog } from "@/components/dialog";
@@ -182,12 +182,12 @@ async function ProgramsContent({
                   <li key={r.id} className="space-y-3 px-5 py-4">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <Link
+                        <HoverLink
                           href={`/dashboard/members/${r.member_id}`}
                           className="font-semibold hover:underline"
                         >
                           {r.members?.full_name}
-                        </Link>
+                        </HoverLink>
                         <p className="text-sm">
                           {GOAL_LABELS[r.goal]} · {r.days_per_week} days/week ·{" "}
                           {EXPERIENCE_LABELS[r.experience]}
@@ -248,13 +248,13 @@ async function ProgramsContent({
                       </div>
                     ) : (
                       r.program_id && (
-                        <Link
+                        <HoverLink
                           href={`${BASE}?tab=requests&program=${r.program_id}`}
                           scroll={false}
                           className="text-sm font-medium underline underline-offset-4"
                         >
                           Continue building
-                        </Link>
+                        </HoverLink>
                       )
                     )}
                   </li>
@@ -281,7 +281,7 @@ async function ProgramsContent({
                     key={p.id}
                     className="flex items-center pr-3 hover:bg-canvas/50"
                   >
-                    <Link
+                    <HoverLink
                       href={`${BASE}?tab=programs&program=${p.id}`}
                       scroll={false}
                       className="flex min-w-0 flex-1 flex-wrap items-center gap-3 px-5 py-3"
@@ -303,7 +303,7 @@ async function ProgramsContent({
                       ) : (
                         <Badge tone="gray">Old</Badge>
                       )}
-                    </Link>
+                    </HoverLink>
                     <RowMenu
                       label={`Actions for ${p.name}`}
                       items={[
@@ -352,13 +352,13 @@ async function ProgramsContent({
                     key={t.id}
                     className="flex items-center pr-3 hover:bg-canvas/50"
                   >
-                    <Link
+                    <HoverLink
                       href={`${BASE}?tab=programs&program=${t.id}`}
                       scroll={false}
                       className="block flex-1 px-5 py-3 font-medium"
                     >
                       {t.name}
-                    </Link>
+                    </HoverLink>
                     <RowMenu
                       label={`Actions for ${t.name}`}
                       items={[

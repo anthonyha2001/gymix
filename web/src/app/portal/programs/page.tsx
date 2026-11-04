@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { ChevronRight, Play, Plus, UserRoundPlus } from "lucide-react";
 import { Dialog } from "@/components/dialog";
@@ -110,7 +110,7 @@ async function Programs({ searchParams }: { searchParams: PageProps<"/portal/pro
             {programs.map((p) => {
               const exercises = p.program_days.reduce((n, d) => n + (d.program_exercises[0]?.count ?? 0), 0);
               return (
-                <Link key={p.id} href={`${BASE}?tab=programs&program=${p.id}`} scroll={false}>
+                <HoverLink key={p.id} href={`${BASE}?tab=programs&program=${p.id}`} scroll={false}>
                   <Card className="flex items-center gap-4 p-5 transition-colors hover:border-ink/30">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
@@ -123,7 +123,7 @@ async function Programs({ searchParams }: { searchParams: PageProps<"/portal/pro
                     </div>
                     <ChevronRight className="size-5 text-muted" />
                   </Card>
-                </Link>
+                </HoverLink>
               );
             })}
           </div>
@@ -187,9 +187,9 @@ async function ProgramModal({ programId, memberId }: { programId: string; member
       <div className="space-y-5">
         {program.notes && <p className="rounded-lg bg-canvas p-3 text-sm">{program.notes}</p>}
         {program.kind === "self" && (
-          <Link href={`${BASE}?edit=${program.id}`} scroll={false} replace className={buttonClass("secondary", "h-9")}>
+          <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace className={buttonClass("secondary", "h-9")}>
             Edit program
-          </Link>
+          </HoverLink>
         )}
         {program.days.length === 0 && <p className="text-sm text-muted">No training days yet.</p>}
         {program.days.map((day, i) => (

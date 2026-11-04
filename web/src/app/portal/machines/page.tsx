@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Nfc } from "lucide-react";
 import { ExerciseAnimation } from "@/components/exercise-media";
@@ -49,7 +49,7 @@ async function Machines({ searchParams }: { searchParams: PageProps<"/portal/mac
         const exercises = m.machine_exercises.map((me) => me.exercises).filter((e) => e !== null);
         const muscles = [...new Set(exercises.flatMap((e) => e.primary_muscles))];
         return (
-          <Link key={m.id} href={`/portal/machines?machine=${m.id}`} scroll={false}>
+          <HoverLink key={m.id} href={`/portal/machines?machine=${m.id}`} scroll={false}>
             <Card className="flex h-full gap-4 p-4 transition-colors hover:border-ink/30">
               {m.photo_path ? (
                 <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-canvas">
@@ -66,7 +66,7 @@ async function Machines({ searchParams }: { searchParams: PageProps<"/portal/mac
                 </p>
               </div>
             </Card>
-          </Link>
+          </HoverLink>
         );
       })}
       <Card className="flex items-center gap-3 p-4 text-sm text-muted sm:col-span-2">

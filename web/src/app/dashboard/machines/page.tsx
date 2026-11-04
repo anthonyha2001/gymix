@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Plus, QrCode } from "lucide-react";
 import { ExerciseAnimation } from "@/components/exercise-media";
@@ -132,7 +132,7 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
               const exercises = m.machine_exercises.map((me) => me.exercises).filter((e) => e !== null);
               const muscles = [...new Set(exercises.flatMap((e) => e.primary_muscles))];
               return (
-                <Link key={m.id} href={`${BASE}?tab=machines&machine=${m.id}`} scroll={false}>
+                <HoverLink key={m.id} href={`${BASE}?tab=machines&machine=${m.id}`} scroll={false}>
                   <div className="flex h-full gap-4 rounded-xl border border-line p-4 transition-colors hover:border-ink/30">
                     {m.photo_path ? (
                       <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-canvas">
@@ -149,7 +149,7 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
                       <p className="mt-1 line-clamp-2 text-xs text-muted">{musclesLabel(muscles)}</p>
                     </div>
                   </div>
-                </Link>
+                </HoverLink>
               );
             })}
           </div>

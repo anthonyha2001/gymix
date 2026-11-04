@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Plus, Search, UserRound } from "lucide-react";
 import { Dialog } from "@/components/dialog";
@@ -158,9 +159,9 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
                   return (
                     <tr key={m.id} className="hover:bg-canvas/50">
                       <td className="px-5 py-3">
-                        <Link href={`/dashboard/members/${m.id}`} className="font-medium hover:underline">
+                        <HoverLink href={`/dashboard/members/${m.id}`} className="font-medium hover:underline">
                           {m.full_name}
-                        </Link>
+                        </HoverLink>
                         <p className="text-xs text-muted">{m.phone || m.email || "—"}</p>
                       </td>
                       <td className="px-5 py-3">

@@ -149,6 +149,7 @@ export function NavLinks({ items }: { items: NavItem[] }) {
           <li key={href}>
             <Link
               href={href}
+              prefetch
               onClick={close}
               aria-current={active ? "page" : undefined}
               className={`flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors ${

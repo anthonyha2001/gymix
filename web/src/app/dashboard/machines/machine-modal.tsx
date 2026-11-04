@@ -129,7 +129,7 @@ export async function MachineModal({ machineId, gymId, canManage }: { machineId:
           </p>
           <NfcWriteButton url={stickerUrl} />
           <CopyLink url={stickerUrl} />
-          <QrDownload png={qr.png} name={machine.name} />
+          <QrDownload text={stickerUrl} name={machine.name} />
         </div>
         <figure className="text-center">
           <div className="mx-auto w-[140px] rounded-lg border border-line bg-white p-1" dangerouslySetInnerHTML={{ __html: qr.svg }} />

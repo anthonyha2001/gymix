@@ -13,6 +13,7 @@ export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient<Database>(supabaseUrl(), supabaseAnonKey(), {
+    ...(process.env.GYMIX_TRACE_QUERIES ? { global: { fetch: tracedFetch } } : {}),
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -30,3 +31,13 @@ export async function createClient() {
     },
   });
 }
+
+// Set GYMIX_TRACE_QUERIES=1 to log every database call with its duration
+// (for finding slow pages). Off in normal use.
+const tracedFetch: typeof fetch = async (input, init) => {
+  const started = performance.now();
+  const response = await fetch(input, init);
+  const url = new URL(typeof input === "string" ? input : input instanceof URL ? input.href : input.url);
+  console.log(`[db] ${Math.round(performance.now() - started)}ms ${init?.method ?? "GET"} ${url.pathname}${url.search.slice(0, 80)}`);
+  return response;
+};

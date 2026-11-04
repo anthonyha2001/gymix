@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Plus } from "lucide-react";
 import { Dialog } from "@/components/dialog";
@@ -91,9 +91,9 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
                 <li key={r.id} className="space-y-3 px-5 py-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <Link href={`/dashboard/members/${r.member_id}?tab=nutrition`} className="font-semibold hover:underline">
+                      <HoverLink href={`/dashboard/members/${r.member_id}?tab=nutrition`} className="font-semibold hover:underline">
                         {r.members?.full_name}
-                      </Link>
+                      </HoverLink>
                       <p className="text-sm">
                         {NUTRITION_GOAL_LABELS[r.goal]} · {ACTIVITY_LABELS[r.activity]}
                         {r.weight_kg && ` · ${Number(r.weight_kg)} kg`}
@@ -116,9 +116,9 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
                       </Dialog>
                     ) : (
                       r.plan_id && (
-                        <Link href={`${BASE}?tab=requests&plan=${r.plan_id}`} scroll={false} className="inline-flex h-9 items-center text-sm font-medium underline underline-offset-4">
+                        <HoverLink href={`${BASE}?tab=requests&plan=${r.plan_id}`} scroll={false} className="inline-flex h-9 items-center text-sm font-medium underline underline-offset-4">
                           Continue building
-                        </Link>
+                        </HoverLink>
                       )
                     )}
                     <ActionButton
@@ -147,7 +147,7 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
                 const status = PLAN_STATUS[p.status] ?? PLAN_STATUS.draft;
                 return (
                   <li key={p.id} className="flex items-center pr-3 hover:bg-canvas/50">
-                    <Link href={`${BASE}?tab=plans&plan=${p.id}`} scroll={false} className="flex min-w-0 flex-1 flex-wrap items-center gap-3 px-5 py-3">
+                    <HoverLink href={`${BASE}?tab=plans&plan=${p.id}`} scroll={false} className="flex min-w-0 flex-1 flex-wrap items-center gap-3 px-5 py-3">
                       <span className="min-w-0 flex-1">
                         <span className="block font-medium">{p.name}</span>
                         <span className="block text-xs text-muted">
@@ -156,7 +156,7 @@ async function NutritionContent({ searchParams }: { searchParams: PageProps<"/da
                         </span>
                       </span>
                       <Badge tone={status.tone}>{status.label}</Badge>
-                    </Link>
+                    </HoverLink>
                     <RowMenu
                       label={`Actions for ${p.name}`}
                       items={[

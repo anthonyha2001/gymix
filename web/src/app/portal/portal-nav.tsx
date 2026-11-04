@@ -52,6 +52,7 @@ export function PortalNav({ unread = 0, hidden = [], frozen = false }: { unread?
             <Link
               key={t.href}
               href={t.href}
+              prefetch
               aria-current={active ? "page" : undefined}
               className={`relative flex min-w-0 flex-col items-center justify-center gap-1 ${active ? "text-ink" : "text-muted hover:text-ink"}`}
             >

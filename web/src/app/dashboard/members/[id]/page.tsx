@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { Eye, Lock, Plus } from "lucide-react";
 import { RowMenu } from "@/components/row-menu";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
@@ -24,7 +23,6 @@ import {
   Card,
   EmptyState,
   SectionTitle,
-  Skeleton,
   buttonClass,
 } from "@/components/ui";
 import { memberInviteMessage } from "@/lib/invite-link";
@@ -94,15 +92,17 @@ export default function MemberPage({
 }: PageProps<"/dashboard/members/[id]">) {
   return (
     <div className="max-w-5xl space-y-6">
-      <Link
+      <HoverLink
         href="/dashboard/members"
         className="text-sm text-muted hover:text-ink"
       >
         ← Members
-      </Link>
-      <Suspense fallback={<Skeleton className="h-[600px]" />}>
-        <MemberContent params={params} searchParams={searchParams} />
-      </Suspense>
+      </HoverLink>
+      {/* No loading boundary of its own: on a click inside the dashboard the
+          profile appears as soon as the server answers, instead of behind a
+          skeleton React keeps up for at least 300ms. Direct visits use the
+          layout's boundary. */}
+      <MemberContent params={params} searchParams={searchParams} />
     </div>
   );
 }
@@ -324,13 +324,13 @@ async function MemberContent({
             </p>
           </div>
           <div className="flex flex-wrap items-start gap-2">
-            <Link
+            <HoverLink
               href={`${here}&preview=${member.id}`}
               scroll={false}
               className={buttonClass("secondary")}
             >
               <Eye className="size-4" /> View as member
-            </Link>
+            </HoverLink>
             {canBill && (
               <Dialog
                 label={current ? "Renew / sell" : "Sell membership"}
@@ -824,13 +824,13 @@ async function MemberContent({
                       className="flex items-center justify-between gap-3 px-5 py-2.5 text-sm"
                     >
                       {canCoach ? (
-                        <Link
+                        <HoverLink
                           href={`${base}?tab=training&program=${p.id}`}
                           scroll={false}
                           className="font-medium hover:underline"
                         >
                           {p.name}
-                        </Link>
+                        </HoverLink>
                       ) : (
                         <span className="font-medium">{p.name}</span>
                       )}
@@ -1198,13 +1198,13 @@ function NutritionSection({
               </Dialog>
             ) : (
               request.plan_id && (
-                <Link
+                <HoverLink
                   href={`${here}&plan=${request.plan_id}`}
                   scroll={false}
                   className="font-medium underline underline-offset-4"
                 >
                   Continue building
-                </Link>
+                </HoverLink>
               )
             ))}
         </Card>
@@ -1234,13 +1234,13 @@ function NutritionSection({
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="font-semibold">{activePlan.name}</p>
               {canDiet && (
-                <Link
+                <HoverLink
                   href={`${here}&plan=${activePlan.id}`}
                   scroll={false}
                   className={buttonClass("secondary", "h-9")}
                 >
                   Edit plan
-                </Link>
+                </HoverLink>
               )}
             </div>
             <NutritionPlanView plan={activePlan} />
@@ -1264,13 +1264,13 @@ function NutritionSection({
                     className="flex items-center justify-between gap-3 px-5 py-2.5 text-sm"
                   >
                     {canDiet ? (
-                      <Link
+                      <HoverLink
                         href={`${here}&plan=${p.id}`}
                         scroll={false}
                         className="font-medium hover:underline"
                       >
                         {p.name}
-                      </Link>
+                      </HoverLink>
                     ) : (
                       <span className="font-medium">{p.name}</span>
                     )}

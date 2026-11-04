@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
 import { formatDateTime, hoursAgoIso, todayIn } from "@/lib/format";
@@ -118,7 +118,7 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
                   const full = booked >= c.capacity;
                   return (
                     <li key={c.id}>
-                      <Link href={`${BASE}?tab=week&session=${c.id}_${date}`} scroll={false} className="flex flex-wrap items-center gap-4 px-5 py-3 hover:bg-canvas/50">
+                      <HoverLink href={`${BASE}?tab=week&session=${c.id}_${date}`} scroll={false} className="flex flex-wrap items-center gap-4 px-5 py-3 hover:bg-canvas/50">
                         <span className="w-24 text-sm font-semibold tabular-nums">
                           {hhmm(c.start_time)}–{endTime(c.start_time, c.duration_min)}
                         </span>
@@ -133,7 +133,7 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
                         </span>
                         {full ? <Badge tone="red">Full</Badge> : <Badge tone="green">{c.capacity - booked} left</Badge>}
                         {waiting > 0 && <Badge tone="amber">{waiting} waiting</Badge>}
-                      </Link>
+                      </HoverLink>
                     </li>
                   );
                 })}
@@ -155,9 +155,9 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
               {requests.map((s) => (
                 <li key={s.id} className="space-y-2 px-5 py-3 text-sm">
                   <div>
-                    <Link href={`/dashboard/members/${s.member_id}`} className="font-medium hover:underline">
+                    <HoverLink href={`/dashboard/members/${s.member_id}`} className="font-medium hover:underline">
                       {s.members?.full_name}
-                    </Link>
+                    </HoverLink>
                     <p className="text-xs text-muted">
                       {formatDateTime(s.starts_at, tz)} · {s.duration_min} min
                       {isManager && s.trainer?.full_name ? ` · with ${s.trainer.full_name}` : ""}
@@ -185,9 +185,9 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
               {confirmed.map((s) => (
                 <li key={s.id} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
                   <span className="min-w-0">
-                    <Link href={`/dashboard/members/${s.member_id}`} className="font-medium hover:underline">
+                    <HoverLink href={`/dashboard/members/${s.member_id}`} className="font-medium hover:underline">
                       {s.members?.full_name}
-                    </Link>
+                    </HoverLink>
                     <span className="block text-xs text-muted">
                       {formatDateTime(s.starts_at, tz)} · {s.duration_min} min
                       {isManager && s.trainer?.full_name ? ` · ${s.trainer.full_name}` : ""}

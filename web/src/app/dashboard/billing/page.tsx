@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
 import {
@@ -122,7 +122,7 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
 
       <div className="flex flex-wrap gap-2">
         {TABS.map((t) => (
-          <Link
+          <HoverLink
             key={t.value}
             href={`/dashboard/billing?tab=${t.value}`}
               scroll={false}
@@ -131,7 +131,7 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
             }`}
           >
             {t.label}
-          </Link>
+          </HoverLink>
         ))}
       </div>
       {tab !== "payments" && (
@@ -159,9 +159,9 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
                     <tr key={inv.id} className="hover:bg-canvas/50">
                       <td className="px-5 py-3 font-mono text-xs text-muted">{String(inv.number).padStart(4, "0")}</td>
                       <td className="px-5 py-3">
-                        <Link href={`/dashboard/members/${inv.member_id}`} className="font-medium hover:underline">
+                        <HoverLink href={`/dashboard/members/${inv.member_id}`} className="font-medium hover:underline">
                           {nameOf.get(inv.member_id!) ?? "Member"}
-                        </Link>
+                        </HoverLink>
                         <p className="text-xs text-muted">{formatDate(inv.issued_on)}</p>
                       </td>
                       <td className="hidden max-w-xs truncate px-5 py-3 text-muted md:table-cell">{inv.description}</td>
@@ -209,9 +209,9 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
             {payments.slice(0, 15).map((p) => (
               <li key={p.id} className="flex items-center justify-between gap-3 px-5 py-2.5 text-sm">
                 <span className="min-w-0">
-                  <Link href={`/dashboard/members/${p.member_id}`} className="font-medium hover:underline">
+                  <HoverLink href={`/dashboard/members/${p.member_id}`} className="font-medium hover:underline">
                     {nameOf.get(p.member_id) ?? "Member"}
-                  </Link>
+                  </HoverLink>
                   <span className="block text-xs text-muted">
                     {PAYMENT_METHOD_LABELS[p.method]} · {formatDateTime(p.paid_at, tz)}
                     {p.amount_lbp ? ` · ${formatLBP(p.amount_lbp)}` : ""}

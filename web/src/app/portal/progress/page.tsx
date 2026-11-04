@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Trophy } from "lucide-react";
 import { MeasurementsPanel } from "@/components/measurements-panel";
@@ -105,7 +105,7 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
                   const minutes = s.finished_at ? Math.round((Date.parse(s.finished_at) - Date.parse(s.started_at)) / 60000) : null;
                   return (
                     <li key={s.id}>
-                      <Link
+                      <HoverLink
                         href={`${BASE}?tab=workouts&workout=${s.id}`}
                         scroll={false}
                         className="flex items-center justify-between gap-3 px-5 py-3 text-sm hover:bg-canvas/50"
@@ -121,7 +121,7 @@ async function Progress({ searchParams }: { searchParams: PageProps<"/portal/pro
                           {s.set_logs.length} sets
                           <span className="block">{Math.round(volume).toLocaleString()} kg</span>
                         </span>
-                      </Link>
+                      </HoverLink>
                     </li>
                   );
                 })}
