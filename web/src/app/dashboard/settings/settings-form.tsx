@@ -7,7 +7,7 @@ import { formatLBP } from "@/lib/format";
 import { PORTAL_PAGES } from "@/lib/portal-pages";
 import { saveGymSettings, setPortalPages } from "./actions";
 
-export function SettingsForm({ name, lbpRate }: { name: string; lbpRate: number }) {
+export function SettingsForm({ name, lbpRate, graceDays }: { name: string; lbpRate: number; graceDays: number }) {
   const [state, action, pending] = useActionState(saveGymSettings, {});
   return (
     <form action={action} className="space-y-4">
@@ -19,6 +19,12 @@ export function SettingsForm({ name, lbpRate }: { name: string; lbpRate: number 
         </Field>
         <Field label="Lira rate (LBP per $1)" hint={`Used when members pay in cash LBP. Now ${formatLBP(lbpRate)}.`}>
           <input name="lbp_rate" inputMode="numeric" required defaultValue={lbpRate} className={inputClass} />
+        </Field>
+        <Field
+          label="Days to pay before freezing"
+          hint="A member who still owes money this many days after an invoice is frozen: their app shows only its home page and check-in is refused until they pay."
+        >
+          <input name="unpaid_grace_days" type="number" min={0} max={60} required defaultValue={graceDays} className={inputClass} />
         </Field>
       </div>
       <Button type="submit" disabled={pending}>

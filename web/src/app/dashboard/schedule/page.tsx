@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton, buttonClass } from "@/components/ui";
+import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
 import { formatDateTime, hoursAgoIso, todayIn } from "@/lib/format";
 import { MANAGER_ROLES } from "@/lib/roles";
 import { PT_STATUS, dayLabel, endTime, hhmm, nextDays, weekdayOf } from "@/lib/schedule";
@@ -32,7 +32,7 @@ export default function SchedulePage({ searchParams }: PageProps<"/dashboard/sch
 }
 
 async function Header() {
-  const { membership } = await requireStaff();
+  await requireStaff();
   return (
     <PageHeader
       title="Schedule"

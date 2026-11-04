@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Apple, CalendarDays, ClipboardList, Dumbbell, House, MessageCircle, Play, TrendingUp } from "lucide-react";
+import { Apple, CalendarDays, ClipboardList, Dumbbell, House, Lock, MessageCircle, Play, TrendingUp } from "lucide-react";
 import type { PortalPage } from "@/lib/portal-pages";
 
 const TABS: { href: string; label: string; icon: typeof House; page?: PortalPage }[] = [
@@ -17,7 +17,8 @@ const TABS: { href: string; label: string; icon: typeof House; page?: PortalPage
 ];
 
 // Bottom tab bar (icons with a short label), fixed to the foot of the screen.
-export function PortalNav({ unread = 0, hidden = [] }: { unread?: number; hidden?: PortalPage[] }) {
+// While the account is frozen for an unpaid balance, every tab but Home is locked.
+export function PortalNav({ unread = 0, hidden = [], frozen = false }: { unread?: number; hidden?: PortalPage[]; frozen?: boolean }) {
   const pathname = usePathname();
   // Pages the gym owner switched off are left out.
   const tabs = TABS.filter((t) => !t.page || !hidden.includes(t.page));
@@ -31,6 +32,22 @@ export function PortalNav({ unread = 0, hidden = [] }: { unread?: number; hidden
         {tabs.map((t) => {
           const active = t.href === "/portal" ? pathname === t.href : pathname.startsWith(t.href);
           const Icon = t.icon;
+          if (frozen && t.page) {
+            return (
+              <span
+                key={t.href}
+                aria-disabled="true"
+                title="Locked until your balance is paid"
+                className="relative flex min-w-0 cursor-not-allowed flex-col items-center justify-center gap-1 text-muted/50"
+              >
+                <span className="relative grid h-7 w-10 place-items-center">
+                  <Icon className="size-5" strokeWidth={1.75} />
+                  <Lock className="absolute -right-0.5 -bottom-0.5 size-3 rounded-full bg-surface p-px text-muted" strokeWidth={2.5} />
+                </span>
+                <span className="w-full truncate text-center text-[9px] font-medium leading-none tracking-tight min-[400px]:text-[10px]">{t.label}</span>
+              </span>
+            );
+          }
           return (
             <Link
               key={t.href}

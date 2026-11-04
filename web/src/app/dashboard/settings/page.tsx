@@ -31,7 +31,7 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
   const supabase = await createClient();
   const [{ data: token }, { data: gym }] = await Promise.all([
     supabase.rpc("get_checkin_token", { p_gym_id: membership.gymId }),
-    supabase.from("gyms").select("tap_simulator, portal_hidden").eq("id", membership.gymId).single(),
+    supabase.from("gyms").select("tap_simulator, portal_hidden, unpaid_grace_days").eq("id", membership.gymId).single(),
   ]);
 
   const url = `${await requestOrigin()}/c/${token}`;
@@ -51,7 +51,7 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
       {tab === "gym" && (
       <Card className="space-y-4 p-5">
         <h2 className="font-semibold">Gym</h2>
-        <SettingsForm name={membership.gymName} lbpRate={membership.lbpRate} />
+        <SettingsForm name={membership.gymName} lbpRate={membership.lbpRate} graceDays={gym?.unpaid_grace_days ?? 3} />
       </Card>
       )}
 

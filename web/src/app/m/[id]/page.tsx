@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { MachineDetail } from "@/components/machine-detail";
 import { Logo, Skeleton } from "@/components/ui";
 import { getViewer, homePathFor } from "@/lib/session";
+import { accountStatus } from "@/lib/portal";
 
 export const metadata: Metadata = { title: "Machine" };
 
@@ -30,6 +31,9 @@ async function Machine({ params }: { params: PageProps<"/m/[id]">["params"] }) {
   const { id } = await params;
   const viewer = await getViewer();
   if (!viewer) redirect(`/login?next=${encodeURIComponent(`/m/${id}`)}`);
+  // Frozen for an unpaid balance: the member app is closed except its home.
+  const asMember = viewer.memberships.find((m) => m.role === "member");
+  if (asMember && viewer.memberships.length === 1 && (await accountStatus(asMember.gymId)).frozen) redirect("/portal");
   const detail = await MachineDetail({ id, viewer });
   // RLS hides machines from other gyms.
   if (!detail) notFound();

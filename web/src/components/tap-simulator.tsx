@@ -33,10 +33,12 @@ export function TapSimulator() {
     <button
       type="button"
       onClick={() => router.push("/tap")}
-      className="flex h-9 items-center gap-2 rounded-lg px-3 text-xs text-muted hover:bg-canvas hover:text-ink"
+      className="flex h-9 items-center gap-2 rounded-lg px-2 text-xs whitespace-nowrap text-muted hover:bg-canvas hover:text-ink sm:px-3"
       title="Simulates tapping the entrance sticker (testing mode)"
     >
-      <Keyboard className="size-3.5" /> Space × 2 = check-in tap
+      <Keyboard className="size-3.5" />
+      <span className="hidden sm:inline">Space × 2 = check-in tap</span>
+      <span className="sm:hidden">Tap in</span>
     </button>
   );
 }

@@ -107,9 +107,10 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
                 const left = Math.max(c.capacity - taken, 0);
                 const booking = myBooking(c.id, date);
                 return (
-                  <li key={c.id} className="flex flex-wrap items-center gap-3 px-5 py-3">
-                    <span className="w-24 text-sm font-semibold tabular-nums">
-                      {hhmm(c.start_time)}–{endTime(c.start_time, c.duration_min)}
+                  <li key={c.id} className="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-5">
+                    <span className="w-12 shrink-0 tabular-nums">
+                      <span className="block text-sm font-semibold">{hhmm(c.start_time)}</span>
+                      <span className="block text-xs text-muted">{endTime(c.start_time, c.duration_min)}</span>
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-medium">{c.name}</span>
@@ -120,18 +121,18 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
                       </span>
                     </span>
                     {booking ? (
-                      <span className="flex items-center gap-2">
+                      <span className="flex shrink-0 flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-2">
                         <Badge tone={BOOKING_STATUS[booking.status].tone}>{BOOKING_STATUS[booking.status].label}</Badge>
                         {(booking.status === "booked" || booking.status === "waitlist") && (
                           <ActionButton action={cancelBooking.bind(null, booking.id)} label="Cancel" variant="ghost" className="h-8 px-3" confirm="Cancel your spot?" />
                         )}
                       </span>
                     ) : c.monthly_price_usd !== null ? (
-                      <Link href="/portal/schedule?tab=courses" scroll={false} className="text-xs font-medium underline underline-offset-4">
+                      <Link href="/portal/schedule?tab=courses" scroll={false} className="shrink-0 text-xs font-medium underline underline-offset-4">
                         Monthly course
                       </Link>
                     ) : (
-                      <ActionButton action={bookClass.bind(null, c.id, date, undefined)} label={left > 0 ? "Book" : "Join waitlist"} variant={left > 0 ? "primary" : "secondary"} className="h-8 px-3" />
+                      <ActionButton action={bookClass.bind(null, c.id, date, undefined)} label={left > 0 ? "Book" : "Join waitlist"} variant={left > 0 ? "primary" : "secondary"} className="h-8 shrink-0 px-3" />
                     )}
                   </li>
                 );

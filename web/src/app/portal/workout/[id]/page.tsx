@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Nfc } from "lucide-react";
 import { Skeleton } from "@/components/ui";
 import { formatDateTime } from "@/lib/format";
-import { requireMember } from "@/lib/session";
+import { requireUnfrozenMember } from "@/lib/portal";
 import { createClient } from "@/lib/supabase/server";
 import { WorkoutLogger, type LoggerExercise } from "./workout-logger";
 
@@ -21,7 +21,7 @@ export default function WorkoutPage({ params }: PageProps<"/portal/workout/[id]"
 
 async function Workout({ params }: { params: PageProps<"/portal/workout/[id]">["params"] }) {
   const { id } = await params;
-  const { viewer, membership } = await requireMember();
+  const { viewer, membership } = await requireUnfrozenMember();
   const supabase = await createClient();
 
   const { data: session } = await supabase

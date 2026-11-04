@@ -25,6 +25,7 @@ const FILTERS: { value: string; label: string }[] = [
   { value: "frozen", label: "Frozen" },
   { value: "none", label: "No membership" },
   { value: "owing", label: "Owing money" },
+  { value: "unpaid_frozen", label: "Frozen, unpaid" },
   { value: "archived", label: "Archived" },
 ];
 
@@ -76,9 +77,11 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
   const canDelete = MANAGER_ROLES.includes(membership.role);
 
   const supabase = await createClient();
+  // Members whose balance is overdue get frozen before the list is read.
+  await supabase.rpc("freeze_unpaid_members", { p_gym_id: membership.gymId });
   let query = supabase
     .from("member_overview")
-    .select("id, full_name, phone, email, user_id, plan_name, ends_on, status, balance_usd, last_checkin_at, archived_at")
+    .select("id, full_name, phone, email, user_id, plan_name, ends_on, status, balance_usd, last_checkin_at, archived_at, unpaid_frozen_at")
     .eq("gym_id", membership.gymId)
     .order("full_name")
     .limit(300);
@@ -90,6 +93,7 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
   query = status === "archived" ? query.not("archived_at", "is", null) : query.is("archived_at", null);
   if (status === "owing") query = query.gt("balance_usd", 0);
   else if (status === "expired") query = query.in("status", ["expired", "used_up"]);
+  else if (status === "unpaid_frozen") query = query.not("unpaid_frozen_at", "is", null);
   else if (status && status !== "archived") query = query.eq("status", status);
 
   const { data: members } = await query;
@@ -170,7 +174,10 @@ async function MemberList({ searchParams }: { searchParams: PageProps<"/dashboar
                         )}
                       </td>
                       <td className="px-5 py-3">
-                        <Badge tone={s.tone}>{s.label}</Badge>
+                        <span className="flex flex-wrap gap-1">
+                          <Badge tone={s.tone}>{s.label}</Badge>
+                          {m.unpaid_frozen_at && <Badge tone="red">Frozen, unpaid</Badge>}
+                        </span>
                       </td>
                       <td className="hidden px-5 py-3 text-muted md:table-cell">
                         {m.last_checkin_at ? formatDate(m.last_checkin_at) : "Never"}

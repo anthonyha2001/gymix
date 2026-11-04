@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Eye, Plus } from "lucide-react";
+import { Eye, Lock, Plus } from "lucide-react";
 import { RowMenu } from "@/components/row-menu";
 import { activeTab, PageTabs } from "@/components/page-tabs";
 import { ProgramEditorModal } from "@/components/program-editor-modal";
@@ -127,6 +127,7 @@ async function MemberContent({
   const openPlan = typeof query.plan === "string" ? query.plan : null;
   const canManage = MANAGER_ROLES.includes(staff.role);
   const supabase = await createClient();
+  await supabase.rpc("freeze_unpaid_members", { p_gym_id: staff.gymId });
 
   const { data: member } = await supabase
     .from("member_overview")
@@ -281,6 +282,16 @@ async function MemberContent({
 
   return (
     <div className="space-y-6">
+      {member.unpaid_frozen_at && (
+        <div role="alert" className="flex items-start gap-3 rounded-2xl border border-danger/25 bg-danger-soft p-4 text-sm">
+          <Lock className="mt-0.5 size-4 shrink-0 text-danger" />
+          <p>
+            <span className="font-semibold text-danger">Account frozen for an unpaid balance</span> since{" "}
+            {formatDate(member.unpaid_frozen_at.slice(0, 10))}. Their member app shows only its home page and check-in is
+            refused. Once the balance is paid, their next check-in unfreezes it.
+          </p>
+        </div>
+      )}
       {/* Header */}
       <Card className="p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -294,6 +305,7 @@ async function MemberContent({
                 <Badge tone="red">Owes {formatUSD(member.balance_usd)}</Badge>
               )}
               {member.archived_at && <Badge tone="gray">Archived</Badge>}
+              {member.unpaid_frozen_at && <Badge tone="red">Frozen, unpaid</Badge>}
             </div>
             <p className="text-sm text-muted">
               {[member.phone, member.email].filter(Boolean).join(" · ") ||

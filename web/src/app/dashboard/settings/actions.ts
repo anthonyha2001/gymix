@@ -10,11 +10,13 @@ export async function saveGymSettings(_prev: ActionState, formData: FormData): P
   const { membership } = await requireStaff(["owner"]);
   const name = text(formData, "name");
   const rate = money(formData, "lbp_rate");
+  const grace = Number(formData.get("unpaid_grace_days"));
   if (name.length < 2 || name.length > 80) return { error: "Gym name must be between 2 and 80 characters." };
   if (!Number.isFinite(rate) || rate <= 0) return { error: "Enter the lira rate, e.g. 89500." };
+  if (!Number.isInteger(grace) || grace < 0 || grace > 60) return { error: "Days to pay must be between 0 and 60." };
 
   const supabase = await createClient();
-  const { error } = await supabase.from("gyms").update({ name, lbp_rate: rate }).eq("id", membership.gymId);
+  const { error } = await supabase.from("gyms").update({ name, lbp_rate: rate, unpaid_grace_days: grace }).eq("id", membership.gymId);
   if (error) return { error: errorMessage(error, "Couldn't save settings.") };
   refresh();
   return { success: "Saved." };

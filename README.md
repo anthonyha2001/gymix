@@ -53,6 +53,8 @@ Staff land on `/dashboard`, members on `/portal`, users with no gym on `/onboard
 - Members are invited with a personal link (WhatsApp or copy). Opening it signs them straight in; Gymix generates a
   password shown once, for logging in elsewhere with their phone, email or member code. The front desk can reset it.
 - The owner chooses which member-app pages are visible (Settings → Member app).
+- A member still owing money a set number of days after an invoice (Settings → Gym, default 3) is frozen: the
+  member app shows only its home page and check-in is refused. Their next check-in after paying unfreezes it.
 - All of this is enforced in the database with row-level security (`supabase/migrations/*_foundation.sql`), not only in the UI.
 
 ## Tests

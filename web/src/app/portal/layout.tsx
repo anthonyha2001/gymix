@@ -6,7 +6,7 @@ import { unreadCount } from "@/lib/chat";
 import { requireMember } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "../(auth)/actions";
-import { hiddenPortalPages } from "@/lib/portal";
+import { accountStatus, hiddenPortalPages } from "@/lib/portal";
 import { PortalNav } from "./portal-nav";
 import { InstallPrompt } from "@/components/install-prompt";
 import { NotificationBell } from "@/components/notification-bell";
@@ -20,7 +20,7 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
           <Link href="/portal">
             <Logo />
           </Link>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1">
             <Suspense>
               <Simulator />
             </Suspense>
@@ -28,7 +28,7 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
               <MemberBell />
             </Suspense>
             <form action={signOut}>
-              <button className="rounded-lg px-3 h-9 text-sm text-muted hover:bg-canvas hover:text-ink">Log out</button>
+              <button className="h-9 rounded-lg px-3 text-sm whitespace-nowrap text-muted hover:bg-canvas hover:text-ink">Log out</button>
             </form>
           </div>
         </div>
@@ -45,8 +45,12 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
 
 async function NavWithUnread() {
   const { viewer, membership } = await requireMember();
-  const [unread, hidden] = await Promise.all([unreadCount(await createClient(), viewer.id), hiddenPortalPages(membership.gymId)]);
-  return <PortalNav unread={unread} hidden={hidden} />;
+  const [unread, hidden, account] = await Promise.all([
+    unreadCount(await createClient(), viewer.id),
+    hiddenPortalPages(membership.gymId),
+    accountStatus(membership.gymId),
+  ]);
+  return <PortalNav unread={unread} hidden={hidden} frozen={account.frozen} />;
 }
 
 // Double-space NFC tap simulator, while the gym has it switched on.

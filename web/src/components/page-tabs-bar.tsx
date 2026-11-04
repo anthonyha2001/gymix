@@ -83,7 +83,7 @@ export function PageTabs({
             onClick={() => {
               if (t.id !== current) setPending({ id: t.id, from: active });
             }}
-            className={`relative z-10 flex flex-1 shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm whitespace-nowrap transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${
+            className={`relative z-10 flex flex-1 shrink-0 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm sm:px-4 whitespace-nowrap transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${
               on ? "font-semibold text-ink" : "font-medium text-muted hover:text-ink"
             } ${on && !pill ? "bg-surface shadow-sm" : ""}`}
           >
