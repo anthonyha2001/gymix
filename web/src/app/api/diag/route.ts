@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getViewer } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
-// TEMPORARY: helps find a deployment misconfiguration. Super admins only.
+// TEMPORARY: helps find a deployment misconfiguration. Signed-in users only.
 // Reports what kind of keys are set (never the keys) and whether the server's
 // database calls carry the signed-in user.
 function kind(value: string | undefined) {
@@ -22,7 +22,7 @@ function kind(value: string | undefined) {
 
 export async function GET() {
   const viewer = await getViewer();
-  if (!viewer?.isPlatformAdmin) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!viewer) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const supabase = await createClient();
   const [{ data: isAdmin, error: adminError }, { data: uid, error: uidError }] = await Promise.all([
     supabase.rpc("is_platform_admin"),
@@ -34,6 +34,7 @@ export async function GET() {
     serviceKey: kind(process.env.SUPABASE_SERVICE_ROLE_KEY),
     otherSupabaseVars: Object.keys(process.env).filter((k) => /SUPABASE/i.test(k)).sort(),
     viewerId: viewer.id,
+    viewerIsPlatformAdmin: viewer.isPlatformAdmin,
     rpcIsPlatformAdmin: adminError ? `error ${adminError.code}: ${adminError.message}` : isAdmin,
     ownProfileVisible: uidError ? `error ${uidError.code}: ${uidError.message}` : Boolean(uid),
   });
