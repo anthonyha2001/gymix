@@ -1,61 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Dumbbell } from "lucide-react";
 
-// Shake the phone (twice, quickly) to open today's program. Works while
-// the app is open; iPhones need motion permission once (Profile → Shake to start).
+// Shake the phone (three times, quickly) to open today's program. The shake
+// itself is recognised by MotionGestures; iPhones need motion permission once.
 export function ShakeQuickStart({ href }: { href: string }) {
   const router = useRouter();
-  // A wave fills the screen, then the program opens.
+  // A lime wave fills the screen, then the program opens underneath it.
   const [wave, setWave] = useState(0);
-  const peaks = useRef<number[]>([]);
-  const last = useRef(0);
 
   useEffect(() => {
-    const enabled = () => {
-      try {
-        return localStorage.getItem("gymix:shake") !== "off";
-      } catch {
-        return true;
-      }
+    const onShake = () => {
+      navigator.vibrate?.(40);
+      setWave(Date.now());
+      router.prefetch(href);
+      setTimeout(() => router.push(href), 350);
     };
-    const onMotion = (e: DeviceMotionEvent) => {
-      const a = e.accelerationIncludingGravity ?? e.acceleration;
-      if (!a || !enabled()) return;
-      const force = Math.hypot(a.x ?? 0, a.y ?? 0, a.z ?? 0);
-      // ~9.8 is gravity at rest; a firm shake goes well past 20.
-      if (force < 22) return;
-      const now = Date.now();
-      // Not while typing, and not again right after it opened.
-      const el = document.activeElement;
-      if (el && ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName)) return;
-      if (now - last.current < 3000) return;
-      peaks.current = [...peaks.current.filter((t) => now - t < 900), now];
-      // Two separate peaks (a back-and-forth) within 0.9 s.
-      if (peaks.current.length >= 2 && peaks.current[peaks.current.length - 1] - peaks.current[0] > 150) {
-        peaks.current = [];
-        last.current = now;
-        navigator.vibrate?.(40);
-        setWave(now);
-        router.prefetch(href);
-        setTimeout(() => router.push(href), 220);
-      }
-    };
-    window.addEventListener("devicemotion", onMotion);
-    // Android sends motion events right away. iPhones only after permission,
-    // which must be asked during a tap: ask on the first one (silent once granted).
-    const Motion = window.DeviceMotionEvent as unknown as { requestPermission?: () => Promise<string> } | undefined;
-    const ask = () => {
-      if (enabled()) Motion?.requestPermission?.().catch(() => {});
-    };
-    const needsAsk = typeof Motion?.requestPermission === "function";
-    if (needsAsk) window.addEventListener("touchend", ask, { once: true });
-    return () => {
-      window.removeEventListener("devicemotion", onMotion);
-      if (needsAsk) window.removeEventListener("touchend", ask);
-    };
+    window.addEventListener("gymix:shake", onShake);
+    return () => window.removeEventListener("gymix:shake", onShake);
   }, [href, router]);
 
-  return wave ? <div key={wave} aria-hidden className="shake-wave" onAnimationEnd={() => setWave(0)} /> : null;
+  if (!wave) return null;
+  return (
+    <div key={wave} aria-hidden className="shake-wave" onAnimationEnd={(e) => e.target === e.currentTarget && setWave(0)}>
+      <span className="shake-wave-label">
+        <Dumbbell className="size-10" />
+        Today&apos;s workout
+      </span>
+    </div>
+  );
 }

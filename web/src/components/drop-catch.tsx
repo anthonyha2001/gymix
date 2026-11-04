@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// Dropped the phone? It free-falls (almost no acceleration), then hits the
-// floor (a spike). The screen "cracks", then heals with a joke. Profile has a
-// button that plays it without dropping anything ("gymix:drop" event).
+// Dropped the phone? MotionGestures spots the fall and the hit and sends
+// "gymix:drop" (so does Profile's "Try it"). The screen "cracks", then heals
+// with a joke.
 const LINES = [
   "Gravity 1, you 0.",
   "That's not a deadlift.",
@@ -50,8 +50,6 @@ function makeCracks(cx: number, cy: number): Crack[] {
 
 export function DropCatch() {
   const [drop, setDrop] = useState<{ id: number; cracks: Crack[]; cx: number; cy: number; line: string } | null>(null);
-  const fallStart = useRef(0);
-  const fellAt = useRef(0);
   const last = useRef(0);
 
   useEffect(() => {
@@ -64,31 +62,8 @@ export function DropCatch() {
       navigator.vibrate?.([70, 40, 120]);
       setDrop({ id: now, cracks: makeCracks(cx, cy), cx, cy, line: LINES[Math.floor(Math.random() * LINES.length)] });
     };
-    const onMotion = (e: DeviceMotionEvent) => {
-      const a = e.accelerationIncludingGravity;
-      if (!a || a.x == null) return;
-      const g = Math.hypot(a.x ?? 0, a.y ?? 0, a.z ?? 0);
-      const now = Date.now();
-      if (g < 3) {
-        // Free fall: gravity seems to vanish.
-        if (!fallStart.current) fallStart.current = now;
-      } else {
-        // A fall of 0.15 s or more (about 10 cm) just ended.
-        if (fallStart.current && now - fallStart.current > 150) fellAt.current = now;
-        fallStart.current = 0;
-      }
-      // The landing: a hard hit right after the fall.
-      if (fellAt.current && now - fellAt.current < 800 && g > 25) {
-        fellAt.current = 0;
-        play();
-      }
-    };
-    window.addEventListener("devicemotion", onMotion);
     window.addEventListener("gymix:drop", play);
-    return () => {
-      window.removeEventListener("devicemotion", onMotion);
-      window.removeEventListener("gymix:drop", play);
-    };
+    return () => window.removeEventListener("gymix:drop", play);
   }, []);
 
   useEffect(() => {

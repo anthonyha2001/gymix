@@ -225,7 +225,7 @@ export function ShakeSetting() {
     <div className="flex items-center justify-between gap-4 py-3">
       <span className="text-sm">
         <span className="block font-medium">Shake to start</span>
-        <span className="text-muted">Shake your phone to bring up today&apos;s workout.</span>
+        <span className="text-muted">Shake your phone three times, quickly, to open today&apos;s program.</span>
       </span>
       <Switch on={on} onChange={set} label="Shake to start" />
     </div>

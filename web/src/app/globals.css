@@ -167,23 +167,40 @@ dialog[open]:not(.sheet)::backdrop { animation: sheet-fade 200ms ease-out; }
   opacity: 0;
   animation: gx-confetti 1100ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
 }
-/* Shake to start: a wave fills the screen before the program opens. */
+/* Shake to start: a lime wave floods the screen from the middle with
+   "Today's workout", the program opens underneath, then the wave fades. */
 @keyframes gx-wave {
-  0% { opacity: 0.9; transform: translate(-50%, -50%) scale(0); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+  0% { clip-path: circle(0% at 50% 55%); opacity: 1; }
+  45% { clip-path: circle(75% at 50% 55%); opacity: 1; }
+  75% { clip-path: circle(75% at 50% 55%); opacity: 1; }
+  100% { clip-path: circle(75% at 50% 55%); opacity: 0; }
+}
+@keyframes gx-wave-label {
+  0%, 20% { opacity: 0; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1.08); }
+  65%, 100% { opacity: 1; transform: none; }
 }
 .shake-wave {
   position: fixed;
-  left: 50%;
-  top: 50%;
+  inset: 0;
   z-index: 60;
-  width: 260vmax;
-  height: 260vmax;
-  border-radius: 9999px;
+  display: grid;
+  place-items: center;
   pointer-events: none;
-  background: radial-gradient(circle, var(--color-brand) 0 30%, transparent 62%);
-  animation: gx-wave 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  background: var(--color-brand);
+  color: var(--color-ink);
+  animation: gx-wave 1000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
+.shake-wave-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  animation: gx-wave-label 1000ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes gx-fade-out { 0%, 60% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes gx-wiggle {
   0%, 100% { transform: rotate(0); }
   20% { transform: rotate(-14deg); }
@@ -193,7 +210,9 @@ dialog[open]:not(.sheet)::backdrop { animation: sheet-fade 200ms ease-out; }
 }
 .wiggle { animation: gx-wiggle 600ms ease-in-out; }
 @media (prefers-reduced-motion: reduce) {
-  .stagger > *, .check-pop, .pr-banner, .pr-banner::after, .shake-wave, .wiggle { animation: none; }
+  .stagger > *, .check-pop, .pr-banner, .pr-banner::after, .shake-wave-label, .wiggle { animation: none; }
+  /* Still has to end (its animationend removes it): a plain fade. */
+  .shake-wave { animation: gx-fade-out 700ms linear forwards; }
   .press :is(a, button):active { transform: none; }
   .confetti { display: none; }
 }

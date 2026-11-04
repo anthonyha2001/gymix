@@ -11,6 +11,7 @@ import { PortalNav } from "./portal-nav";
 import { InstallPrompt } from "@/components/install-prompt";
 import { ShakeQuickStart } from "@/components/shake-quick-start";
 import { DropCatch } from "@/components/drop-catch";
+import { MotionGestures } from "@/components/motion-gestures";
 import { loadTrainingPlan } from "@/lib/training-plan";
 import { QrScanButton } from "@/components/qr-scanner";
 import { NotificationBell } from "@/components/notification-bell";
@@ -48,6 +49,7 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
       </Suspense>
       <InstallPrompt />
       <DropCatch />
+      <MotionGestures />
     </div>
   );
 }
