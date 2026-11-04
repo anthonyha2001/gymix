@@ -1874,6 +1874,9 @@ isOneToOne: false
 "trainer_is_free":
 { Args: { "p_duration": number,"p_except"?: string,"p_starts_at": string,"p_trainer_id": string }; Returns: boolean
                            },
+"freeze_my_membership":
+{ Args: { "p_action": string,"p_gym_id": string }; Returns: undefined
+                           },
 "update_membership":
 { Args: { "p_action": string,"p_membership_id": string }; Returns: undefined
                            },

@@ -273,3 +273,13 @@ export async function discardWorkout(sessionId: string) {
   await supabase.from("workout_sessions").delete().eq("id", sessionId);
   redirect("/portal/train");
 }
+
+// The member pauses or resumes their own membership.
+export async function freezeMyMembership(action: "freeze" | "unfreeze"): Promise<ActionState> {
+  const { membership } = await requireMember();
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("freeze_my_membership", { p_gym_id: membership.gymId, p_action: action });
+  if (error) return { error: errorMessage(error, "Couldn't update your membership.") };
+  refresh();
+  return { success: action === "freeze" ? "Membership paused." : "Welcome back. Your membership is active again." };
+}

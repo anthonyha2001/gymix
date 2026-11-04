@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { CalendarDays, CheckCircle2, ChevronRight, Dumbbell, Flame, Nfc, UserRound } from "lucide-react";
 import { Badge, Card, EmptyState, SectionTitle } from "@/components/ui";
+import { ActionButton } from "@/app/dashboard/members/action-button";
+import { freezeMyMembership } from "@/app/portal/actions";
 import { TodayWorkout } from "@/components/today-workout";
 import {
   INVOICE_STATUS,
@@ -192,6 +194,23 @@ export async function MemberHome({
             </div>
           )}
         </div>
+        {!preview && me?.status === "active" && (
+          <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-3">
+            <p className="text-sm text-muted">Away for a while? Pause it and the days are added back.</p>
+            <ActionButton
+              action={freezeMyMembership.bind(null, "freeze")}
+              label="Pause"
+              pendingLabel="Pausing…"
+              confirm="Pause your membership? You can't check in or use the app until you resume it. The paused days are added to your end date."
+            />
+          </div>
+        )}
+        {!preview && me?.status === "frozen" && (
+          <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-3">
+            <p className="text-sm text-muted">Your membership is paused.</p>
+            <ActionButton action={freezeMyMembership.bind(null, "unfreeze")} label="Resume" pendingLabel="Resuming…" variant="primary" />
+          </div>
+        )}
         {(!me || me.status === "expired" || me.status === "none") && (
           <p className="border-t border-line px-5 py-3 text-sm text-muted">Renew at the front desk to keep training.</p>
         )}

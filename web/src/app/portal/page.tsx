@@ -95,7 +95,7 @@ function InactiveNotice({ status }: { status: string }) {
       </span>
       <div className="min-w-0 space-y-1">
         <h2 className="text-lg font-semibold">{text[status] ?? "Your membership isn't active."}</h2>
-        <p className="text-sm text-muted">Until it&apos;s active, only this page is open. Renew at the front desk and everything opens again.</p>
+        <p className="text-sm text-muted">{status === "frozen" ? "Resume it below and everything opens again." : "Until it's active, only this page is open. Renew at the front desk and everything opens again."}</p>
       </div>
     </section>
   );
