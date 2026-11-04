@@ -18,7 +18,10 @@ export async function createGym(_prev: CreateGymState, formData: FormData): Prom
   const supabase = await createClient();
   const { error } = await supabase.rpc("create_gym", { p_name: name });
   if (error) {
-    return { error: isUnreachable(error) ? UNREACHABLE_MESSAGE : "Couldn't create the gym. Please try again." };
+    if (isUnreachable(error)) return { error: UNREACHABLE_MESSAGE };
+    console.error("create_gym failed", error);
+    // The code helps support find the cause without exposing details.
+    return { error: `Couldn't create the gym. Please try again. (Code: ${error.code || error.message?.slice(0, 60) || "unknown"})` };
   }
 
   redirect("/dashboard");
