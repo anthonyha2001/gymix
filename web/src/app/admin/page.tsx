@@ -12,9 +12,10 @@ import { platformSettings } from "@/lib/subscription";
 import { requirePlatformAdmin } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "../(auth)/actions";
-import { extendTrial, recordSubscriptionPayment, setGymSuspended } from "./actions";
+import { extendTrial, openGymAsSupport, recordSubscriptionPayment, setGymSuspended } from "./actions";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { DailyChart } from "./daily-chart";
-import { ExtendTrialForm, PlatformSettingsForm, PricingForm, PruneForm, RecordPaymentForm, SuspendForm } from "./forms";
+import { BroadcastForm, ExtendTrialForm, PlatformSettingsForm, PricingForm, PruneForm, RecordPaymentForm, SuspendForm, WhatsAppKeysForm } from "./forms";
 import {
   ADMIN_TZ,
   EMPTY_TOTALS,
@@ -686,6 +687,18 @@ async function Gyms() {
           <StatTile key={t.label} label={t.label} value={t.value} />
         ))}
       </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="p-5">
+          <h2 className="font-semibold">Send a notification</h2>
+          <p className="mb-4 text-sm text-muted">Maintenance, new features, anything every gym should know. It lands in their bell.</p>
+          <BroadcastForm />
+        </Card>
+        <Card className="p-5">
+          <h2 className="font-semibold">WhatsApp (Gymix number)</h2>
+          <p className="mb-4 text-sm text-muted">Renewal reminders, payment receipts and new-member logins go out from this number for every gym.</p>
+          <WhatsAppKeys />
+        </Card>
+      </div>
       <TableCard title="All gyms">
         {!rows.length ? (
           <EmptyState>No gyms yet. They appear here as owners sign up.</EmptyState>
@@ -736,6 +749,11 @@ async function Gyms() {
                     <td className={`${tdClass} text-muted`}>{g.last_checkin_at ? formatDate(g.last_checkin_at) : "Never"}</td>
                     <td className={tdClass}>
                       <div className="flex justify-end gap-2">
+                        <form action={openGymAsSupport.bind(null, g.gym_id)}>
+                          <button title="Open their dashboard as the owner, to help them" className="inline-flex h-8 items-center rounded-lg bg-brand px-3 text-xs font-medium whitespace-nowrap">
+                            Open dashboard
+                          </button>
+                        </form>
                         <Dialog
                           label="Record payment"
                           title={`Payment from ${g.name}`}
@@ -910,4 +928,10 @@ async function MyGymLink() {
       {hasGym ? "My gym dashboard" : "Create a gym"}
     </Link>
   );
+}
+
+async function WhatsAppKeys() {
+  const { data } = await createAdminClient().from("platform_secrets").select("whatsapp_token, whatsapp_phone_number_id").maybeSingle();
+  const token = data?.whatsapp_token ?? "";
+  return <WhatsAppKeysForm tokenHint={token ? token.slice(-4) : null} phoneNumberId={data?.whatsapp_phone_number_id ?? ""} />;
 }

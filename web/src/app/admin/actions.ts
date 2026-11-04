@@ -4,6 +4,8 @@ import { refresh, updateTag } from "next/cache";
 import { errorMessage, text, type ActionState } from "@/lib/action-result";
 import { formatDate } from "@/lib/format";
 import { requirePlatformAdmin } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { PRICING_TAG } from "@/lib/pricing-server";
 
@@ -99,4 +101,50 @@ export async function pruneEvents(_prev: ActionState, formData: FormData): Promi
   if (error) return { error: errorMessage(error, "Couldn't clean up.") };
   refresh();
   return { success: `Removed ${(data ?? 0).toLocaleString("en-US")} old events.` };
+}
+
+// Support access: open a gym's dashboard as its owner, without an account there.
+export async function openGymAsSupport(gymId: string) {
+  const viewer = await requirePlatformAdmin();
+  const { error } = await createAdminClient()
+    .from("platform_admin_visits")
+    .upsert({ user_id: viewer.id, gym_id: gymId, started_at: new Date().toISOString() }, { onConflict: "user_id" });
+  if (error) throw new Error(errorMessage(error, "Couldn't open the gym."));
+  redirect("/dashboard");
+}
+
+export async function leaveSupport() {
+  const viewer = await requirePlatformAdmin();
+  await createAdminClient().from("platform_admin_visits").delete().eq("user_id", viewer.id);
+  redirect("/admin?tab=gyms");
+}
+
+// Keys for the Gymix WhatsApp number (Meta Cloud API). Kept server-side only;
+// a blank token keeps the saved one.
+export async function saveWhatsAppKeys(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requirePlatformAdmin();
+  const token = text(formData, "token");
+  const phoneId = text(formData, "phone_number_id");
+  if (phoneId && !/^\d{6,20}$/.test(phoneId)) return { error: "The phone number ID is the long number from WhatsApp Manager." };
+  const { error } = await createAdminClient()
+    .from("platform_secrets")
+    .update({ whatsapp_phone_number_id: phoneId, ...(token ? { whatsapp_token: token } : {}), updated_at: new Date().toISOString() })
+    .eq("id", true);
+  if (error) return { error: errorMessage(error, "Couldn't save.") };
+  refresh();
+  return { success: "Saved." };
+}
+
+// A bell notification to every gym's team (or everyone, members too).
+export async function broadcast(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requirePlatformAdmin();
+  const title = text(formData, "title");
+  const body = text(formData, "body");
+  const audience = formData.get("audience") === "everyone" ? "everyone" : "staff";
+  if (!title) return { error: "Write a title." };
+  if (title.length > 120 || body.length > 300) return { error: "Keep the title under 120 characters and the message under 300." };
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_broadcast", { p_title: title, p_body: body, p_audience: audience });
+  if (error) return { error: errorMessage(error, "Couldn't send.") };
+  return { success: `Sent to ${data ?? 0} people.` };
 }

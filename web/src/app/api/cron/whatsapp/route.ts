@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   if (!process.env.CRON_SECRET || request.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
-  if (!whatsappConfigured()) return Response.json({ sent: 0, skipped: "WhatsApp is not configured" });
+  if (!(await whatsappConfigured())) return Response.json({ sent: 0, skipped: "WhatsApp is not configured" });
 
   const { data, error } = await createAdminClient().rpc("renewal_reminders_due");
   if (error) return Response.json({ error: error.message }, { status: 500 });

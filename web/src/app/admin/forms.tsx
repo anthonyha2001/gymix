@@ -5,7 +5,7 @@ import { useDialogAction } from "@/components/dialog";
 import { SearchSelect } from "@/components/search-select";
 import { Alert, Button, Field, inputClass, inputWidth } from "@/components/ui";
 import type { ActionState } from "@/lib/action-result";
-import { pruneEvents, savePlatformSettings, savePricing } from "./actions";
+import { broadcast, pruneEvents, savePlatformSettings, savePricing, saveWhatsAppKeys } from "./actions";
 
 type FormAction = (prev: ActionState, formData: FormData) => Promise<ActionState>;
 
@@ -152,6 +152,60 @@ export function PruneForm() {
       </Button>
       {state.error && <span className="text-sm text-danger">{state.error}</span>}
       {state.success && <span className="text-sm text-success">{state.success}</span>}
+    </form>
+  );
+}
+
+export function WhatsAppKeysForm({ tokenHint, phoneNumberId }: { tokenHint: string | null; phoneNumberId: string }) {
+  const [state, formAction, pending] = useActionState(saveWhatsAppKeys, {});
+  return (
+    <form action={formAction} className="space-y-4">
+      {state.error && <Alert tone="error">{state.error}</Alert>}
+      <Field label="Phone number ID" hint="WhatsApp Manager → API setup. The long number under your Gymix phone number.">
+        <input name="phone_number_id" inputMode="numeric" defaultValue={phoneNumberId} placeholder="123456789012345" className={inputClass} />
+      </Field>
+      <Field
+        label="Access token"
+        hint={tokenHint ? `Saved (ends in …${tokenHint}). Leave blank to keep it.` : "A permanent token from a system user in Meta Business settings."}
+      >
+        <input name="token" type="password" autoComplete="off" placeholder={tokenHint ? "••••••••" : "EAAG…"} className={inputClass} />
+      </Field>
+      <div className="flex items-center justify-end gap-3">
+        {state.success && <span className="text-sm text-success">{state.success}</span>}
+        <Button type="submit" disabled={pending}>
+          {pending ? "Saving…" : "Save"}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+export function BroadcastForm() {
+  const [state, formAction, pending] = useActionState(broadcast, {});
+  return (
+    <form action={formAction} className="space-y-4">
+      {state.error && <Alert tone="error">{state.error}</Alert>}
+      <Field label="Title">
+        <input name="title" required maxLength={120} placeholder="Short maintenance tonight at 2:00" className={inputClass} />
+      </Field>
+      <Field label="Message" hint="Optional. Up to 300 characters.">
+        <textarea name="body" rows={3} maxLength={300} placeholder="Gymix will be unavailable for about 10 minutes. Nothing to do on your side." className={`${inputClass} h-auto py-2`} />
+      </Field>
+      <fieldset className="flex flex-wrap gap-4 text-sm">
+        <legend className="mb-2 text-sm font-medium">Send to</legend>
+        <label className="flex items-center gap-2">
+          <input type="radio" name="audience" value="staff" defaultChecked className="accent-ink" /> Gym owners and teams
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="radio" name="audience" value="everyone" className="accent-ink" /> Everyone (members too)
+        </label>
+      </fieldset>
+      <div className="flex items-center justify-end gap-3">
+        {state.success && <span className="text-sm text-success">{state.success}</span>}
+        <Button type="submit" disabled={pending}>
+          {pending ? "Sending…" : "Send notification"}
+        </Button>
+      </div>
     </form>
   );
 }

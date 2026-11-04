@@ -935,6 +935,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"platform_admin_visits": {
+                  Row: {
+                    "gym_id": string,"started_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "gym_id": string,"started_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "gym_id"?: string,"started_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "platform_admin_visits_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "platform_admin_visits_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"platform_admins": {
                   Row: {
                     "created_at": string,"user_id": string
@@ -1000,6 +1026,20 @@ isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
+                  ]
+                },"platform_secrets": {
+                  Row: {
+                    "id": boolean,"updated_at": string,"whatsapp_phone_number_id": string,"whatsapp_token": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: boolean,"updated_at"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_token"?: string
+                  }
+                  Update: {
+                    "id"?: boolean,"updated_at"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_token"?: string
+                  }
+                  Relationships: [
+                    
                   ]
                 },"platform_settings": {
                   Row: {
@@ -1585,6 +1625,9 @@ isOneToOne: false
                            },
 "adjust_membership":
 { Args: { "p_ends_on": string,"p_membership_id": string,"p_starts_on": string,"p_visit_limit": number,"p_visits_used": number }; Returns: undefined
+                           },
+"admin_broadcast":
+{ Args: { "p_audience": string,"p_body": string,"p_title": string }; Returns: number
                            },
 "admin_extend_trial":
 { Args: { "p_days": number,"p_gym_id": string }; Returns: string

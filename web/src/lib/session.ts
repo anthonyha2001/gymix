@@ -19,6 +19,8 @@ export type Viewer = {
   memberships: Membership[];
   // Runs the Gymix platform itself (see /admin).
   isPlatformAdmin: boolean;
+  // The gym a super admin is helping right now (they act as its owner).
+  supportGym: { id: string; name: string } | null;
 };
 
 // Who is signed in, their gyms and roles. Cached for the request, so the many
@@ -30,7 +32,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
   if (!claims?.sub) return null;
   const user = { id: claims.sub, email: typeof claims.email === "string" ? claims.email : "" };
 
-  const [{ data: profile }, { data: rows }, { data: isPlatformAdmin }] = await Promise.all([
+  const [{ data: profile }, { data: rows }, { data: isPlatformAdmin }, { data: visit }] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
     supabase
       .from("gym_users")
@@ -38,13 +40,19 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       .eq("user_id", user.id)
       .order("created_at"),
     supabase.rpc("is_platform_admin"),
+    supabase.from("platform_admin_visits").select("gym_id, gyms(name, timezone, lbp_rate)").eq("user_id", user.id).maybeSingle(),
   ]);
+
+  const supportGym = isPlatformAdmin === true && visit ? { id: visit.gym_id, name: visit.gyms?.name ?? "" } : null;
+  const own = (rows ?? []).filter((r) => r.gym_id !== supportGym?.id);
+  // While helping a gym, its dashboard comes first.
+  const all = supportGym && visit ? [{ gym_id: visit.gym_id, role: "owner" as GymRole, gyms: visit.gyms }, ...own] : own;
 
   return {
     id: user.id,
     email: user.email ?? "",
     fullName: profile?.full_name ?? "",
-    memberships: (rows ?? []).map((r) => ({
+    memberships: all.map((r) => ({
       gymId: r.gym_id,
       gymName: r.gyms?.name ?? "",
       role: r.role,
@@ -52,6 +60,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       lbpRate: Number(r.gyms?.lbp_rate ?? 89500),
     })),
     isPlatformAdmin: isPlatformAdmin === true,
+    supportGym,
   };
 });
 

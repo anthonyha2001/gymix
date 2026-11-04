@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { waNumber } from "@/lib/invite-link";
 
@@ -8,7 +9,8 @@ import { waNumber } from "@/lib/invite-link";
 //   gymix_renewal_reminder  Hi {{1}}, your {{2}} membership ends on {{3}}. Renew at the front desk to keep training.
 //   gymix_payment_received  Hi {{1}}, {{2}} received your payment of {{3}}. Thank you!
 //   gymix_member_welcome    Hi {{1}}, {{2}} has set up your Gymix account. Open your portal: {{3}}
-// Without WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID nothing is sent.
+// The keys come from the super admin console (or WHATSAPP_TOKEN /
+// WHATSAPP_PHONE_NUMBER_ID); without them nothing is sent.
 const TEMPLATES = {
   renewal: "gymix_renewal_reminder",
   payment: "gymix_payment_received",
@@ -24,8 +26,17 @@ const BODIES: Record<WhatsAppKind, (p: string[]) => string> = {
   welcome: (p) => `Hi ${p[0]}, ${p[1]} has set up your Gymix account. Open your portal: ${p[2]}`,
 };
 
-export function whatsappConfigured() {
-  return Boolean(process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID);
+export const whatsappKeys = cache(async (): Promise<{ token: string; phoneNumberId: string } | null> => {
+  if (process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID) {
+    return { token: process.env.WHATSAPP_TOKEN, phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID };
+  }
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  const { data } = await createAdminClient().from("platform_secrets").select("whatsapp_token, whatsapp_phone_number_id").maybeSingle();
+  return data?.whatsapp_token && data.whatsapp_phone_number_id ? { token: data.whatsapp_token, phoneNumberId: data.whatsapp_phone_number_id } : null;
+});
+
+export async function whatsappConfigured() {
+  return (await whatsappKeys()) !== null;
 }
 
 // Sends one message, at most once per (kind, ref). Never throws: a failure is
@@ -39,7 +50,8 @@ export async function sendWhatsApp(msg: {
   params: string[];
 }) {
   const to = waNumber(msg.phone);
-  if (!to || !whatsappConfigured()) return;
+  const keys = await whatsappKeys();
+  if (!to || !keys) return;
   const admin = createAdminClient();
   const { data: row } = await admin
     .from("whatsapp_log")
@@ -50,9 +62,9 @@ export async function sendWhatsApp(msg: {
 
   let error: string | null = null;
   try {
-    const res = await fetch(`https://graph.facebook.com/v21.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+    const res = await fetch(`https://graph.facebook.com/v21.0/${keys.phoneNumberId}/messages`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${keys.token}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         messaging_product: "whatsapp",
         to,

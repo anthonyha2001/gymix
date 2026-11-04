@@ -13,7 +13,7 @@ import { firstName, sendWhatsApp, whatsappConfigured } from "@/lib/whatsapp";
 
 // A payment receipt on WhatsApp, after the response is sent.
 async function sendReceipt(gymId: string, gymName: string, memberId: string, amountUsd: number, ref: string) {
-  if (!whatsappConfigured()) return;
+  if (!(await whatsappConfigured())) return;
   const supabase = await createClient();
   const { data: m } = await supabase.from("members").select("full_name, phone").eq("id", memberId).maybeSingle();
   if (!m?.phone) return;
@@ -76,7 +76,7 @@ export async function createMember(_prev: ActionState, formData: FormData): Prom
     if (inviteError) return { error: inviteError };
   }
   // New member with a phone: their login link goes out on WhatsApp.
-  if (parsed.details.phone && whatsappConfigured()) {
+  if (parsed.details.phone && (await whatsappConfigured())) {
     const { data: token } = await supabase.rpc("member_invite_token", { p_member_id: data.id });
     if (token) {
       const url = `${await requestOrigin()}/join/${token}`;
