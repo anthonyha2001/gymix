@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured, isUnreachable, UNREACHABLE_MESSAGE } from "@/lib/supabase/config";
 import { homePathForUser } from "@/lib/session";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { identifierType, logAuthEvent } from "@/lib/telemetry-server";
 
 export type AuthFormState = { error?: string; message?: string; email?: string };
 
@@ -39,17 +40,27 @@ export async function signIn(_prev: AuthFormState, formData: FormData): Promise<
   }
   if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED, email: identifier };
 
+  const via = identifierType(identifier);
+  const failed = (reason: string) =>
+    logAuthEvent({ kind: "login_failed", path: "/login", message: identifier.slice(0, 100), detail: { reason, via } });
+
   const email = await loginEmail(identifier);
-  if (!email) return { error: "Wrong login or password.", email: identifier };
+  if (!email) {
+    await failed("unknown login");
+    return { error: "Wrong login or password.", email: identifier };
+  }
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     if (isUnreachable(error)) return { error: UNREACHABLE_MESSAGE, email: identifier };
     if (error.code === "email_not_confirmed") {
+      await failed("email not confirmed");
       return { error: "Confirm your email first — check your inbox for the link.", email: identifier };
     }
+    await failed(error.code ?? "wrong password");
     return { error: "Wrong login or password.", email: identifier };
   }
+  await logAuthEvent({ kind: "login", path: "/login", user_id: data.user.id, message: "password", detail: { via } });
 
   // Pick up any gym invites sent to this email since the account was created.
   await supabase.rpc("claim_my_invites");
@@ -68,7 +79,8 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
   }
   if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED, email };
 
-  const origin = (await headers()).get("origin") ?? "";
+  // The public site URL wins so confirmation links never point at localhost in production.
+  const origin = (process.env.NEXT_PUBLIC_SITE_URL || (await headers()).get("origin") || "").replace(/\/+$/, "");
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -87,6 +99,7 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
     if (error.code === "weak_password") return { error: error.message, email };
     return { error: "Couldn't create your account. Please try again.", email };
   }
+  if (data.user) await logAuthEvent({ kind: "signup", path: "/signup", user_id: data.user.id, message: "email" });
 
   // Email confirmation is on: no session until they click the link.
   if (!data.session || !data.user) {
