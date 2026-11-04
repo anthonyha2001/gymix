@@ -2,11 +2,25 @@
 
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireStaff } from "@/lib/session";
 import { BILLING_ROLES, MANAGER_ROLES } from "@/lib/roles";
-import { PAYMENT_METHODS, type PaymentMethod } from "@/lib/format";
+import { PAYMENT_METHODS, formatUSD, type PaymentMethod } from "@/lib/format";
 import { errorMessage, money, text, type ActionState } from "@/lib/action-result";
+import { requestOrigin } from "@/lib/origin";
+import { firstName, sendWhatsApp, whatsappConfigured } from "@/lib/whatsapp";
+
+// A payment receipt on WhatsApp, after the response is sent.
+async function sendReceipt(gymId: string, gymName: string, memberId: string, amountUsd: number, ref: string) {
+  if (!whatsappConfigured()) return;
+  const supabase = await createClient();
+  const { data: m } = await supabase.from("members").select("full_name, phone").eq("id", memberId).maybeSingle();
+  if (!m?.phone) return;
+  after(() =>
+    sendWhatsApp({ kind: "payment", ref, gymId, memberId, phone: m.phone, params: [firstName(m.full_name), gymName, formatUSD(amountUsd)] }),
+  );
+}
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -61,6 +75,17 @@ export async function createMember(_prev: ActionState, formData: FormData): Prom
     const inviteError = await memberInvite(data.id);
     if (inviteError) return { error: inviteError };
   }
+  // New member with a phone: their login link goes out on WhatsApp.
+  if (parsed.details.phone && whatsappConfigured()) {
+    const { data: token } = await supabase.rpc("member_invite_token", { p_member_id: data.id });
+    if (token) {
+      const url = `${await requestOrigin()}/join/${token}`;
+      const phone = parsed.details.phone;
+      after(() =>
+        sendWhatsApp({ kind: "welcome", ref: data.id, gymId: membership.gymId, memberId: data.id, phone, params: [firstName(parsed.details.full_name), membership.gymName, url] }),
+      );
+    }
+  }
   // Stay on the list: a "Member added" dialog offers the invite and the profile.
   redirect(`/dashboard/members?added=${data.id}`);
 }
@@ -108,7 +133,7 @@ export async function removePortalAccess(memberId: string) {
 }
 
 export async function sellMembership(memberId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireStaff(BILLING_ROLES);
+  const { membership } = await requireStaff(BILLING_ROLES);
   const planId = text(formData, "plan_id");
   const startsOn = text(formData, "starts_on");
   const discount = money(formData, "discount_usd");
@@ -119,7 +144,7 @@ export async function sellMembership(memberId: string, _prev: ActionState, formD
   if (!parsed.payment) return { error: parsed.error };
 
   const supabase = await createClient();
-  const { error } = await supabase.rpc("sell_membership", {
+  const { data: saleId, error } = await supabase.rpc("sell_membership", {
     p_member_id: memberId,
     p_plan_id: planId,
     p_starts_on: startsOn,
@@ -129,19 +154,20 @@ export async function sellMembership(memberId: string, _prev: ActionState, formD
     p_amount_lbp: parsed.payment.amountLbp ?? undefined,
   });
   if (error) return { error: errorMessage(error, "Couldn't sell the membership.") };
+  if (parsed.payment.amountUsd > 0) await sendReceipt(membership.gymId, membership.gymName, memberId, parsed.payment.amountUsd, `sale:${saleId}`);
 
   refresh();
   return { success: "Membership sold and invoice created." };
 }
 
 export async function recordPayment(invoiceId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireStaff(BILLING_ROLES);
+  const { membership } = await requireStaff(BILLING_ROLES);
   const parsed = readPayment(formData);
   if (!parsed.payment) return { error: parsed.error };
   if (parsed.payment.amountUsd <= 0) return { error: "Enter the amount received." };
 
   const supabase = await createClient();
-  const { error } = await supabase.rpc("add_payment", {
+  const { data: paymentId, error } = await supabase.rpc("add_payment", {
     p_invoice_id: invoiceId,
     p_amount_usd: parsed.payment.amountUsd,
     p_method: parsed.payment.method,
@@ -149,6 +175,8 @@ export async function recordPayment(invoiceId: string, _prev: ActionState, formD
     p_note: text(formData, "note") || undefined,
   });
   if (error) return { error: errorMessage(error, "Couldn't record the payment.") };
+  const { data: inv } = await supabase.from("invoices").select("member_id").eq("id", invoiceId).maybeSingle();
+  if (inv) await sendReceipt(membership.gymId, membership.gymName, inv.member_id, parsed.payment.amountUsd, `payment:${paymentId}`);
 
   refresh();
   return { success: "Payment recorded." };

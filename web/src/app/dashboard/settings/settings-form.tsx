@@ -7,7 +7,7 @@ import { formatLBP } from "@/lib/format";
 import { PORTAL_PAGES } from "@/lib/portal-pages";
 import { saveGymSettings, setPortalPages } from "./actions";
 
-export function SettingsForm({ name, lbpRate, graceDays }: { name: string; lbpRate: number; graceDays: number }) {
+export function SettingsForm({ name, lbpRate, graceDays, reminderDays }: { name: string; lbpRate: number; graceDays: number; reminderDays: number }) {
   const [state, action, pending] = useActionState(saveGymSettings, {});
   return (
     <form action={action} className="space-y-4">
@@ -25,6 +25,12 @@ export function SettingsForm({ name, lbpRate, graceDays }: { name: string; lbpRa
           hint="A member who still owes money this many days after an invoice is frozen: their app shows only its home page and check-in is refused until they pay."
         >
           <input name="unpaid_grace_days" type="number" min={0} max={60} required defaultValue={graceDays} className={inputClass} />
+        </Field>
+        <Field
+          label="WhatsApp renewal reminder (days before)"
+          hint="Members get a WhatsApp message this many days before their membership ends. 0 turns reminders off. Payment receipts and new-member logins are sent automatically too."
+        >
+          <input name="renewal_reminder_days" type="number" min={0} max={30} required defaultValue={reminderDays} className={inputClass} />
         </Field>
       </div>
       <Button type="submit" disabled={pending}>
