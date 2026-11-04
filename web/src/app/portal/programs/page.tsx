@@ -188,7 +188,7 @@ async function ProgramModal({ programId, memberId }: { programId: string; member
         {program.notes && <p className="rounded-lg bg-canvas p-3 text-sm">{program.notes}</p>}
         {program.kind === "self" && (
           <div className="flex gap-2">
-            <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace aria-label="Edit program" title="Edit program" className={buttonClass("secondary", "h-10 w-10 px-0")}>
+            <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace aria-label="Edit program" title="Edit program" className={buttonClass("secondary", "h-10 w-10 shrink-0 px-0!")}>
               <Pencil className="size-4" />
             </HoverLink>
             <DeleteProgramButton programId={program.id} name={program.name} />

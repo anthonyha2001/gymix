@@ -172,7 +172,7 @@ export function DeleteProgramButton({ programId, name }: { programId: string; na
           });
           if (ok) start(() => deleteProgram(programId, "/portal/programs"));
         }}
-        className={buttonClass("secondary", "h-10 w-10 px-0 text-danger hover:border-danger")}
+        className={buttonClass("secondary", "h-10 w-10 shrink-0 px-0! text-danger hover:border-danger")}
       >
         <Trash2 className="size-4" />
       </button>

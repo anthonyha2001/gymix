@@ -358,16 +358,16 @@ async function MemberContent({
               <ActionButton
                 action={openChatAsStaff.bind(null, member.id!, here)}
                 label="Message"
-                icon={<MessageCircle className="size-4" />}
+                icon={<MessageCircle className="size-[18px]" />}
                 variant="secondary"
-                className="h-10 w-10 px-0"
+                className="h-10 w-10 shrink-0 px-0!"
               />
             )}
             {canBill && (
               <Dialog
                 label={<span className="sr-only">Edit details</span>}
-                icon={<Pencil className="size-4" />}
-                triggerClassName="h-10 w-10 px-0"
+                icon={<Pencil className="size-[18px]" />}
+                triggerClassName="h-10 w-10 shrink-0 px-0!"
                 title="Edit member"
                 variant="secondary"
                 size="lg"
