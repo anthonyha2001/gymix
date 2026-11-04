@@ -99,9 +99,9 @@ dialog.sheet[open]::backdrop {
 }
 
 /* A page opening. */
-.page-enter { animation: gx-rise 260ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.page-enter { animation: gx-rise 260ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
 /* A tab's content appearing (its panel goes from hidden to shown). */
-.tab-enter > * { animation: gx-rise 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.tab-enter > * { animation: gx-rise 220ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
 /* Centred dialogs pop in; sheets slide up (above). */
 dialog[open]:not(.sheet) { animation: gx-pop 200ms cubic-bezier(0.22, 1, 0.36, 1); }
 dialog[open]:not(.sheet)::backdrop { animation: sheet-fade 200ms ease-out; }

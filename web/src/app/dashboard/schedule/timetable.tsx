@@ -102,3 +102,15 @@ export async function Timetable() {
     </>
   );
 }
+
+// "+ Add" for the calendar's toolbar (managers): the same form as the timetable's.
+export async function AddClassButton() {
+  const { membership } = await requireStaff(MANAGER_ROLES);
+  const supabase = await createClient();
+  const { data: coaches } = await supabase.rpc("gym_coaches", { p_gym_id: membership.gymId });
+  return (
+    <Dialog label="Add" icon={<Plus className="size-4" />} title="Add a class" size="lg" triggerClassName="h-9 px-3">
+      <ClassForm action={saveClass.bind(null, null)} coaches={coaches ?? []} submitLabel="Add class" />
+    </Dialog>
+  );
+}

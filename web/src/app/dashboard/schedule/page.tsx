@@ -14,7 +14,7 @@ import { SessionModal } from "./session-modal";
 import { ScheduleCalendar } from "@/components/schedule-calendar";
 import { addMinutes, calendarWindow, classSessions, localDateTime, type CalEvent } from "@/lib/calendar";
 import { gymTimeToIso } from "@/lib/schedule";
-import { Timetable } from "./timetable";
+import { AddClassButton, Timetable } from "./timetable";
 
 export const metadata: Metadata = { title: "Schedule" };
 
@@ -152,6 +152,7 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
           windowFrom={win.from}
           windowTo={win.to}
           mode="staff"
+          quickAdd={isManager ? <AddClassButton /> : undefined}
           emptyHint={isManager ? "No classes or sessions. Add weekly classes on the Timetable tab." : "No classes or sessions."}
         />
       </TabPanel>

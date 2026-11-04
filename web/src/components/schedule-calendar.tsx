@@ -84,6 +84,7 @@ export function ScheduleCalendar({
   windowTo,
   mode,
   emptyHint,
+  quickAdd,
 }: {
   events: CalEvent[];
   today: string;
@@ -91,6 +92,8 @@ export function ScheduleCalendar({
   windowTo: string;
   mode: "staff" | "member";
   emptyHint?: string;
+  // A button (e.g. "Add class") shown in the toolbar.
+  quickAdd?: React.ReactNode;
 }) {
   const router = useRouter();
   const isPhone = useSyncExternalStore(
@@ -184,6 +187,7 @@ export function ScheduleCalendar({
         <h2 className="min-w-0 flex-1 truncate font-semibold" aria-live="polite">
           {title}
         </h2>
+        {quickAdd}
         <div role="group" aria-label="Calendar view" className="flex rounded-lg bg-canvas p-0.5">
           {(["day", "week", "month"] as View[]).map((v) => (
             <button
@@ -226,7 +230,34 @@ export function ScheduleCalendar({
         <MonthGrid anchor={anchor} today={today} byDate={byDate} windowFrom={windowFrom} windowTo={windowTo} onPickDay={(d) => {
           setAnchor(d);
           setView("day");
-        }} onOpen={openEvent} />
+        }} onOpen={openEvent} compact={isPhone} />
+      ) : view === "week" && isPhone ? (
+        // Phones: the week as a list, day by day.
+        <ul className="divide-y divide-line">
+          {week.map((d) => {
+            const list = byDate.get(d) ?? [];
+            return (
+              <li key={d} className="px-3 py-2.5">
+                <button type="button" onClick={() => { setAnchor(d); setView("day"); }} className={`mb-1.5 text-sm font-semibold ${d === today ? "text-ink" : "text-muted"}`}>
+                  {d === today ? "Today · " : ""}{fmt(d, { weekday: "long", day: "numeric", month: "short" })}
+                </button>
+                {list.length === 0 ? (
+                  <p className="text-xs text-muted">Nothing scheduled</p>
+                ) : (
+                  <div className="space-y-1.5">
+                    {list.map((ev) => (
+                      <button key={ev.id} type="button" onClick={() => openEvent(ev)} className={`flex w-full items-center gap-3 rounded-xl border-l-4 px-3 py-2 text-left text-sm ${TONES[ev.tone]}`}>
+                        <span className="w-11 shrink-0 font-semibold tabular-nums">{ev.start}</span>
+                        <span className="min-w-0 flex-1 truncate font-medium">{ev.title}</span>
+                        {ev.status && <span className="shrink-0 text-xs opacity-80">{ev.status}</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       ) : (
         <div ref={gridRef} className="max-h-[70vh] overflow-auto">
           <div className="grid min-w-0" style={{ gridTemplateColumns: `3.25rem repeat(${shownDays.length}, minmax(${view === "week" ? "7.5rem" : "0"}, 1fr))` }}>
@@ -327,6 +358,7 @@ function MonthGrid({
   windowTo,
   onPickDay,
   onOpen,
+  compact,
 }: {
   anchor: string;
   today: string;
@@ -335,6 +367,7 @@ function MonthGrid({
   windowTo: string;
   onPickDay: (d: string) => void;
   onOpen: (ev: CalEvent) => void;
+  compact: boolean;
 }) {
   const first = monthStart(anchor);
   const start = weekStart(first);
@@ -355,15 +388,23 @@ function MonthGrid({
           const inMonth = d.slice(0, 7) === month;
           const outside = d < windowFrom || d > windowTo;
           return (
-            <div key={d} className={`min-h-24 border-b border-l border-line p-1 first:border-l-0 [&:nth-child(7n+1)]:border-l-0 ${inMonth ? "" : "bg-canvas/60"}`}>
+            <div key={d} className={`${compact ? "min-h-14 text-center" : "min-h-24"} border-b border-l border-line p-1 first:border-l-0 [&:nth-child(7n+1)]:border-l-0 ${inMonth ? "" : "bg-canvas/60"}`}>
               <button
                 type="button"
                 onClick={() => onPickDay(d)}
                 disabled={outside}
-                className={`mb-1 grid size-7 place-items-center rounded-full text-xs font-semibold tabular-nums disabled:opacity-40 ${d === today ? "bg-ink text-white" : inMonth ? "hover:bg-canvas" : "text-muted"}`}
+                className={`mb-1 grid size-7 place-items-center rounded-full text-xs font-semibold tabular-nums disabled:opacity-40 ${compact ? "mx-auto" : ""} ${d === today ? "bg-ink text-white" : inMonth ? "hover:bg-canvas" : "text-muted"}`}
               >
                 {Number(d.slice(8))}
               </button>
+              {compact ? (
+                // Phones: a dot per session; tapping the day opens it.
+                <button type="button" onClick={() => onPickDay(d)} disabled={outside} aria-label={`${list.length} sessions`} className="flex w-full flex-wrap justify-center gap-0.5 pt-0.5">
+                  {list.slice(0, 6).map((ev) => (
+                    <span key={ev.id} className={`size-1.5 rounded-full border ${TONES[ev.tone]}`} />
+                  ))}
+                </button>
+              ) : (
               <div className="space-y-0.5">
                 {list.slice(0, 3).map((ev) => (
                   <button
@@ -381,6 +422,7 @@ function MonthGrid({
                   </button>
                 )}
               </div>
+              )}
             </div>
           );
         })}
