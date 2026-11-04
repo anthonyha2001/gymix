@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireViewer } from "@/lib/session";
 import { errorMessage, type ActionState } from "@/lib/action-result";
 import { generatePassword, memberLoginId, rememberNewLogin } from "@/lib/member-login";
+import { logAuthEvent } from "@/lib/telemetry-server";
 
 export async function acceptInvite(token: string): Promise<ActionState> {
   await requireViewer();
@@ -63,6 +64,8 @@ export async function joinWithLink(token: string): Promise<ActionState> {
     await admin.auth.admin.deleteUser(created.user.id);
     return { error: errorMessage(linkError ?? verifyError ?? acceptError ?? { message: "" }, "Couldn't open your portal.") };
   }
+  await logAuthEvent({ kind: "signup", path: "/join", user_id: created.user.id, message: "invite link" });
+  await logAuthEvent({ kind: "login", path: "/join", user_id: created.user.id, message: "invite link" });
   const loginEmail = invite.email ?? member.email;
   await rememberNewLogin({ loginId: memberLoginId({ ...member, email: loginEmail }), code: member.checkin_code, password });
   redirect("/portal");

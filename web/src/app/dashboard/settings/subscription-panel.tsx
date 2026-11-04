@@ -1,7 +1,8 @@
 import { Check, MessageCircle } from "lucide-react";
 import { Badge, Card, EmptyState, SectionTitle, buttonClass } from "@/components/ui";
 import { formatDate, formatUSD } from "@/lib/format";
-import { PLAN_FEATURES, PRICE_USD, SUBSCRIPTION_STATUS } from "@/lib/pricing";
+import { PLAN_FEATURES, SUBSCRIPTION_STATUS, formatPrice } from "@/lib/pricing";
+import { getPricing } from "@/lib/pricing-server";
 import { createClient } from "@/lib/supabase/server";
 import { gymSubscription, platformSettings, renewLink } from "@/lib/subscription";
 
@@ -9,7 +10,7 @@ import { gymSubscription, platformSettings, renewLink } from "@/lib/subscription
 // and what they have paid.
 export async function SubscriptionPanel({ gymId, gymName }: { gymId: string; gymName: string }) {
   const supabase = await createClient();
-  const [sub, settings, { data: payments }] = await Promise.all([
+  const [sub, settings, { data: payments }, { priceUsd }] = await Promise.all([
     gymSubscription(gymId),
     platformSettings(),
     supabase
@@ -17,13 +18,17 @@ export async function SubscriptionPanel({ gymId, gymName }: { gymId: string; gym
       .select("id, months, amount_usd, method, paid_until, created_at")
       .eq("gym_id", gymId)
       .order("created_at", { ascending: false }),
+    getPricing(),
   ]);
+  const price = formatPrice(priceUsd);
   if (!sub) return null;
   const status = SUBSCRIPTION_STATUS[sub.status];
   const wa = renewLink(settings.whatsapp, gymName);
 
   const headline =
-    sub.status === "trial"
+    sub.status === "suspended"
+      ? "Your gym's account is suspended"
+      : sub.status === "trial"
       ? sub.daysLeft === 0
         ? "Your free trial ends today"
         : `${sub.daysLeft} day${sub.daysLeft === 1 ? "" : "s"} left in your free trial`
@@ -42,16 +47,18 @@ export async function SubscriptionPanel({ gymId, gymName }: { gymId: string; gym
             </div>
             <p className="mt-3 text-2xl font-semibold tracking-tight">{headline}</p>
             <p className="mt-1 text-sm text-white/70">
-              {sub.status === "active"
+              {sub.status === "suspended"
+                ? "Gymix has paused this gym's dashboard. Message us to sort it out. Your members can still use their app."
+                : sub.status === "active"
                 ? "Pay again before this date to keep going without a break."
                 : sub.status === "trial"
-                  ? `Everything is included during the trial. After ${formatDate(sub.trialEndsAt)} it's $${PRICE_USD} a month.`
+                  ? `Everything is included during the trial. After ${formatDate(sub.trialEndsAt)} it's ${price} a month.`
                   : "The dashboard is locked until you renew. Your members can still use their app."}
             </p>
           </div>
           <div className="space-y-4 p-6">
             <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-bold tracking-tight">${PRICE_USD}</span>
+              <span className="text-4xl font-bold tracking-tight">{price}</span>
               <span className="text-muted">/ month for your whole gym</span>
             </div>
             <h3 className="font-semibold">How to pay</h3>

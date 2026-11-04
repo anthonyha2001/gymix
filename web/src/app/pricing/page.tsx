@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import { FaqList, FinalCta, MarketingFooter, MarketingNav, PricingCard } from "@/components/marketing";
-import { PRICE_USD, TRIAL_DAYS } from "@/lib/pricing";
+import { formatPrice } from "@/lib/pricing";
+import { getPricing } from "@/lib/pricing-server";
 
-export const metadata: Metadata = {
-  title: "Pricing",
-  description: `Gymix is $${PRICE_USD} a month per gym, everything included, after a ${TRIAL_DAYS}-day free trial.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { priceUsd, trialDays } = await getPricing();
+  return {
+    title: "Pricing",
+    description: `Gymix is ${formatPrice(priceUsd)} a month per gym, everything included, after a ${trialDays}-day free trial.`,
+  };
+}
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const { priceUsd } = await getPricing();
   return (
     <div className="flex flex-1 flex-col bg-canvas">
       <MarketingNav />
@@ -17,7 +22,7 @@ export default function PricingPage() {
           <p className="text-sm font-semibold uppercase tracking-widest text-brand">Pricing</p>
           <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Simple, honest pricing.</h1>
           <p className="mt-4 text-lg text-white/70">
-            One plan with everything in it. ${PRICE_USD} a month per gym, whether you have 50 members or 2,000.
+            One plan with everything in it. {formatPrice(priceUsd)} a month per gym, whether you have 50 members or 2,000.
           </p>
         </div>
       </section>

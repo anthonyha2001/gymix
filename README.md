@@ -43,12 +43,32 @@ SUPABASE_SERVICE_ROLE_KEY=... ADMIN_PASSWORD='...' node scripts/create-super-adm
 
 `npx supabase db reset` wipes accounts, so rerun this after a reset.
 
+## Control center (`/admin`)
+
+The super admin console has six tabs, each with a 7/30/90-day range:
+
+- **Overview**: monthly recurring revenue, paying/trial gyms, traffic, logins, sign-ups and errors compared with the
+  previous period, plus gyms that need attention and the latest errors.
+- **Traffic**: visitors, page views, top pages, referrers, countries, devices, browsers, busiest routes and a live request log.
+- **Logins**: successful and failed logins with IP and country, login methods, and a warning when one IP fails 5+ times in a day.
+- **Errors**: server errors (from `web/src/instrumentation.ts`) and browser errors (from `instrumentation-client.ts`
+  and the error pages), grouped by message, with stack traces.
+- **Gyms**: every gym with record payment, extend trial and suspend/reopen.
+- **Revenue & pricing**: change the price, trial length and grace period; payment instructions; payment history;
+  cleanup of old monitoring data.
+
+Monitoring rows live in `platform_events`, written by the web app with the service role key and readable only by
+super admins. Query strings are never stored, invite and check-in tokens are replaced with `:token`, and IP addresses
+are kept only for login and sign-up events. Visitors are counted with an anonymous `gx_vid` cookie. Set
+`GYMIX_TELEMETRY=off` to stop recording.
+
 ## Selling Gymix (subscriptions)
 
-Each gym pays $10 a month (`web/src/lib/pricing.ts`) after a 14-day free trial. There is no card processor:
+Each gym pays $10 a month after a 14-day free trial by default; a super admin changes the price, trial and grace
+period in `/admin` (Revenue & pricing), stored in `platform_settings`. There is no card processor:
 gyms pay by Whish, OMT or bank transfer and a super admin records it in `/admin` ("Record payment"), which
 extends the gym's paid-until date. Also in `/admin`: extend a trial, and the payment instructions and WhatsApp
-number every owner sees on Settings, Subscription. Three days after a subscription ends the staff dashboard locks
+number every owner sees on Settings, Subscription. A few days (the grace period, 3 by default) after a subscription ends the staff dashboard locks
 (the owner can still open the Subscription tab); members keep using their app.
 
 ## How access works

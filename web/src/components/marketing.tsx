@@ -18,7 +18,8 @@ import {
   Users,
 } from "lucide-react";
 import { Logo } from "@/components/ui";
-import { PLAN_FEATURES, PRICE_USD, TRIAL_DAYS } from "@/lib/pricing";
+import { PLAN_FEATURES, formatPrice, type Pricing } from "@/lib/pricing";
+import { getPricing } from "@/lib/pricing-server";
 
 // Shared pieces of the public site (landing page and /pricing).
 
@@ -48,11 +49,12 @@ export function MarketingNav() {
   );
 }
 
-export function CtaButtons({ dark = true }: { dark?: boolean }) {
+export async function CtaButtons({ dark = true }: { dark?: boolean }) {
+  const { priceUsd, trialDays } = await getPricing();
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Link href="/signup" className="inline-flex h-12 items-center gap-2 rounded-xl bg-brand px-6 text-base font-semibold text-ink shadow-[0_8px_30px_-8px_rgba(200,241,53,0.6)] transition hover:-translate-y-0.5 hover:bg-brand-strong">
-        Start your {TRIAL_DAYS}-day free trial <ArrowRight className="size-4" />
+        Start your {trialDays}-day free trial <ArrowRight className="size-4" />
       </Link>
       <Link
         href="/pricing"
@@ -60,7 +62,7 @@ export function CtaButtons({ dark = true }: { dark?: boolean }) {
           dark ? "text-white ring-white/20 hover:bg-white/10" : "text-ink ring-ink/15 hover:bg-ink/5"
         }`}
       >
-        ${PRICE_USD} a month, all in
+        {formatPrice(priceUsd)} a month, all in
       </Link>
     </div>
   );
@@ -157,17 +159,18 @@ export const FEATURES = [
   { icon: TrendingUp, title: "Numbers that matter", body: "Today's check-ins, money collected, who owes and who is about to leave." },
 ] as const;
 
-export function PricingCard() {
+export async function PricingCard() {
+  const { priceUsd, trialDays } = await getPricing();
   return (
     <div className="relative mx-auto w-full max-w-md">
       <div className="absolute -inset-px rounded-[28px] bg-gradient-to-b from-brand to-brand/0" />
       <div className="relative rounded-[27px] bg-surface p-8 shadow-xl">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold uppercase tracking-widest text-muted">Gymix</p>
-          <span className="rounded-full bg-brand px-3 py-1 text-xs font-semibold text-ink">{TRIAL_DAYS} days free</span>
+          <span className="rounded-full bg-brand px-3 py-1 text-xs font-semibold text-ink">{trialDays} days free</span>
         </div>
         <p className="mt-6 flex items-baseline gap-1.5">
-          <span className="text-6xl font-bold tracking-tight text-ink">${PRICE_USD}</span>
+          <span className="text-6xl font-bold tracking-tight text-ink">{formatPrice(priceUsd)}</span>
           <span className="text-muted">/ month</span>
         </p>
         <p className="mt-2 text-sm text-muted">Per gym. Not per member, not per staff. Everything included.</p>
@@ -190,7 +193,7 @@ export function PricingCard() {
   );
 }
 
-export const FAQ = [
+const faq = ({ priceUsd, trialDays }: Pricing) => [
   {
     q: "Do my members need to download an app?",
     a: "No store download. You send each member a personal link on WhatsApp; it opens their app straight away and can be added to their home screen like any other app, on iPhone and Android.",
@@ -201,7 +204,7 @@ export const FAQ = [
   },
   {
     q: "How do I pay for Gymix?",
-    a: `$${PRICE_USD} a month per gym, after a ${TRIAL_DAYS}-day free trial. Pay by Whish, OMT or bank transfer, for one month or several at once. No card is needed.`,
+    a: `${formatPrice(priceUsd)} a month per gym, after a ${trialDays}-day free trial. Pay by Whish, OMT or bank transfer, for one month or several at once. No card is needed.`,
   },
   {
     q: "What happens if I stop paying?",
@@ -221,10 +224,11 @@ export const FAQ = [
   },
 ] as const;
 
-export function FaqList() {
+export async function FaqList() {
+  const items = faq(await getPricing());
   return (
     <div className="divide-y divide-line rounded-3xl border border-line bg-surface">
-      {FAQ.map((f) => (
+      {items.map((f) => (
         <details key={f.q} className="group px-6 py-5 [&_summary::-webkit-details-marker]:hidden">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold">
             {f.q}
@@ -237,13 +241,14 @@ export function FaqList() {
   );
 }
 
-export function FinalCta() {
+export async function FinalCta() {
+  const { trialDays } = await getPricing();
   return (
     <section className="px-4 pb-20">
       <div className="mx-auto max-w-6xl overflow-hidden rounded-[32px] bg-brand px-6 py-14 text-center sm:px-12">
         <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-ink sm:text-5xl">Your gym, running itself.</h2>
         <p className="mx-auto mt-4 max-w-xl text-ink/70">
-          Try every feature free for {TRIAL_DAYS} days. If it doesn&apos;t save you time in the first week, don&apos;t pay.
+          Try every feature free for {trialDays} days. If it doesn&apos;t save you time in the first week, don&apos;t pay.
         </p>
         <div className="mt-8 flex justify-center">
           <Link href="/signup" className="inline-flex h-12 items-center gap-2 rounded-xl bg-ink px-6 text-base font-semibold text-white transition hover:-translate-y-0.5">

@@ -1,4 +1,4 @@
-import { TRIAL_DAYS } from "@/lib/pricing";
+import { getPricing } from "@/lib/pricing-server";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -7,12 +7,13 @@ import { SignupForm } from "../auth-forms";
 
 export const metadata: Metadata = { title: "Sign up" };
 
-export default function SignupPage({ searchParams }: PageProps<"/signup">) {
+export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
+  const { trialDays } = await getPricing();
   return (
     <Card className="p-6 space-y-5">
       <div>
         <h1 className="text-xl font-semibold">Create your account</h1>
-        <p className="text-sm text-muted">Gym owners: your first {TRIAL_DAYS} days are free. Staff and members: use the invite your gym sent you.</p>
+        <p className="text-sm text-muted">Gym owners: your first {trialDays} days are free. Staff and members: use the invite your gym sent you.</p>
       </div>
       <Suspense fallback={<Skeleton className="h-72" />}>
         <SignupBody searchParams={searchParams} />

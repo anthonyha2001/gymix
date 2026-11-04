@@ -10,12 +10,16 @@ import {
   MarketingNav,
   PricingCard,
 } from "@/components/marketing";
-import { PRICE_USD, TRIAL_DAYS } from "@/lib/pricing";
+import { formatPrice } from "@/lib/pricing";
+import { getPricing } from "@/lib/pricing-server";
 
-export const metadata: Metadata = {
-  title: { absolute: "Gymix · The operating system for your gym" },
-  description: `Memberships, payments in dollars and lira, tap-to-check-in, trainer programs and a member app. $${PRICE_USD} a month. ${TRIAL_DAYS} days free.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { priceUsd, trialDays } = await getPricing();
+  return {
+    title: { absolute: "Gymix · The operating system for your gym" },
+    description: `Memberships, payments in dollars and lira, tap-to-check-in, trainer programs and a member app. ${formatPrice(priceUsd)} a month. ${trialDays} days free.`,
+  };
+}
 
 const STEPS = [
   { icon: Store, title: "Create your gym", body: "Add your membership plans, prices and lira rate. Invite your managers, front desk and trainers." },
@@ -23,7 +27,9 @@ const STEPS = [
   { icon: Nfc, title: "They tap in", body: "A sticker at the door checks them in. Unpaid? They're stopped and sent to the front desk." },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const { priceUsd, trialDays } = await getPricing();
+  const price = formatPrice(priceUsd);
   return (
     <div className="flex flex-1 flex-col bg-canvas">
       <MarketingNav />
@@ -61,7 +67,7 @@ export default function Home() {
       <section className="border-b border-line bg-surface">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 py-8 text-center md:grid-cols-4">
           {[
-            { k: `$${PRICE_USD}`, v: "a month for the whole gym" },
+            { k: price, v: "a month for the whole gym" },
             { k: "USD + LBP", v: "with your own lira rate" },
             { k: "$1", v: "NFC sticker is all the hardware" },
             { k: "10 min", v: "to set up your gym" },
@@ -123,12 +129,12 @@ export default function Home() {
             <p className="text-sm font-semibold uppercase tracking-widest text-brand-strong">Pricing</p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">One price. Everything included.</h2>
             <p className="mt-4 text-lg text-muted">
-              ${PRICE_USD} a month for your whole gym: every member, every trainer, every feature. Less than one member&apos;s monthly fee.
+              {price} a month for your whole gym: every member, every trainer, every feature. Less than one member&apos;s monthly fee.
             </p>
             <ul className="mt-8 space-y-4 text-sm">
               {[
                 ["No setup fee", "Create your gym and start today."],
-                [`${TRIAL_DAYS} days free`, "Try everything with your real members before paying."],
+                [`${trialDays} days free`, "Try everything with your real members before paying."],
                 ["Pay your way", "Whish, OMT or bank transfer. Monthly, or several months at once."],
                 ["No lock-in", "Stop whenever you like. Your data stays yours."],
               ].map(([t, d]) => (

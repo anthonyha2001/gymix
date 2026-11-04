@@ -417,14 +417,14 @@ isOneToOne: false
                   ]
                 },"gyms": {
                   Row: {
-                    "checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"lbp_rate": number,"name": string,"next_invoice_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"slug": string,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
+                    "checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"lbp_rate": number,"name": string,"next_invoice_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"slug": string,"tap_simulator": boolean,"timezone": string,"suspended_at": string | null,"suspended_reason": string | null,"trial_ends_at": string,"unpaid_grace_days": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"slug": string,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"slug": string,"tap_simulator"?: boolean,"timezone"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Update: {
-                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"slug"?: string,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"slug"?: string,"tap_simulator"?: boolean,"timezone"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Relationships: [
                     
@@ -923,6 +923,20 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"platform_events": {
+                  Row: {
+                    "browser": string | null,"country": string | null,"created_at": string,"detail": NonNullable<Json>,"device": string | null,"id": number,"ip": string | null,"kind": string,"message": string | null,"method": string | null,"path": string | null,"referrer": string | null,"request_type": string | null,"user_id": string | null,"visitor_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "browser"?: string | null,"country"?: string | null,"created_at"?: string,"detail"?: NonNullable<Json>,"device"?: string | null,"id"?: number,"ip"?: string | null,"kind": string,"message"?: string | null,"method"?: string | null,"path"?: string | null,"referrer"?: string | null,"request_type"?: string | null,"user_id"?: string | null,"visitor_id"?: string | null
+                  }
+                  Update: {
+                    "browser"?: string | null,"country"?: string | null,"created_at"?: string,"detail"?: NonNullable<Json>,"device"?: string | null,"id"?: number,"ip"?: string | null,"kind"?: string,"message"?: string | null,"method"?: string | null,"path"?: string | null,"referrer"?: string | null,"request_type"?: string | null,"user_id"?: string | null,"visitor_id"?: string | null
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"platform_payments": {
                   Row: {
                     "amount_usd": number,"created_at": string,"gym_id": string,"id": string,"method": string,"months": number,"note": string | null,"paid_until": string,"recorded_by": string | null
@@ -957,14 +971,14 @@ isOneToOne: false
                   ]
                 },"platform_settings": {
                   Row: {
-                    "id": boolean,"payment_instructions": string,"updated_at": string,"whatsapp": string
+                    "grace_days": number,"id": boolean,"payment_instructions": string,"price_usd": number,"trial_days": number,"updated_at": string,"whatsapp": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "id"?: boolean,"payment_instructions"?: string,"updated_at"?: string,"whatsapp"?: string
+                    "grace_days"?: number,"id"?: boolean,"payment_instructions"?: string,"price_usd"?: number,"trial_days"?: number,"updated_at"?: string,"whatsapp"?: string
                   }
                   Update: {
-                    "id"?: boolean,"payment_instructions"?: string,"updated_at"?: string,"whatsapp"?: string
+                    "grace_days"?: number,"id"?: boolean,"payment_instructions"?: string,"price_usd"?: number,"trial_days"?: number,"updated_at"?: string,"whatsapp"?: string
                   }
                   Relationships: [
                     
@@ -1507,11 +1521,33 @@ isOneToOne: false
                            },
 "admin_gym_overview":
 { Args: Record<PropertyKey, never>; Returns: {
-              "active_members": number,"checkins_30d": number,"collected_30d": number,"created_at": string,"gym_id": string,"last_checkin_at": string,"members": number,"name": string,"owner_email": string,"owner_name": string,"owner_phone": string,"paid_until": string,"staff": number,"trial_ends_at": string
+              "active_members": number,"checkins_30d": number,"collected_30d": number,"created_at": string,"gym_id": string,"last_checkin_at": string,"members": number,"name": string,"owner_email": string,"owner_name": string,"owner_phone": string,"paid_until": string,"staff": number,"suspended_at": string,"suspended_reason": string,"trial_ends_at": string
             }[]
                            },
 "admin_record_subscription_payment":
 { Args: { "p_amount_usd": number,"p_gym_id": string,"p_method": string,"p_months": number,"p_note"?: string }; Returns: string
+                           },
+"admin_monitoring":
+{ Args: { "p_days": number }; Returns: Json
+                           },
+"admin_platform_payments":
+{ Args: { "p_limit"?: number }; Returns: {
+              "amount_usd": number,"created_at": string,"gym_id": string,"gym_name": string,"id": string,"method": string,"months": number,"note": string,"paid_until": string,"recorded_by_name": string
+            }[]
+                           },
+"admin_prune_events":
+{ Args: { "p_keep_days": number }; Returns: number
+                           },
+"admin_recent_events":
+{ Args: { "p_kinds": (string)[],"p_limit"?: number }; Returns: {
+              "browser": string,"country": string,"created_at": string,"detail": Json,"device": string,"id": number,"ip": string,"kind": string,"message": string,"method": string,"path": string,"referrer": string,"request_type": string,"user_email": string,"user_id": string,"user_name": string,"visitor_id": string
+            }[]
+                           },
+"admin_save_pricing":
+{ Args: { "p_grace_days": number,"p_price_usd": number,"p_trial_days": number }; Returns: undefined
+                           },
+"admin_set_gym_suspended":
+{ Args: { "p_gym_id": string,"p_reason"?: string,"p_suspended": boolean }; Returns: undefined
                            },
 "admin_save_platform_settings":
 { Args: { "p_instructions": string,"p_whatsapp": string }; Returns: undefined
@@ -1612,6 +1648,14 @@ isOneToOne: false
 { Args: { "p_gym_id": string }; Returns: {
               "active_members": number,"checkins_today": number,"collected_month": number,"expiring_soon": number,"outstanding": number
             }[]
+                           },
+"platform_pricing":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "grace_days": number,"price_usd": number,"trial_days": number
+            }[]
+                           },
+"platform_trial_days":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "gym_subscription":
 { Args: { "p_gym_id": string }; Returns: {

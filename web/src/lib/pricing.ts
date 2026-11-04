@@ -1,9 +1,14 @@
-// Gymix's own price. Change it here and the landing page, pricing and
-// subscription screens all follow. (The trial length is set in the database:
-// gyms.trial_ends_at defaults to 14 days after sign-up.)
-export const PRICE_USD = 10;
-export const TRIAL_DAYS = 14;
-export const GRACE_DAYS = 3;
+// Gymix's own price, trial length and grace period live in the database
+// (platform_settings) and are changed by a super admin in /admin. Server code
+// reads them with getPricing() from "@/lib/pricing-server"; these are only the
+// fallbacks used when the database can't be reached.
+export type Pricing = { priceUsd: number; trialDays: number; graceDays: number };
+export const DEFAULT_PRICING: Pricing = { priceUsd: 10, trialDays: 14, graceDays: 3 };
+
+// "$10" or "$9.99".
+export function formatPrice(usd: number) {
+  return Number.isInteger(usd) ? `$${usd}` : `$${usd.toFixed(2)}`;
+}
 
 // Everything is included in the one plan.
 export const PLAN_FEATURES = [
@@ -19,14 +24,21 @@ export const PLAN_FEATURES = [
   "Automatic freeze for unpaid accounts",
 ] as const;
 
-export type SubscriptionStatus = "trial" | "active" | "grace" | "expired";
+export type SubscriptionStatus = "trial" | "active" | "grace" | "expired" | "suspended";
 
-export function subscriptionStatus(trialEndsAt: string, paidUntil: string | null, today: string): SubscriptionStatus {
+export function subscriptionStatus(
+  trialEndsAt: string,
+  paidUntil: string | null,
+  today: string,
+  graceDays: number,
+  suspended = false,
+): SubscriptionStatus {
+  if (suspended) return "suspended";
   const end = paidUntil && paidUntil > trialEndsAt ? paidUntil : trialEndsAt;
   if (paidUntil && paidUntil >= today) return "active";
   if (end >= today) return "trial";
   const grace = new Date(`${end}T00:00:00Z`);
-  grace.setUTCDate(grace.getUTCDate() + GRACE_DAYS);
+  grace.setUTCDate(grace.getUTCDate() + graceDays);
   return grace.toISOString().slice(0, 10) >= today ? "grace" : "expired";
 }
 
@@ -35,4 +47,5 @@ export const SUBSCRIPTION_STATUS: Record<SubscriptionStatus, { label: string; to
   active: { label: "Active", tone: "green" },
   grace: { label: "Payment due", tone: "amber" },
   expired: { label: "Ended", tone: "red" },
+  suspended: { label: "Suspended", tone: "red" },
 };
