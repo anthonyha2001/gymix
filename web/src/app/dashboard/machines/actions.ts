@@ -103,11 +103,18 @@ export async function setEquipment(_prev: ActionState, formData: FormData): Prom
   return { success: "Saved. Trainers and members can now use these exercises." };
 }
 
-export async function addMachineExercise(machineId: string, exerciseId: string) {
+// Links an exercise to a machine. A plain upsert needs UPDATE rights, which
+// staff don't have on this table, so it always failed; "ignore duplicates"
+// (ON CONFLICT DO NOTHING) needs only INSERT.
+export async function addMachineExercise(machineId: string, exerciseId: string): Promise<ActionState> {
   await requireStaff(MANAGER_ROLES);
   const supabase = await createClient();
-  await supabase.from("machine_exercises").upsert({ machine_id: machineId, exercise_id: exerciseId });
+  const { error } = await supabase
+    .from("machine_exercises")
+    .upsert({ machine_id: machineId, exercise_id: exerciseId }, { ignoreDuplicates: true });
+  if (error) return { error: errorMessage(error, "Couldn't add the exercise.") };
   refresh();
+  return { success: "Added." };
 }
 
 export async function removeMachineExercise(machineId: string, exerciseId: string) {

@@ -5,6 +5,7 @@ import { useDialogAction } from "@/components/dialog";
 import { X } from "lucide-react";
 import { ExercisePicker } from "@/components/exercise-picker";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
+import { showToast } from "@/components/toaster";
 import type { Exercise } from "@/lib/exercises";
 import type { ActionState } from "@/lib/action-result";
 import { createMachine } from "./actions";
@@ -112,15 +113,18 @@ export function AddExercisesToMachine({
   add,
 }: {
   selectedIds: string[];
-  add: (exerciseId: string) => Promise<void>;
+  add: (exerciseId: string) => Promise<ActionState>;
 }) {
   // Shown inside a dialog; each pick is saved right away (selected items are on the machine).
   return (
     <ExercisePicker
       source="catalog"
       selectedIds={selectedIds}
-      onPick={(ex) => {
-        if (!selectedIds.includes(ex.id)) void add(ex.id);
+      onPick={async (ex) => {
+        if (selectedIds.includes(ex.id)) return;
+        const result = await add(ex.id);
+        if (result.error) showToast(result.error, "error");
+        else showToast(`${ex.name} added`);
       }}
     />
   );

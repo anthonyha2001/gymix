@@ -11,10 +11,12 @@ import { createClient } from "@/lib/supabase/server";
 import { bookClass, cancelBooking, requestPtSession, subscribeToCourse, updatePtSession } from "@/app/schedule-actions";
 import { ActionButton } from "../../dashboard/members/action-button";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
+import { ScheduleCalendar } from "@/components/schedule-calendar";
+import { addMinutes, calendarWindow, classSessions, localDateTime, type CalEvent } from "@/lib/calendar";
 
 export const metadata: Metadata = { title: "Schedule" };
 
-const TABS = ["classes", "courses", "pt"] as const;
+const TABS = ["calendar", "classes", "courses", "pt"] as const;
 
 export default function MemberSchedulePage({ searchParams }: PageProps<"/portal/schedule">) {
   return (
@@ -30,6 +32,8 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
   const tz = membership.timezone;
   const today = todayIn(tz);
   const days = nextDays(today, 7);
+  // The calendar loads last week to eight weeks ahead in one go.
+  const win = calendarWindow(today);
   const supabase = await createClient();
   const { data: me } = await supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle();
 
@@ -41,7 +45,7 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
       .eq("is_active", true)
       .order("start_time"),
     // Spots taken per session — counts only; members can't see who booked.
-    supabase.rpc("class_spots", { p_gym_id: membership.gymId, p_from: days[0], p_to: days[6] }),
+    supabase.rpc("class_spots", { p_gym_id: membership.gymId, p_from: win.from, p_to: win.to }),
     me
       ? supabase
           .from("class_bookings")
@@ -78,6 +82,47 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
     counts?.find((c) => c.class_id === classId && c.session_date === date)?.taken ?? 0;
   const myBooking = (classId: string, date: string) => mine?.find((b) => b.class_id === classId && b.session_date === date);
 
+  const calendarEvents: CalEvent[] = [
+    ...classSessions(classes ?? [], win.from, win.to, (c, date, base) => {
+      const booking = myBooking(c.id, date);
+      const left = Math.max(c.capacity - spotsTaken(c.id, date), 0);
+      const isCourse = c.monthly_price_usd !== null;
+      const sub = subFor(c.id);
+      const subscribed = Boolean(sub && sub.starts_on <= date && sub.ends_on >= date);
+      return {
+        ...base,
+        kind: isCourse ? "course" : "class",
+        tone: booking && booking.status !== "cancelled" ? "mine" : isCourse ? "course" : left === 0 ? "full" : "class",
+        subtitle: [c.trainer_id && coachName.get(c.trainer_id), c.location].filter(Boolean).join(" · ") || undefined,
+        status: booking ? BOOKING_STATUS[booking.status]?.label : isCourse ? (subscribed ? "Subscribed" : "Monthly course") : left > 0 ? `${left} spots left` : "Full, waitlist open",
+        classId: c.id,
+        bookingId: booking?.id,
+        bookingStatus: booking?.status,
+        spotsLeft: left,
+        courseNote: isCourse
+          ? subscribed
+            ? "Included in your monthly subscription."
+            : `A monthly course (${formatUSD(c.monthly_price_usd)} a month). Subscribe on the Courses tab to join every session.`
+          : undefined,
+      };
+    }),
+    ...(pt ?? [])
+      .filter((s) => s.status !== "cancelled" && s.status !== "declined")
+      .map((s): CalEvent => {
+        const at = localDateTime(s.starts_at, tz);
+        return {
+          id: s.id,
+          kind: "pt",
+          tone: "pt",
+          date: at.date,
+          start: at.time,
+          end: addMinutes(at.time, s.duration_min),
+          title: `PT with ${coachName.get(s.trainer_id) ?? "your trainer"}`,
+          status: PT_STATUS[s.status]?.label,
+        };
+      }),
+  ];
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight">Schedule</h1>
@@ -85,11 +130,23 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
         base="/portal/schedule"
         active={tab}
         tabs={[
+          { id: "calendar", label: "Calendar" },
           { id: "classes", label: "Classes" },
           { id: "courses", label: "Courses", count: subs?.length ?? 0 },
           { id: "pt", label: "Personal training" },
         ]}
       />
+
+      <TabPanel id="calendar" tabs={TABS}>
+        <ScheduleCalendar
+          events={calendarEvents}
+          today={today}
+          windowFrom={win.from}
+          windowTo={win.to}
+          mode="member"
+          emptyHint="No classes on these days."
+        />
+      </TabPanel>
 
       <TabPanel id="classes" tabs={TABS}>{(
       <>

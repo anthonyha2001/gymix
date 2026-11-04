@@ -11,11 +11,14 @@ import { updatePtSession } from "@/app/schedule-actions";
 import { ActionButton } from "../members/action-button";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { SessionModal } from "./session-modal";
+import { ScheduleCalendar } from "@/components/schedule-calendar";
+import { addMinutes, calendarWindow, classSessions, localDateTime, type CalEvent } from "@/lib/calendar";
+import { gymTimeToIso } from "@/lib/schedule";
 import { Timetable } from "./timetable";
 
 export const metadata: Metadata = { title: "Schedule" };
 
-const TABS = ["week", "pt", "timetable"] as const;
+const TABS = ["calendar", "week", "pt", "timetable"] as const;
 const BASE = "/dashboard/schedule";
 
 export default function SchedulePage({ searchParams }: PageProps<"/dashboard/schedule">) {
@@ -36,7 +39,7 @@ async function Header() {
   return (
     <PageHeader
       title="Schedule"
-      description="Classes for the next 7 days and personal training sessions."
+      description="Classes, monthly courses and personal training, on a calendar or as a list."
     />
   );
 }
@@ -63,10 +66,21 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
   // Trainers see their own sessions; owners and managers see everyone's.
   if (!isManager) ptQuery = ptQuery.eq("trainer_id", viewer.id);
 
-  const [{ data: classes }, { data: bookings }, { data: pt }] = await Promise.all([
+  // The calendar loads last week to eight weeks ahead in one go.
+  const win = calendarWindow(today);
+  let calPtQuery = supabase
+    .from("pt_sessions")
+    .select("id, starts_at, duration_min, status, trainer_id, member_id, members(full_name), trainer:profiles!pt_sessions_trainer_id_fkey(full_name)")
+    .eq("gym_id", membership.gymId)
+    .in("status", ["requested", "confirmed", "done"])
+    .gte("starts_at", gymTimeToIso(win.from, "00:00", tz))
+    .lte("starts_at", gymTimeToIso(win.to, "23:59", tz));
+  if (!isManager) calPtQuery = calPtQuery.eq("trainer_id", viewer.id);
+
+  const [{ data: classes }, { data: bookings }, { data: pt }, { data: calPt }] = await Promise.all([
     supabase
       .from("classes")
-      .select("id, name, weekday, start_time, duration_min, capacity, location, trainer:profiles(full_name)")
+      .select("id, name, weekday, start_time, duration_min, capacity, location, monthly_price_usd, trainer:profiles(full_name)")
       .eq("gym_id", membership.gymId)
       .eq("is_active", true)
       .order("start_time"),
@@ -74,15 +88,46 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
       .from("class_bookings")
       .select("class_id, session_date, status")
       .eq("gym_id", membership.gymId)
-      .gte("session_date", days[0])
-      .lte("session_date", days[6])
+      .gte("session_date", win.from)
+      .lte("session_date", win.to)
       .in("status", ["booked", "waitlist", "attended"]),
     ptQuery,
+    calPtQuery,
   ]);
 
   const count = (classId: string, date: string, statuses: string[]) =>
     (bookings ?? []).filter((b) => b.class_id === classId && b.session_date === date && statuses.includes(b.status)).length;
   const requests = (pt ?? []).filter((s) => s.status === "requested");
+
+  const calendarEvents: CalEvent[] = [
+    ...classSessions(classes ?? [], win.from, win.to, (c, date, base) => {
+      const booked = count(c.id, date, ["booked", "attended"]);
+      const waiting = count(c.id, date, ["waitlist"]);
+      return {
+        ...base,
+        kind: c.monthly_price_usd !== null ? "course" : "class",
+        tone: c.monthly_price_usd !== null ? "course" : booked >= c.capacity ? "full" : "class",
+        subtitle: [c.trainer?.full_name, c.location].filter(Boolean).join(" · ") || undefined,
+        status: `${booked}/${c.capacity}${waiting ? ` +${waiting} waiting` : ""}`,
+        href: `${BASE}?tab=calendar&session=${c.id}_${date}`,
+      };
+    }),
+    ...(calPt ?? []).map((s): CalEvent => {
+      const at = localDateTime(s.starts_at, tz);
+      return {
+        id: s.id,
+        kind: "pt",
+        tone: s.status === "requested" ? "muted" : "pt",
+        date: at.date,
+        start: at.time,
+        end: addMinutes(at.time, s.duration_min),
+        title: `PT · ${s.members?.full_name ?? "Member"}`,
+        subtitle: isManager && s.trainer?.full_name ? `with ${s.trainer.full_name}` : undefined,
+        status: PT_STATUS[s.status]?.label,
+        href: `/dashboard/members/${s.member_id}`,
+      };
+    }),
+  ];
   const confirmed = (pt ?? []).filter((s) => s.status === "confirmed");
 
   return (
@@ -92,12 +137,22 @@ async function ScheduleContent({ searchParams }: { searchParams: PageProps<"/das
         active={tab}
         tabs={tabs.map((t) => ({
           id: t,
-          label: { week: "This week", pt: "Personal training", timetable: "Timetable" }[t],
+          label: { calendar: "Calendar", week: "List", pt: "Personal training", timetable: "Timetable" }[t],
           count: t === "pt" ? requests.length : undefined,
         }))}
       />
       {typeof query.session === "string" && <SessionModal session={query.session} membership={membership} />}
       {tabs.includes("timetable") && <TabPanel id="timetable" tabs={tabs}><Timetable /></TabPanel>}
+      <TabPanel id="calendar" tabs={tabs}>
+        <ScheduleCalendar
+          events={calendarEvents}
+          today={today}
+          windowFrom={win.from}
+          windowTo={win.to}
+          mode="staff"
+          emptyHint={isManager ? "No classes or sessions. Add weekly classes on the Timetable tab." : "No classes or sessions."}
+        />
+      </TabPanel>
       <TabPanel id="week" tabs={tabs}>{(
       <div className="space-y-4">
         {!classes?.length && (
