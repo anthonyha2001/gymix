@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Confetti } from "@/components/confetti";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -104,7 +105,12 @@ async function Workout({ params }: { params: PageProps<"/portal/workout/[id]">["
           {session.programs?.name ?? "No program"} · started {formatDateTime(session.started_at, membership.timezone)}
         </p>
         <h1 className="text-2xl font-semibold tracking-tight">{session.day_name ?? "Workout"}</h1>
-        {session.finished_at && <p className="text-sm text-success">Finished. Nice work.</p>}
+        {session.finished_at && (
+          <p className="pr-banner relative mt-2 inline-flex items-center gap-2 rounded-full bg-success-soft px-3 py-1 text-sm font-medium text-success">
+            <Confetti pieces={16} />
+            Finished. Nice work.
+          </p>
+        )}
       </div>
       {!session.finished_at && (
         <p className="flex items-center gap-2 rounded-lg bg-canvas px-3 py-2 text-sm text-muted">

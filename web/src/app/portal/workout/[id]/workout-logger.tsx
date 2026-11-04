@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { Check, Plus, Timer, Trophy, X } from "lucide-react";
+import { Confetti } from "@/components/confetti";
 import { Dialog } from "@/components/dialog";
 import { ExercisePicker } from "@/components/exercise-picker";
 import { showToast } from "@/components/toaster";
@@ -53,8 +54,9 @@ export function WorkoutLogger({
   return (
     <div className="space-y-4 pb-24">
       {pr && (
-        <div role="status" className="flex items-center gap-3 rounded-xl bg-brand p-4 font-semibold">
-          <Trophy className="size-6" /> New personal record: {pr}!
+        <div key={pr} role="status" className="pr-banner relative flex items-center gap-3 rounded-xl bg-brand p-4 font-semibold">
+          <Confetti />
+          <Trophy className="wiggle size-6" /> New personal record: {pr}!
         </div>
       )}
 
@@ -176,7 +178,10 @@ function ExerciseBlock({
           {exercise.notes && <p className="mt-1 text-xs">Note: {exercise.notes}</p>}
         </div>
         <div className="flex h-fit items-center gap-1">
-          <span className="rounded-full bg-canvas px-2 py-0.5 text-xs tabular-nums text-muted">
+          <span
+            key={doneCount === rows ? "complete" : "open"}
+            className={`rounded-full px-2 py-0.5 text-xs tabular-nums ${doneCount === rows && rows > 0 ? "nav-bounce bg-success text-white" : "bg-canvas text-muted"}`}
+          >
             {doneCount}/{rows}
           </span>
           {!disabled && exercise.workoutExerciseId && doneCount === 0 && (
@@ -251,6 +256,8 @@ function SetRow({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const done = Boolean(logged);
+  // Pop the check only when it's logged now, not for sets loaded with the page.
+  const [justDone, setJustDone] = useState(false);
 
   function toggle() {
     setError(null);
@@ -264,7 +271,11 @@ function SetRow({
       const r = Number(reps);
       const res = await logSet(sessionId, exercise.exerciseId, setNumber, w, r);
       if (!res.ok) setError(res.error ?? "Couldn't save.");
-      else onLogged(setNumber, { weight: w, reps: r }, res.pr);
+      else {
+        setJustDone(true);
+        navigator.vibrate?.(res.pr ? [30, 50, 80] : 15);
+        onLogged(setNumber, { weight: w, reps: r }, res.pr);
+      }
     });
   }
 
@@ -295,7 +306,7 @@ function SetRow({
           disabled={pending || disabled}
           aria-label={done ? `Undo set ${setNumber}` : `Log set ${setNumber}`}
           aria-pressed={done}
-          className={`grid h-10 place-items-center rounded-lg ${done ? "bg-success text-white" : "bg-canvas text-muted hover:bg-line"}`}
+          className={`grid h-10 place-items-center rounded-lg transition-colors ${done ? `bg-success text-white ${justDone ? "check-pop" : ""}` : "bg-canvas text-muted hover:bg-line"}`}
         >
           <Check className="size-5" />
         </button>

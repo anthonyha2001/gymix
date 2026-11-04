@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // Shake the phone (twice, quickly) to open today's program. Works while
 // the app is open; iPhones need motion permission once (Profile → Shake to start).
 export function ShakeQuickStart({ href }: { href: string }) {
   const router = useRouter();
+  // A wave fills the screen, then the program opens.
+  const [wave, setWave] = useState(0);
   const peaks = useRef<number[]>([]);
   const last = useRef(0);
 
@@ -35,7 +37,9 @@ export function ShakeQuickStart({ href }: { href: string }) {
         peaks.current = [];
         last.current = now;
         navigator.vibrate?.(40);
-        router.push(href);
+        setWave(now);
+        router.prefetch(href);
+        setTimeout(() => router.push(href), 220);
       }
     };
     window.addEventListener("devicemotion", onMotion);
@@ -53,5 +57,5 @@ export function ShakeQuickStart({ href }: { href: string }) {
     };
   }, [href, router]);
 
-  return null;
+  return wave ? <div key={wave} aria-hidden className="shake-wave" onAnimationEnd={() => setWave(0)} /> : null;
 }

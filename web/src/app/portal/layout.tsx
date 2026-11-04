@@ -37,7 +37,7 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 pt-6 pb-[calc(var(--bottom-bar)+1.5rem)]">{children}</main>
+      <main className="press mx-auto w-full max-w-3xl flex-1 px-4 pt-6 pb-[calc(var(--bottom-bar)+1.5rem)]">{children}</main>
       {/* Bottom tab bar. Reads the URL and the unread count, neither known ahead of time. */}
       <Suspense fallback={<div className="fixed inset-x-0 bottom-0 h-16 border-t border-line bg-surface" />}>
         <NavWithUnread />

@@ -113,7 +113,7 @@ export async function MemberHome({
     .slice(0, 5);
 
   return (
-    <div className="space-y-5">
+    <div className="stagger space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-sm text-muted">{gymName}</p>
