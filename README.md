@@ -33,7 +33,8 @@ After changing a migration: `npx supabase db reset` (wipes local data and re-app
 ## Super admin (platform console)
 
 Super admins run Gymix itself: they log in to `/admin` and see every gym's numbers (not members' personal data).
-Create or update one with the Supabase service role key (`npx supabase status` shows it locally); the password is
+The easiest way to make one: list the email in `SUPER_ADMIN_EMAILS` (comma-separated) in the app's environment.
+That account becomes a super admin on its next login and lands on `/admin`. Or create or update one with the Supabase service role key (`npx supabase status` shows it locally); the password is
 passed in the environment so it never ends up in the repo:
 
 ```sh

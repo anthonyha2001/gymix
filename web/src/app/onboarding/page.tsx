@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { Card, Logo, Skeleton } from "@/components/ui";
 import { homePathFor, requireViewer } from "@/lib/session";
+import { promoteConfiguredSuperAdmin } from "@/lib/super-admin";
 import { signOut } from "../(auth)/actions";
 import { CreateGymForm } from "./create-gym-form";
 
@@ -41,5 +42,7 @@ export default async function OnboardingPage() {
 async function OnboardingGate() {
   const viewer = await requireViewer();
   if (viewer.memberships.length > 0) redirect(homePathFor(viewer));
+  // Super admins don't need a gym: send them to the console instead.
+  if (viewer.isPlatformAdmin || (await promoteConfiguredSuperAdmin(viewer.id, viewer.email))) redirect("/admin");
   return <CreateGymForm />;
 }

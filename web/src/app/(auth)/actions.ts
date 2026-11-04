@@ -7,6 +7,7 @@ import { isSupabaseConfigured, isUnreachable, UNREACHABLE_MESSAGE } from "@/lib/
 import { homePathForUser } from "@/lib/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { identifierType, logAuthEvent } from "@/lib/telemetry-server";
+import { promoteConfiguredSuperAdmin } from "@/lib/super-admin";
 
 export type AuthFormState = { error?: string; message?: string; email?: string };
 
@@ -61,6 +62,7 @@ export async function signIn(_prev: AuthFormState, formData: FormData): Promise<
     return { error: "Wrong login or password.", email: identifier };
   }
   await logAuthEvent({ kind: "login", path: "/login", user_id: data.user.id, message: "password", detail: { via } });
+  await promoteConfiguredSuperAdmin(data.user.id, data.user.email);
 
   // Pick up any gym invites sent to this email since the account was created.
   await supabase.rpc("claim_my_invites");
