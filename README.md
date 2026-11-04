@@ -5,6 +5,31 @@ The operating system for gyms: an owner/staff dashboard plus a member portal.
 - `web/` — Next.js 16 (App Router, TypeScript, Tailwind v4). Read `web/AGENTS.md` before writing Next-specific code.
 - `supabase/` — Postgres schema as migrations, plus local dev config.
 
+## Features
+
+**Staff dashboard**
+
+- Members, memberships (monthly, yearly, visit packs), invoices and payments in USD and lira; freeze, resume, renew.
+- Schedule with a day/week/month calendar (a list on phones) and quick add; trainers see only their own classes.
+- Classes, bookings and waitlists, personal training, monthly courses, nutrition plans.
+- Equipment: the owner lists the gym's machines, and programs only use exercises for that equipment.
+- Machines with NFC and QR stickers (generated in the dashboard) that open a how-to sheet in the member app.
+- Chat with members, including the automatic WhatsApp messages each member was sent, with time and delivery status.
+- Automatic WhatsApp (see below): renewal reminders N days before expiry (Settings), payment receipts, new-member logins.
+
+**Member app** (a PWA for iPhone and Android: Home, Train, Schedule, Progress, More)
+
+- Home: today's workout, weekly goal and streak, membership, next class, invoices.
+- Programs: build their own or ask a trainer; edit (pen) or delete (trash, with a confirmation).
+- Training days: pick weekdays and which program day each one is for; reminders on those days.
+- Workout logger with rest timer, a Finish bar always on screen, personal-record alerts.
+- Shake the phone (twice, quickly) to open today's program. iPhones ask for motion access on the first tap.
+- Dropped phone: free fall followed by a hard hit plays a cracked-screen joke animation (Profile, "Try it").
+- Pause and resume their own membership (the paused days are added to the end date).
+- No active membership, paused, or frozen for an unpaid balance: only Home is open and its training parts are greyed out.
+- Micro-animations throughout (staggered cards, press feedback, set check pop, confetti on records); all off when
+  the phone asks for reduced motion.
+
 ## Running locally
 
 Needs Node 22+ and Docker Desktop (running).
@@ -54,7 +79,13 @@ The super admin console has six tabs, each with a 7/30/90-day range:
 - **Logins**: successful and failed logins with IP and country, login methods, and a warning when one IP fails 5+ times in a day.
 - **Errors**: server errors (from `web/src/instrumentation.ts`) and browser errors (from `instrumentation-client.ts`
   and the error pages), grouped by message, with stack traces.
-- **Gyms**: every gym with record payment, extend trial and suspend/reopen.
+- **Gyms**: every gym with record payment, extend trial and suspend/reopen, plus:
+  - **Open dashboard** (support access): enter that gym's dashboard as its owner without an account there. A banner
+    shows it; "Back to admin" leaves. Stored in `platform_admin_visits` (one gym at a time) and honoured by
+    `my_gym_role()`, so every database permission check applies as for the owner.
+  - **Send a notification** to every gym's team, or everyone including members (lands in their bell).
+  - **WhatsApp (Gymix number)**: the Meta phone number ID and access token, kept in `platform_secrets`
+    (server-only, no policies).
 - **Revenue & pricing**: change the price, trial length and grace period; payment instructions; payment history;
   cleanup of old monitoring data.
 
@@ -72,6 +103,23 @@ extends the gym's paid-until date. Also in `/admin`: extend a trial, and the pay
 number every owner sees on Settings, Subscription. A few days (the grace period, 3 by default) after a subscription ends the staff dashboard locks
 (the owner can still open the Subscription tab); members keep using their app.
 
+## Automatic WhatsApp
+
+Sent from one Gymix number through Meta's WhatsApp Cloud API (`web/src/lib/whatsapp.ts`), at most once each
+(`whatsapp_log`, unique on kind + ref):
+
+- **Renewal reminder**: a daily Vercel cron (`/api/cron/whatsapp`, 07:00 UTC, protected by `CRON_SECRET`) messages
+  members whose membership ends in the gym's "renewal reminder" days (Settings, default 3, 0 = off).
+- **Payment receipt**: when staff sell a membership with a payment or record a payment.
+- **Welcome**: a new member added with a phone gets their one-tap portal login link.
+
+Setup: create these Utility templates (English) in WhatsApp Manager, then save the keys in `/admin` (Gyms) or set
+`WHATSAPP_TOKEN` and `WHATSAPP_PHONE_NUMBER_ID`. Without keys nothing is sent.
+
+- `gymix_renewal_reminder`: Hi {{1}}, your {{2}} membership ends on {{3}}. Renew at the front desk to keep training.
+- `gymix_payment_received`: Hi {{1}}, {{2}} received your payment of {{3}}. Thank you!
+- `gymix_member_welcome`: Hi {{1}}, {{2}} has set up your Gymix account. Open your portal: {{3}}
+
 ## How access works
 
 Every user has a role per gym: `owner`, `manager`, `front_desk`, `trainer`, `dietitian` or `member`.
@@ -84,6 +132,8 @@ Staff land on `/dashboard`, members on `/portal`, users with no gym on `/onboard
 - The owner chooses which member-app pages are visible (Settings → Member app).
 - A member still owing money a set number of days after an invoice (Settings → Gym, default 3) is frozen: the
   member app shows only its home page and check-in is refused. Their next check-in after paying unfreezes it.
+- The same Home-only lock applies with no active membership (none, expired, paused, not started, visits used up).
+  Members pause and resume their own membership from Home (`freeze_my_membership`).
 - All of this is enforced in the database with row-level security (`supabase/migrations/*_foundation.sql`), not only in the UI.
 
 ## Tests

@@ -20,6 +20,8 @@ export const PLAN_FEATURES = [
   "Nutrition plans from your dietitian",
   "Classes, monthly courses and personal training",
   "Machine stickers with how-to animations",
+  "Calendar schedule with bookings",
+  "Automatic WhatsApp reminders and receipts",
   "Notifications and reminders",
   "Automatic freeze for unpaid accounts",
 ] as const;
