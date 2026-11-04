@@ -39,7 +39,18 @@ export function ShakeQuickStart({ children }: { children: React.ReactNode }) {
       }
     };
     window.addEventListener("devicemotion", onMotion);
-    return () => window.removeEventListener("devicemotion", onMotion);
+    // Android sends motion events right away. iPhones only after permission,
+    // which must be asked during a tap: ask on the first one (silent once granted).
+    const Motion = window.DeviceMotionEvent as unknown as { requestPermission?: () => Promise<string> } | undefined;
+    const ask = () => {
+      if (enabled()) Motion?.requestPermission?.().catch(() => {});
+    };
+    const needsAsk = typeof Motion?.requestPermission === "function";
+    if (needsAsk) window.addEventListener("touchend", ask, { once: true });
+    return () => {
+      window.removeEventListener("devicemotion", onMotion);
+      if (needsAsk) window.removeEventListener("touchend", ask);
+    };
   }, []);
 
   return (

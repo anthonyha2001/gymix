@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 
 // viewportFit "cover" lets the app use the whole iPhone screen, so the bottom
 // bar can pad itself clear of the home indicator (env(safe-area-inset-bottom)).
-export const viewport: Viewport = { themeColor: "#0d1117", viewportFit: "cover" };
+// maximumScale 1: phones don't zoom in when a field is tapped.
+export const viewport: Viewport = { themeColor: "#0d1117", viewportFit: "cover", maximumScale: 1 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

@@ -17,7 +17,7 @@ import { createClient } from "@/lib/supabase/server";
 import { deleteProgram } from "@/app/program-actions";
 import { ActionButton } from "../../dashboard/members/action-button";
 import { cancelMyRequest, startWorkout } from "../actions";
-import { NewSelfProgramForm, RequestProgramForm } from "./forms";
+import { DeleteProgramButton, NewSelfProgramForm, RequestProgramForm } from "./forms";
 
 export const metadata: Metadata = { title: "My programs" };
 
@@ -187,9 +187,12 @@ async function ProgramModal({ programId, memberId }: { programId: string; member
       <div className="space-y-5">
         {program.notes && <p className="rounded-lg bg-canvas p-3 text-sm">{program.notes}</p>}
         {program.kind === "self" && (
-          <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace aria-label="Edit program" title="Edit program" className={buttonClass("secondary", "h-10 w-10 px-0")}>
-            <Pencil className="size-4" />
-          </HoverLink>
+          <div className="flex gap-2">
+            <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace aria-label="Edit program" title="Edit program" className={buttonClass("secondary", "h-10 w-10 px-0")}>
+              <Pencil className="size-4" />
+            </HoverLink>
+            <DeleteProgramButton programId={program.id} name={program.name} />
+          </div>
         )}
         {program.days.length === 0 && <p className="text-sm text-muted">No training days yet.</p>}
         {program.days.map((day, i) => (

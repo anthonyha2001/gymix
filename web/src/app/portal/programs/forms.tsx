@@ -2,13 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { useDialogAction } from "@/components/dialog";
-import { Repeat, X } from "lucide-react";
+import { Repeat, Trash2, X } from "lucide-react";
+import { useConfirm } from "@/components/confirm";
 import { ExerciseAnimation } from "@/components/exercise-media";
 import { Alert, Button, Field, buttonClass, inputClass } from "@/components/ui";
 import { EXPERIENCE, GOALS, musclesLabel, type Exercise } from "@/lib/exercises";
 import { formatUSD } from "@/lib/format";
 import { exerciseAlternatives } from "@/app/exercise-actions";
-import { swapExercise } from "@/app/program-actions";
+import { deleteProgram, swapExercise } from "@/app/program-actions";
 import { createSelfProgram, requestProgram } from "../actions";
 import { SearchSelect } from "@/components/search-select";
 
@@ -149,5 +150,32 @@ export function SwapButton({ programExerciseId, exerciseId, exerciseName }: { pr
         </ul>
       )}
     </div>
+  );
+}
+
+// Trash button with a confirmation popup; deletes the program and goes back to the list.
+export function DeleteProgramButton({ programId, name }: { programId: string; name: string }) {
+  const [confirmDialog, confirm] = useConfirm();
+  const [pending, start] = useTransition();
+  return (
+    <>
+      {confirmDialog}
+      <button
+        type="button"
+        disabled={pending}
+        aria-label="Delete program"
+        title="Delete program"
+        onClick={async () => {
+          const ok = await confirm(`Delete "${name}"? Workouts you already logged stay in your history.`, {
+            title: "Delete this program?",
+            confirmLabel: "Delete program",
+          });
+          if (ok) start(() => deleteProgram(programId, "/portal/programs"));
+        }}
+        className={buttonClass("secondary", "h-10 w-10 px-0 text-danger hover:border-danger")}
+      >
+        <Trash2 className="size-4" />
+      </button>
+    </>
   );
 }

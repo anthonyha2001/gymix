@@ -102,7 +102,7 @@ export function TrainingDaysForm({ initial, programDays }: { initial: { weekday:
       {ordered.length > 0 && programDays.length > 0 && (
         <ul className="space-y-2">
           {ordered.map((w) => (
-            <li key={w} className="grid grid-cols-[6rem_1fr] items-center gap-3">
+            <li key={w} className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-1.5 sm:grid-cols-[7rem_minmax(0,1fr)] sm:items-center sm:gap-3">
               <span className="text-sm font-medium">{WEEKDAYS[w]}</span>
               <SearchSelect
                 aria-label={`${WEEKDAYS[w]} workout`}
