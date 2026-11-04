@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, CheckCircle2, ChevronRight, Dumbbell, Flame, Nfc, UserRound } from "lucide-react";
+import { CalendarDays, CheckCircle2, ChevronRight, Dumbbell, Flame, Nfc, UserRound, Lock } from "lucide-react";
 import { Badge, Card, EmptyState, SectionTitle } from "@/components/ui";
 import { ActionButton } from "@/app/dashboard/members/action-button";
 import { freezeMyMembership } from "@/app/portal/actions";
@@ -44,7 +44,7 @@ export async function MemberHome({
   // Membership not active (or frozen for an unpaid balance): training parts are blurred out.
   locked?: boolean;
 }) {
-  const dim = locked ? "pointer-events-none select-none opacity-60 blur-[3px] transition" : "";
+  const dim = locked ? "pointer-events-none select-none opacity-40 grayscale blur-[1.5px]" : "";
   const today = todayIn(timeZone);
   const nowIso = new Date().toISOString();
   const [{ data: me }, { data: invoices }, { data: visits }, { data: nextClass }, { data: nextPt }, { data: workouts }, plan] = await Promise.all([
@@ -130,8 +130,17 @@ export async function MemberHome({
         <p className="rounded-2xl bg-danger-soft px-4 py-3 text-sm font-medium text-danger">You have {formatUSD(balance)} to pay at the front desk.</p>
       )}
 
-      <div className={dim} aria-hidden={locked || undefined} inert={locked || undefined}>
-        <TodayWorkout plan={plan} weekdayName={WEEKDAYS[todayDow]} preview={preview} />
+      <div className="relative">
+        <div className={dim} aria-hidden={locked || undefined} inert={locked || undefined}>
+          <TodayWorkout plan={plan} weekdayName={WEEKDAYS[todayDow]} preview={preview} />
+        </div>
+        {locked && (
+          <div className="absolute inset-0 grid place-items-center">
+            <span className="inline-flex items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-medium shadow-sm ring-1 ring-line">
+              <Lock className="size-4" /> Opens with an active membership
+            </span>
+          </div>
+        )}
       </div>
 
       {/* This week */}
