@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Bell, Check, ChevronLeft, ChevronRight, Lock, MessageCircle, Nfc, Pause, Play, QrCode, ShieldCheck } from "lucide-react";
+import {
+  Bell, CalendarDays, Check, ChevronLeft, ChevronRight, ClipboardList, CreditCard, Dumbbell, LayoutDashboard, Lock,
+  MessageCircle, Monitor, Nfc, Pause, Play, QrCode, Salad, Settings, ShieldCheck, Smartphone, Tag, Users,
+} from "lucide-react";
+import { LogoMark } from "@/components/logo-mark";
 
 // The full Gymix tour (about 5 minutes): every feature plays as a short animation on a phone,
 // with a full explanation, who uses it, how to start and a tip. Scenes are plain HTML so they stay crisp.
@@ -678,7 +682,63 @@ const CHAPTERS: Chapter[] = [
   },
 ];
 
-const ALL = CHAPTERS.flatMap((c, ci) => c.steps.map((s) => ({ ...s, chapter: c.name, ci })));
+// Staff features play on a laptop showing the dashboard page they live on; the rest play on the phone.
+const NAV = [
+  ["Overview", LayoutDashboard], ["Check-in", Nfc], ["Members", Users], ["Schedule", CalendarDays],
+  ["Messages", MessageCircle], ["Programs", ClipboardList], ["Nutrition", Salad], ["Equipment", Dumbbell],
+  ["Billing", CreditCard], ["Plans", Tag], ["Team", ShieldCheck], ["Settings", Settings],
+] as const;
+const PC_PAGE: Record<string, (typeof NAV)[number][0]> = {
+  "Create your gym": "Overview", "Your lira rate and gym rules": "Settings", "Membership plans": "Plans",
+  "Your equipment": "Equipment", "Invite your team": "Team", "Choose what members see": "Settings",
+  "Add a member": "Members", "Sell a membership": "Members", "Payments in dollars and lira": "Members",
+  "Billing: who owes what": "Billing", "Freeze, resume and renew": "Members", "Expiring soon": "Overview",
+  "Check-in log": "Check-in", "Your gym today": "Overview", "The calendar": "Schedule", "Personal training": "Schedule",
+  "Monthly courses": "Schedule", "Programs from your trainers": "Programs", "Nutrition plans": "Nutrition",
+  Chat: "Messages", "Your subscription": "Settings", "Help when you need it": "Overview", "Your data is private": "Team",
+};
+
+function Laptop({ page, children }: { page: string; children: ReactNode }) {
+  const idx = NAV.findIndex(([n]) => n === page);
+  return (
+    <div className="mx-auto w-full max-w-[640px]">
+      <div className="rounded-t-2xl border-[8px] border-b-0 border-[#2a2f36] bg-[#2a2f36] shadow-2xl">
+        <div className="flex h-[400px] overflow-hidden rounded-t-lg bg-canvas">
+          <aside className="relative w-11 shrink-0 bg-ink p-1.5 text-white sm:w-36">
+            <div className="mb-2 flex h-8 items-center gap-2 px-1">
+              <span className="grid size-6 shrink-0 place-items-center rounded-md bg-brand text-ink"><LogoMark className="size-full" /></span>
+              <span className="hidden text-sm font-bold sm:inline">Gymix</span>
+            </div>
+            {NAV.map(([n, Icon], k) => (
+              <div key={n} className={`flex h-7 items-center gap-2 rounded-lg px-2 text-[11px] ${k === idx ? "demo-hl" : "text-white/60"}`}>
+                <Icon className="size-3.5 shrink-0" /><span className="hidden truncate sm:inline">{n}</span>
+              </div>
+            ))}
+            <span className="demo-cursor pointer-events-none absolute top-0 left-0 z-10 text-lg" style={{ ["--y" as string]: `${48 + idx * 28}px` }}>🖱️</span>
+          </aside>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="flex h-10 shrink-0 items-center justify-between border-b border-line bg-surface px-3 text-xs">
+              <b>{page}</b><span className="text-muted">Iron House</span>
+            </div>
+            <div className="demo-page flex flex-1 flex-col gap-2 overflow-hidden p-3"><div className="mx-auto flex w-full max-w-sm flex-col gap-2">{children}</div></div>
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto h-3 w-[108%] -translate-x-[3.7%] rounded-b-xl bg-gradient-to-b from-[#3a4048] to-[#1d2127]" />
+    </div>
+  );
+}
+
+function Phone({ children }: { children: ReactNode }) {
+  return (
+    <div className="mx-auto w-[300px] rounded-[2.5rem] border-[8px] border-[#2a2f36] bg-canvas p-3 shadow-2xl">
+      <div className="mx-auto mb-3 h-1.5 w-14 rounded-full bg-[#2a2f36]" />
+      <div className="flex h-[376px] flex-col gap-2 overflow-hidden">{children}</div>
+    </div>
+  );
+}
+
+const ALL = CHAPTERS.flatMap((c, ci) => c.steps.map((s) => ({ ...s, chapter: c.name, ci, page: PC_PAGE[s.title] })));
 // Long explanations stay on screen longer: about 5 minutes for the whole tour.
 const msFor = (s: Step) => Math.min(13000, Math.max(7000, s.what.split(" ").length * 190));
 const TOTAL_MS = ALL.reduce((t, s) => t + msFor(s), 0);
@@ -705,15 +765,17 @@ export function DemoTour() {
   return (
     <section className="px-4 py-10">
       <style>{CSS}</style>
-      <div ref={top} className="mx-auto grid max-w-6xl scroll-mt-20 items-start gap-8 lg:grid-cols-[340px_1fr]">
-        {/* Player: phone + explanation */}
+      <div ref={top} className="mx-auto grid max-w-6xl scroll-mt-20 items-start gap-8 lg:grid-cols-[minmax(0,640px)_1fr]">
+        {/* Player: laptop for staff features, phone for member features */}
         <div className="lg:sticky lg:top-20">
-          <div className="mx-auto w-[300px] rounded-[2.5rem] border-[8px] border-[#2a2f36] bg-canvas p-3 shadow-2xl">
-            <div className="mx-auto mb-3 h-1.5 w-14 rounded-full bg-[#2a2f36]" />
-            <div key={i} className="flex h-[400px] flex-col gap-2 overflow-hidden">{step.scene()}</div>
-            <div className="mt-3 h-1 overflow-hidden rounded-full bg-line">
-              <div key={`p${i}${playing}`} className={playing ? "demo-bar h-full bg-brand-strong" : "h-full w-0"} style={{ animationDuration: `${ms}ms` }} />
-            </div>
+          <p className="mb-3 flex items-center justify-center gap-2 text-xs font-semibold text-muted">
+            {step.page ? <><Monitor className="size-4" /> Staff dashboard · computer or tablet</> : <><Smartphone className="size-4" /> Member app · iPhone and Android</>}
+          </p>
+          <div key={step.page ? "pc" : "phone"} className="demo-zoom">
+            {step.page ? <Laptop key={i} page={step.page}>{step.scene()}</Laptop> : <Phone key={i}>{step.scene()}</Phone>}
+          </div>
+          <div className="mx-auto mt-3 h-1 max-w-[300px] overflow-hidden rounded-full bg-line">
+            <div key={`p${i}${playing}`} className={playing ? "demo-bar h-full bg-brand-strong" : "h-full w-0"} style={{ animationDuration: `${ms}ms` }} />
           </div>
           <div className="mt-4 flex items-center justify-center gap-2">
             <button aria-label="Previous" onClick={() => go(i - 1)} className="grid size-10 place-items-center rounded-xl bg-surface ring-1 ring-line"><ChevronLeft className="size-5" /></button>
@@ -790,7 +852,15 @@ const CSS = `
 @keyframes demo-wave{to{clip-path:circle(150% at 50% 100%)}}
 .demo-crack{opacity:0;animation:demo-crack 2.2s .4s both}
 @keyframes demo-crack{0%{opacity:0}10%,60%{opacity:1}100%{opacity:0}}
+.demo-zoom{animation:demo-zoom .5s both cubic-bezier(.2,.8,.2,1)}
+@keyframes demo-zoom{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.demo-cursor{animation:demo-cursor .9s .1s both cubic-bezier(.4,0,.2,1),demo-click .2s 1s}
+@keyframes demo-cursor{from{transform:translate(150px,330px);opacity:0}20%{opacity:1}to{transform:translate(22px,var(--y));opacity:1}}
+@keyframes demo-click{50%{scale:.8}}
+.demo-hl{color:rgba(255,255,255,.6);animation:demo-hl .3s 1s both}
+@keyframes demo-hl{to{background:#c8f135;color:#0d1117;font-weight:600}}
+.demo-page{animation:demo-up .4s 1s both}
 .demo-bar{animation:demo-bar linear both}
 @keyframes demo-bar{from{width:0}to{width:100%}}
-@media (prefers-reduced-motion:reduce){[class*="demo-"]{animation:none!important;opacity:1!important;clip-path:none!important}}
+@media (prefers-reduced-motion:reduce){[class*="demo-"]{animation:none!important;opacity:1!important;clip-path:none!important}.demo-hl{background:#c8f135;color:#0d1117}.demo-cursor{display:none}}
 `;
