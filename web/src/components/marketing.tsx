@@ -33,6 +33,7 @@ export function MarketingNav() {
         </Link>
         <nav aria-label="Site" className="hidden items-center gap-1 text-sm text-white/70 md:flex">
           <Link href="/#features" className="rounded-lg px-3 py-2 hover:text-white">Features</Link>
+          <Link href="/demo" className="rounded-lg px-3 py-2 hover:text-white">Live demo</Link>
           <Link href="/#how" className="rounded-lg px-3 py-2 hover:text-white">How it works</Link>
           <Link href="/pricing" className="rounded-lg px-3 py-2 hover:text-white">Pricing</Link>
           <Link href="/pricing#faq" className="rounded-lg px-3 py-2 hover:text-white">FAQ</Link>
