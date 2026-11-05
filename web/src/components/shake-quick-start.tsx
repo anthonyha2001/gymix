@@ -1,17 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Dumbbell } from "lucide-react";
 
 // Shake the phone (three times, quickly) to open the Programs page. The shake
 // itself is recognised by MotionGestures; iPhones need motion permission once.
+// Off during a workout (after Start workout), so a shake never leaves it; the
+// dropped-phone animation still works there.
 export function ShakeQuickStart({ href }: { href: string }) {
   const router = useRouter();
+  const inWorkout = usePathname().startsWith("/portal/workout");
   // A lime wave fills the screen, then the program opens underneath it.
   const [wave, setWave] = useState(0);
 
   useEffect(() => {
+    if (inWorkout) return;
     const onShake = () => {
       navigator.vibrate?.(40);
       setWave(Date.now());
@@ -20,7 +24,7 @@ export function ShakeQuickStart({ href }: { href: string }) {
     };
     window.addEventListener("gymix:shake", onShake);
     return () => window.removeEventListener("gymix:shake", onShake);
-  }, [href, router]);
+  }, [href, router, inWorkout]);
 
   if (!wave) return null;
   return (
