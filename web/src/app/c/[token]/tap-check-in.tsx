@@ -93,8 +93,15 @@ function Screen({ tone, children }: { tone: "good" | "bad" | "neutral"; children
     neutral: "bg-ink text-white",
   }[tone];
   return (
-    <main role="status" className={`flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center ${styles}`}>
-      {children}
+    <main role="status" className={`relative flex flex-1 flex-col items-center justify-center gap-3 overflow-hidden px-6 py-16 text-center ${styles}`}>
+      {/* Waves spreading from the middle, like the tap that opened this page. They keep
+          going while checking, and burst again when the answer appears. */}
+      <span key={tone} aria-hidden className={`tap-waves ${tone === "neutral" ? "tap-waves-loop" : ""}`}>
+        <i />
+        <i />
+        <i />
+      </span>
+      <div className="relative flex flex-col items-center gap-3">{children}</div>
     </main>
   );
 }

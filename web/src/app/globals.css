@@ -255,3 +255,28 @@ dialog[open]:not(.sheet)::backdrop { animation: sheet-fade 200ms ease-out; }
   .drop-glass { display: none; }
   .drop-card { animation: none; opacity: 1; }
 }
+
+/* NFC check-in: rings spreading out from the middle of the screen. */
+@keyframes gx-tap-wave {
+  from { transform: translate(-50%, -50%) scale(0.3); opacity: 0.55; }
+  to { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+}
+.tap-waves > i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 9999px;
+  border: 2px solid rgb(255 255 255 / 0.6);
+  background: rgb(255 255 255 / 0.06);
+  opacity: 0;
+  pointer-events: none;
+  animation: gx-tap-wave 1.8s cubic-bezier(0.22, 1, 0.36, 1) 2;
+}
+.tap-waves > i:nth-child(2) { animation-delay: 0.3s; }
+.tap-waves > i:nth-child(3) { animation-delay: 0.6s; }
+.tap-waves-loop > i { animation-iteration-count: infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .tap-waves { display: none; }
+}
