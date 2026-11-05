@@ -13,9 +13,9 @@ export default function DemoPage() {
       <MarketingNav />
       <section className="bg-ink px-4 pt-14 pb-10 text-center text-white">
         <p className="text-sm font-semibold uppercase tracking-widest text-brand">Live demo</p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">See Gymix in 60 seconds.</h1>
+        <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">The full Gymix tour.</h1>
         <p className="mx-auto mt-4 max-w-xl text-white/70">
-          Each feature plays on the phone. Read what it does and where to start, then set up your gym in ten minutes.
+          Every feature, explained in about five minutes. Watch it play, or jump to the feature you want, then set up your gym in ten minutes.
         </p>
       </section>
       <DemoTour />
