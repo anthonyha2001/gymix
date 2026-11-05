@@ -35,6 +35,7 @@ export async function MemberHome({
   timeZone,
   preview = false,
   locked = false,
+  canPause = false,
 }: {
   supabase: Client;
   memberId: string;
@@ -43,6 +44,8 @@ export async function MemberHome({
   preview?: boolean;
   // Membership not active (or frozen for an unpaid balance): training parts are blurred out.
   locked?: boolean;
+  // Members may pause their own membership (a feature switch).
+  canPause?: boolean;
 }) {
   const dim = locked ? "pointer-events-none select-none opacity-40 grayscale blur-[1.5px]" : "";
   const today = todayIn(timeZone);
@@ -209,7 +212,7 @@ export async function MemberHome({
             </div>
           )}
         </div>
-        {!preview && me?.status === "active" && (
+        {!preview && canPause && me?.status === "active" && (
           <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-3">
             <p className="text-sm text-muted">Away for a while? Pause it and the days are added back.</p>
             <ActionButton
@@ -220,7 +223,7 @@ export async function MemberHome({
             />
           </div>
         )}
-        {!preview && me?.status === "frozen" && (
+        {!preview && canPause && me?.status === "frozen" && (
           <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-3">
             <p className="text-sm text-muted">Your membership is paused.</p>
             <ActionButton action={freezeMyMembership.bind(null, "unfreeze")} label="Resume" pendingLabel="Resuming…" variant="primary" />

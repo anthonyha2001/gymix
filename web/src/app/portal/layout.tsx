@@ -11,6 +11,8 @@ import { PortalNav } from "./portal-nav";
 import { InstallPrompt } from "@/components/install-prompt";
 import { ShakeQuickStart } from "@/components/shake-quick-start";
 import { DropCatch } from "@/components/drop-catch";
+import { SupportBanner } from "@/components/support-banner";
+import { hasFeature } from "@/lib/features";
 import { MotionGestures } from "@/components/motion-gestures";
 import { QrScanButton } from "@/components/qr-scanner";
 import { NotificationBell } from "@/components/notification-bell";
@@ -38,7 +40,12 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
           </div>
         </div>
       </header>
-      <main className="press mx-auto w-full max-w-3xl flex-1 px-4 pt-6 pb-[calc(var(--bottom-bar)+1.5rem)]">{children}</main>
+      <main className="press mx-auto w-full max-w-3xl flex-1 px-4 pt-6 pb-[calc(var(--bottom-bar)+1.5rem)]">
+        <Suspense fallback={null}>
+          <SupportBanner />
+        </Suspense>
+        {children}
+      </main>
       {/* Bottom tab bar. Reads the URL and the unread count, neither known ahead of time. */}
       <Suspense fallback={<div className="fixed inset-x-0 bottom-0 h-16 border-t border-line bg-surface" />}>
         <NavWithUnread />
@@ -47,7 +54,9 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
         <QuickStart />
       </Suspense>
       <InstallPrompt />
-      <DropCatch />
+      <Suspense>
+        <Drop />
+      </Suspense>
       <MotionGestures />
     </div>
   );
@@ -81,6 +90,13 @@ async function MemberBell() {
 // Shake the phone to open the Programs page (not while the account is locked).
 async function QuickStart() {
   const { membership } = await requireMember();
-  if ((await accountStatus(membership.gymId)).locked) return null;
+  const [account, on] = await Promise.all([accountStatus(membership.gymId), hasFeature(membership.gymId, "shake_to_open")]);
+  if (account.locked || !on) return null;
   return <ShakeQuickStart href="/portal/programs" />;
+}
+
+// The dropped-phone animation, when the feature is on for this gym.
+async function Drop() {
+  const { membership } = await requireMember();
+  return (await hasFeature(membership.gymId, "drop_animation")) ? <DropCatch /> : null;
 }

@@ -2,7 +2,8 @@
 
 import { refresh, updateTag } from "next/cache";
 import { errorMessage, text, type ActionState } from "@/lib/action-result";
-import { formatDate } from "@/lib/format";
+import { formatDate, todayIn } from "@/lib/format";
+import type { GymRole } from "@/lib/roles";
 import { requirePlatformAdmin } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -104,13 +105,99 @@ export async function pruneEvents(_prev: ActionState, formData: FormData): Promi
 }
 
 // Support access: open a gym's dashboard as its owner, without an account there.
-export async function openGymAsSupport(gymId: string) {
+// Any staff role in any gym. "member" only in a lab gym: the super admin gets a
+// member record there (with a year-long membership) the first time.
+export async function openGymAsSupport(gymId: string, role: GymRole = "owner") {
   const viewer = await requirePlatformAdmin();
-  const { error } = await createAdminClient()
+  const admin = createAdminClient();
+  if (role === "member") {
+    const { data: gym } = await admin.from("gyms").select("is_lab, timezone").eq("id", gymId).single();
+    if (!gym?.is_lab) throw new Error("Only a lab gym can be opened as a member.");
+    await ensureLabMember(gymId, viewer.id, viewer.fullName || viewer.email, gym.timezone);
+  }
+  const { error } = await admin
     .from("platform_admin_visits")
-    .upsert({ user_id: viewer.id, gym_id: gymId, started_at: new Date().toISOString() }, { onConflict: "user_id" });
+    .upsert({ user_id: viewer.id, gym_id: gymId, role, started_at: new Date().toISOString() }, { onConflict: "user_id" });
   if (error) throw new Error(errorMessage(error, "Couldn't open the gym."));
-  redirect("/dashboard");
+  redirect(role === "member" ? "/portal" : "/dashboard");
+}
+
+async function ensureLabMember(gymId: string, userId: string, name: string, timeZone: string) {
+  const admin = createAdminClient();
+  let { data: member } = await admin.from("members").select("id").eq("gym_id", gymId).eq("user_id", userId).maybeSingle();
+  if (!member) {
+    ({ data: member } = await admin
+      .from("members")
+      .insert({ gym_id: gymId, user_id: userId, full_name: name.length >= 2 ? name : "Lab member" })
+      .select("id")
+      .single());
+  }
+  if (!member) return;
+  const today = todayIn(timeZone);
+  const { data: active } = await admin
+    .from("memberships")
+    .select("id")
+    .eq("member_id", member.id)
+    .is("cancelled_at", null)
+    .gte("ends_on", today)
+    .limit(1);
+  if (!active?.length) {
+    const end = new Date(`${today}T00:00:00Z`);
+    end.setUTCFullYear(end.getUTCFullYear() + 1);
+    await admin.from("memberships").insert({
+      gym_id: gymId,
+      member_id: member.id,
+      plan_name: "Lab",
+      starts_on: today,
+      ends_on: end.toISOString().slice(0, 10),
+    });
+  }
+}
+
+// The super admin's own test gym: new features set to "lab only" show here first.
+export async function createLabGym() {
+  const viewer = await requirePlatformAdmin();
+  const admin = createAdminClient();
+  const { data: existing } = await admin.from("gyms").select("id").eq("is_lab", true).limit(1).maybeSingle();
+  let gymId = existing?.id;
+  if (!gymId) {
+    const { data, error } = await admin
+      .from("gyms")
+      .insert({ name: "Gymix Lab", slug: `gymix-lab-${Date.now().toString(36)}`, created_by: viewer.id, is_lab: true, paid_until: "2099-12-31" })
+      .select("id")
+      .single();
+    if (error || !data) throw new Error(errorMessage(error ?? { message: "" }, "Couldn't create the lab."));
+    gymId = data.id;
+    await admin.from("membership_plans").insert({ gym_id: gymId, name: "Monthly", price_usd: 40 });
+  }
+  await openGymAsSupport(gymId, "owner");
+}
+
+// A feature's rollout: off, lab gyms only, or everyone.
+export async function setFeatureRollout(key: string, formData: FormData) {
+  await requirePlatformAdmin();
+  const rollout = text(formData, "rollout");
+  if (!["off", "lab", "all"].includes(rollout)) return;
+  await createAdminClient().from("features").update({ rollout, updated_at: new Date().toISOString() }).eq("key", key);
+  refresh();
+}
+
+// One gym gets a feature early ("on"), never ("off"), or follows the rollout ("default").
+export async function setFeatureOverride(key: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requirePlatformAdmin();
+  const gymId = text(formData, "gym_id");
+  const value = text(formData, "value");
+  if (!gymId) return { error: "Choose a gym." };
+  const admin = createAdminClient();
+  const { error } =
+    value === "default"
+      ? await admin.from("gym_feature_overrides").delete().eq("gym_id", gymId).eq("feature_key", key)
+      : await admin
+          .from("gym_feature_overrides")
+          .upsert({ gym_id: gymId, feature_key: key, enabled: value === "on" }, { onConflict: "gym_id,feature_key" });
+  if (error) return { error: errorMessage(error, "Couldn't save.") };
+  refresh();
+  return { success: "Saved." };
 }
 
 export async function leaveSupport() {
@@ -147,4 +234,11 @@ export async function broadcast(_prev: ActionState, formData: FormData): Promise
   const { data, error } = await supabase.rpc("admin_broadcast", { p_title: title, p_body: body, p_audience: audience });
   if (error) return { error: errorMessage(error, "Couldn't send.") };
   return { success: `Sent to ${data ?? 0} people.` };
+}
+
+// "Open as" form: a gym and a role.
+export async function openGymAs(formData: FormData) {
+  const role = text(formData, "role") as GymRole;
+  const roles: GymRole[] = ["owner", "manager", "front_desk", "trainer", "dietitian", "member"];
+  await openGymAsSupport(text(formData, "gym_id"), roles.includes(role) ? role : "owner");
 }

@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import { Card, SectionTitle, Skeleton } from "@/components/ui";
 import { mediaUrl } from "@/lib/exercises";
 import { requireMember } from "@/lib/session";
+import { gymFeatures } from "@/lib/features";
 import { createClient } from "@/lib/supabase/server";
 import { loadTrainingPlan } from "@/lib/training-plan";
 import { signOut } from "../../(auth)/actions";
@@ -24,6 +25,7 @@ export default function ProfilePage() {
 
 async function Profile() {
   const { viewer, membership } = await requireMember();
+  const features = await gymFeatures(membership.gymId);
   const supabase = await createClient();
   const [{ data: profile }, { data: me }] = await Promise.all([
     supabase.from("profiles").select("full_name, phone, email, avatar_path, notify_prefs, language").eq("id", viewer.id).single(),
@@ -72,8 +74,8 @@ async function Profile() {
             </span>
             <span className="rounded-lg bg-canvas px-3 py-1.5 font-medium">English</span>
           </div>
-          <ShakeSetting />
-          <DropPreview />
+          {features.has("shake_to_open") && <ShakeSetting />}
+          {features.has("drop_animation") && <DropPreview />}
         </div>
       </Card>
 

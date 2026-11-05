@@ -19,8 +19,8 @@ export type Viewer = {
   memberships: Membership[];
   // Runs the Gymix platform itself (see /admin).
   isPlatformAdmin: boolean;
-  // The gym a super admin is helping right now (they act as its owner).
-  supportGym: { id: string; name: string } | null;
+  // The gym a super admin is in right now, and the role they see it as.
+  supportGym: { id: string; name: string; role: GymRole; isLab: boolean } | null;
 };
 
 // Who is signed in, their gyms and roles. Cached for the request, so the many
@@ -40,13 +40,16 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       .eq("user_id", user.id)
       .order("created_at"),
     supabase.rpc("is_platform_admin"),
-    supabase.from("platform_admin_visits").select("gym_id, gyms(name, timezone, lbp_rate)").eq("user_id", user.id).maybeSingle(),
+    supabase.from("platform_admin_visits").select("gym_id, role, gyms(name, timezone, lbp_rate, is_lab)").eq("user_id", user.id).maybeSingle(),
   ]);
 
-  const supportGym = isPlatformAdmin === true && visit ? { id: visit.gym_id, name: visit.gyms?.name ?? "" } : null;
+  const supportGym =
+    isPlatformAdmin === true && visit
+      ? { id: visit.gym_id, name: visit.gyms?.name ?? "", role: visit.role, isLab: visit.gyms?.is_lab ?? false }
+      : null;
   const own = (rows ?? []).filter((r) => r.gym_id !== supportGym?.id);
   // While helping a gym, its dashboard comes first.
-  const all = supportGym && visit ? [{ gym_id: visit.gym_id, role: "owner" as GymRole, gyms: visit.gyms }, ...own] : own;
+  const all = supportGym && visit ? [{ gym_id: visit.gym_id, role: visit.role, gyms: visit.gyms }, ...own] : own;
 
   return {
     id: user.id,

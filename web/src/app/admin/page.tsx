@@ -15,6 +15,7 @@ import { signOut } from "../(auth)/actions";
 import { extendTrial, openGymAsSupport, recordSubscriptionPayment, setGymSuspended } from "./actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { DailyChart } from "./daily-chart";
+import { Lab } from "./lab";
 import { BroadcastForm, ExtendTrialForm, PlatformSettingsForm, PricingForm, PruneForm, RecordPaymentForm, SuspendForm, WhatsAppKeysForm } from "./forms";
 import {
   ADMIN_TZ,
@@ -40,6 +41,7 @@ const TABS = [
   { id: "errors", label: "Errors" },
   { id: "gyms", label: "Gyms" },
   { id: "revenue", label: "Revenue & pricing" },
+  { id: "lab", label: "Lab & features" },
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
 const TAB_IDS = TABS.map((t) => t.id);
@@ -126,6 +128,8 @@ async function TabBody({ tab, days }: { tab: Tab; days: number }) {
       return <Gyms />;
     case "revenue":
       return <Revenue days={days} />;
+    case "lab":
+      return <Lab />;
   }
 }
 
@@ -749,7 +753,7 @@ async function Gyms() {
                     <td className={`${tdClass} text-muted`}>{g.last_checkin_at ? formatDate(g.last_checkin_at) : "Never"}</td>
                     <td className={tdClass}>
                       <div className="flex justify-end gap-2">
-                        <form action={openGymAsSupport.bind(null, g.gym_id)}>
+                        <form action={openGymAsSupport.bind(null, g.gym_id, "owner")}>
                           <button title="Open their dashboard as the owner, to help them" className="inline-flex h-8 items-center rounded-lg bg-brand px-3 text-xs font-medium whitespace-nowrap">
                             Open dashboard
                           </button>

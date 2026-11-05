@@ -351,6 +351,52 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"features": {
+                  Row: {
+                    "created_at": string,"description": string,"key": string,"name": string,"rollout": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"description"?: string,"key": string,"name": string,"rollout"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"description"?: string,"key"?: string,"name"?: string,"rollout"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"gym_feature_overrides": {
+                  Row: {
+                    "enabled": boolean,"feature_key": string,"gym_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "enabled": boolean,"feature_key": string,"gym_id": string
+                  }
+                  Update: {
+                    "enabled"?: boolean,"feature_key"?: string,"gym_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "gym_feature_overrides_feature_key_fkey"
+      columns: ["feature_key"]
+isOneToOne: false
+      referencedRelation: "features"
+      referencedColumns: ["key"]
+    },{
+      foreignKeyName: "gym_feature_overrides_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "gym_feature_overrides_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"gym_machines": {
                   Row: {
                     "created_at": string,"created_by": string | null,"description": string | null,"gym_id": string,"id": string,"name": string,"photo_path": string | null
@@ -417,14 +463,14 @@ isOneToOne: false
                   ]
                 },"gyms": {
                   Row: {
-                    "checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"lbp_rate": number,"name": string,"next_invoice_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
+                    "checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"lbp_rate": number,"name": string,"next_invoice_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Update: {
-                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Relationships: [
                     
@@ -937,14 +983,14 @@ isOneToOne: false
                   ]
                 },"platform_admin_visits": {
                   Row: {
-                    "gym_id": string,"started_at": string,"user_id": string
+                    "gym_id": string,"role": Database["public"]['Enums']["gym_role"],"started_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "gym_id": string,"started_at"?: string,"user_id": string
+                    "gym_id": string,"role"?: Database["public"]['Enums']["gym_role"],"started_at"?: string,"user_id": string
                   }
                   Update: {
-                    "gym_id"?: string,"started_at"?: string,"user_id"?: string
+                    "gym_id"?: string,"role"?: Database["public"]['Enums']["gym_role"],"started_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -1754,6 +1800,9 @@ isOneToOne: false
 { Args: { "p_gym_id": string }; Returns: {
               "full_name": string,"id": string
             }[]
+                           },
+"gym_features":
+{ Args: { "p_gym_id": string }; Returns: (string)[]
                            },
 "gym_staff_names":
 { Args: { "p_gym_id": string }; Returns: {

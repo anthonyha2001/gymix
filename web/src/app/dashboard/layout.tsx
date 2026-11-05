@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import { LifeBuoy, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Skeleton } from "@/components/ui";
 import { ROLE_LABELS } from "@/lib/roles";
-import { getViewer, requireStaff } from "@/lib/session";
-import { leaveSupport } from "../admin/actions";
+import { requireStaff } from "@/lib/session";
+import { SupportBanner } from "@/components/support-banner";
 import { unreadCount } from "@/lib/chat";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "../(auth)/actions";
@@ -122,21 +122,3 @@ function initials(text: string) {
   return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "G";
 }
 
-// A super admin helping this gym: say so, with the way back to the console.
-async function SupportBanner() {
-  const viewer = await getViewer();
-  if (!viewer?.supportGym) return null;
-  return (
-    <div role="status" className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-strong bg-brand/25 px-4 py-3 text-sm">
-      <span className="flex items-center gap-2">
-        <LifeBuoy className="size-4 shrink-0" />
-        <span>
-          Support access: you are in <strong>{viewer.supportGym.name}</strong> as its owner. Changes are real.
-        </span>
-      </span>
-      <form action={leaveSupport}>
-        <button className="rounded-lg bg-ink px-3 py-1.5 text-xs font-medium text-white">Back to admin</button>
-      </form>
-    </div>
-  );
-}

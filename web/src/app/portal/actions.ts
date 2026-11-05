@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/session";
+import { hasFeature } from "@/lib/features";
 import { GOALS, EXPERIENCE, type ExperienceLevel, type ProgramGoal } from "@/lib/exercises";
 import { errorMessage, text, type ActionState } from "@/lib/action-result";
 import { hoursAgoIso } from "@/lib/format";
@@ -277,6 +278,7 @@ export async function discardWorkout(sessionId: string) {
 // The member pauses or resumes their own membership.
 export async function freezeMyMembership(action: "freeze" | "unfreeze"): Promise<ActionState> {
   const { membership } = await requireMember();
+  if (!(await hasFeature(membership.gymId, "self_pause"))) return { error: "Ask the front desk to pause your membership." };
   const supabase = await createClient();
   const { error } = await supabase.rpc("freeze_my_membership", { p_gym_id: membership.gymId, p_action: action });
   if (error) return { error: errorMessage(error, "Couldn't update your membership.") };

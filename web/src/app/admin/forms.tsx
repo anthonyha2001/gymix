@@ -1,11 +1,11 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { useDialogAction } from "@/components/dialog";
 import { SearchSelect } from "@/components/search-select";
 import { Alert, Button, Field, inputClass, inputWidth } from "@/components/ui";
 import type { ActionState } from "@/lib/action-result";
-import { broadcast, pruneEvents, savePlatformSettings, savePricing, saveWhatsAppKeys } from "./actions";
+import { broadcast, pruneEvents, savePlatformSettings, savePricing, saveWhatsAppKeys, setFeatureRollout } from "./actions";
 
 type FormAction = (prev: ActionState, formData: FormData) => Promise<ActionState>;
 
@@ -206,6 +206,97 @@ export function BroadcastForm() {
           {pending ? "Sending…" : "Send notification"}
         </Button>
       </div>
+    </form>
+  );
+}
+
+type Option = { id: string; name: string };
+
+// Changing the select saves straight away.
+export function RolloutSelect({ featureKey, rollout, label }: { featureKey: string; rollout: string; label: string }) {
+  const [pending, start] = useTransition();
+  return (
+    <select
+      aria-label={`${label} rollout`}
+      defaultValue={rollout}
+      disabled={pending}
+      onChange={(e) => {
+        const fd = new FormData();
+        fd.set("rollout", e.target.value);
+        start(() => setFeatureRollout(featureKey, fd));
+      }}
+      className="h-9 rounded-lg border border-line bg-surface px-2 text-sm"
+    >
+      <option value="off">Off</option>
+      <option value="lab">Lab only</option>
+      <option value="all">Everyone</option>
+    </select>
+  );
+}
+
+export function FeatureOverrideForm({ action, gyms }: { action: FormAction; gyms: Option[] }) {
+  const [state, formAction, pending] = useDialogAction(action, {});
+  return (
+    <form action={formAction} className="space-y-4">
+      {state.error && <Alert tone="error">{state.error}</Alert>}
+      <Field label="Gym">
+        <select name="gym_id" required className={inputClass}>
+          {gyms.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.name}
+            </option>
+          ))}
+        </select>
+      </Field>
+      <fieldset className="space-y-2 text-sm">
+        <legend className="mb-2 font-medium">For this gym</legend>
+        <label className="flex items-center gap-2">
+          <input type="radio" name="value" value="on" defaultChecked className="accent-ink" /> On, whatever the rollout
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="radio" name="value" value="off" className="accent-ink" /> Off, whatever the rollout
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="radio" name="value" value="default" className="accent-ink" /> Follow the rollout (remove the exception)
+        </label>
+      </fieldset>
+      <Button type="submit" disabled={pending}>
+        {pending ? "Saving…" : "Save"}
+      </Button>
+    </form>
+  );
+}
+
+export function OpenAsForm({
+  action,
+  gyms,
+  roles,
+}: {
+  action: (formData: FormData) => Promise<void>;
+  gyms: Option[];
+  roles: { id: string; label: string }[];
+}) {
+  return (
+    <form action={action} className="flex flex-wrap items-end gap-2">
+      <Field label="Gym">
+        <select name="gym_id" required className={inputClass}>
+          {gyms.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.name}
+            </option>
+          ))}
+        </select>
+      </Field>
+      <Field label="As">
+        <select name="role" className={inputClass}>
+          {roles.map((r) => (
+            <option key={r.id} value={r.id}>
+              {r.label}
+            </option>
+          ))}
+        </select>
+      </Field>
+      <Button type="submit">Open</Button>
     </form>
   );
 }

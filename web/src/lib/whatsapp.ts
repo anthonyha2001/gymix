@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { waNumber } from "@/lib/invite-link";
+import { hasFeature } from "@/lib/features";
 
 // Automatic WhatsApp messages from the one Gymix number, through Meta's
 // WhatsApp Cloud API. Each kind is a template approved in WhatsApp Manager
@@ -51,7 +52,7 @@ export async function sendWhatsApp(msg: {
 }) {
   const to = waNumber(msg.phone);
   const keys = await whatsappKeys();
-  if (!to || !keys) return;
+  if (!to || !keys || !(await hasFeature(msg.gymId, "whatsapp"))) return;
   const admin = createAdminClient();
   const { data: row } = await admin
     .from("whatsapp_log")

@@ -104,6 +104,19 @@ extends the gym's paid-until date. Also in `/admin`: extend a trial, and the pay
 number every owner sees on Settings, Subscription. A few days (the grace period, 3 by default) after a subscription ends the staff dashboard locks
 (the owner can still open the Subscription tab); members keep using their app.
 
+## Lab & features (`/admin`, Lab & features tab)
+
+- **Lab gym**: "Create my lab gym" makes a gym only the super admin uses (`gyms.is_lab`, never billed). Open it as
+  any role (owner, manager, front desk, trainer, dietitian, member). As a member you get a lab member record with a
+  year-long membership, and land in the member app.
+- **Open any gym as a role**: any staff role in a real gym (support access; changes are real). The role lives in
+  `platform_admin_visits.role` and is what `my_gym_role()` returns, so the database enforces exactly that role.
+- **Feature switches** (`features`): each is Off, Lab only or Everyone, plus per-gym exceptions
+  (`gym_feature_overrides`). The app asks `hasFeature(gymId, key)` (`web/src/lib/features.ts`).
+- **Shipping a new feature**: add its key to `features` in a migration with rollout `lab`, wrap the code in
+  `hasFeature`, try it in the lab, then switch it to Everyone. Current keys: `whatsapp`, `shake_to_open`,
+  `drop_animation`, `self_pause`.
+
 ## Automatic WhatsApp
 
 Sent from one Gymix number through Meta's WhatsApp Cloud API (`web/src/lib/whatsapp.ts`), at most once each
