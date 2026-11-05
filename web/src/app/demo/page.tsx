@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { FinalCta, MarketingFooter, MarketingNav } from "@/components/marketing";
 import { DemoTour } from "./demo-tour";
 
 export const metadata: Metadata = {
   title: "Live demo",
-  description: "See Gymix in action: every feature on a phone, with what it does and how to start.",
+  description: "See Gymix in action: every feature on a computer and a phone, with what it does and how to start.",
 };
 
 export default function DemoPage() {
@@ -18,7 +19,10 @@ export default function DemoPage() {
           Every feature, explained in about five minutes. Watch it play, or jump to the feature you want, then set up your gym in ten minutes.
         </p>
       </section>
-      <DemoTour />
+      {/* Reads ?feature=N from the URL, so it renders in the browser. */}
+      <Suspense fallback={<div className="h-[56rem]" />}>
+        <DemoTour />
+      </Suspense>
       <FinalCta />
       <MarketingFooter />
     </div>
