@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Nfc, Send, Store } from "lucide-react";
+import Link from "next/link";
+import { Nfc, PlayCircle, Send, Store } from "lucide-react";
 import {
   CtaButtons,
   FEATURES,
@@ -57,7 +58,13 @@ export default async function Home() {
             <div className="mt-8">
               <CtaButtons />
             </div>
-            <p className="mt-4 text-sm text-white/50">No card needed. Set up in ten minutes.</p>
+            <Link
+              href="/demo"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl px-1 py-2 text-base font-semibold text-brand hover:text-white"
+            >
+              <PlayCircle className="size-5" /> Watch the 60-second demo
+            </Link>
+            <p className="mt-2 text-sm text-white/50">No card needed. Set up in ten minutes.</p>
           </div>
           <HeroMock />
         </div>
