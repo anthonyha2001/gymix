@@ -3163,10 +3163,10 @@ export function DemoTour() {
   const left = Math.max(1, Math.round(ALL.slice(i).reduce((sum, s) => sum + durationOf(s, wide), 0) / 60000));
 
   return (
-    <section className="px-4 py-10">
+    <section className="overflow-x-clip px-4 py-10">
       <style>{CSS}</style>
-      <div ref={top} className="mx-auto grid max-w-6xl scroll-mt-20 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="lg:sticky lg:top-20">
+      <div ref={top} className="mx-auto grid max-w-6xl scroll-mt-20 grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="min-w-0 lg:sticky lg:top-20">
           <p className="mb-3 flex items-center justify-center gap-2 text-xs font-semibold text-muted">
             {step.page ? (
               <>
