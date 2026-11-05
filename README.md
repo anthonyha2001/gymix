@@ -23,7 +23,7 @@ The operating system for gyms: an owner/staff dashboard plus a member portal.
 - Programs: build their own or ask a trainer; edit (pen) or delete (trash, with a confirmation).
 - Training days: pick weekdays and which program day each one is for; reminders on those days.
 - Workout logger with rest timer, a Finish bar always on screen, personal-record alerts.
-- Shake the phone (three times, quickly) to open today's program behind a lime wave. One motion detector
+- Shake the phone (three times, quickly) to open the Programs page behind a lime wave. One motion detector
   (`components/motion-gestures.tsx`) tells a shake from a drop, so only one of them fires. iPhones ask for motion access on the first tap.
 - Dropped phone: free fall followed by a hard hit plays a cracked-screen joke animation (Profile, "Try it").
 - Pause and resume their own membership (the paused days are added to the end date).

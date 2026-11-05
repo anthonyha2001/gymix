@@ -12,7 +12,6 @@ import { InstallPrompt } from "@/components/install-prompt";
 import { ShakeQuickStart } from "@/components/shake-quick-start";
 import { DropCatch } from "@/components/drop-catch";
 import { MotionGestures } from "@/components/motion-gestures";
-import { loadTrainingPlan } from "@/lib/training-plan";
 import { QrScanButton } from "@/components/qr-scanner";
 import { NotificationBell } from "@/components/notification-bell";
 import { loadNotifications } from "@/lib/notifications";
@@ -79,18 +78,9 @@ async function MemberBell() {
   return <NotificationBell items={items} unread={unread} />;
 }
 
-// Shake the phone to open today's program (not while frozen for an unpaid balance).
+// Shake the phone to open the Programs page (not while the account is locked).
 async function QuickStart() {
-  const { viewer, membership } = await requireMember();
-  const supabase = await createClient();
-  const [{ data: me }, account] = await Promise.all([
-    supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle(),
-    accountStatus(membership.gymId),
-  ]);
-  if (!me || account.locked) return null;
-  const plan = await loadTrainingPlan(supabase, me.id, membership.timezone);
-  const programId = plan.today?.programId ?? plan.programDays[0]?.programId;
-  return (
-    <ShakeQuickStart href={`/portal/programs${programId ? `?program=${programId}` : ""}`} />
-  );
+  const { membership } = await requireMember();
+  if ((await accountStatus(membership.gymId)).locked) return null;
+  return <ShakeQuickStart href="/portal/programs" />;
 }

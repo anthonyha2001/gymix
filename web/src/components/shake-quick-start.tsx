@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dumbbell } from "lucide-react";
 
-// Shake the phone (three times, quickly) to open today's program. The shake
+// Shake the phone (three times, quickly) to open the Programs page. The shake
 // itself is recognised by MotionGestures; iPhones need motion permission once.
 export function ShakeQuickStart({ href }: { href: string }) {
   const router = useRouter();
@@ -27,7 +27,7 @@ export function ShakeQuickStart({ href }: { href: string }) {
     <div key={wave} aria-hidden className="shake-wave" onAnimationEnd={(e) => e.target === e.currentTarget && setWave(0)}>
       <span className="shake-wave-label">
         <Dumbbell className="size-10" />
-        Today&apos;s workout
+        My programs
       </span>
     </div>
   );
