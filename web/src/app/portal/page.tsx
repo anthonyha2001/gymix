@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { MemberHome } from "@/components/member-home";
+import { GymNowCard } from "@/components/gym-now-card";
 import { Card, Skeleton } from "@/components/ui";
 import { requireMember } from "@/lib/session";
 import { hasFeature } from "@/lib/features";
@@ -50,6 +51,7 @@ async function PortalContent({ searchParams }: { searchParams: PageProps<"/porta
       {typeof machine === "string" && !account.locked && <MachineSheet machineId={machine} viewer={viewer} />}
       {account.frozen && <FrozenNotice owed={account.overdueUsd || account.balanceUsd} />}
       {!account.frozen && account.locked && <InactiveNotice status={account.membership} />}
+      <GymNowCard gymId={membership.gymId} gymName={membership.gymName} timeZone={membership.timezone} />
       <MemberHome supabase={supabase} memberId={me.id} gymName={membership.gymName} timeZone={membership.timezone} locked={account.locked} canPause={await hasFeature(membership.gymId, "self_pause")} />
 
     </>

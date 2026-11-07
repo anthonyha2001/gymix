@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, use, useRef, useState, type ReactNode } from "react";
 import {
+  Activity,
   CalendarDays,
   ClipboardList,
   DoorOpen,
@@ -36,6 +37,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   programs: ClipboardList,
   messages: MessageCircle,
   access: DoorOpen,
+  live: Activity,
 };
 
 // Lets nav links (rendered in a server slot) close the mobile drawer.

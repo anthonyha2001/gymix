@@ -115,7 +115,18 @@ number every owner sees on Settings, Subscription. A few days (the grace period,
   (`gym_feature_overrides`). The app asks `hasFeature(gymId, key)` (`web/src/lib/features.ts`).
 - **Shipping a new feature**: add its key to `features` in a migration with rollout `lab`, wrap the code in
   `hasFeature`, try it in the lab, then switch it to Everyone. Current keys: `whatsapp`, `shake_to_open`,
-  `drop_animation`, `self_pause`, `access_control` (lab).
+  `drop_animation`, `self_pause`, `access_control` (lab), `live_occupancy` (lab).
+
+## Live occupancy
+
+Dashboard → **Live** (front desk and up, feature `live_occupancy`) and a "Right now at the gym" card on the member's
+Home. `gym_occupancy(gym)` uses the best source available: a people counter that reported in the last 15 minutes
+(its count, or entries minus exits since midnight), else entry and exit doors (members whose last door event
+today was an entry, at most 4 hours old), else check-ins within the gym's usual visit length
+(`gyms.avg_visit_minutes`, default 75). The level (quiet, moderate, busy, full) compares with `gyms.capacity`, or
+without one, with the busiest usual hour. `gym_busy_hours(gym)` averages the last 8 weeks by weekday and hour.
+People counters post to `/api/occupancy/<counter token>`: `{"people": 23}`, `{"in": 3, "out": 1}`, or a
+Hikvision people-counting event. Tests: `supabase/tests/occupancy_test.sql`.
 
 ## Door access (ZKTeco and Hikvision)
 

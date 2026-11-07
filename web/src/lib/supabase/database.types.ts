@@ -749,14 +749,14 @@ isOneToOne: false
                   ]
                 },"gyms": {
                   Row: {
-                    "checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"lbp_rate": number,"name": string,"next_invoice_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"lbp_rate": number,"name": string,"next_invoice_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Update: {
-                    "checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Relationships: [
                     
@@ -1208,6 +1208,64 @@ isOneToOne: false
       columns: ["plan_id"]
 isOneToOne: false
       referencedRelation: "nutrition_plans"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"occupancy_readings": {
+                  Row: {
+                    "at": string,"entered": number,"exited": number,"gym_id": string,"id": number,"people": number | null,"sensor_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "at"?: string,"entered"?: number,"exited"?: number,"gym_id": string,"id"?: never,"people"?: number | null,"sensor_id": string
+                  }
+                  Update: {
+                    "at"?: string,"entered"?: number,"exited"?: number,"gym_id"?: string,"id"?: never,"people"?: number | null,"sensor_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "occupancy_readings_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "occupancy_readings_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "occupancy_readings_sensor_id_fkey"
+      columns: ["sensor_id"]
+isOneToOne: false
+      referencedRelation: "occupancy_sensors"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"occupancy_sensors": {
+                  Row: {
+                    "created_at": string,"gym_id": string,"id": string,"last_reading_at": string | null,"name": string,"token": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"gym_id": string,"id"?: string,"last_reading_at"?: string | null,"name": string,"token"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"gym_id"?: string,"id"?: string,"last_reading_at"?: string | null,"name"?: string,"token"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "occupancy_sensors_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "occupancy_sensors_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
       referencedColumns: ["id"]
     }
                   ]
@@ -2108,6 +2166,9 @@ isOneToOne: false
 "can_handle_billing":
 { Args: { "p_gym_id": string }; Returns: boolean
                            },
+"can_see_occupancy":
+{ Args: { "p_gym_id": string }; Returns: boolean
+                           },
 "can_view_nutrition_plan":
 { Args: { "p_plan_id": string }; Returns: boolean
                            },
@@ -2169,6 +2230,11 @@ isOneToOne: false
 "get_checkin_token":
 { Args: { "p_gym_id": string }; Returns: string
                            },
+"gym_busy_hours":
+{ Args: { "p_gym_id": string }; Returns: {
+              "hour": number,"people": number,"weekday": number
+            }[]
+                           },
 "gym_coaches":
 { Args: { "p_gym_id": string }; Returns: {
               "full_name": string,"id": string
@@ -2176,6 +2242,16 @@ isOneToOne: false
                            },
 "gym_features":
 { Args: { "p_gym_id": string }; Returns: (string)[]
+                           },
+"gym_occupancy":
+{ Args: { "p_gym_id": string }; Returns: {
+              "capacity": number,"entries_today": number,"exits_today": number,"level": string,"method": string,"people": number,"usual_now": number
+            }[]
+                           },
+"gym_occupancy_today":
+{ Args: { "p_gym_id": string }; Returns: {
+              "hour": number,"people": number
+            }[]
                            },
 "gym_staff_names":
 { Args: { "p_gym_id": string }; Returns: {
@@ -2282,6 +2358,9 @@ isOneToOne: false
                            },
 "nutrition_plan_gym":
 { Args: { "p_plan_id": string }; Returns: string
+                           },
+"occupancy_ingest":
+{ Args: { "p_at"?: string,"p_entered": number,"p_exited": number,"p_people"?: number,"p_token": string }; Returns: boolean
                            },
 "open_conversation":
 { Args: { "p_gym_id": string,"p_member_id"?: string,"p_staff_id"?: string }; Returns: string

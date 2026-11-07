@@ -9,7 +9,8 @@ export type FeatureKey =
   | "shake_to_open"
   | "drop_animation"
   | "self_pause"
-  | "access_control";
+  | "access_control"
+  | "live_occupancy";
 
 const ALL: FeatureKey[] = ["whatsapp", "shake_to_open", "drop_animation", "self_pause"];
 
