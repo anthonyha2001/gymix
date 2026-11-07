@@ -15,6 +15,7 @@ import {
   Receipt,
   ScanLine,
   Settings,
+  ShoppingBag,
   Tags,
   UserRound,
   Users,
@@ -38,6 +39,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   messages: MessageCircle,
   access: DoorOpen,
   live: Activity,
+  shop: ShoppingBag,
 };
 
 // Lets nav links (rendered in a server slot) close the mobile drawer.

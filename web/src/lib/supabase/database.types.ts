@@ -749,14 +749,14 @@ isOneToOne: false
                   ]
                 },"gyms": {
                   Row: {
-                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"lbp_rate": number,"name": string,"next_invoice_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Update: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Relationships: [
                     
@@ -1471,6 +1471,32 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"products": {
+                  Row: {
+                    "barcode": string | null,"category": string | null,"cost_usd": number | null,"created_at": string,"gym_id": string,"id": string,"is_active": boolean,"low_stock_at": number,"name": string,"price_usd": number,"stock": number,"track_stock": boolean
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "barcode"?: string | null,"category"?: string | null,"cost_usd"?: number | null,"created_at"?: string,"gym_id": string,"id"?: string,"is_active"?: boolean,"low_stock_at"?: number,"name": string,"price_usd": number,"stock"?: number,"track_stock"?: boolean
+                  }
+                  Update: {
+                    "barcode"?: string | null,"category"?: string | null,"cost_usd"?: number | null,"created_at"?: string,"gym_id"?: string,"id"?: string,"is_active"?: boolean,"low_stock_at"?: number,"name"?: string,"price_usd"?: number,"stock"?: number,"track_stock"?: boolean
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "products_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "products_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "avatar_path": string | null,"created_at": string,"email": string,"full_name": string,"id": string,"language": string,"notify_prefs": NonNullable<Json>,"phone": string | null,"updated_at": string
@@ -1717,6 +1743,88 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"sale_items": {
+                  Row: {
+                    "id": string,"name": string,"product_id": string | null,"quantity": number,"sale_id": string,"unit_cost": number | null,"unit_price": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"name": string,"product_id"?: string | null,"quantity": number,"sale_id": string,"unit_cost"?: number | null,"unit_price": number
+                  }
+                  Update: {
+                    "id"?: string,"name"?: string,"product_id"?: string | null,"quantity"?: number,"sale_id"?: string,"unit_cost"?: number | null,"unit_price"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "sale_items_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "sale_items_sale_id_fkey"
+      columns: ["sale_id"]
+isOneToOne: false
+      referencedRelation: "sales"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"sales": {
+                  Row: {
+                    "amount_lbp": number | null,"cost_usd": number,"created_at": string,"discount_usd": number,"gym_id": string,"id": string,"invoice_id": string | null,"lbp_rate": number | null,"member_id": string | null,"method": Database["public"]['Enums']["payment_method"] | null,"number": number,"refund_reason": string | null,"refunded_at": string | null,"sold_by": string | null,"status": string,"subtotal_usd": number,"total_usd": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount_lbp"?: number | null,"cost_usd"?: number,"created_at"?: string,"discount_usd"?: number,"gym_id": string,"id"?: string,"invoice_id"?: string | null,"lbp_rate"?: number | null,"member_id"?: string | null,"method"?: Database["public"]['Enums']["payment_method"] | null,"number": number,"refund_reason"?: string | null,"refunded_at"?: string | null,"sold_by"?: string | null,"status"?: string,"subtotal_usd": number,"total_usd"?: never
+                  }
+                  Update: {
+                    "amount_lbp"?: number | null,"cost_usd"?: number,"created_at"?: string,"discount_usd"?: number,"gym_id"?: string,"id"?: string,"invoice_id"?: string | null,"lbp_rate"?: number | null,"member_id"?: string | null,"method"?: Database["public"]['Enums']["payment_method"] | null,"number"?: number,"refund_reason"?: string | null,"refunded_at"?: string | null,"sold_by"?: string | null,"status"?: string,"subtotal_usd"?: number,"total_usd"?: never
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "sales_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "sales_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "sales_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoice_summary"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "sales_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "sales_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "sales_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "sales_sold_by_fkey"
+      columns: ["sold_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"set_logs": {
                   Row: {
                     "exercise_id": string,"id": string,"logged_at": string,"member_id": string,"reps": number,"session_id": string,"set_number": number,"weight_kg": number
@@ -1758,6 +1866,50 @@ isOneToOne: false
       columns: ["session_id"]
 isOneToOne: false
       referencedRelation: "workout_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"stock_movements": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"gym_id": string,"id": number,"note": string | null,"product_id": string,"quantity": number,"reason": string,"sale_id": string | null,"stock_after": number,"unit_cost": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"gym_id": string,"id"?: never,"note"?: string | null,"product_id": string,"quantity": number,"reason": string,"sale_id"?: string | null,"stock_after": number,"unit_cost"?: number | null
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"gym_id"?: string,"id"?: never,"note"?: string | null,"product_id"?: string,"quantity"?: number,"reason"?: string,"sale_id"?: string | null,"stock_after"?: number,"unit_cost"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "stock_movements_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_movements_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "stock_movements_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_movements_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_movements_sale_id_fkey"
+      columns: ["sale_id"]
+isOneToOne: false
+      referencedRelation: "sales"
       referencedColumns: ["id"]
     }
                   ]
@@ -2375,6 +2527,21 @@ isOneToOne: false
                            },
 "platform_trial_days":
 { Args: Record<PropertyKey, never>; Returns: number
+                           },
+"pos_checkout":
+{ Args: { "p_amount_lbp"?: number,"p_discount"?: number,"p_gym_id": string,"p_items": Json,"p_member_id"?: string,"p_method": string }; Returns: string
+                           },
+"pos_count_stock":
+{ Args: { "p_counted": number,"p_note"?: string,"p_product_id": string }; Returns: number
+                           },
+"pos_receive_stock":
+{ Args: { "p_note"?: string,"p_product_id": string,"p_quantity": number,"p_unit_cost"?: number }; Returns: number
+                           },
+"pos_refund":
+{ Args: { "p_reason"?: string,"p_sale_id": string }; Returns: undefined
+                           },
+"pos_report":
+{ Args: { "p_from": string,"p_gym_id": string,"p_to": string }; Returns: Json
                            },
 "publish_program":
 { Args: { "p_program_id": string }; Returns: undefined

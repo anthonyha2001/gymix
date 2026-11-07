@@ -115,7 +115,20 @@ number every owner sees on Settings, Subscription. A few days (the grace period,
   (`gym_feature_overrides`). The app asks `hasFeature(gymId, key)` (`web/src/lib/features.ts`).
 - **Shipping a new feature**: add its key to `features` in a migration with rollout `lab`, wrap the code in
   `hasFeature`, try it in the lab, then switch it to Everyone. Current keys: `whatsapp`, `shake_to_open`,
-  `drop_animation`, `self_pause`, `access_control` (lab), `live_occupancy` (lab).
+  `drop_animation`, `self_pause`, `access_control` (lab), `live_occupancy` (lab), `pos` (lab).
+
+## Shop (POS)
+
+Dashboard → **Shop** (feature `pos`). The front desk sells (Register, Sales); owners and managers also manage
+Products, Stock and Reports. `pos_checkout` is one atomic sale: it locks the products, refuses to sell more than is
+in stock (for products that count stock), records each line with its price and cost at that moment, and lowers
+stock with a `stock_movements` row. Paid by cash (USD or lira at the gym's rate), card, Whish or OMT, or put **on a
+member's account**, which creates a normal invoice ("Shop: …"), so it shows in Billing and counts towards the
+unpaid-account freeze. Stock only changes through sales, refunds (`pos_refund`, which voids an account sale's invoice
+while nothing is paid on it), deliveries (`pos_receive_stock`, optionally updating the cost) and counts
+(`pos_count_stock`). `pos_report` gives revenue, cost, profit, best sellers, payment methods and revenue by day.
+Barcode scanners work anywhere on the Register (they type the code and Enter); phones can scan with the camera where
+the browser supports it. Tests: `supabase/tests/pos_test.sql`.
 
 ## Live occupancy
 
