@@ -9,6 +9,7 @@ import { BILLING_ROLES, MANAGER_ROLES } from "@/lib/roles";
 import { PAYMENT_METHODS, formatUSD, type PaymentMethod } from "@/lib/format";
 import { errorMessage, money, text, type ActionState } from "@/lib/action-result";
 import { requestOrigin } from "@/lib/origin";
+import { kickAccess } from "@/lib/access/server";
 import { firstName, sendWhatsApp, whatsappConfigured } from "@/lib/whatsapp";
 
 // A payment receipt on WhatsApp, after the response is sent.
@@ -134,6 +135,7 @@ export async function removePortalAccess(memberId: string) {
 
 export async function sellMembership(memberId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
   const { membership } = await requireStaff(BILLING_ROLES);
+  kickAccess(membership.gymId);
   const planId = text(formData, "plan_id");
   const startsOn = text(formData, "starts_on");
   const discount = money(formData, "discount_usd");
@@ -162,6 +164,7 @@ export async function sellMembership(memberId: string, _prev: ActionState, formD
 
 export async function recordPayment(invoiceId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
   const { membership } = await requireStaff(BILLING_ROLES);
+  kickAccess(membership.gymId);
   const parsed = readPayment(formData);
   if (!parsed.payment) return { error: parsed.error };
   if (parsed.payment.amountUsd <= 0) return { error: "Enter the amount received." };
@@ -183,7 +186,8 @@ export async function recordPayment(invoiceId: string, _prev: ActionState, formD
 }
 
 export async function voidInvoice(invoiceId: string): Promise<ActionState> {
-  await requireStaff(MANAGER_ROLES);
+  const { membership } = await requireStaff(MANAGER_ROLES);
+  kickAccess(membership.gymId);
   const supabase = await createClient();
   const { error } = await supabase.rpc("void_invoice", { p_invoice_id: invoiceId, p_reason: "Voided by staff" });
   if (error) return { error: errorMessage(error, "Couldn't void the invoice.") };
@@ -195,7 +199,8 @@ export async function changeMembership(
   membershipId: string,
   action: "freeze" | "unfreeze" | "cancel",
 ): Promise<ActionState> {
-  await requireStaff(action === "cancel" ? MANAGER_ROLES : BILLING_ROLES);
+  const { membership } = await requireStaff(action === "cancel" ? MANAGER_ROLES : BILLING_ROLES);
+  kickAccess(membership.gymId);
   const supabase = await createClient();
   const { error } = await supabase.rpc("update_membership", { p_membership_id: membershipId, p_action: action });
   if (error) return { error: errorMessage(error, "Couldn't update the membership.") };
@@ -291,7 +296,8 @@ export async function checkIn(input: { code?: string; memberId?: string }): Prom
 // ---------------------------------------------------------------------------
 
 export async function setArchived(memberId: string, archived: boolean): Promise<ActionState> {
-  await requireStaff(BILLING_ROLES);
+  const { membership } = await requireStaff(BILLING_ROLES);
+  kickAccess(membership.gymId);
   const supabase = await createClient();
   const { error } = await supabase.rpc("set_member_archived", { p_member_id: memberId, p_archived: archived });
   if (error) return { error: errorMessage(error) };
@@ -308,7 +314,8 @@ export async function deleteMember(memberId: string): Promise<ActionState> {
 }
 
 export async function refundPayment(paymentId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireStaff(MANAGER_ROLES);
+  const { membership } = await requireStaff(MANAGER_ROLES);
+  kickAccess(membership.gymId);
   const supabase = await createClient();
   const { error } = await supabase.rpc("refund_payment", { p_payment_id: paymentId, p_reason: text(formData, "reason") });
   if (error) return { error: errorMessage(error, "Couldn't refund.") };
@@ -317,7 +324,8 @@ export async function refundPayment(paymentId: string, _prev: ActionState, formD
 }
 
 export async function adjustMembership(membershipId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireStaff(MANAGER_ROLES);
+  const { membership } = await requireStaff(MANAGER_ROLES);
+  kickAccess(membership.gymId);
   const limitRaw = text(formData, "visit_limit");
   const supabase = await createClient();
   const { error } = await supabase.rpc("adjust_membership", {

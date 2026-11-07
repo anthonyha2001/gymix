@@ -66,6 +66,7 @@ import { MemberForm } from "../member-form";
 import { PaymentForm } from "../payment-form";
 import { SellForm } from "../sell-form";
 import { MeasurementsPanel } from "@/components/measurements-panel";
+import { DoorAccessCard } from "../door-access";
 import { PtSessionForm } from "@/components/schedule-forms";
 import { PT_STATUS } from "@/lib/schedule";
 import { schedulePtSession, updatePtSession } from "@/app/schedule-actions";
@@ -407,6 +408,9 @@ async function MemberContent({
         <MemberPreviewModal memberId={member.id!} viewerId={staffViewer.id} membership={staff} />
       )}
       {typeof query.c === "string" && <ChatModal conversationId={query.c} viewerId={staffViewer.id} timeZone={staff.timezone} as="staff" />}
+
+      {/* Door access (ZKTeco / Hikvision), when switched on for the gym */}
+      <TabPanel id="overview" tabs={tabs}>{canBill && <DoorAccessCard memberId={member.id!} gymId={staff.gymId} />}</TabPanel>
 
       {/* Portal access */}
       <TabPanel id="overview" tabs={tabs}>{canBill && (

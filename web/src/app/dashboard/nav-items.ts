@@ -13,11 +13,13 @@ export type NavIcon =
   | "schedule"
   | "machines"
   | "programs"
-  | "messages";
+  | "messages"
+  | "access";
 
 export type NavItem = { href: string; label: string; icon: NavIcon; badge?: number };
 
-const NAV: (NavItem & { roles?: GymRole[] })[] = [
+// feature: shown only while that feature switch is on for the gym.
+const NAV: (NavItem & { roles?: GymRole[]; feature?: string })[] = [
   { href: "/dashboard", label: "Overview", icon: "overview" },
   { href: "/dashboard/check-in", label: "Check-in", icon: "checkin", roles: BILLING_ROLES },
   { href: "/dashboard/members", label: "Members", icon: "members" },
@@ -27,6 +29,7 @@ const NAV: (NavItem & { roles?: GymRole[] })[] = [
   { href: "/dashboard/machines", label: "Equipment", icon: "machines", roles: ["owner", "manager", "front_desk", "trainer"] },
   { href: "/dashboard/billing", label: "Billing", icon: "billing", roles: BILLING_ROLES },
   { href: "/dashboard/plans", label: "Plans", icon: "plans", roles: MANAGER_ROLES },
+  { href: "/dashboard/access", label: "Access", icon: "access", roles: MANAGER_ROLES, feature: "access_control" },
   { href: "/dashboard/team", label: "Team", icon: "team" },
   { href: "/dashboard/settings", label: "Settings", icon: "settings", roles: ["owner"] },
 ];
@@ -42,8 +45,8 @@ const COUNT_FOR: Record<string, keyof NavCounts> = {
   "/dashboard/schedule": "schedule",
 };
 
-export function navFor(role: GymRole, counts: Partial<NavCounts> = {}): NavItem[] {
-  return NAV.filter((item) => !item.roles || item.roles.includes(role)).map(({ href, label, icon }) => {
+export function navFor(role: GymRole, counts: Partial<NavCounts> = {}, features: ReadonlySet<string> = new Set()): NavItem[] {
+  return NAV.filter((item) => (!item.roles || item.roles.includes(role)) && (!item.feature || features.has(item.feature))).map(({ href, label, icon }) => {
     const n = COUNT_FOR[href] ? (counts[COUNT_FOR[href]] ?? 0) : 0;
     return { href, label, icon, badge: n > 0 ? n : undefined };
   });

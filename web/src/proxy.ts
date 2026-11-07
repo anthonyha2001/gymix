@@ -12,6 +12,9 @@ import {
 
 const PROTECTED_PREFIXES = ["/dashboard", "/portal", "/onboarding", "/admin"];
 
+// Called by door hardware, not people.
+const DEVICE_PATHS = ["/iclock/", "/api/access/hikvision/"];
+
 // Files the browser fetches on its own; not worth logging as traffic.
 const UNTRACKED = ["/sw.js", "/manifest.webmanifest", "/robots.txt", "/sitemap.xml", "/icons/", "/_next/"];
 
@@ -36,6 +39,10 @@ function requestType(request: NextRequest): RequestType | null {
 // this is only the first line of defence. Also records the request for the
 // super admin dashboard, after the response is sent.
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
+  // Door devices and the Gymix Bridge call these every few seconds: no session
+  // to refresh and nothing worth logging as traffic.
+  const path = request.nextUrl.pathname;
+  if (path === "/api/access/bridge" || DEVICE_PATHS.some((p) => path.startsWith(p))) return NextResponse.next();
   let response = NextResponse.next({ request });
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

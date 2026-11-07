@@ -115,7 +115,42 @@ number every owner sees on Settings, Subscription. A few days (the grace period,
   (`gym_feature_overrides`). The app asks `hasFeature(gymId, key)` (`web/src/lib/features.ts`).
 - **Shipping a new feature**: add its key to `features` in a migration with rollout `lab`, wrap the code in
   `hasFeature`, try it in the lab, then switch it to Everyone. Current keys: `whatsapp`, `shake_to_open`,
-  `drop_animation`, `self_pause`.
+  `drop_animation`, `self_pause`, `access_control` (lab).
+
+## Door access (ZKTeco and Hikvision)
+
+Dashboard → **Access** (owners and managers, feature `access_control`). Gymix decides who may open which door;
+every device is kept in step with memberships and payments (`supabase/migrations/*_access_control.sql`).
+
+- **Who gets in**: `access_valid_until(member, device)` is the membership's last day while the member may enter
+  (active, not frozen, visits left, nothing overdue, not archived, plan allowed in the device's zone), else null.
+  Each member has a door number (`members.access_pin`, the user ID on every device) and may have a card.
+- **Zones** group doors (Ladies area, Pool). A plan that lists zones opens only those; a plan without zones opens
+  every door. Doors without a zone are open to every plan.
+- **Keeping devices in step**: triggers on memberships, payments, invoices and members call `access_sync_member`,
+  which compares with `access_grants` (what each device was last told) and queues the difference in
+  `access_commands`. Each device is also brought up to date once a day (on its first call, the bridge's report, or
+  the nightly `/api/cron/access`), because memberships end and invoices fall overdue without any row changing.
+- **ZKTeco** terminals use their cloud-server (ADMS push) setting pointed at the Gymix domain, port 443, HTTPS:
+  `/iclock/cdata` (handshake, attendance, enrolments), `/iclock/getrequest` (commands), `/iclock/devicecmd`
+  (results), identified by serial number. Expired members are deleted from the device; their fingerprints and
+  faces (uploaded at enrolment) are kept in `access_biometrics`, copied to the gym's other ZKTeco doors and restored
+  on renewal. Cards enrolled on a device are saved to the member.
+- **Hikvision** (ISAPI, digest auth): Gymix plans the requests (`web/src/lib/access/hikvision.ts`, with fallbacks
+  for older firmware). Each person is stored with a validity period ending on the membership's last day, so the
+  device refuses expired members even offline; blocking sets a past period (face kept). Events arrive at
+  `/api/access/hikvision/<device token>`. Devices reachable from the internet are sent commands directly (after
+  each change, on events, nightly); otherwise through the bridge.
+- **Gymix Bridge** (`web/public/downloads/gymix-bridge.mjs`, Node 18+, no dependencies): runs on a gym computer,
+  polls `/api/access/bridge` with the gym's token, runs the planned requests on local Hikvision devices, reports
+  them online, points their event notifications at itself and relays events to Gymix, and relays ZKTeco push
+  traffic for terminals without HTTPS (port 8091). Access → Gymix Bridge → Download for Windows gives a `.cmd`
+  with the gym's address and token filled in.
+- **Entries** become check-ins (source `device`) at the event time; exits are kept for live occupancy. If a device
+  lets in someone Gymix wouldn't, the check-in is recorded as refused and the device is corrected.
+- **Tests**: `supabase/tests/access_test.sql`, and against a running app and local database
+  `node web/scripts/test-access-e2e.mjs` (a simulated ZKTeco terminal, a mock Hikvision device and the real
+  bridge; seed first with `node web/scripts/qa-seed.mjs`).
 
 ## Automatic WhatsApp
 

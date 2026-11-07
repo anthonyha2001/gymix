@@ -179,7 +179,7 @@ Breaking these damages trust in a small market where everyone talks. Follow them
 | "Download from the App Store / Google Play" | It's a web app installed from a link (PWA). Say "install it from a link, no store needed". |
 | "Pay online by card" (for the Gymix subscription) | Gyms pay Gymix by Whish, OMT or bank transfer. (Gyms can *record* card payments from their members.) |
 | "Online payments for members" / "members pay in the app" | Members can see their invoices in the app, but they pay at the front desk. |
-| "Works with turnstiles / access-control gates / fingerprint readers" | Not supported. Check-in is NFC sticker + QR. |
+| "Works with turnstiles / access-control gates / fingerprint readers" | Door access for ZKTeco and Hikvision devices is built but in testing (not live for gyms yet). Don't advertise it until the founder switches it on for everyone; then it can be said that Gymix works with ZKTeco and Hikvision face, fingerprint and card terminals. Today's check-in is the NFC sticker + QR. |
 | "AI-powered" / "AI builds your program" | No AI features in the product. Trainers build programs; members can build their own. |
 | "Used by X gyms" / "Trusted by the top gyms in Beirut" | No public customer numbers yet. Never invent numbers, logos or testimonials. |
 | Fake reviews, fake screenshots of customers, made-up quotes | Never. Use `[QUOTE]` placeholders. |

@@ -3,6 +3,7 @@ import { LogOut } from "lucide-react";
 import { Skeleton } from "@/components/ui";
 import { ROLE_LABELS } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
+import { gymFeatures } from "@/lib/features";
 import { SupportBanner } from "@/components/support-banner";
 import { unreadCount } from "@/lib/chat";
 import { createClient } from "@/lib/supabase/server";
@@ -70,9 +71,10 @@ async function GymCard() {
 async function RoleNav() {
   const { viewer, membership } = await requireStaff();
   const supabase = await createClient();
-  const [unread, { data: counts }] = await Promise.all([
+  const [unread, { data: counts }, features] = await Promise.all([
     unreadCount(supabase, viewer.id),
     supabase.rpc("staff_counts", { p_gym_id: membership.gymId }).maybeSingle(),
+    gymFeatures(membership.gymId),
   ]);
   return (
     <NavLinks
@@ -80,7 +82,7 @@ async function RoleNav() {
         messages: unread,
         programs: counts?.program_requests ?? 0,
         schedule: counts?.pt_requests ?? 0,
-      })}
+      }, features)}
     />
   );
 }

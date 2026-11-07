@@ -23,7 +23,293 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "activity_log": {
+            "access_biometrics": {
+                  Row: {
+                    "fields": NonNullable<Json>,"gym_id": string,"id": string,"kind": string,"member_id": string,"slot": string,"source_device_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "fields": NonNullable<Json>,"gym_id": string,"id"?: string,"kind": string,"member_id": string,"slot": string,"source_device_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "fields"?: NonNullable<Json>,"gym_id"?: string,"id"?: string,"kind"?: string,"member_id"?: string,"slot"?: string,"source_device_id"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "access_biometrics_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "access_biometrics_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_biometrics_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_biometrics_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_biometrics_source_device_id_fkey"
+      columns: ["source_device_id"]
+isOneToOne: false
+      referencedRelation: "access_devices"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"access_bridges": {
+                  Row: {
+                    "created_at": string,"gym_id": string,"last_seen_at": string | null,"token": string,"version": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"gym_id": string,"last_seen_at"?: string | null,"token"?: string,"version"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"gym_id"?: string,"last_seen_at"?: string | null,"token"?: string,"version"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "access_bridges_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: true
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "access_bridges_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: true
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"access_commands": {
+                  Row: {
+                    "attempts": number,"created_at": string,"device_id": string,"done_at": string | null,"gym_id": string,"id": number,"kind": string,"member_id": string | null,"payload": NonNullable<Json>,"result": string | null,"sent_at": string | null,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "attempts"?: number,"created_at"?: string,"device_id": string,"done_at"?: string | null,"gym_id": string,"id"?: never,"kind": string,"member_id"?: string | null,"payload"?: NonNullable<Json>,"result"?: string | null,"sent_at"?: string | null,"status"?: string
+                  }
+                  Update: {
+                    "attempts"?: number,"created_at"?: string,"device_id"?: string,"done_at"?: string | null,"gym_id"?: string,"id"?: never,"kind"?: string,"member_id"?: string | null,"payload"?: NonNullable<Json>,"result"?: string | null,"sent_at"?: string | null,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "access_commands_device_id_fkey"
+      columns: ["device_id"]
+isOneToOne: false
+      referencedRelation: "access_devices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_commands_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "access_commands_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_commands_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_commands_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"access_device_secrets": {
+                  Row: {
+                    "device_id": string,"password": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "device_id": string,"password": string
+                  }
+                  Update: {
+                    "device_id"?: string,"password"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "access_device_secrets_device_id_fkey"
+      columns: ["device_id"]
+isOneToOne: true
+      referencedRelation: "access_devices"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"access_devices": {
+                  Row: {
+                    "connection": string,"created_at": string,"direction": string,"door_no": number,"event_token": string,"gym_id": string,"host": string | null,"id": string,"info": NonNullable<Json>,"is_active": boolean,"last_error": string | null,"last_reconciled_on": string | null,"last_seen_at": string | null,"name": string,"serial_number": string | null,"username": string,"vendor": string,"zone_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "connection": string,"created_at"?: string,"direction"?: string,"door_no"?: number,"event_token"?: string,"gym_id": string,"host"?: string | null,"id"?: string,"info"?: NonNullable<Json>,"is_active"?: boolean,"last_error"?: string | null,"last_reconciled_on"?: string | null,"last_seen_at"?: string | null,"name": string,"serial_number"?: string | null,"username"?: string,"vendor": string,"zone_id"?: string | null
+                  }
+                  Update: {
+                    "connection"?: string,"created_at"?: string,"direction"?: string,"door_no"?: number,"event_token"?: string,"gym_id"?: string,"host"?: string | null,"id"?: string,"info"?: NonNullable<Json>,"is_active"?: boolean,"last_error"?: string | null,"last_reconciled_on"?: string | null,"last_seen_at"?: string | null,"name"?: string,"serial_number"?: string | null,"username"?: string,"vendor"?: string,"zone_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "access_devices_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "access_devices_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_devices_zone_id_fkey"
+      columns: ["zone_id"]
+isOneToOne: false
+      referencedRelation: "access_zones"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"access_events": {
+                  Row: {
+                    "checkin_id": string | null,"created_at": string,"device_id": string,"direction": string,"granted": boolean,"gym_id": string,"id": number,"member_id": string | null,"method": string,"occurred_at": string,"outcome": string | null,"pin": string | null,"raw": NonNullable<Json>
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "checkin_id"?: string | null,"created_at"?: string,"device_id": string,"direction": string,"granted": boolean,"gym_id": string,"id"?: never,"member_id"?: string | null,"method"?: string,"occurred_at": string,"outcome"?: string | null,"pin"?: string | null,"raw"?: NonNullable<Json>
+                  }
+                  Update: {
+                    "checkin_id"?: string | null,"created_at"?: string,"device_id"?: string,"direction"?: string,"granted"?: boolean,"gym_id"?: string,"id"?: never,"member_id"?: string | null,"method"?: string,"occurred_at"?: string,"outcome"?: string | null,"pin"?: string | null,"raw"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "access_events_checkin_id_fkey"
+      columns: ["checkin_id"]
+isOneToOne: false
+      referencedRelation: "checkins"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_events_device_id_fkey"
+      columns: ["device_id"]
+isOneToOne: false
+      referencedRelation: "access_devices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_events_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "access_events_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_events_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_events_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"access_grants": {
+                  Row: {
+                    "device_id": string,"gym_id": string,"member_id": string,"sent_card": string | null,"sent_name": string | null,"updated_at": string,"valid_until": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "device_id": string,"gym_id": string,"member_id": string,"sent_card"?: string | null,"sent_name"?: string | null,"updated_at"?: string,"valid_until"?: string | null
+                  }
+                  Update: {
+                    "device_id"?: string,"gym_id"?: string,"member_id"?: string,"sent_card"?: string | null,"sent_name"?: string | null,"updated_at"?: string,"valid_until"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "access_grants_device_id_fkey"
+      columns: ["device_id"]
+isOneToOne: false
+      referencedRelation: "access_devices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_grants_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "access_grants_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_grants_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "access_grants_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"access_zones": {
+                  Row: {
+                    "created_at": string,"gym_id": string,"id": string,"name": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"gym_id": string,"id"?: string,"name": string
+                  }
+                  Update: {
+                    "created_at"?: string,"gym_id"?: string,"id"?: string,"name"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "access_zones_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "access_zones_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"activity_log": {
                   Row: {
                     "action": string,"actor_id": string | null,"created_at": string,"details": NonNullable<Json>,"gym_id": string,"id": string,"summary": string
                   }
@@ -635,14 +921,14 @@ isOneToOne: false
                   ]
                 },"members": {
                   Row: {
-                    "archived_at": string | null,"checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"full_name": string,"gym_id": string,"id": string,"notes": string | null,"phone": string | null,"unpaid_frozen_at": string | null,"user_id": string | null
+                    "access_card": string | null,"access_pin": number | null,"archived_at": string | null,"checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"full_name": string,"gym_id": string,"id": string,"notes": string | null,"phone": string | null,"unpaid_frozen_at": string | null,"user_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name": string,"gym_id": string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"unpaid_frozen_at"?: string | null,"user_id"?: string | null
+                    "access_card"?: string | null,"access_pin"?: number | null,"archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name": string,"gym_id": string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"unpaid_frozen_at"?: string | null,"user_id"?: string | null
                   }
                   Update: {
-                    "archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name"?: string,"gym_id"?: string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"unpaid_frozen_at"?: string | null,"user_id"?: string | null
+                    "access_card"?: string | null,"access_pin"?: number | null,"archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name"?: string,"gym_id"?: string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"unpaid_frozen_at"?: string | null,"user_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -978,6 +1264,32 @@ isOneToOne: false
       columns: ["received_by"]
 isOneToOne: false
       referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"plan_access_zones": {
+                  Row: {
+                    "plan_id": string,"zone_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "plan_id": string,"zone_id": string
+                  }
+                  Update: {
+                    "plan_id"?: string,"zone_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "plan_access_zones_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "membership_plans"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "plan_access_zones_zone_id_fkey"
+      columns: ["zone_id"]
+isOneToOne: false
+      referencedRelation: "access_zones"
       referencedColumns: ["id"]
     }
                   ]
@@ -1666,6 +1978,67 @@ isOneToOne: false
             "accept_invite":
 { Args: { "p_token": string }; Returns: Database["public"]['Enums']["gym_role"]
                            },
+"access_bridge_status":
+{ Args: { "p_gym_id": string }; Returns: {
+              "last_seen_at": string,"version": string
+            }[]
+                           },
+"access_bridge_token":
+{ Args: { "p_gym_id": string }; Returns: string
+                           },
+"access_command_done":
+{ Args: { "p_command_id": number,"p_device_id": string,"p_ok": boolean,"p_result"?: string }; Returns: undefined
+                           },
+"access_device_counts":
+{ Args: { "p_gym_id": string }; Returns: {
+              "biometrics": number,"device_id": string,"failed": number,"granted": number,"pending": number
+            }[]
+                           },
+"access_device_seen":
+{ Args: { "p_device_id": string,"p_info"?: Json }; Returns: undefined
+                           },
+"access_ingest_event":
+{ Args: { "p_at": string,"p_device_id": string,"p_direction": string,"p_granted": boolean,"p_method"?: string,"p_pin": string,"p_raw"?: Json }; Returns: string
+                           },
+"access_save_biometric":
+{ Args: { "p_device_id": string,"p_fields": Json,"p_kind": string,"p_pin": string,"p_slot": string }; Returns: boolean
+                           },
+"access_save_card":
+{ Args: { "p_card": string,"p_device_id": string,"p_pin": string }; Returns: boolean
+                           },
+"access_sync_device":
+{ Args: { "p_device_id": string }; Returns: number
+                           },
+"access_sync_member":
+{ Args: { "p_member_id": string }; Returns: undefined
+                           },
+"access_sync_one":
+{ Args: { "p_device_id": string,"p_member_id": string }; Returns: undefined
+                           },
+"access_take_commands":
+{ Args: { "p_device_id": string,"p_limit"?: number }; Returns: {
+              "attempts": number,
+"created_at": string,
+"device_id": string,
+"done_at": string | null,
+"gym_id": string,
+"id": number,
+"kind": string,
+"member_id": string | null,
+"payload": NonNullable<Json>,
+"result": string | null,
+"sent_at": string | null,
+"status": string
+            }[]
+                          SetofOptions: {
+        from: "*"
+        to: "access_commands"
+        isOneToOne: false
+        isSetofReturn: true
+      } },
+"access_valid_until":
+{ Args: { "p_device_id": string,"p_member_id": string }; Returns: string
+                           },
 "add_payment":
 { Args: { "p_amount_lbp"?: number,"p_amount_usd": number,"p_invoice_id": string,"p_method": Database["public"]['Enums']["payment_method"],"p_note"?: string }; Returns: string
                            },
@@ -1955,6 +2328,9 @@ isOneToOne: false
 "require_manager":
 { Args: { "p_gym_id": string }; Returns: undefined
                            },
+"resync_access_device":
+{ Args: { "p_device_id": string }; Returns: number
+                           },
 "rotate_checkin_token":
 { Args: { "p_gym_id": string }; Returns: string
                            },
@@ -1984,8 +2360,14 @@ isOneToOne: false
 "session_member":
 { Args: { "p_session_id": string }; Returns: string
                            },
+"set_access_device_password":
+{ Args: { "p_device_id": string,"p_password": string }; Returns: undefined
+                           },
 "set_gym_equipment":
 { Args: { "p_equipment": (string)[],"p_gym_id": string }; Returns: undefined
+                           },
+"set_member_access_card":
+{ Args: { "p_card": string,"p_member_id": string }; Returns: undefined
                            },
 "set_member_archived":
 { Args: { "p_archived": boolean,"p_member_id": string }; Returns: undefined
