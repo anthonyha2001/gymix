@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createLabGym, openGymAs, openGymAsSupport, setFeatureOverride } from "./actions";
 import { FeatureOverrideForm, OpenAsForm, RolloutSelect } from "./forms";
 
-const ROLES: GymRole[] = ["owner", "manager", "front_desk", "trainer", "dietitian", "member"];
+const ROLES: GymRole[] = ["owner", "manager", "front_desk", "trainer", "member"];
 
 const ROLLOUT = {
   off: { label: "Off", tone: "gray" },

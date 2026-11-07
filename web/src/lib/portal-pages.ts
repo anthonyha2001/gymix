@@ -3,7 +3,6 @@
 export const PORTAL_PAGES = [
   { id: "train", label: "Train", description: "Start and log workouts" },
   { id: "programs", label: "Programs", description: "Trainer programs, own programs, requests" },
-  { id: "nutrition", label: "Nutrition", description: "Meal plans from the dietitian" },
   { id: "machines", label: "Machines", description: "Equipment and how to use it" },
   { id: "schedule", label: "Schedule", description: "Classes and PT sessions" },
   { id: "progress", label: "Progress", description: "Body measurements and workout history" },

@@ -93,7 +93,7 @@ export default async function Home() {
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-widest text-brand-strong">Everything in one place</p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Replace the notebook, the spreadsheet and the WhatsApp groups.</h2>
-            <p className="mt-4 text-lg text-muted">One system for the front desk, your trainers, your dietitian and every member.</p>
+            <p className="mt-4 text-lg text-muted">One system for the front desk, your trainers and every member.</p>
           </div>
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f) => (

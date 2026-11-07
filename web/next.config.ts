@@ -7,6 +7,13 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   // Keep the dev-only badge clear of the sidebar's account section.
   devIndicators: { position: "bottom-right" },
+  // Nutrition moved to the Nutrix app: old links and notifications land home.
+  async redirects() {
+    return [
+      { source: "/portal/nutrition/:path*", destination: "/portal", permanent: false },
+      { source: "/dashboard/nutrition/:path*", destination: "/dashboard", permanent: false },
+    ];
+  },
   // The service worker must always be fresh, and only act for this site.
   async headers() {
     return [

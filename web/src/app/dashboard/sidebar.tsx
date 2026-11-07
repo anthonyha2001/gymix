@@ -6,7 +6,6 @@ import { createContext, use, useRef, useState, type ReactNode } from "react";
 import {
   CalendarDays,
   ClipboardList,
-  Apple,
   Dumbbell,
   LayoutDashboard,
   Menu,
@@ -35,7 +34,6 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   machines: Dumbbell,
   programs: ClipboardList,
   messages: MessageCircle,
-  nutrition: Apple,
 };
 
 // Lets nav links (rendered in a server slot) close the mobile drawer.

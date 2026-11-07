@@ -5,17 +5,8 @@ import { Eye, Lock, MessageCircle, Pencil, Plus } from "lucide-react";
 import { RowMenu } from "@/components/row-menu";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { ProgramEditorModal } from "@/components/program-editor-modal";
-import { NutritionEditorModal } from "@/components/nutrition-editor-modal";
-import { NutritionPlanView } from "@/components/nutrition-plan-view";
 import { ChatModal } from "@/components/chat-modal";
 import { MemberPreviewModal } from "../preview-modal";
-import {
-  NUTRITION_GOAL_LABELS,
-  PLAN_STATUS,
-  loadNutritionPlan,
-} from "@/lib/nutrition";
-import { startNutritionPlan } from "@/app/nutrition-actions";
-import { StartNutritionForm } from "../../nutrition/forms";
 import { Dialog } from "@/components/dialog";
 import { InviteShare } from "@/components/invite-share";
 import {
@@ -44,7 +35,6 @@ import {
 import {
   BILLING_ROLES,
   COACH_ROLES,
-  DIET_ROLES,
   MANAGER_ROLES,
 } from "@/lib/roles";
 import { createMemberProgram } from "../../programs/actions";
@@ -84,7 +74,7 @@ import { openChatAsStaff } from "@/app/chat-actions";
 
 export const metadata: Metadata = { title: "Member" };
 
-const TABS = ["overview", "billing", "training", "nutrition", "body"] as const;
+const TABS = ["overview", "billing", "training", "body"] as const;
 
 export default function MemberPage({
   params,
@@ -118,13 +108,11 @@ async function MemberContent({
   const query = await searchParams;
   const { viewer: staffViewer, membership: staff } = await requireStaff();
   const canBill = BILLING_ROLES.includes(staff.role);
-  const canDiet = DIET_ROLES.includes(staff.role);
   const tabs = TABS.filter((t) => t !== "billing" || canBill);
   const tab = activeTab(query.tab, tabs);
   const base = `/dashboard/members/${id}`;
   const here = `${base}?tab=${tab}`;
   const openProgram = typeof query.program === "string" ? query.program : null;
-  const openPlan = typeof query.plan === "string" ? query.plan : null;
   const canManage = MANAGER_ROLES.includes(staff.role);
   const supabase = await createClient();
   await supabase.rpc("freeze_unpaid_members", { p_gym_id: staff.gymId });
@@ -227,21 +215,6 @@ async function MemberContent({
       .limit(10),
     supabase.rpc("gym_coaches", { p_gym_id: staff.gymId }),
   ]);
-  const [{ data: nutritionPlans }, { data: nutritionRequest }] =
-    await Promise.all([
-      supabase
-        .from("nutrition_plans")
-        .select("id, name, status, calories, updated_at")
-        .eq("member_id", id)
-        .order("updated_at", { ascending: false })
-        .limit(20),
-      supabase
-        .from("nutrition_requests")
-        .select("id, goal, status, plan_id, created_at")
-        .eq("member_id", id)
-        .in("status", ["open", "in_progress"])
-        .maybeSingle(),
-    ]);
   const [{ data: courseSubs }, { data: courses }] = await Promise.all([
     supabase
       .from("class_subscriptions")
@@ -257,11 +230,6 @@ async function MemberContent({
       .not("monthly_price_usd", "is", null)
       .order("name"),
   ]);
-  const activePlanId = nutritionPlans?.find((p) => p.status === "active")?.id;
-  const activePlan =
-    activePlanId
-      ? await loadNutritionPlan(supabase, activePlanId)
-      : null;
 
   const origin = await requestOrigin();
   const nowIso = new Date().toISOString();
@@ -423,7 +391,6 @@ async function MemberContent({
             overview: "Overview",
             billing: "Billing",
             training: "Training",
-            nutrition: "Nutrition",
             body: "Body",
           }[t],
         }))}
@@ -440,13 +407,6 @@ async function MemberContent({
         <MemberPreviewModal memberId={member.id!} viewerId={staffViewer.id} membership={staff} />
       )}
       {typeof query.c === "string" && <ChatModal conversationId={query.c} viewerId={staffViewer.id} timeZone={staff.timezone} as="staff" />}
-      {openPlan && canDiet && (
-        <NutritionEditorModal
-          planId={openPlan}
-          gymId={staff.gymId}
-          closePath={here}
-        />
-      )}
 
       {/* Portal access */}
       <TabPanel id="overview" tabs={tabs}>{canBill && (
@@ -1059,17 +1019,6 @@ async function MemberContent({
         </Card>
       )}</TabPanel>
 
-      <TabPanel id="nutrition" tabs={tabs}>{(
-        <NutritionSection
-          memberName={member.full_name ?? "member"}
-          memberId={member.id!}
-          here={here}
-          canDiet={canDiet}
-          plans={nutritionPlans ?? []}
-          request={nutritionRequest}
-          activePlan={activePlan}
-        />
-      )}</TabPanel>
 
       <TabPanel id="body" tabs={tabs}>{(
         <section className="space-y-3">
@@ -1144,151 +1093,6 @@ async function MemberContent({
             </ul>
           </Card>
         )}</TabPanel>
-    </div>
-  );
-}
-
-function NutritionSection({
-  memberName,
-  memberId,
-  here,
-  canDiet,
-  plans,
-  request,
-  activePlan,
-}: {
-  memberName: string;
-  memberId: string;
-  here: string;
-  canDiet: boolean;
-  plans: {
-    id: string;
-    name: string;
-    status: string;
-    calories: number | null;
-    updated_at: string;
-  }[];
-  request: {
-    id: string;
-    goal: string;
-    status: string;
-    plan_id: string | null;
-    created_at: string;
-  } | null;
-  activePlan: Awaited<ReturnType<typeof loadNutritionPlan>>;
-}) {
-  return (
-    <div className="space-y-6">
-      {request && (
-        <Card className="flex flex-wrap items-center justify-between gap-3 border-amber-200 bg-amber-50/50 px-5 py-4 text-sm">
-          <span>
-            Asked for a nutrition plan ({NUTRITION_GOAL_LABELS[request.goal]})
-            on {formatDate(request.created_at)}.
-          </span>
-          {canDiet &&
-            (request.status === "open" ? (
-              <Dialog
-                label="Build plan"
-                title={`Nutrition plan for ${memberName}`}
-                triggerClassName="h-9"
-              >
-                <StartNutritionForm
-                  action={startNutritionPlan.bind(
-                    null,
-                    memberId,
-                    request.id,
-                    here,
-                  )}
-                />
-              </Dialog>
-            ) : (
-              request.plan_id && (
-                <HoverLink
-                  href={`${here}&plan=${request.plan_id}`}
-                  scroll={false}
-                  className="font-medium underline underline-offset-4"
-                >
-                  Continue building
-                </HoverLink>
-              )
-            ))}
-        </Card>
-      )}
-
-      <Card>
-        <SectionTitle
-          action={
-            canDiet && (
-              <Dialog
-                label="New plan"
-                icon={<Plus className="size-4" />}
-                title={`Nutrition plan for ${memberName}`}
-                triggerClassName="h-9"
-              >
-                <StartNutritionForm
-                  action={startNutritionPlan.bind(null, memberId, null, here)}
-                />
-              </Dialog>
-            )
-          }
-        >
-          Current nutrition plan
-        </SectionTitle>
-        {activePlan ? (
-          <div className="space-y-3 border-t border-line p-5">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="font-semibold">{activePlan.name}</p>
-              {canDiet && (
-                <HoverLink
-                  href={`${here}&plan=${activePlan.id}`}
-                  scroll={false}
-                  className={buttonClass("secondary", "h-9")}
-                >
-                  Edit plan
-                </HoverLink>
-              )}
-            </div>
-            <NutritionPlanView plan={activePlan} />
-          </div>
-        ) : (
-          <EmptyState>No active nutrition plan.</EmptyState>
-        )}
-      </Card>
-
-      {plans.some((p) => p.id !== activePlan?.id) && (
-        <Card>
-          <SectionTitle>Other plans</SectionTitle>
-          <ul className="divide-y divide-line border-t border-line">
-            {plans
-              .filter((p) => p.id !== activePlan?.id)
-              .map((p) => {
-                const status = PLAN_STATUS[p.status] ?? PLAN_STATUS.draft;
-                return (
-                  <li
-                    key={p.id}
-                    className="flex items-center justify-between gap-3 px-5 py-2.5 text-sm"
-                  >
-                    {canDiet ? (
-                      <HoverLink
-                        href={`${here}&plan=${p.id}`}
-                        scroll={false}
-                        className="font-medium hover:underline"
-                      >
-                        {p.name}
-                      </HoverLink>
-                    ) : (
-                      <span className="font-medium">{p.name}</span>
-                    )}
-                    <span className="flex items-center gap-2 text-muted">
-                      {formatDate(p.updated_at)}
-                      <Badge tone={status.tone}>{status.label}</Badge>
-                    </span>
-                  </li>
-                );
-              })}
-          </ul>
-        </Card>
-      )}
     </div>
   );
 }

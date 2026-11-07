@@ -79,7 +79,6 @@ async function RoleNav() {
       items={navFor(membership.role, {
         messages: unread,
         programs: counts?.program_requests ?? 0,
-        nutrition: counts?.nutrition_requests ?? 0,
         schedule: counts?.pt_requests ?? 0,
       })}
     />

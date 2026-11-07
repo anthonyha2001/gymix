@@ -23,15 +23,15 @@ export const BILLING_ROLES: GymRole[] = ["owner", "manager", "front_desk"];
 export const MANAGER_ROLES: GymRole[] = ["owner", "manager"];
 // Build programs and templates. Mirrors public.can_coach().
 export const COACH_ROLES: GymRole[] = ["owner", "manager", "trainer"];
-// Build nutrition plans. Mirrors public.can_diet().
-export const DIET_ROLES: GymRole[] = ["owner", "manager", "dietitian"];
+// Nutrition plans (public.can_diet()) are no longer edited in Gymix: nutrition
+// will live in the separate Nutrix app (see README, "Nutrition and Nutrix").
 
 export function assignableRoles(by: GymRole): GymRole[] {
   switch (by) {
     case "owner":
-      return ["manager", "front_desk", "trainer", "dietitian", "member"];
+      return ["manager", "front_desk", "trainer", "member"];
     case "manager":
-      return ["front_desk", "trainer", "dietitian", "member"];
+      return ["front_desk", "trainer", "member"];
     case "front_desk":
       return ["member"];
     default:

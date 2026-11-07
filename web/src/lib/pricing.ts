@@ -17,7 +17,6 @@ export const PLAN_FEATURES = [
   "NFC tap and QR check-in",
   "Member app for iPhone and Android",
   "Programs built by your trainers",
-  "Nutrition plans from your dietitian",
   "Classes, monthly courses and personal training",
   "Machine stickers with how-to animations",
   "Calendar schedule with bookings",

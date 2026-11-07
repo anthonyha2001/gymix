@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
-  Apple,
   CalendarDays,
   ChevronRight,
   ClipboardList,
@@ -31,7 +30,6 @@ const MAIN: Tab[] = [
 ];
 const MORE: (Tab & { hint: string })[] = [
   { href: "/portal/programs", label: "Programs", icon: ClipboardList, page: "programs", hint: "Your training programs" },
-  { href: "/portal/nutrition", label: "Nutrition", icon: Apple, page: "nutrition", hint: "Your meal plan" },
   { href: "/portal/machines", label: "Machines", icon: Dumbbell, page: "machines", hint: "How to use each machine" },
   { href: "/portal/messages", label: "Chat", icon: MessageCircle, page: "messages", hint: "Talk to your trainer" },
   { href: "/portal/profile", label: "Profile", icon: UserRound, hint: "Photo, training days, notifications" },

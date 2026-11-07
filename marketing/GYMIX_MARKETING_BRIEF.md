@@ -29,7 +29,7 @@ These details are not set yet. Use the placeholder in drafts and never make up a
 ## 1. Gymix in one sentence
 
 **Gymix is the all-in-one system for running a gym in Lebanon: memberships, payments in dollars and lira,
-tap-your-phone check-in, trainer programs, nutrition plans and a member app, for $19.99 a month for the whole gym.**
+tap-your-phone check-in, trainer programs and a member app, for $19.99 a month for the whole gym.**
 
 ### Short versions (use as they are)
 
@@ -55,7 +55,7 @@ Everything in this section is built and live for every gym today. You may claim 
 - **Setup takes about 10 minutes:** create the gym, add membership plans, invite staff, add members as they walk in.
 - **The servers are in Frankfurt (EU),** so it's fast from Lebanon.
 
-### 2.2 The staff dashboard (owner, manager, front desk, trainer, dietitian)
+### 2.2 The staff dashboard (owner, manager, front desk, trainer)
 
 **Members and memberships**
 - Sell **monthly, yearly or visit-pack** memberships (for example, 10 visits).
@@ -101,10 +101,6 @@ Everything in this section is built and live for every gym today. You may claim 
   member's app.
 - Members can also build their own.
 
-**Nutrition**
-- A **dietitian role**: the dietitian sees each member's details and measurements and sends a meal plan straight
-  to their app.
-
 **Chat**
 - Staff chat with members inside Gymix.
 - The chat also shows the automatic WhatsApp messages each member was sent, with time and delivery status.
@@ -116,7 +112,7 @@ Everything in this section is built and live for every gym today. You may claim 
 - Each message is sent once, never spammed.
 
 **Team roles and privacy**
-- Roles: **owner, manager, front desk, trainer, dietitian** (and member).
+- Roles: **owner, manager, front desk, trainer** (and member).
 - Each sees only what they need. **Trainers don't see money.** Members only see their own records.
 - Who can invite whom is controlled (for example, the front desk can only add members).
 - **Each gym's data is separated in the database itself**, not just hidden on the screen. The Gymix team only sees
@@ -134,7 +130,6 @@ Everything in this section is built and live for every gym today. You may claim 
   reminder on those days.
 - **Schedule:** book classes, join waitlists.
 - **Progress:** body measurements and lifting progress over time.
-- **Nutrition:** the meal plan from the dietitian.
 - **Messages:** chat with the gym or their coach.
 - **Pause themselves:** travelling or injured? Members pause their membership from the app and resume it later. The
   paused days are added to the end date. Fewer front-desk calls.
@@ -165,13 +160,12 @@ Everything in this section is built and live for every gym today. You may claim 
 3. NFC tap and QR check-in
 4. Member app for iPhone and Android
 5. Programs built by your trainers
-6. Nutrition plans from your dietitian
-7. Classes, monthly courses and personal training
-8. Machine stickers with how-to animations
-9. Calendar schedule with bookings
-10. Automatic WhatsApp reminders and receipts
-11. Notifications and reminders
-12. Automatic freeze for unpaid accounts
+6. Classes, monthly courses and personal training
+7. Machine stickers with how-to animations
+8. Calendar schedule with bookings
+9. Automatic WhatsApp reminders and receipts
+10. Notifications and reminders
+11. Automatic freeze for unpaid accounts
 
 ---
 
@@ -191,6 +185,7 @@ Breaking these damages trust in a small market where everyone talks. Follow them
 | Fake reviews, fake screenshots of customers, made-up quotes | Never. Use `[QUOTE]` placeholders. |
 | "Integrates with [any accounting or payment software]" | No integrations except WhatsApp. |
 | "Wearables / Apple Health / Google Fit sync" | Not supported. |
+| "Nutrition plans" / "meal plans" / "dietitian" | Not in Gymix. Nutrition is moving to a separate app, Nutrix, which is not launched. Don't mention it until the founder says so. |
 | "Multi-branch management" / "franchise dashboard" | Each gym is its own account. Don't promise a multi-branch view. `[TO CONFIRM]` with the founder before targeting chains. |
 | "Guaranteed more members / X% more revenue" | No guarantees. Talk about time saved, money collected and members who stay, without fake percentages. |
 | Naming or attacking competitors | Don't name competitors in public content. Compare with "the notebook, Excel and WhatsApp groups" or "expensive foreign software". |
@@ -288,7 +283,7 @@ in dollars and lira, for **$19.99 a month**. Unlike foreign gym software priced 
 2. **Save time.** Set up in 10 minutes. No more notebook. Members pause themselves, get their own login link,
    and book their own classes.
 3. **Keep members coming back.** A member app they actually open: today's workout, streaks, records,
-   programs from their trainer, nutrition plans. *Keep them coming back.*
+   programs from their trainer, classes and progress. *Keep them coming back.*
 4. **Built for Lebanon.** USD + LBP with your own rate, Whish/OMT, WhatsApp, fast servers, local support that
    can open your dashboard and help.
 5. **Ridiculously fair price.** $19.99/month for the whole gym. Unlimited members. No card, no contract, 14 days free.
@@ -482,8 +477,8 @@ Adapt these, but keep the facts exactly as they are.
 **Sub:** The all-in-one gym system built for Lebanon. $19.99 a month. 14 days free.
 - **Get paid:** unpaid members freeze automatically, WhatsApp renewal reminders, receipts, dollars and lira.
 - **Tap to check in:** a $1 sticker at the door. No hardware.
-- **A member app:** programs, classes, progress, nutrition. No store download.
-- **Your whole team:** owner, manager, front desk, trainers, dietitian, each with their own access.
+- **A member app:** programs, classes and progress. No store download.
+- **Your whole team:** owner, manager, front desk and trainers, each with their own access.
 - **CTA:** Start free at `[WEBSITE]` or WhatsApp `[WHATSAPP_SALES]`.
 
 ### 9.4 Cold WhatsApp message to an owner (only to people who have agreed to be contacted or who reached out first)

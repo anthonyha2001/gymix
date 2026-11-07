@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runs every tests/*_test.sql against its own fresh database (auth stub + all
 # migrations) in a throwaway Postgres container.
-# Usage (from repo root): bash supabase/tests/run_tests.sh
+# Usage (from repo root): bash supabase/tests/run_tests.sh [name]  (e.g. "access" runs access_test.sql only)
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -17,9 +17,9 @@ sleep 1
 run() { docker exec -i "$NAME" psql -q -v ON_ERROR_STOP=1 -U postgres "$@"; }
 
 # Roles are cluster-wide, so create them once.
-run -c "create role anon; create role authenticated;"
+run -c "create role anon; create role authenticated; create role service_role bypassrls;"
 
-for t in tests/*_test.sql; do
+for t in tests/${1:-*}_test.sql; do
   echo "running $t"
   run -c "drop database if exists t;" -c "create database t;"
   grep -v -E '^create role ' tests/auth_stub.sql | run -d t

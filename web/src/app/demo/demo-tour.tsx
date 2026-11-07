@@ -11,7 +11,6 @@ import {
   type RefObject,
 } from "react";
 import {
-  Apple,
   BatteryFull,
   Bell,
   CalendarDays,
@@ -519,7 +518,6 @@ const NAV = [
   ["Schedule", CalendarDays],
   ["Messages", MessageCircle],
   ["Programs", ClipboardList],
-  ["Nutrition", Apple],
   ["Equipment", Dumbbell],
   ["Billing", Receipt],
   ["Plans", Tags],
@@ -751,9 +749,9 @@ const CHAPTERS: Chapter[] = [
       {
         title: "Invite your team",
         who: "Owner",
-        what: "Invite managers, front desk, trainers and a dietitian by email. Each role sees only what it needs: trainers see their classes and clients but no money, the front desk sells memberships and takes payments, managers run almost everything. The invite is claimed as soon as that person signs up.",
+        what: "Invite managers, front desk and trainers by email. Each role sees only what it needs: trainers see their classes and clients but no money, the front desk sells memberships and takes payments, managers run almost everything. The invite is claimed as soon as that person signs up.",
         start: ["Team → Invite team member.", "Type their email, choose the role, send."],
-        tip: "Owners can invite anyone. Managers can invite front desk, trainers and dietitians. The front desk can only add members.",
+        tip: "Owners can invite anyone. Managers can invite front desk and trainers. The front desk can only add members.",
         page: "Team",
         taps: [
           { at: 800, id: "inv" },
@@ -792,10 +790,10 @@ const CHAPTERS: Chapter[] = [
               </ul>
             </Card>
             <Dialog t={t} at={1000} until={3800} title="Invite a team member" description="They get a link to create their account and land straight in your gym.">
-              <Input label="Email" value={typed("rita@ironhouse.lb", t, 1200, 16)} focus={t >= 1100 && t < 2400} />
+              <Input label="Email" value={typed("hadi@ironhouse.lb", t, 1200, 16)} focus={t >= 1100 && t < 2400} />
               <div className="relative">
-                <Select id="role" label="Role" value={t >= 3000 ? "Dietitian" : "Front desk"} focus={t >= 2400 && t < 3050} />
-                {t >= 2450 && t < 3050 && <Dropdown items={["Manager", "Front desk", "Trainer", "Dietitian"]} pick="Dietitian" id="opt" hl={t >= 2900} />}
+                <Select id="role" label="Role" value={t >= 3000 ? "Trainer" : "Front desk"} focus={t >= 2400 && t < 3050} />
+                {t >= 2450 && t < 3050 && <Dropdown items={["Manager", "Front desk", "Trainer"]} pick="Trainer" id="opt" hl={t >= 2900} />}
               </div>
               <div className="flex justify-end gap-2">
                 <Btn variant="secondary">Cancel</Btn>
@@ -803,7 +801,7 @@ const CHAPTERS: Chapter[] = [
               </div>
             </Dialog>
             <Toast t={t} at={3850}>
-              Invite sent to rita@ironhouse.lb
+              Invite sent to hadi@ironhouse.lb
             </Toast>
           </Page>
         ),
@@ -811,7 +809,7 @@ const CHAPTERS: Chapter[] = [
       {
         title: "Choose what members see",
         who: "Owner",
-        what: "You decide which pages the member app shows: training, schedule, progress, programs, nutrition, machines and chat. No dietitian? Turn nutrition off and it disappears from every member's app. Members only see what your gym really offers.",
+        what: "You decide which pages the member app shows: training, schedule, progress, programs, machines and chat. No classes at your gym? Turn the schedule off and it disappears from every member's app. Members only see what your gym really offers.",
         start: ["Settings → Member app.", "Switch pages on or off, then Save."],
         page: "Settings",
         taps: [
@@ -826,10 +824,10 @@ const CHAPTERS: Chapter[] = [
               <h2 className="font-semibold">Member portal pages</h2>
               <p className="text-sm text-muted">Hide what your gym doesn&apos;t offer. Home is always on.</p>
               <ul className="mt-3 divide-y divide-line">
-                {["Train", "Schedule", "Progress", "Programs", "Nutrition", "Machines", "Chat"].map((p) => (
+                {["Train", "Schedule", "Progress", "Programs", "Machines", "Chat"].map((p) => (
                   <li key={p} className="flex items-center justify-between py-2.5 text-sm">
                     <span>{p}</span>
-                    <Toggle id={p === "Nutrition" ? "tg" : undefined} on={p !== "Nutrition" || t < 1250} />
+                    <Toggle id={p === "Schedule" ? "tg" : undefined} on={p !== "Schedule" || t < 1250} />
                   </li>
                 ))}
               </ul>
@@ -1153,7 +1151,7 @@ const CHAPTERS: Chapter[] = [
       {
         title: "Billing: who owes what",
         who: "Owner, manager, front desk",
-        what: "One place for every unpaid invoice and every payment. See what you collected this month, who owes you and how much, and which payment methods people use. Tap a name to collect. Trainers and dietitians can't see this page.",
+        what: "One place for every unpaid invoice and every payment. See what you collected this month, who owes you and how much, and which payment methods people use. Tap a name to collect. Trainers can't see this page.",
         start: ["Billing."],
         page: "Billing",
         taps: [{ at: 2700, id: "tpay" }],
@@ -1846,7 +1844,7 @@ const CHAPTERS: Chapter[] = [
     ],
   },
   {
-    name: "Training and nutrition",
+    name: "Training",
     steps: [
       {
         title: "Machines that teach",
@@ -1978,81 +1976,6 @@ const CHAPTERS: Chapter[] = [
             </div>
           ),
       },
-      {
-        title: "Nutrition plans",
-        who: "Dietitian",
-        what: "Members ask for a meal plan from their app. Your dietitian sees their details and measurements, writes the plan meal by meal with a daily target, and sends it straight to the member's app. No more PDFs lost in WhatsApp.",
-        start: ["Nutrition → Requests → Build plan."],
-        page: "Nutrition",
-        taps: [
-          { at: 800, id: "b" },
-          { at: 4300, id: "s" },
-        ],
-        end: 5800,
-        scene: (t) =>
-          t < 1100 ? (
-            <Page title="Nutrition" description="Answer members' nutrition requests and build their meal plans.">
-              <Tabs items={["Requests", "Plans"]} active="Requests" badges={{ Requests: 1 }} />
-              <Card>
-                <SectionTitle>Requests from members</SectionTitle>
-                <div className="flex flex-wrap items-center gap-3 border-t border-line px-5 py-3 text-sm">
-                  <Avatar lime>NK</Avatar>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-medium">Nour Khalil</span>
-                    <span className="block text-xs text-muted">Lose fat · 3 meals a day · no seafood</span>
-                  </span>
-                  <Btn id="b" className="h-9">
-                    Build plan
-                  </Btn>
-                </div>
-              </Card>
-            </Page>
-          ) : (
-            <div className="page-enter space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h1 className="text-2xl font-semibold tracking-tight">Meal plan</h1>
-                  <p className="text-sm text-muted">For Nour Khalil · lose fat</p>
-                </div>
-                <Btn id="s">
-                  <Send className="size-4" /> Send plan
-                </Btn>
-              </div>
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  ["Weight", "72 kg"],
-                  ["Height", "168 cm"],
-                  ["Body fat", "24%"],
-                  ["Target", "1,900 kcal"],
-                ].map(([k, v]) => (
-                  <Card key={k} className="p-3">
-                    <p className="text-xs text-muted">{k}</p>
-                    <p className="font-semibold">{v}</p>
-                  </Card>
-                ))}
-              </div>
-              <Card className="px-5 py-2">
-                {[
-                  [1300, "Breakfast", "Oats with milk, 2 eggs, a banana"],
-                  [2100, "Lunch", "Grilled chicken, rice, fattoush"],
-                  [2900, "Snack", "Greek yogurt with almonds"],
-                  [3500, "Dinner", "Lentil soup and a green salad"],
-                ].map(([at, meal, food]) => (
-                  <div key={meal} className="grid grid-cols-[90px_1fr] gap-3 border-b border-line py-2.5 text-sm last:border-0">
-                    <span className="font-medium">{meal}</span>
-                    <span className="text-muted">
-                      {typed(food as string, t, at as number, 28)}
-                      {t >= (at as number) && t < (at as number) + 900 && <span className="d-caret ml-px inline-block h-4 w-px bg-ink align-middle" />}
-                    </span>
-                  </div>
-                ))}
-              </Card>
-              <Toast t={t} at={4450}>
-                Plan sent to Nour&apos;s app
-              </Toast>
-            </div>
-          ),
-      },
     ],
   },
   {
@@ -2155,7 +2078,7 @@ const CHAPTERS: Chapter[] = [
       {
         title: "Notifications",
         who: "Members and staff",
-        what: "The bell collects everything that matters: class reminders, training-day reminders, a new program from the trainer, a new meal plan, payments and messages. Members never miss what you send them.",
+        what: "The bell collects everything that matters: class reminders, training-day reminders, a new program from the trainer, payments and messages. Members never miss what you send them.",
         start: ["Nothing to set up: it's automatic."],
         tab: "Home",
         bell: (t) => (t < 400 ? 0 : t < 1100 ? 1 : 2),
@@ -2865,7 +2788,6 @@ const CHAPTERS: Chapter[] = [
                   ["Manager", "Running the gym: members, money, schedule, team"],
                   ["Front desk", "Members, check-in and payments"],
                   ["Trainer", "Their classes, clients and programs. No money."],
-                  ["Dietitian", "Nutrition requests and meal plans. No money."],
                   ["Member", "Only their own records"],
                 ].map(([r, d]) => (
                   <li key={r} className="flex items-center gap-3 px-5 py-2.5 text-sm">

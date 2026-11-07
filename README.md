@@ -11,7 +11,7 @@ The operating system for gyms: an owner/staff dashboard plus a member portal.
 
 - Members, memberships (monthly, yearly, visit packs), invoices and payments in USD and lira; freeze, resume, renew.
 - Schedule with a day/week/month calendar (a list on phones) and quick add; trainers see only their own classes.
-- Classes, bookings and waitlists, personal training, monthly courses, nutrition plans.
+- Classes, bookings and waitlists, personal training, monthly courses.
 - Equipment: the owner lists the gym's machines, and programs only use exercises for that equipment.
 - Machines with NFC and QR stickers (generated in the dashboard) that open a how-to sheet in the member app.
 - Chat with members, including the automatic WhatsApp messages each member was sent, with time and delivery status.
@@ -107,7 +107,7 @@ number every owner sees on Settings, Subscription. A few days (the grace period,
 ## Lab & features (`/admin`, Lab & features tab)
 
 - **Lab gym**: "Create my lab gym" makes a gym only the super admin uses (`gyms.is_lab`, never billed). Open it as
-  any role (owner, manager, front desk, trainer, dietitian, member). As a member you get a lab member record with a
+  any role (owner, manager, front desk, trainer, member). As a member you get a lab member record with a
   year-long membership, and land in the member app.
 - **Open any gym as a role**: any staff role in a real gym (support access; changes are real). The role lives in
   `platform_admin_visits.role` and is what `my_gym_role()` returns, so the database enforces exactly that role.
@@ -136,11 +136,11 @@ Setup: create these Utility templates (English) in WhatsApp Manager, then save t
 
 ## How access works
 
-Every user has a role per gym: `owner`, `manager`, `front_desk`, `trainer`, `dietitian` or `member`.
+Every user has a role per gym: `owner`, `manager`, `front_desk`, `trainer` or `member` (`dietitian` still exists in the database; see Nutrition and Nutrix).
 Staff land on `/dashboard`, members on `/portal`, users with no gym on `/onboarding` (create a gym → become its owner).
 
 - Staff invite people by email on **Team & members**. The invite is claimed automatically when that email signs up or logs in.
-- Who can invite/assign which role: owner → anyone but owner; manager → front desk, trainer, dietitian, member; front desk → member.
+- Who can invite/assign which role: owner → anyone but owner; manager → front desk, trainer, member; front desk → member.
 - Members are invited with a personal link (WhatsApp or copy). Opening it signs them straight in; Gymix generates a
   password shown once, for logging in elsewhere with their phone, email or member code. The front desk can reset it.
 - The owner chooses which member-app pages are visible (Settings → Member app).
@@ -154,3 +154,15 @@ Staff land on `/dashboard`, members on `/portal`, users with no gym on `/onboard
 
 `bash supabase/tests/run_tests.sh` applies every migration to a throwaway Postgres container and checks
 what each role can and can't do (needs Docker; on Git Bash prefix with `MSYS_NO_PATHCONV=1`).
+
+## Nutrition and Nutrix
+
+Nutrition is moving to a separate app, Nutrix, so Gymix no longer shows any nutrition screens or offers the
+dietitian role. Everything underneath stays: the `nutrition_requests`, `nutrition_plans` and `nutrition_meals`
+tables, their rules and the `dietitian` role (existing dietitian accounts still sign in), and
+`supabase/tests/nutrition_test.sql` keeps them tested. `web/src/lib/nutrition.ts` still reads a plan. Old links to
+`/portal/nutrition` and `/dashboard/nutrition` redirect home.
+
+Connecting the two apps later (not built): give each gym a key for Nutrix (stored hashed, owner-only, revocable),
+put it behind a `nutrix` feature switch, and expose a small versioned API (`/api/integrations/nutrix/v1/...`) that
+reads members, body measurements and the existing nutrition plans so Nutrix can take them over.

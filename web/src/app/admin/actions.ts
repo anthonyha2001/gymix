@@ -239,6 +239,6 @@ export async function broadcast(_prev: ActionState, formData: FormData): Promise
 // "Open as" form: a gym and a role.
 export async function openGymAs(formData: FormData) {
   const role = text(formData, "role") as GymRole;
-  const roles: GymRole[] = ["owner", "manager", "front_desk", "trainer", "dietitian", "member"];
+  const roles: GymRole[] = ["owner", "manager", "front_desk", "trainer", "member"];
   await openGymAsSupport(text(formData, "gym_id"), roles.includes(role) ? role : "owner");
 }

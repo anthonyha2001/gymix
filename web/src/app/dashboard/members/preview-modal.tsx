@@ -1,13 +1,11 @@
 import { Eye } from "lucide-react";
 import { MeasurementsPanel } from "@/components/measurements-panel";
 import { MemberHome } from "@/components/member-home";
-import { NutritionPlanView } from "@/components/nutrition-plan-view";
 import { ProgramCard } from "@/components/program-card";
 import { RouteModal } from "@/components/route-modal";
 import { Badge, Card, EmptyState, SectionTitle } from "@/components/ui";
 import { loadExerciseStats } from "@/lib/exercise-stats";
 import { formatDateTime, todayIn } from "@/lib/format";
-import { loadNutritionPlan } from "@/lib/nutrition";
 import { loadActivePrograms } from "@/lib/programs";
 import { BOOKING_STATUS, PT_STATUS, dayLabel, hhmm } from "@/lib/schedule";
 import { createClient } from "@/lib/supabase/server";
@@ -38,8 +36,6 @@ export async function MemberPreviewModal({
     supabase.from("classes").select("id, name, start_time").eq("gym_id", membership.gymId),
     supabase.rpc("gym_coaches", { p_gym_id: membership.gymId }),
   ]);
-  const { data: activePlan } = await supabase.from("nutrition_plans").select("id").eq("member_id", id).eq("status", "active").maybeSingle();
-  const nutrition = activePlan ? await loadNutritionPlan(supabase, activePlan.id) : null;
   const stats = await loadExerciseStats(
     supabase,
     id,
@@ -67,11 +63,6 @@ export async function MemberPreviewModal({
           ) : (
             programs.map((p) => <ProgramCard key={p.id} program={p} stats={stats} readOnly />)
           )}
-        </section>
-
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Nutrition</h2>
-          {nutrition ? <NutritionPlanView plan={nutrition} /> : <Card className="p-6 text-sm text-muted">No active nutrition plan.</Card>}
         </section>
 
         <section id="schedule" className="scroll-mt-32 space-y-4">

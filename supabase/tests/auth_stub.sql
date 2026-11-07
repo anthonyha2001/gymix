@@ -19,7 +19,8 @@ $$;
 
 create role anon;
 create role authenticated;
-grant usage on schema public, auth, extensions to anon, authenticated;
+create role service_role bypassrls;
+grant usage on schema public, auth, extensions to anon, authenticated, service_role;
 grant execute on function auth.uid() to anon, authenticated;
 alter default privileges in schema public grant all on tables to anon, authenticated;
 alter default privileges in schema public grant execute on functions to anon, authenticated;

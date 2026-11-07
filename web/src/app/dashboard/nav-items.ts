@@ -1,4 +1,4 @@
-import { BILLING_ROLES, COACH_ROLES, DIET_ROLES, MANAGER_ROLES, type GymRole } from "@/lib/roles";
+import { BILLING_ROLES, COACH_ROLES, MANAGER_ROLES, type GymRole } from "@/lib/roles";
 
 // Icons are referenced by name so this list can be built on the server and
 // passed to the client sidebar (components can't cross that boundary).
@@ -13,8 +13,7 @@ export type NavIcon =
   | "schedule"
   | "machines"
   | "programs"
-  | "messages"
-  | "nutrition";
+  | "messages";
 
 export type NavItem = { href: string; label: string; icon: NavIcon; badge?: number };
 
@@ -25,7 +24,6 @@ const NAV: (NavItem & { roles?: GymRole[] })[] = [
   { href: "/dashboard/schedule", label: "Schedule", icon: "schedule" },
   { href: "/dashboard/messages", label: "Messages", icon: "messages" },
   { href: "/dashboard/programs", label: "Programs", icon: "programs", roles: COACH_ROLES },
-  { href: "/dashboard/nutrition", label: "Nutrition", icon: "nutrition", roles: DIET_ROLES },
   { href: "/dashboard/machines", label: "Equipment", icon: "machines", roles: ["owner", "manager", "front_desk", "trainer"] },
   { href: "/dashboard/billing", label: "Billing", icon: "billing", roles: BILLING_ROLES },
   { href: "/dashboard/plans", label: "Plans", icon: "plans", roles: MANAGER_ROLES },
@@ -36,12 +34,11 @@ const NAV: (NavItem & { roles?: GymRole[] })[] = [
 // Features shown greyed out until they ship (empty = section hidden).
 export const COMING_SOON: { label: string; icon: NavIcon }[] = [];
 
-export type NavCounts = { messages: number; programs: number; nutrition: number; schedule: number };
+export type NavCounts = { messages: number; programs: number; schedule: number };
 
 const COUNT_FOR: Record<string, keyof NavCounts> = {
   "/dashboard/messages": "messages",
   "/dashboard/programs": "programs",
-  "/dashboard/nutrition": "nutrition",
   "/dashboard/schedule": "schedule",
 };
 
