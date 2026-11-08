@@ -86,3 +86,13 @@ export async function changePassword(_prev: ActionState, formData: FormData): Pr
   }
   return { success: "Password changed." };
 }
+
+// Whether the member's first name may appear on the gym's TV screens.
+export async function saveShowOnScreens(show: boolean): Promise<ActionState> {
+  const { membership } = await requireMember();
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_show_on_screens", { p_gym_id: membership.gymId, p_show: show });
+  if (error) return { error: errorMessage(error, "Couldn't save.") };
+  refresh();
+  return { success: show ? "You may appear on the gym's screens." : "You won't appear on the gym's screens." };
+}

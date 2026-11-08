@@ -13,7 +13,7 @@ import {
 const PROTECTED_PREFIXES = ["/dashboard", "/portal", "/onboarding", "/admin"];
 
 // Called by door hardware, not people.
-const DEVICE_PATHS = ["/iclock/", "/api/access/hikvision/", "/api/occupancy/"];
+const DEVICE_PATHS = ["/iclock/", "/api/access/hikvision/", "/api/occupancy/", "/api/screens/"];
 
 // Files the browser fetches on its own; not worth logging as traffic.
 const UNTRACKED = ["/sw.js", "/manifest.webmanifest", "/robots.txt", "/sitemap.xml", "/icons/", "/_next/"];

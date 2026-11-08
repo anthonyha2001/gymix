@@ -115,7 +115,18 @@ number every owner sees on Settings, Subscription. A few days (the grace period,
   (`gym_feature_overrides`). The app asks `hasFeature(gymId, key)` (`web/src/lib/features.ts`).
 - **Shipping a new feature**: add its key to `features` in a migration with rollout `lab`, wrap the code in
   `hasFeature`, try it in the lab, then switch it to Everyone. Current keys: `whatsapp`, `shake_to_open`,
-  `drop_animation`, `self_pause`, `access_control` (lab), `live_occupancy` (lab), `pos` (lab).
+  `drop_animation`, `self_pause`, `access_control` (lab), `live_occupancy` (lab), `pos` (lab), `screens` (lab).
+
+## Gymix Screens
+
+Dashboard → **Screens** (owners and managers, feature `screens`). Each screen has a secret link,
+`/screen/<token>`, opened full screen on a smart TV browser, a TV stick or a tablet. The player
+(`web/src/app/screen/[token]/player.tsx`) loops the slides, polls `/api/screens/<token>` every minute (that's
+`screen_feed()`), keeps showing the last content when offline, keeps the display awake and reloads every six hours.
+Slides: announcements and offers (headline, text, photo in `gym-media/<gym>/screens/`, dark/lime/light), today's
+remaining classes with spots left, the month's check-in leaderboard, the week's personal records, and live occupancy.
+Each slide can be limited to some screens, dates, weekdays and times of day. Members appear as "Nour K." and can
+opt out on their Profile (`set_show_on_screens`). Tests: `supabase/tests/screens_test.sql`.
 
 ## Shop (POS)
 

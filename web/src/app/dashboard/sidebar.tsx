@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Menu,
   MessageCircle,
+  Monitor,
   Receipt,
   ScanLine,
   Settings,
@@ -40,6 +41,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   access: DoorOpen,
   live: Activity,
   shop: ShoppingBag,
+  screens: Monitor,
 };
 
 // Lets nav links (rendered in a server slot) close the mobile drawer.

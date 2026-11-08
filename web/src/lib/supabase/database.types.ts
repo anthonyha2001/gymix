@@ -921,14 +921,14 @@ isOneToOne: false
                   ]
                 },"members": {
                   Row: {
-                    "access_card": string | null,"access_pin": number | null,"archived_at": string | null,"checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"full_name": string,"gym_id": string,"id": string,"notes": string | null,"phone": string | null,"unpaid_frozen_at": string | null,"user_id": string | null
+                    "access_card": string | null,"access_pin": number | null,"archived_at": string | null,"checkin_code": string,"created_at": string,"created_by": string | null,"email": string | null,"full_name": string,"gym_id": string,"id": string,"notes": string | null,"phone": string | null,"show_on_screens": boolean,"unpaid_frozen_at": string | null,"user_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "access_card"?: string | null,"access_pin"?: number | null,"archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name": string,"gym_id": string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"unpaid_frozen_at"?: string | null,"user_id"?: string | null
+                    "access_card"?: string | null,"access_pin"?: number | null,"archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name": string,"gym_id": string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"show_on_screens"?: boolean,"unpaid_frozen_at"?: string | null,"user_id"?: string | null
                   }
                   Update: {
-                    "access_card"?: string | null,"access_pin"?: number | null,"archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name"?: string,"gym_id"?: string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"unpaid_frozen_at"?: string | null,"user_id"?: string | null
+                    "access_card"?: string | null,"access_pin"?: number | null,"archived_at"?: string | null,"checkin_code"?: string,"created_at"?: string,"created_by"?: string | null,"email"?: string | null,"full_name"?: string,"gym_id"?: string,"id"?: string,"notes"?: string | null,"phone"?: string | null,"show_on_screens"?: boolean,"unpaid_frozen_at"?: string | null,"user_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -1825,6 +1825,58 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"screen_slides": {
+                  Row: {
+                    "body": string | null,"created_at": string,"duration_seconds": number,"ends_on": string | null,"gym_id": string,"id": string,"image_path": string | null,"is_active": boolean,"kind": string,"position": number,"screen_ids": (string)[] | null,"starts_on": string | null,"theme": string,"time_from": string | null,"time_to": string | null,"title": string | null,"weekdays": (number)[] | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: string | null,"created_at"?: string,"duration_seconds"?: number,"ends_on"?: string | null,"gym_id": string,"id"?: string,"image_path"?: string | null,"is_active"?: boolean,"kind": string,"position"?: number,"screen_ids"?: (string)[] | null,"starts_on"?: string | null,"theme"?: string,"time_from"?: string | null,"time_to"?: string | null,"title"?: string | null,"weekdays"?: (number)[] | null
+                  }
+                  Update: {
+                    "body"?: string | null,"created_at"?: string,"duration_seconds"?: number,"ends_on"?: string | null,"gym_id"?: string,"id"?: string,"image_path"?: string | null,"is_active"?: boolean,"kind"?: string,"position"?: number,"screen_ids"?: (string)[] | null,"starts_on"?: string | null,"theme"?: string,"time_from"?: string | null,"time_to"?: string | null,"title"?: string | null,"weekdays"?: (number)[] | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "screen_slides_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "screen_slides_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"screens": {
+                  Row: {
+                    "created_at": string,"gym_id": string,"id": string,"is_active": boolean,"last_seen_at": string | null,"name": string,"orientation": string,"token": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"gym_id": string,"id"?: string,"is_active"?: boolean,"last_seen_at"?: string | null,"name": string,"orientation"?: string,"token"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"gym_id"?: string,"id"?: string,"is_active"?: boolean,"last_seen_at"?: string | null,"name"?: string,"orientation"?: string,"token"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "screens_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "screens_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"set_logs": {
                   Row: {
                     "exercise_id": string,"id": string,"logged_at": string,"member_id": string,"reps": number,"session_id": string,"set_number": number,"weight_kg": number
@@ -2589,6 +2641,15 @@ isOneToOne: false
 "schedule_pt_session":
 { Args: { "p_duration"?: number,"p_member_id": string,"p_note"?: string,"p_starts_at": string,"p_trainer_id": string }; Returns: string
                            },
+"screen_feed":
+{ Args: { "p_token": string }; Returns: Json
+                           },
+"screen_name":
+{ Args: { "p_full_name": string }; Returns: string
+                           },
+"screen_preview":
+{ Args: { "p_screen_id": string }; Returns: Json
+                           },
 "self_check_in":
 { Args: { "p_token": string }; Returns: {
               "allowed": boolean,"already_in": boolean,"balance_usd": number,"ends_on": string,"full_name": string,"member_id": string,"plan_name": string,"reason": string,"visits_left": number
@@ -2617,6 +2678,9 @@ isOneToOne: false
                            },
 "set_member_archived":
 { Args: { "p_archived": boolean,"p_member_id": string }; Returns: undefined
+                           },
+"set_show_on_screens":
+{ Args: { "p_gym_id": string,"p_show": boolean }; Returns: undefined
                            },
 "simulated_check_in":
 { Args: { "p_gym_id": string }; Returns: {

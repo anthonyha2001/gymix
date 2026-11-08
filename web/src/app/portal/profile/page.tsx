@@ -8,7 +8,7 @@ import { gymFeatures } from "@/lib/features";
 import { createClient } from "@/lib/supabase/server";
 import { loadTrainingPlan } from "@/lib/training-plan";
 import { signOut } from "../../(auth)/actions";
-import { NotificationPrefsForm, PasswordForm, PhotoForm, ProfileForm, ShakeSetting, DropPreview, TrainingDaysForm } from "./forms";
+import { NotificationPrefsForm, PasswordForm, PhotoForm, ProfileForm, ShakeSetting, DropPreview, TrainingDaysForm, ScreensSetting } from "./forms";
 
 export const metadata: Metadata = { title: "Profile" };
 
@@ -29,7 +29,7 @@ async function Profile() {
   const supabase = await createClient();
   const [{ data: profile }, { data: me }] = await Promise.all([
     supabase.from("profiles").select("full_name, phone, email, avatar_path, notify_prefs, language").eq("id", viewer.id).single(),
-    supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle(),
+    supabase.from("members").select("id, show_on_screens").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle(),
   ]);
   const plan = me ? await loadTrainingPlan(supabase, me.id, membership.timezone) : null;
   const name = profile?.full_name || viewer.fullName || "";
@@ -76,6 +76,7 @@ async function Profile() {
           </div>
           {features.has("shake_to_open") && <ShakeSetting />}
           {features.has("drop_animation") && <DropPreview />}
+          {features.has("screens") && me && <ScreensSetting initial={me.show_on_screens} />}
         </div>
       </Card>
 

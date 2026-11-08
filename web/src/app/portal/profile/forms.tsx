@@ -6,7 +6,7 @@ import { showToast } from "@/components/toaster";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
 import { SearchSelect } from "@/components/search-select";
 import { WEEKDAYS } from "@/lib/schedule";
-import { changePassword, saveNotificationPrefs, savePhoto, saveProfile, saveTrainingDays } from "./actions";
+import { changePassword, saveNotificationPrefs, savePhoto, saveProfile, saveTrainingDays, saveShowOnScreens } from "./actions";
 
 const WEEK = [1, 2, 3, 4, 5, 6, 0];
 
@@ -265,5 +265,27 @@ export function PasswordForm() {
         {pending ? "Saving…" : "Change password"}
       </Button>
     </form>
+  );
+}
+
+// Leaderboards and personal records on the gym's TVs.
+export function ScreensSetting({ initial }: { initial: boolean }) {
+  const [on, setOn] = useState(initial);
+  const set = async (value: boolean) => {
+    setOn(value);
+    const result = await saveShowOnScreens(value);
+    if (result.error) {
+      setOn(!value);
+      showToast(result.error, "error");
+    } else if (result.success) showToast(result.success);
+  };
+  return (
+    <div className="flex items-center justify-between gap-4 py-3">
+      <span className="text-sm">
+        <span className="block font-medium">Show me on the gym&apos;s screens</span>
+        <span className="text-muted">Your first name and initial in leaderboards and new records on the TVs.</span>
+      </span>
+      <Switch on={on} onChange={set} label="Show me on the gym's screens" />
+    </div>
   );
 }
