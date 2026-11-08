@@ -17,7 +17,9 @@ const check = (ok, msg) => { console.log(`${ok ? "PASS" : "FAIL"} ${msg}`); if (
 
 const { data: gym } = await db.from("gyms").select("id, timezone").eq("name", "QA Iron House").single();
 const { data: nour } = await db.from("members").select("id, access_pin, full_name").eq("gym_id", gym.id).eq("full_name", "Nour Khalil").single();
-const { data: rami } = await db.from("members").select("id, access_pin").eq("gym_id", gym.id).eq("full_name", "Rami Haddad").single();
+// A member with no membership, made fresh each run.
+await db.from("members").delete().eq("gym_id", gym.id).eq("full_name", "E2E No Membership");
+const { data: rami } = await db.from("members").insert({ gym_id: gym.id, full_name: "E2E No Membership" }).select("id, access_pin").single();
 await db.from("access_devices").delete().eq("gym_id", gym.id);
 await db.from("checkins").delete().eq("gym_id", gym.id);
 await db.from("access_biometrics").delete().eq("gym_id", gym.id);
@@ -112,7 +114,7 @@ const er = await fetch(`${BASE}/api/access/hikvision/${hd.event_token}`, { metho
 check(er.status === 200, "event endpoint answered");
 check((await fetch(`${BASE}/api/access/hikvision/${"0".repeat(64)}`, { method: "POST", body: "{}" })).status === 404, "unknown token refused");
 await sleep(4000);
-const record = seen.find((s) => s.url.includes("/UserInfo/Record"));
+const record = seen.find((s) => s.url.includes("/UserInfo/Record") && s.body.includes(`"employeeNo":"${nour.access_pin}"`));
 const body = record ? JSON.parse(record.body) : null;
 check(Boolean(record), "fell back from SetUp to Record (older firmware)");
 check(body?.UserInfo?.employeeNo === String(nour.access_pin) && body.UserInfo.Valid.endTime.endsWith("T23:59:59"), `person sent with validity ending on the membership's last day: ${body?.UserInfo?.Valid?.endTime}`);
