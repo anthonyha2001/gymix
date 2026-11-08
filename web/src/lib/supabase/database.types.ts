@@ -749,14 +749,14 @@ isOneToOne: false
                   ]
                 },"gyms": {
                   Row: {
-                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Update: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
                   }
                   Relationships: [
                     
@@ -852,6 +852,52 @@ isOneToOne: false
       columns: ["membership_id"]
 isOneToOne: false
       referencedRelation: "memberships"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"kiosk_lookups": {
+                  Row: {
+                    "at": string,"id": number,"kiosk_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "at"?: string,"id"?: never,"kiosk_id": string
+                  }
+                  Update: {
+                    "at"?: string,"id"?: never,"kiosk_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "kiosk_lookups_kiosk_id_fkey"
+      columns: ["kiosk_id"]
+isOneToOne: false
+      referencedRelation: "kiosks"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"kiosks": {
+                  Row: {
+                    "allow_buy": boolean,"allow_checkin": boolean,"allow_join": boolean,"created_at": string,"gym_id": string,"id": string,"is_active": boolean,"last_seen_at": string | null,"name": string,"token": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "allow_buy"?: boolean,"allow_checkin"?: boolean,"allow_join"?: boolean,"created_at"?: string,"gym_id": string,"id"?: string,"is_active"?: boolean,"last_seen_at"?: string | null,"name": string,"token"?: string
+                  }
+                  Update: {
+                    "allow_buy"?: boolean,"allow_checkin"?: boolean,"allow_join"?: boolean,"created_at"?: string,"gym_id"?: string,"id"?: string,"is_active"?: boolean,"last_seen_at"?: string | null,"name"?: string,"token"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "kiosks_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "kiosks_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
       referencedColumns: ["id"]
     }
                   ]
@@ -1266,6 +1312,74 @@ isOneToOne: false
       columns: ["gym_id"]
 isOneToOne: false
       referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"payment_intents": {
+                  Row: {
+                    "amount_usd": number,"channel": string,"confirmed_by": string | null,"created_at": string,"expires_at": string,"gym_id": string,"id": string,"invoice_id": string | null,"kiosk_id": string | null,"member_id": string,"paid_at": string | null,"plan_id": string,"provider_ref": string | null,"reference": string,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount_usd": number,"channel": string,"confirmed_by"?: string | null,"created_at"?: string,"expires_at"?: string,"gym_id": string,"id"?: string,"invoice_id"?: string | null,"kiosk_id"?: string | null,"member_id": string,"paid_at"?: string | null,"plan_id": string,"provider_ref"?: string | null,"reference": string,"status"?: string
+                  }
+                  Update: {
+                    "amount_usd"?: number,"channel"?: string,"confirmed_by"?: string | null,"created_at"?: string,"expires_at"?: string,"gym_id"?: string,"id"?: string,"invoice_id"?: string | null,"kiosk_id"?: string | null,"member_id"?: string,"paid_at"?: string | null,"plan_id"?: string,"provider_ref"?: string | null,"reference"?: string,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payment_intents_confirmed_by_fkey"
+      columns: ["confirmed_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payment_intents_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "payment_intents_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payment_intents_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoice_summary"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payment_intents_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payment_intents_kiosk_id_fkey"
+      columns: ["kiosk_id"]
+isOneToOne: false
+      referencedRelation: "kiosks"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payment_intents_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "member_overview"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payment_intents_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payment_intents_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "membership_plans"
       referencedColumns: ["id"]
     }
                   ]
@@ -2301,6 +2415,9 @@ isOneToOne: false
 "access_valid_until":
 { Args: { "p_device_id": string,"p_member_id": string }; Returns: string
                            },
+"activate_payment_intent":
+{ Args: { "p_amount_lbp"?: number,"p_automatic"?: boolean,"p_intent_id": string,"p_method": Database["public"]['Enums']["payment_method"],"p_provider_ref"?: string }; Returns: string
+                           },
 "add_payment":
 { Args: { "p_amount_lbp"?: number,"p_amount_usd": number,"p_invoice_id": string,"p_method": Database["public"]['Enums']["payment_method"],"p_note"?: string }; Returns: string
                            },
@@ -2387,6 +2504,9 @@ isOneToOne: false
                            },
 "cancel_nutrition_request":
 { Args: { "p_request_id": string }; Returns: undefined
+                           },
+"cancel_payment_intent":
+{ Args: { "p_intent_id": string }; Returns: undefined
                            },
 "cancel_program_request":
 { Args: { "p_request_id": string }; Returns: undefined
@@ -2501,6 +2621,43 @@ isOneToOne: false
 "is_platform_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"kiosk_check_in":
+{ Args: { "p_member_id": string,"p_token": string }; Returns: Json
+                           },
+"kiosk_find_member":
+{ Args: { "p_query": string,"p_token": string }; Returns: Json
+                           },
+"kiosk_for":
+{ Args: { "p_count"?: boolean,"p_token": string }; Returns: {
+              "allow_buy": boolean,
+"allow_checkin": boolean,
+"allow_join": boolean,
+"created_at": string,
+"gym_id": string,
+"id": string,
+"is_active": boolean,
+"last_seen_at": string | null,
+"name": string,
+"token": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "kiosks"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"kiosk_info":
+{ Args: { "p_token": string }; Returns: Json
+                           },
+"kiosk_intent_status":
+{ Args: { "p_intent_id": string,"p_token": string }; Returns: Json
+                           },
+"kiosk_join":
+{ Args: { "p_email"?: string,"p_full_name": string,"p_phone": string,"p_token": string }; Returns: Json
+                           },
+"kiosk_start_purchase":
+{ Args: { "p_channel": string,"p_member_id": string,"p_plan_id": string,"p_token": string }; Returns: Json
+                           },
 "log_activity":
 { Args: { "p_action": string,"p_details"?: Json,"p_gym_id": string,"p_summary": string }; Returns: undefined
                            },
@@ -2594,6 +2751,9 @@ isOneToOne: false
                            },
 "pos_report":
 { Args: { "p_from": string,"p_gym_id": string,"p_to": string }; Returns: Json
+                           },
+"provider_payment":
+{ Args: { "p_amount_usd": number,"p_gym_id": string,"p_method": Database["public"]['Enums']["payment_method"],"p_provider_ref": string,"p_reference": string }; Returns: string
                            },
 "publish_program":
 { Args: { "p_program_id": string }; Returns: undefined

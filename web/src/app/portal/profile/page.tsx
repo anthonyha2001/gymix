@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import QRCode from "qrcode";
 import { LogOut } from "lucide-react";
 import { Card, SectionTitle, Skeleton } from "@/components/ui";
 import { mediaUrl } from "@/lib/exercises";
@@ -29,7 +30,7 @@ async function Profile() {
   const supabase = await createClient();
   const [{ data: profile }, { data: me }] = await Promise.all([
     supabase.from("profiles").select("full_name, phone, email, avatar_path, notify_prefs, language").eq("id", viewer.id).single(),
-    supabase.from("members").select("id, show_on_screens").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle(),
+    supabase.from("members").select("id, show_on_screens, checkin_code").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle(),
   ]);
   const plan = me ? await loadTrainingPlan(supabase, me.id, membership.timezone) : null;
   const name = profile?.full_name || viewer.fullName || "";
@@ -45,6 +46,8 @@ async function Profile() {
           <ProfileForm fullName={name} phone={profile?.phone ?? ""} email={profile?.email ?? viewer.email} />
         </div>
       </Card>
+
+      {me && <MemberCodeCard code={me.checkin_code} />}
 
       <Card id="training-days" className="scroll-mt-20 p-5">
         <h2 className="font-semibold">Training days</h2>
@@ -92,5 +95,20 @@ async function Profile() {
         </div>
       </Card>
     </>
+  );
+}
+
+// The member's code as a QR: scanned at the reception kiosk, or read out at the desk.
+async function MemberCodeCard({ code }: { code: string }) {
+  const svg = await QRCode.toString(code, { type: "svg", margin: 1, width: 160, color: { dark: "#0d1117", light: "#ffffff" } });
+  return (
+    <Card className="flex items-center gap-5 p-5">
+      <div className="size-28 shrink-0 overflow-hidden rounded-xl ring-1 ring-line [&_svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
+      <div className="min-w-0">
+        <h2 className="font-semibold">Your member code</h2>
+        <p className="mt-1 font-mono text-xl font-semibold tracking-wider">{code}</p>
+        <p className="mt-1 text-sm text-muted">Scan it at the reception kiosk, or give it at the desk.</p>
+      </div>
+    </Card>
   );
 }

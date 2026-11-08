@@ -7,6 +7,7 @@ import {
   Activity,
   CalendarDays,
   ClipboardList,
+  ConciergeBell,
   DoorOpen,
   Dumbbell,
   LayoutDashboard,
@@ -42,6 +43,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   live: Activity,
   shop: ShoppingBag,
   screens: Monitor,
+  reception: ConciergeBell,
 };
 
 // Lets nav links (rendered in a server slot) close the mobile drawer.

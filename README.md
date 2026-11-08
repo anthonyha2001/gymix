@@ -115,7 +115,22 @@ number every owner sees on Settings, Subscription. A few days (the grace period,
   (`gym_feature_overrides`). The app asks `hasFeature(gymId, key)` (`web/src/lib/features.ts`).
 - **Shipping a new feature**: add its key to `features` in a migration with rollout `lab`, wrap the code in
   `hasFeature`, try it in the lab, then switch it to Everyone. Current keys: `whatsapp`, `shake_to_open`,
-  `drop_animation`, `self_pause`, `access_control` (lab), `live_occupancy` (lab), `pos` (lab), `screens` (lab).
+  `drop_animation`, `self_pause`, `access_control` (lab), `live_occupancy` (lab), `pos` (lab), `screens` (lab),
+  `self_service` (lab).
+
+## Self-service reception
+
+Dashboard → **Reception** (front desk and up, feature `self_service`). A kiosk link, `/kiosk/<token>`, opens on a
+tablet at the entrance; it talks only to `/api/kiosk/<token>`, whose database functions check the kiosk is on, what
+it allows, and refuse more than 40 requests a minute. People can **check in** (phone, member code, or the QR on
+their Profile; source `kiosk`), **join** (a new member; an existing phone is reused) and **buy or renew**: the
+kiosk creates a `payment_intents` row with a reference like `GX-4821` and shows how to pay (desk, card terminal,
+Whish or OMT, as set under Ways to pay). When the payment is verified, `activate_payment_intent` sells the plan with
+the payment, starting the day after the current membership ends for a renewal, and the kiosk shows it straight away.
+Verified by the front desk (Waiting payments → Confirm paid), or by a payment provider through
+`POST /api/payments/webhook` with `X-Gymix-Signature: hex(HMAC-SHA256(PAYMENT_WEBHOOK_SECRET, body))` and
+`{"gym_id", "reference", "amount_usd", "provider_ref", "method"}`; then the sale is made as the gym's owner. Without
+`PAYMENT_WEBHOOK_SECRET` (32+ characters) the webhook is off. Tests: `supabase/tests/self_service_test.sql`.
 
 ## Gymix Screens
 
