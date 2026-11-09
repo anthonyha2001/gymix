@@ -8,7 +8,7 @@
 > **Goal:** make Gymix the gym software most gyms in Lebanon use: the default answer when a Lebanese gym owner asks
 > "what do you use to run your gym?"
 >
-> **Last checked against the product:** 5 November 2026.
+> **Last checked against the product:** 9 November 2026.
 
 ---
 
@@ -18,7 +18,7 @@ These details are not set yet. Use the placeholder in drafts and never make up a
 
 | Placeholder | What it is |
 |---|---|
-| `[WEBSITE]` | Public website address (the sign-up page is `[WEBSITE]/signup`, pricing is `[WEBSITE]/pricing`) |
+| `[WEBSITE]` | Public website address (the sign-up page is `[WEBSITE]/signup`, pricing is `[WEBSITE]/pricing`, the live demo is `[WEBSITE]/demo`) |
 | `[WHATSAPP_SALES]` | Gymix sales/support WhatsApp number |
 | `[INSTAGRAM]`, `[TIKTOK]`, `[FACEBOOK]`, `[LINKEDIN]` | Social handles |
 | `[FOUNDER_NAME]` | Name used to sign posts and emails (the founder is Anthony Hasrouny; confirm before using the name publicly) |
@@ -53,6 +53,7 @@ Everything in this section is built and live for every gym today. You may claim 
   away and can be added to the home screen like a normal app, on iPhone and Android. It is **not** in the App
   Store or Google Play, and that is a selling point: no download, no store, no password to remember.
 - **Setup takes about 10 minutes:** create the gym, add membership plans, invite staff, add members as they walk in.
+- **Anyone can try it first, with no sign-up:** the live demo at `[WEBSITE]/demo` (see 2.5).
 - **The servers are in Frankfurt (EU),** so it's fast from Lebanon.
 
 ### 2.2 The staff dashboard (owner, manager, front desk, trainer)
@@ -105,11 +106,19 @@ Everything in this section is built and live for every gym today. You may claim 
 - Staff chat with members inside Gymix.
 - The chat also shows the automatic WhatsApp messages each member was sent, with time and delivery status.
 
-**Automatic WhatsApp** (sent from the official Gymix WhatsApp Business number)
+**Automatic WhatsApp** (sent by Gymix itself: nobody at the front desk sends anything from their own phone)
+- **From the Gymix number by default, or from the gym's own WhatsApp Business number.** A gym that has its own
+  WhatsApp Business API account (from Meta) can connect it in Settings, and its members then get the messages from
+  the gym's own number and name. Gymix creates the message templates on the gym's account for it.
 - **Renewal reminders** a number of days before a membership ends (3 by default, the owner chooses, 0 turns it off).
 - **Payment receipts** when the front desk records a payment.
 - **Welcome message** with a one-tap login link when a new member is added.
-- Each message is sent once, never spammed.
+- **Invite links and login details** sent with one button ("Send on WhatsApp") from the member's profile.
+- **A message log** for the owner: every message sent, to whom, from which number, and whether it was delivered and
+  read (or why it failed), with filters.
+- Each automatic message is sent once, never spammed.
+- `[TO CONFIRM with founder]` before advertising WhatsApp as working today: the Gymix WhatsApp number and its
+  message templates must be connected and approved by Meta first.
 
 **Team roles and privacy**
 - Roles: **owner, manager, front desk, trainer** (and member).
@@ -167,6 +176,26 @@ Everything in this section is built and live for every gym today. You may claim 
 10. Notifications and reminders
 11. Automatic freeze for unpaid accounts
 
+
+### 2.5 The live demo (`[WEBSITE]/demo`)
+
+The strongest way to show Gymix. Use it as the main call to action wherever a sign-up feels like too big a step.
+
+- **One button, no sign-up, no email.** The visitor gets their **own private sample gym, "Atlas Fitness"**, inside the
+  real Gymix (not a video, not screenshots), signed in as the owner.
+- It's **full of realistic data**: 25 members (active, ending soon, expired, paused, owing money), payments in
+  dollars and lira by cash, Whish, OMT and card, three weeks of check-ins, weekly classes with bookings, a trainer
+  program, a shop, a member chat and staff invites.
+- **A guide walks them through every page**: what it's for and what to try (for example "check in Tarek: his
+  membership expired, so Gymix refuses him and says why"). The next page to visit glows in the menu.
+- **They can switch to the member's phone** (Karim's app) and back, to see what members see.
+- They can **click and change anything**. Nothing is sent to anyone. The sample gym is deleted after 24 hours.
+- From the demo, one button starts their real 14-day free trial.
+
+**How to talk about it:** "Run a gym for a day", "Try it now, no sign-up", "Click anything, you can't break it".
+**Don't say** the sample gym or its members are real, and don't promise data from the demo carries over to a real
+gym (it doesn't: it's deleted).
+
 ---
 
 ## 3. What you must NOT claim (guardrails)
@@ -191,7 +220,8 @@ Breaking these damages trust in a small market where everyone talks. Follow them
 | "Guaranteed more members / X% more revenue" | No guarantees. Talk about time saved, money collected and members who stay, without fake percentages. |
 | Naming or attacking competitors | Don't name competitors in public content. Compare with "the notebook, Excel and WhatsApp groups" or "expensive foreign software". |
 
-The demo names on the website ("Iron House", "Rami Haddad", "Lara Nassar", "Karim Saad", "Nour") are **made-up
+The live demo's gym and people ("Atlas Fitness", "Karim Aoun", "Fadi Germanos", "Lynn Tannous" and the rest) are also
+made-up sample data. The demo names on the website ("Iron House", "Rami Haddad", "Lara Nassar", "Karim Saad", "Nour") are **made-up
 examples**. Don't present them as customers.
 
 If you're not sure whether a feature exists, write `[TO CONFIRM: does Gymix do X?]` instead of guessing.
@@ -380,7 +410,8 @@ The AI should get a Lebanese speaker to check dialect copy before it's published
 ### 8.2 Funnel
 1. **Awareness:** Instagram/TikTok Reels, gym-owner WhatsApp and Facebook groups, trainers, members seeing the app
    at other gyms.
-2. **Interest:** the website, a demo video, a WhatsApp chat with `[WHATSAPP_SALES]`.
+2. **Interest:** the website, **the live demo at `[WEBSITE]/demo` (no sign-up, the best converter)**, a WhatsApp
+   chat with `[WHATSAPP_SALES]`.
 3. **Trial:** a 14-day free trial at `[WEBSITE]/signup`, no card. **Offer to set it up together**, in person or on
    a call (white-glove onboarding is a huge advantage in a small market).
 4. **Activation (critical):** during the trial the gym must (a) add its plans, (b) add members, (c) stick the
@@ -393,13 +424,15 @@ The AI should get a Lebanese speaker to check dialect copy before it's published
 
 **A. Direct and in person (the most effective in Lebanon)**
 - **Walk into gyms** with a phone and an NFC sticker. A 2-minute demo: tap the sticker, it checks in; show a frozen
-  member being stopped. Leave a free sticker with a QR code to the trial.
+  member being stopped. Or open `[WEBSITE]/demo` on the owner's own phone and let them click around. Leave a free
+  sticker with a QR code to the demo or the trial.
 - **"We set it up for you" offer:** visit the gym, add the plans and the first members, stick the sticker. Done in
   30 minutes.
 - Bring **printed one-pagers** (see section 9) and **branded NFC stickers**.
 
 **B. WhatsApp (the main business channel in Lebanon)**
-- A WhatsApp Business account for `[WHATSAPP_SALES]` with a catalogue, quick replies and a short demo video.
+- A WhatsApp Business account for `[WHATSAPP_SALES]` with a catalogue, quick replies, a short demo video and the
+  live demo link `[WEBSITE]/demo` as the first reply to anyone curious.
 - Click-to-WhatsApp ads on Instagram and Facebook.
 - Short voice notes from the founder for warm leads (very Lebanese, very effective).
 - Respect people: no mass unsolicited messages to numbers that didn't agree; it gets the number banned and hurts
@@ -442,6 +475,7 @@ The AI should get a Lebanese speaker to check dialect copy before it's published
   check them]`.
 
 ### 8.4 Key metrics to track
+- Demos started per week, and demo → trial conversion.
 - Trials started per week, by channel.
 - **Activation rate:** trials that complete the 4 setup steps.
 - Trial → paid conversion.
@@ -462,6 +496,7 @@ Adapt these, but keep the facts exactly as they are.
 - **Subhead:** Gymix is the all-in-one system for your gym: memberships, payments in dollars and lira,
   tap-to-check-in, programs from your trainers and an app your members actually open.
 - **CTA:** Start your 14-day free trial · $19.99 a month, all in
+- **Second link:** Try the live demo, no sign-up
 - **Under the CTA:** No card needed. Set up in ten minutes.
 - **Proof strip:** $19.99 a month for the whole gym · USD + LBP with your own lira rate · $1 NFC sticker is all the
   hardware · 10 min to set up your gym
@@ -469,8 +504,8 @@ Adapt these, but keep the facts exactly as they are.
 ### 9.2 The 3 steps (already live)
 1. **Create your gym.** Add your membership plans, prices and lira rate. Invite your managers, front desk and
    trainers.
-2. **Invite members on WhatsApp.** Each member gets a personal link. One tap and they're in their app, no password
-   to remember.
+2. **Invite members on WhatsApp.** Gymix sends each member a personal link. One tap and they're in their app, no
+   password to remember.
 3. **They tap in.** A sticker at the door checks them in. Unpaid? They're stopped and sent to the front desk.
 
 ### 9.3 One-pager (print / PDF)
@@ -480,19 +515,20 @@ Adapt these, but keep the facts exactly as they are.
 - **Tap to check in:** a $1 sticker at the door. No hardware.
 - **A member app:** programs, classes and progress. No store download.
 - **Your whole team:** owner, manager, front desk and trainers, each with their own access.
-- **CTA:** Start free at `[WEBSITE]` or WhatsApp `[WHATSAPP_SALES]`.
+- **CTA:** Try the live demo at `[WEBSITE]/demo`, start free at `[WEBSITE]/signup`, or WhatsApp `[WHATSAPP_SALES]`.
 
 ### 9.4 Cold WhatsApp message to an owner (only to people who have agreed to be contacted or who reached out first)
 **English:**
 > Hi [Name], this is [FOUNDER_NAME] from Gymix. We built a gym system for Lebanese gyms: members tap their phone
 > at the door to check in, anyone who hasn't paid gets frozen automatically, and you take dollars or lira at your
-> own rate. It's $19.99 a month for the whole gym and the first 14 days are free. Can I show you in 2 minutes when
-> you're at the gym this week?
+> own rate. It's $19.99 a month for the whole gym and the first 14 days are free. You can try it right now with a
+> sample gym, no sign-up: [WEBSITE]/demo. Or I can show you in 2 minutes when you're at the gym this week?
 
 **Lebanese (Arabizi):**
 > Marhaba [Name], ana [FOUNDER_NAME] men Gymix. 3amalna system lal gyms bi Lebnen: el members bya3mlo tap bel
 > phone 3al bab, w li ma dafa3 bya3mol freeze la7alo, w btekhod dollar aw lira 3al sa3er li badak ye. $19.99 bel
-> chahr la kel el gym, w awwal 14 yom free. Fik a3tik demo 2 minutes hal jem3a?
+> chahr la kel el gym, w awwal 14 yom free. Fik tjarrbo halla2 ma3 gym demo, bala ma tsajjel: [WEBSITE]/demo. Aw
+> fik a3tik demo 2 minutes hal jem3a?
 
 ### 9.5 Instagram Reel scripts
 
@@ -519,6 +555,12 @@ Adapt these, but keep the facts exactly as they are.
 - Before: a notebook, a calculator, 40 WhatsApp chats, "kam el sa3er lyom?" (what's the rate today?).
 - After: one dashboard: check-ins today, collected this month, who owes.
 
+**Reel 7: "Run a gym for a day" (20s, owners)**
+- Screen recording of the live demo: press "Start the demo", the sample gym appears, the guide card says
+  "Welcome to Atlas Fitness".
+- Quick cuts: check in a member, the expired one gets refused, sell a membership, switch to the member's phone.
+- Text: "Try it now. No sign-up." End card: `[WEBSITE]/demo`.
+
 **Reel 6: "The member's morning" (15s)**
 - Notification "Leg day today 💪" → home screen with today's workout → tap at the door → log sets → PR confetti.
 
@@ -535,6 +577,12 @@ Adapt these, but keep the facts exactly as they are.
   day. Built for studios in Lebanon. 14 days free.
 - Headline: Your studio, running itself.
 
+**Meta ad (live demo), English**
+- Primary text: Don't take our word for it. Run a sample gym in Gymix right now: check members in, sell
+  memberships, see who owes. No sign-up, nothing to install. $19.99/month when you're ready.
+- Headline: Run a gym for a day.
+- CTA: Learn more → `[WEBSITE]/demo`
+
 **Google search ads**
 - Headlines: Gym Management Software Lebanon | $19.99/Month, All Features | USD & LBP Payments | 14-Day Free Trial
 - Descriptions: Memberships, tap check-in, member app, WhatsApp reminders. Built for Lebanese gyms. No card needed.
@@ -544,6 +592,7 @@ Adapt these, but keep the facts exactly as they are.
 > Hi [Name],
 >
 > Thanks for your time today. As promised:
+> - Want to look around again first? The live demo is here: [WEBSITE]/demo (no sign-up)
 > - Start your free trial here: [WEBSITE]/signup (14 days, no card)
 > - It takes about 10 minutes: add your plans, add your first members, stick the check-in sticker at the door.
 > - Send your members their login links on WhatsApp straight from Gymix.
@@ -599,8 +648,8 @@ Adapt these, but keep the facts exactly as they are.
 1. **Facts come only from this file.** If it's not here, mark `[TO CONFIRM]`.
 2. **Never invent** testimonials, customer names, logos, numbers of gyms, statistics, partnerships, awards, press
    mentions or discounts.
-3. **Always include a clear call to action:** start the free trial at `[WEBSITE]/signup` or WhatsApp
-   `[WHATSAPP_SALES]`.
+3. **Always include a clear call to action:** try the live demo at `[WEBSITE]/demo` (best for cold audiences and
+   ads), start the free trial at `[WEBSITE]/signup`, or WhatsApp `[WHATSAPP_SALES]`.
 4. **Lead with money and time** for owners (pillars 1 and 2), **fun and progress** for members (pillar 3).
 5. **Respect the guardrails in section 3,** especially: no Arabic-interface claim, no App Store, no AI features,
    no turnstile integrations, no card payments online.
@@ -633,6 +682,7 @@ Adapt these, but keep the facts exactly as they are.
 | **Product** | Gymix, the all-in-one gym system (staff dashboard + member app) |
 | **For** | Gyms and studios in Lebanon |
 | **Price** | $19.99/month per gym, unlimited members and staff, everything included |
+| **Live demo** | `[WEBSITE]/demo`: a private sample gym with a guide, no sign-up, deleted after 24 hours |
 | **Trial** | 14 days free, no card |
 | **Pay Gymix by** | Whish, OMT, bank transfer |
 | **Setup** | About 10 minutes |
@@ -643,4 +693,4 @@ Adapt these, but keep the facts exactly as they are.
 | **Language of the app** | English (marketing can be in Arabic, Lebanese, French, English) |
 | **Tagline** | Run your gym. Keep them coming back. |
 | **Colours** | Lime `#C8F135`, Ink `#0D1117`, Canvas `#F4F5F2` |
-| **CTA** | Start your free trial: `[WEBSITE]/signup` · WhatsApp `[WHATSAPP_SALES]` |
+| **CTA** | Try the demo: `[WEBSITE]/demo` · Start your free trial: `[WEBSITE]/signup` · WhatsApp `[WHATSAPP_SALES]` |
