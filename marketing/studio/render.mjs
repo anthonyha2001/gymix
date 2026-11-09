@@ -7,11 +7,15 @@
 // Chrome over the DevTools protocol, and encoded with the bundled ffmpeg (H.264,
 // yuv420p, faststart: plays everywhere, including Instagram and TikTok).
 // --preview T saves a single PNG of the frame at T seconds instead of a video.
+// Carousels: node render.mjs carousels/x.html out/x --slides --size 1080x1350
+//   The page sets window.SLIDES (count) and window.showSlide(i); each slide is
+//   saved as out/x/01.png, 02.png…
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import ffmpeg from "ffmpeg-static";
+import { synthWav } from "./synth.mjs";
 
 const args = process.argv.slice(2);
 const opt = (name, dflt) => {
@@ -25,8 +29,8 @@ if (!input || !output) {
 }
 const FPS = Number(opt("fps", 30));
 const PREVIEW = opt("preview", null);
-const W = 1080;
-const H = 1920;
+const [W, H] = (opt("size", "1080x1920")).split("x").map(Number);
+const SLIDES = args.includes("--slides");
 const CHROME = process.env.CHROME ?? "C:/Program Files/Google/Chrome/Application/chrome.exe";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -79,8 +83,20 @@ try {
     if ((await evaluate("document.readyState")) === "complete") break;
   }
   await evaluate("document.fonts.ready.then(() => true)");
-  const duration = Number(await evaluate("window.DURATION"));
-  if (!duration) throw new Error("The episode must set window.DURATION");
+  if (SLIDES) {
+    const count = Number(await evaluate("window.SLIDES"));
+    if (!count) throw new Error("A carousel must set window.SLIDES");
+    fs.mkdirSync(output, { recursive: true });
+    for (let i = 0; i < count; i++) {
+      await evaluate(`(window.showSlide(${i}), new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))`);
+      const r = await send("Page.captureScreenshot", { format: "png", clip: { x: 0, y: 0, width: W, height: H, scale: 1 } });
+      fs.writeFileSync(path.join(output, `${String(i + 1).padStart(2, "0")}.png`), Buffer.from(r.result.data, "base64"));
+    }
+    console.log(`done ${output} (${count} slides, ${W}x${H})`);
+    process.exitCode = 0;
+  }
+  const duration = SLIDES ? 0 : Number(await evaluate("window.DURATION"));
+  if (!SLIDES && !duration) throw new Error("The episode must set window.DURATION");
 
   const shot = async (t) => {
     await evaluate(`(window.renderAt(${t}), new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))`);
@@ -89,14 +105,24 @@ try {
   };
 
   fs.mkdirSync(path.dirname(path.resolve(output)), { recursive: true });
-  if (PREVIEW !== null) {
+  if (SLIDES) {
+    // done above
+  } else if (PREVIEW !== null) {
     fs.writeFileSync(output, await shot(Number(PREVIEW)));
     console.log("preview", output);
   } else {
     const frames = Math.round(duration * FPS);
+    // The episode's sound (window.AUDIO: a list of notes and effects) is synthesised to a WAV and muxed in.
+    const audio = await evaluate("JSON.stringify(window.AUDIO ?? null)");
+    const cues = JSON.parse(audio ?? "null");
+    const wavPath = cues ? path.resolve(output).replace(/\.mp4$/i, ".wav") : null;
+    if (cues) fs.writeFileSync(wavPath, synthWav(cues, duration));
+    const encArgs = ["-y", "-f", "image2pipe", "-framerate", String(FPS), "-i", "-"];
+    if (wavPath) encArgs.push("-i", wavPath, "-c:a", "aac", "-b:a", "192k", "-shortest");
+    encArgs.push("-c:v", "libx264", "-preset", "slow", "-crf", "17", "-pix_fmt", "yuv420p", "-movflags", "+faststart", output);
     const enc = spawn(
       ffmpeg,
-      ["-y", "-f", "image2pipe", "-framerate", String(FPS), "-i", "-", "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", output],
+      encArgs,
       { stdio: ["pipe", "ignore", "pipe"] },
     );
     let log = "";
@@ -109,7 +135,8 @@ try {
     enc.stdin.end();
     const code = await new Promise((r) => enc.on("close", r));
     if (code !== 0) throw new Error(`ffmpeg failed:\n${log.slice(-1500)}`);
-    console.log(`\rdone ${output} (${frames} frames, ${duration}s @ ${FPS}fps)`);
+    if (wavPath) fs.rmSync(wavPath, { force: true });
+    console.log(`\rdone ${output} (${frames} frames, ${duration}s @ ${FPS}fps${cues ? ", with sound" : ""})`);
   }
 } finally {
   ws.close();

@@ -387,20 +387,20 @@ a post, laugh, think "wallah, that's my gym", and tap the link.
 
 One joke per piece, then get out. If you have to explain it, cut it.
 
-#### Recurring characters and bits (build series around them)
-- **Abou Bkra:** the member who always pays "tomorrow". Every gym has one. Gymix's auto-freeze is his natural enemy.
-  *"Abou Bkra met the auto-freeze today. Bkra, he paid."*
-- **El Daftar (the notebook):** the old front-desk notebook, retiring with honours. Coffee stains, three handwritings,
-  a page torn out in 2019. *"El daftar served you well. Let it rest."*
-- **January Members:** 80 new faces on 2 January, "wein ra7o?" by February. Gymix's reminders and streaks keep them.
-- **The Wasta Member:** "ana men jama3it el owner" (I'm the owner's friend). *"El freeze ma bya3ref wasta."* (The
-  freeze doesn't know anyone.)
-- **The Rate Question:** "kam el sa3er lyom?" asked at the desk ten times a day. You set your rate once; Gymix does
-  the maths. (Keep it about daily logistics, never about the crisis.)
-- **The Trainer's PDF:** programs sent as blurry PDFs on WhatsApp at 11pm. Gymix puts them in the member's app.
-- **40 Chats:** the owner's WhatsApp, with 40 unread "kifak, fi class bokra?" messages.
+#### The brand character: Detective Bob
+**Detective Bob is Gymix's recurring character** (chosen by the founder, 9 November 2026). A calm, sharp noir
+detective in a charcoal trench coat and a fedora with a lime band; short beard, never raises his voice. Every story
+is a *case*: a gym is losing money, time or members, Bob investigates the clues (the notebook, the lira rate, 40
+unread chats, January members vanishing), names the real culprit (no system), and closes the case with Gymix.
+- **Format:** illustrated carousels ("Case #001, #002…"), noir look: night blues, rain, a lime accent, case files,
+  exhibits, an evidence board, a "CASE CLOSED" stamp. Drawn in `marketing/studio/` (see `carousels/bob-case-001.html`).
+- **His voice:** short, dry, smart. "Money doesn't vanish, kid. It just stops being written down."
+- **Never:** Bob doesn't mock members or owners; the villain is always the situation (no system).
+- **Abou Bkra is retired** (the founder asked to stop using him). Don't use Abou Bkra in new content.
 
-All characters are fictional types, never real people, never named after a real member or gym.
+Other bits that still work as clues in Bob's cases: **el daftar** (the front-desk notebook), **January members**,
+**the wasta member**, **the rate question** ("kam el sa3er lyom?"), **the trainer's 11pm PDF**, **40 chats**.
+All are fictional types, never real people, never named after a real member or gym.
 
 #### The hook bank (use, remix, test; dialect lines NEED NATIVE CHECK)
 **Getting paid**
@@ -435,10 +435,8 @@ All characters are fictional types, never real people, never named after a real 
 - "Run a gym for a day. No sign-up, no salesman, no 'n7ki ba3den'."
 - "Try it. Break it. It's not your gym (yet)."
 - "Check in a member. Freeze another one. Sell a membership. All before your coffee gets cold."
-- "Abou Bkra is in the demo too. Go freeze him. It's therapeutic."
 
 #### Smart, not cringe: the checks
-- **Specific beats generic.** "Abou Bkra since October" beats "late payers". "Zalka" beats "your area".
 - **Truth first.** Every joke stands on a real owner's problem and a real Gymix fact. No fact, no joke.
 - **One language switch per line is plenty.** "Unpaid? Frozen. Paid? Welcome back, habibi." Not a word salad.
 - **No forced slang, no emoji spam** (one emoji at most in a social caption, none in ads or designs).
@@ -448,7 +446,6 @@ All characters are fictional types, never real people, never named after a real 
 #### How playful, by channel
 | Channel | Playful | Notes |
 |---|---|---|
-| Instagram / TikTok | High | Characters, hooks, trends. The home of Abou Bkra. |
 | Ads | Medium | One clever hook, then the facts and the CTA. Clarity wins the click. |
 | WhatsApp to new owners | Light | Warm, one light line max. Respect their time. |
 | Website, one-pager, emails | Light | Clear first; one smart line per section. |
@@ -478,12 +475,13 @@ Lebanon is multilingual. Match the language to the channel and audience:
   "Whish", "OMT").
 
 Example of the right tone in Lebanese dialect (Arabizi):
-> "Abou Bkra 3am y2ellak 'bkra bedfa3' men October? Ma3 Gymix, li ma dafa3 bya3mol freeze la7alo, w el freeze ma
-> bya3ref wasta. $19.99 bel chahr la kel el gym. Jarreb 3a gym demo, bala ma tsajjel."
+> "Kel chahr, el masari 3am tdi3 men el gym? Detective Bob la2a el moshkle: ma fi system. Ma3 Gymix, li ma dafa3
+> bya3mol freeze la7alo, w el freeze ma bya3ref wasta. $19.99 bel chahr la kel el gym. Jarreb 3a gym demo, bala ma
+> tsajjel."
 
-(Translation: "Abou Bkra has been telling you 'I'll pay tomorrow' since October? With Gymix, whoever didn't pay
-freezes automatically, and the freeze doesn't know any wasta. $19.99 a month for the whole gym. Try it on a demo
-gym, no sign-up.")
+(Translation: "Every month, money keeps disappearing from the gym? Detective Bob found the problem: there's no
+system. With Gymix, whoever didn't pay freezes automatically, and the freeze doesn't know any wasta. $19.99 a month
+for the whole gym. Try it on a demo gym, no sign-up.")
 
 The AI should get a Lebanese speaker to check dialect copy before it's published.
 
@@ -653,12 +651,9 @@ Adapt these, but keep the facts exactly as they are.
 - Quick cuts: check in a member, the expired one gets refused, sell a membership, switch to the member's phone.
 - Text: "Try it now. No sign-up." End card: `[WEBSITE]/demo`.
 
-**Reel 8: "Abou Bkra" series (15s each, the brand's recurring character)**
-- Ep. 1 "Bkra": Abou Bkra at the desk, "bkra bedfa3, wallah". Cut to the next day: he taps the sticker, red screen.
-  Text: "Bkra bedfa3? Tayyeb. W bkra btfout."
-- Ep. 2 "Wasta": "Ana men jama3it el owner." Tap. Red. Text: "El freeze ma bya3ref wasta."
-- Ep. 3 "Redemption": he pays on Whish, taps, green. The desk claps. Text: "Welcome back, habibi."
-- Shot with friends or staff playing him (with their permission), never a real member being shamed.
+**Carousel: Detective Bob, Case #001 "The Case of the Missing Dollars"** (10 slides, ready in
+`marketing/studio/out/bob-case-001/` with its caption): money vanishes from a gym every month; the clues are the
+notebook, three lira rates and 40 unread chats; the culprit is "no system"; Gymix closes the case.
 
 **Reel 9: "El daftar retires" (20s)**
 - A front-desk notebook gets a retirement party: balloons, a tiny cake, coffee stains on every page.

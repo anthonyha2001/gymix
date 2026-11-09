@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Detective Bob · Case #001 · The Case of the Missing Dollars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,500;1,9..144,700&family=Geist:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&family=Caveat:wght@600;700&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --ink: #0d1117; --night: #0b1018; --night2: #121a26; --paper: #efe7d6; --danger: #c0362c; --amber: #ffcf7a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1350px; overflow: hidden; background: var(--night); font-family: Geist, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  .slide { position: absolute; inset: 0; width: 1080px; height: 1350px; overflow: hidden; visibility: hidden; }
+  .slide.on { visibility: visible; }
+  .abs { position: absolute; }
+  .serif { font-family: Fraunces, Georgia, serif; }
+  .type { font-family: "Courier Prime", "Courier New", monospace; }
+  .hand { font-family: Caveat, cursive; }
+  .head { position: absolute; left: 64px; right: 64px; top: 50px; display: flex; justify-content: space-between; align-items: center; z-index: 40;
+    font-family: "Courier Prime", monospace; font-size: 26px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgb(255 255 255 / 0.7); }
+  .paper .head { color: rgb(13 17 23 / 0.65); }
+  .head .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--lime); margin-right: 12px; box-shadow: 0 0 12px var(--lime); }
+  .narr { position: absolute; left: 64px; right: 64px; z-index: 30; }
+  .kicker { font-family: "Courier Prime", monospace; font-size: 28px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); margin-bottom: 18px; }
+  .paper .kicker { color: #5c6b10; }
+  .big { font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: 70px; line-height: 1.04; letter-spacing: -0.02em; color: #fff; }
+  .paper .big { color: var(--ink); }
+  .quote { font-family: Fraunces, Georgia, serif; font-style: italic; font-weight: 500; font-size: 40px; line-height: 1.3; color: rgb(255 255 255 / 0.85); }
+  .quote b { font-style: normal; font-family: "Courier Prime", monospace; font-size: 26px; letter-spacing: 0.14em; color: var(--lime); display: block; margin-top: 14px; font-weight: 700; }
+  .paper .quote { color: rgb(13 17 23 / 0.8); }
+  .paper .quote b { color: #5c6b10; }
+  .exhibit { display: inline-block; font-family: "Courier Prime", monospace; font-weight: 700; font-size: 26px; letter-spacing: 0.14em; text-transform: uppercase; background: #fff8e1; color: var(--ink); padding: 10px 18px; border: 3px solid var(--ink); }
+  .rain { position: absolute; inset: 0; z-index: 25; pointer-events: none; }
+  .grain { position: absolute; inset: 0; z-index: 50; pointer-events: none; opacity: 0.1; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .vignette { position: absolute; inset: 0; z-index: 45; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, transparent 50%, rgb(0 0 0 / 0.55)); }
+  .paper .vignette { background: radial-gradient(ellipse at 50% 45%, transparent 60%, rgb(60 40 10 / 0.25)); }
+  svg { overflow: visible; }
+</style>
+</head>
+<body>
+<div id="slides"></div>
+<script>
+const TOTAL = 10;
+const LOGO = (stroke, size) => `<svg viewBox="0 0 100 100" width="${size}" height="${size}"><g transform="translate(3,-1.5)" fill="none" stroke="${stroke}" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>`;
+const head = (i, extra = "Case #001") => `<div class="head"><span><span class="dot"></span>Detective Bob · ${extra}</span><span>${String(i).padStart(2, "0")} / ${TOTAL}</span></div>`;
+const rain = (n = 140, op = 0.22, seed = 7) => {
+  let s = seed; const r = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+  let out = "";
+  for (let k = 0; k < n; k++) { const x = r() * 1180 - 50, y = r() * 1400 - 50, l = 30 + r() * 60; out += `<line x1="${x}" y1="${y}" x2="${x - l * 0.25}" y2="${y + l}" stroke="#cfe3ff" stroke-width="${1.5 + r() * 1.5}" opacity="${op * (0.4 + r() * 0.6)}"/>`; }
+  return `<svg class="rain" width="1080" height="1350">${out}</svg>`;
+};
+
+// ---------------------------------------------------------------- Detective Bob
+// Charcoal trench coat, fedora with a lime band, short beard, calm eyes.
+// opts: w, hold none|phone|lamp-lit, look front|side, smile
+function bob(id, o = {}) {
+  const w = o.w ?? 520;
+  const smile = o.smile ? "M232 330 Q262 352 292 330" : "M236 334 Q262 342 288 334";
+  const hold = {
+    phone: `<g transform="translate(300 700) rotate(-8)"><rect x="0" y="0" width="150" height="270" rx="26" fill="#05070a"/><rect x="10" y="12" width="130" height="246" rx="18" fill="#f4f5f2"/><rect x="22" y="30" width="106" height="44" rx="10" fill="#0d1117"/><rect x="22" y="86" width="50" height="40" rx="8" fill="#fff" stroke="#e2e4de" stroke-width="3"/><rect x="78" y="86" width="50" height="40" rx="8" fill="#fff" stroke="#e2e4de" stroke-width="3"/><rect x="22" y="134" width="106" height="40" rx="8" fill="#fdecea"/><rect x="22" y="182" width="106" height="26" rx="13" fill="#c8f135"/><g transform="translate(51 34) scale(0.36)">${LOGO("#c8f135", 100).replace(/<svg[^>]*>|<\/svg>/g, "")}</g></g>
+             <path d="M300 820 Q260 860 250 920" stroke="#3b4048" stroke-width="64" fill="none" stroke-linecap="round"/><ellipse cx="318" cy="842" rx="34" ry="40" fill="#d9a07a"/>`,
+    none: "",
+  }[o.hold ?? "none"];
+  return `<svg id="${id}" viewBox="0 0 520 1200" width="${w}" height="${w * 1200 / 520}">
+    <defs>
+      <linearGradient id="${id}coat" x1="0" x2="1"><stop offset="0" stop-color="#4a505a"/><stop offset="0.55" stop-color="#3a3f48"/><stop offset="1" stop-color="#2b2f36"/></linearGradient>
+      <linearGradient id="${id}hat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2e35"/><stop offset="1" stop-color="#16191e"/></linearGradient>
+      <radialGradient id="${id}skin" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#e8b48c"/><stop offset="1" stop-color="#c88d66"/></radialGradient>
+    </defs>
+    <ellipse cx="260" cy="1185" rx="230" ry="22" fill="#000" opacity="0.35"/>
+    <!-- coat -->
+    <path d="M90 520 Q100 430 200 410 L320 410 Q420 430 432 520 L470 1150 Q260 1190 50 1150 Z" fill="url(#${id}coat)"/>
+    <path d="M260 430 L260 1170" stroke="#24282e" stroke-width="6"/>
+    <path d="M200 412 L262 560 L322 412 Z" fill="#f4f1ea"/>
+    <path d="M250 432 L262 470 L274 432 Z" fill="#0d1117"/><path d="M262 470 L248 600 L262 640 L276 600 Z" fill="#0d1117"/>
+    <path d="M200 412 L150 470 L230 640 L262 560 Z" fill="#30353d"/><path d="M322 412 L372 470 L292 640 L262 560 Z" fill="#30353d"/>
+    <rect x="70" y="820" width="380" height="26" rx="10" fill="#2b2f36"/><rect x="236" y="814" width="52" height="38" rx="6" fill="#1b1e23" stroke="#5b616b" stroke-width="4"/>
+    <path d="M380 470 l20 4 l-6 22 z" fill="#c8f135"/>
+    <!-- arms -->
+    <path d="M100 500 Q60 700 96 900" stroke="#3b4048" stroke-width="72" fill="none" stroke-linecap="round"/>
+    ${o.hold === "phone" ? "" : `<path d="M420 500 Q460 700 424 900" stroke="#33383f" stroke-width="72" fill="none" stroke-linecap="round"/>`}
+    ${hold}
+    <!-- head -->
+    <rect x="228" y="350" width="68" height="80" rx="24" fill="#c08560"/>
+    <ellipse cx="166" cy="270" rx="22" ry="32" fill="#c88d66"/><ellipse cx="358" cy="270" rx="22" ry="32" fill="#c88d66"/>
+    <path d="M168 250 Q166 150 262 140 Q358 150 356 250 Q360 340 300 378 Q262 398 224 378 Q164 340 168 250 Z" fill="url(#${id}skin)"/>
+    <path d="M176 290 Q186 370 262 392 Q338 370 348 290 Q340 340 300 356 Q262 366 224 356 Q184 340 176 290 Z" fill="#3a2f28" opacity="0.85"/>
+    <path d="M228 330 Q262 316 296 330 Q290 342 262 340 Q234 342 228 330 Z" fill="#2b221d"/>
+    <path d="${smile}" stroke="#6b2f22" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M204 238 Q224 226 244 234" stroke="#1f1a17" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M280 234 Q300 226 320 238" stroke="#1f1a17" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M208 266 Q224 258 240 266 Q224 272 208 266 Z" fill="#0d1117"/><path d="M284 266 Q300 258 316 266 Q300 272 284 266 Z" fill="#0d1117"/>
+    <path d="M258 262 Q250 296 262 302 Q274 298 266 262" fill="#b97e59"/>
+    <!-- fedora -->
+    <ellipse cx="262" cy="190" rx="168" ry="34" fill="#16191e"/>
+    <path d="M168 190 Q170 96 262 88 Q354 96 356 190 Z" fill="url(#${id}hat)"/>
+    <path d="M226 96 Q262 120 298 96" stroke="#0d0f12" stroke-width="10" fill="none"/>
+    <rect x="170" y="160" width="184" height="24" fill="#c8f135"/>
+  </svg>`;
+}
+
+// ---------------------------------------------------------------- the city
+const city = (seed, base = 1000, color = "#0e1520") => {
+  let s = seed; const r = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
+  let x = -10, out = "";
+  while (x < 1100) {
+    const w = 90 + r() * 140, h = 280 + r() * 420;
+    out += `<rect x="${x}" y="${base - h}" width="${w}" height="${h + 500}" fill="${color}"/>`;
+    for (let wy = base - h + 30; wy < base - 20; wy += 46) for (let wx = x + 16; wx < x + w - 20; wx += 34) if (r() > 0.72) out += `<rect x="${wx}" y="${wy}" width="14" height="20" fill="#ffcf7a" opacity="${0.3 + r() * 0.5}"/>`;
+    x += w + 6;
+  }
+  return out;
+};
+
+const S = [];
+
+// 1 · Cover
+S.push(`<div class="slide" style="background: linear-gradient(#070b12, #0f1724 60%, #0a0f17)">
+  <svg class="abs" width="1080" height="1350">
+    ${city(4, 980, "#0c121c")}
+    <rect y="980" width="1080" height="370" fill="#0a0e15"/>
+    <rect y="980" width="1080" height="370" fill="url(#wet1)"/>
+    <defs><linearGradient id="wet1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8f135" stop-opacity="0.12"/><stop offset="1" stop-color="#c8f135" stop-opacity="0"/></linearGradient>
+      <radialGradient id="lamp1" cx="0.5" cy="0" r="1"><stop offset="0" stop-color="#ffe2a6" stop-opacity="0.55"/><stop offset="1" stop-color="#ffe2a6" stop-opacity="0"/></radialGradient></defs>
+    <rect x="152" y="300" width="12" height="700" fill="#151b25"/><path d="M158 300 Q158 270 200 270 L250 270" stroke="#151b25" stroke-width="12" fill="none"/>
+    <ellipse cx="250" cy="282" rx="34" ry="12" fill="#ffe2a6"/>
+    <polygon points="216,290 284,290 470,1000 30,1000" fill="url(#lamp1)"/>
+  </svg>
+  <div class="abs" style="right: 70px; top: 330px; padding: 20px 34px; border: 6px solid var(--lime); border-radius: 22px; font-family: Geist; font-weight: 800; font-size: 76px; letter-spacing: 0.12em; color: var(--lime); text-shadow: 0 0 18px var(--lime), 0 0 42px rgb(200 241 53 / 0.6); box-shadow: 0 0 30px rgb(200 241 53 / 0.45), inset 0 0 24px rgb(200 241 53 / 0.25)">GYM</div>
+  <div class="abs" style="left: 60px; top: 520px; filter: brightness(0.55) contrast(1.1)">${bob("bob1", { w: 400 })}</div>
+  ${rain(170, 0.28, 3)}
+  ${head(1)}
+  <div class="narr" style="left: 470px; right: 60px; top: 560px">
+    <div class="kicker">A Detective Bob mystery</div>
+    <div class="serif" style="font-size: 92px; font-weight: 900; line-height: 0.95; letter-spacing: -0.03em; color: #fff">The Case<br>of the<br>Missing<br>Dollars</div>
+  </div>
+  <div class="abs" style="right: 60px; bottom: 70px; padding: 16px 26px; border-radius: 999px; background: rgb(255 255 255 / 0.08); color: #fff; font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 28px; letter-spacing: 0.1em">SWIPE TO INVESTIGATE <span style="color: var(--lime)">→</span></div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 2 · The crime
+S.push(`<div class="slide" style="background: #080c12">
+  <svg class="abs" width="1080" height="1350">
+    <defs><radialGradient id="lamp2" cx="0.5" cy="0.45" r="0.55"><stop offset="0" stop-color="#ffd58a" stop-opacity="0.5"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="560" cy="760" r="560" fill="url(#lamp2)"/>
+    <rect x="0" y="900" width="1080" height="450" fill="#0f141b"/>
+    <rect x="0" y="900" width="1080" height="14" fill="#c8f135" opacity="0.5"/>
+    <path d="M700 560 L760 470 L800 490" stroke="#1d232c" stroke-width="16" fill="none" stroke-linecap="round"/>
+    <path d="M770 470 L860 520 L820 600 Z" fill="#1d232c"/><ellipse cx="760" cy="905" rx="80" ry="12" fill="#1d232c"/><rect x="752" y="600" width="16" height="300" fill="#1d232c"/>
+    <!-- the notebook on the desk -->
+    <g transform="translate(330 820) rotate(-6)"><rect width="300" height="96" rx="8" fill="#b9874f"/><rect x="10" y="8" width="280" height="80" rx="6" fill="#f5edd8"/><path d="M150 8 V88" stroke="#d9cdb0" stroke-width="4"/></g>
+    <ellipse cx="560" cy="880" rx="70" ry="14" fill="#5a3b22" opacity="0.6"/>
+    <!-- an empty cash box, open -->
+    <g transform="translate(110 790)"><rect width="190" height="100" rx="10" fill="#3a4250"/><path d="M0 0 L40 -60 L230 -60 L190 0 Z" fill="#4a5262"/><rect x="20" y="20" width="150" height="60" rx="6" fill="#1b2029"/></g>
+  </svg>
+  ${head(2)}
+  <div class="narr" style="top: 170px">
+    <div class="kicker">Beirut · 11:42 p.m.</div>
+    <div class="big">The gym was closed.<br>The money was gone.</div>
+  </div>
+  <div class="narr" style="bottom: 90px">
+    <div class="quote">Every month, it happened again. No forced entry. No witnesses. Just a notebook on the desk.</div>
+  </div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 3 · Enter Bob
+S.push(`<div class="slide" style="background: linear-gradient(160deg, #141c28, #080c12)">
+  <svg class="abs" width="1080" height="1350"><defs><radialGradient id="rim3" cx="0.3" cy="0.4" r="0.6"><stop offset="0" stop-color="#c8f135" stop-opacity="0.18"/><stop offset="1" stop-color="#c8f135" stop-opacity="0"/></radialGradient></defs><rect width="1080" height="1350" fill="url(#rim3)"/></svg>
+  ${rain(90, 0.14, 21)}
+  <div class="abs" style="left: 20px; top: 220px">${bob("bob3", { w: 520, smile: true })}</div>
+  ${head(3)}
+  <div class="narr" style="left: 560px; top: 200px">
+    <div class="kicker">Enter</div>
+    <div class="serif" style="font-size: 120px; font-weight: 900; line-height: 0.9; letter-spacing: -0.03em; color: #fff">Detective<br>Bob.</div>
+  </div>
+  <div class="abs type" style="left: 560px; right: 60px; top: 520px; background: #efe7d6; color: var(--ink); padding: 34px 36px; border-radius: 6px; box-shadow: 0 30px 80px rgb(0 0 0 / 0.5); transform: rotate(2deg); font-size: 27px; line-height: 1.55; z-index: 30">
+    <div style="font-weight: 700; letter-spacing: 0.12em; border-bottom: 3px solid var(--ink); padding-bottom: 12px; margin-bottom: 16px">PERSONNEL FILE</div>
+    <b>Specialty:</b> gyms that lose money<br>
+    <b>Voice:</b> never raised<br>
+    <b>Weapon:</b> a phone<br>
+    <b>Record:</b> every case closed
+  </div>
+  <div class="narr" style="left: 560px; bottom: 100px">
+    <div class="quote">"Money doesn't vanish, kid. It just stops being written down."</div>
+  </div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 4 · Exhibit A: the notebook
+S.push(`<div class="slide paper" style="background: #2b2118">
+  <svg class="abs" width="1080" height="1350"><defs><linearGradient id="wood4" x1="0" x2="1"><stop offset="0" stop-color="#3a2a1e"/><stop offset="1" stop-color="#271b12"/></linearGradient></defs><rect width="1080" height="1350" fill="url(#wood4)"/>
+    ${Array.from({ length: 13 }, (_, k) => `<path d="M0 ${60 + k * 105} Q540 ${40 + k * 105 + (k % 3) * 16} 1080 ${70 + k * 105}" stroke="#46331f" stroke-width="3" fill="none" opacity="0.7"/>`).join("")}
+  </svg>
+  <div class="head" style="color: rgb(255 255 255 / 0.7)"><span><span class="dot"></span>Detective Bob · Case #001</span><span>04 / ${TOTAL}</span></div>
+  <div class="abs" style="left: 80px; top: 200px; width: 920px; height: 760px; transform: rotate(-4deg); background: #fbf4e2; border-radius: 8px 16px 16px 8px; box-shadow: 0 40px 100px rgb(0 0 0 / 0.55); overflow: hidden">
+    ${Array.from({ length: 13 }, (_, k) => `<div style="position:absolute; left:0; right:0; top:${100 + k * 54}px; height:2px; background:#c9d6e8"></div>`).join("")}
+    <div style="position:absolute; left:100px; top:0; bottom:0; width:2px; background:#e6a1a1"></div>
+    <div class="hand" style="position:absolute; left:130px; top:40px; font-size:58px; color:#1c2a6b">October — payments</div>
+    <div class="hand" style="position:absolute; left:130px; top:150px; font-size:48px; color:#1c2a6b">Elie · $45 · paid?</div>
+    <div class="hand" style="position:absolute; left:130px; top:255px; font-size:50px; color:#7a2a6b; transform: rotate(-2deg)">Sara 45$ cash ✓</div>
+    <div class="hand" style="position:absolute; left:130px; top:360px; font-size:46px; color:#2a6b3a">Rami — 4 million LL ??</div>
+    <div class="hand" style="position:absolute; left:130px; top:465px; font-size:48px; color:#1c2a6b">Maya · pays next week</div>
+    <div class="hand" style="position:absolute; left:560px; top:560px; font-size:54px; color:#b33; transform: rotate(-7deg)">who wrote this??</div>
+    <div style="position:absolute; right: 60px; top: 90px; width: 200px; height: 200px; border-radius: 50%; border: 20px solid rgb(120 70 30 / 0.22)"></div>
+    <div style="position:absolute; right: 150px; top: 380px; width: 140px; height: 140px; border-radius: 50%; border: 16px solid rgb(120 70 30 / 0.16)"></div>
+    <div style="position:absolute; right:-10px; top:0; bottom:0; width: 60px; background: repeating-linear-gradient(180deg, #fbf4e2 0 14px, transparent 14px 22px)"></div>
+  </div>
+  <div class="abs" style="left: 640px; top: 160px; transform: rotate(5deg); z-index: 30"><span class="exhibit">Exhibit A</span></div>
+  <div class="narr" style="bottom: 80px">
+    <div class="kicker" style="color: var(--lime)">The front-desk notebook</div>
+    <div class="big" style="color:#fff; font-size: 58px">Three handwritings. Two coffee stains. Page 47: missing.</div>
+  </div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 5 · Exhibit B: the lira rate
+S.push(`<div class="slide" style="background: #10161f">
+  ${head(5)}
+  <div class="abs" style="left: 0; top: 160px; width: 1080px; height: 760px">
+    ${[["89,500", -8, 90, 60, "#ffe88a"], ["90,000 ?", 6, 420, 20, "#ffb3c7"], ["89,000", -3, 700, 120, "#b8f0c4"], ["el sa3er\nlyom??", 9, 230, 360, "#a8d8ff"], ["ask Joe", -6, 610, 420, "#ffe88a"]].map(([t, r, x, y, c]) => `
+      <div class="abs hand" style="left:${x}px; top:${y}px; width: 300px; height: 300px; background:${c}; transform: rotate(${r}deg); box-shadow: 0 24px 50px rgb(0 0 0 / 0.45); padding: 40px 30px; font-size: 62px; line-height: 1; color: #1c1c1c; white-space: pre-line">${t}</div>`).join("")}
+  </div>
+  <div class="abs" style="left: 760px; top: 130px; transform: rotate(-5deg); z-index: 30"><span class="exhibit">Exhibit B</span></div>
+  <div class="narr" style="bottom: 90px">
+    <div class="kicker">The lira rate</div>
+    <div class="big" style="font-size: 62px">Everyone had a rate. Nobody had the same one.</div>
+    <div class="quote" style="margin-top: 18px; font-size: 34px">"Kam el sa3er lyom?" Asked ten times a day. Answered three different ways.</div>
+  </div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 6 · Exhibit C: 40 unread chats
+const chats = [["Elie", "kifak, fi class bokra?"], ["Sara", "I sent it on Whish 👍"], ["Unknown", "is the gym open on Sunday"], ["Rami", "bas eja l ma3esh"], ["Maya", "can I pay next week?"], ["Coach Tony", "who has the key"], ["Karl", "sent you 45"], ["Nadine", "😂😂"]];
+S.push(`<div class="slide" style="background: radial-gradient(ellipse at 50% 35%, #172131, #080c12 70%)">
+  ${head(6)}
+  <div class="abs" style="left: 250px; top: 150px; width: 580px; height: 1000px; border-radius: 80px; background: #05070a; padding: 22px; box-shadow: 0 50px 140px rgb(0 0 0 / 0.6); transform: rotate(3deg)">
+    <div style="position: relative; width: 100%; height: 100%; border-radius: 60px; background: #fff; overflow: hidden">
+      <div style="height: 120px; background: #f2f3f0; display:flex; align-items:flex-end; padding: 0 30px 18px; font-weight: 800; font-size: 40px">Chats <span style="margin-left: auto; font-size: 26px; color: #fff; background: var(--danger); border-radius: 999px; padding: 4px 14px; font-weight: 700">40</span></div>
+      ${chats.map(([n, m], k) => `<div style="display:flex; gap: 18px; align-items:center; padding: 18px 26px; border-bottom: 2px solid #f0f1ee">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: hsl(${k * 47} 45% 72%); flex: none"></div>
+        <div style="min-width:0; flex:1"><div style="font-weight: 700; font-size: 28px">${n}</div><div style="font-size: 24px; color: #5d6470; white-space: nowrap; overflow:hidden; text-overflow: ellipsis">${m}</div></div>
+        <div style="width: 30px; height: 30px; border-radius: 50%; background: #1fa855; flex:none"></div></div>`).join("")}
+    </div>
+  </div>
+  <div class="abs" style="left: 90px; top: 220px; transform: rotate(-6deg); z-index: 30"><span class="exhibit">Exhibit C</span></div>
+  <div class="narr" style="bottom: 70px; background: linear-gradient(transparent, rgb(8 12 18 / 0.95) 30%); padding-top: 60px">
+    <div class="kicker">The phone</div>
+    <div class="big" style="font-size: 58px">40 unread chats. The payment was in there. Somewhere.</div>
+  </div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 7 · The interrogation
+S.push(`<div class="slide" style="background: #050709">
+  <svg class="abs" width="1080" height="1350">
+    <defs><radialGradient id="cone7" cx="0.5" cy="0" r="1"><stop offset="0" stop-color="#fff1c9" stop-opacity="0.75"/><stop offset="1" stop-color="#fff1c9" stop-opacity="0"/></radialGradient></defs>
+    <path d="M540 0 V170" stroke="#1d232c" stroke-width="8"/>
+    <path d="M460 220 Q540 140 620 220 Z" fill="#1d232c"/>
+    <ellipse cx="540" cy="222" rx="80" ry="14" fill="#fff1c9"/>
+    <polygon points="465,224 615,224 960,1060 120,1060" fill="url(#cone7)"/>
+    <rect x="160" y="1000" width="760" height="40" rx="8" fill="#14181e"/>
+    <g transform="translate(390 900) rotate(-3)"><rect width="300" height="100" rx="8" fill="#b9874f"/><rect x="10" y="8" width="280" height="84" rx="6" fill="#f5edd8"/></g>
+  </svg>
+  <div class="abs" style="left: 700px; top: 520px; filter: brightness(0.4)">${bob("bob7", { w: 360 })}</div>
+  ${head(7)}
+  <div class="narr" style="top: 300px; left: 64px; right: 520px">
+    <div class="kicker">The interrogation</div>
+    <div class="quote" style="font-size: 46px; color: #fff">"So. Who paid in October?"</div>
+  </div>
+  <div class="narr" style="top: 620px; left: 64px; right: 560px">
+    <div class="quote" style="font-size: 38px; color: rgb(255 255 255 / 0.55)">The notebook said nothing.</div>
+  </div>
+  <div class="narr" style="bottom: 110px">
+    <div class="big" style="font-size: 60px">It didn't talk. <span style="color: var(--lime)">It couldn't.</span></div>
+  </div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 8 · The verdict: the evidence board
+S.push(`<div class="slide paper" style="background: #b9925f">
+  <svg class="abs" width="1080" height="1350">
+    <defs><pattern id="cork" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="#b9925f"/><circle cx="5" cy="7" r="2" fill="#a07a49"/><circle cx="15" cy="16" r="1.6" fill="#c9a571"/></pattern></defs>
+    <rect width="1080" height="1350" fill="url(#cork)"/>
+    <path d="M250 330 L540 640 L830 330 M540 640 L270 900 M540 640 L820 920" stroke="#c0362c" stroke-width="6" fill="none"/>
+  </svg>
+  ${head(8)}
+  ${[["Exhibit A", "the notebook", 110, 230, -4], ["Exhibit B", "three lira rates", 690, 230, 5], ["Exhibit C", "40 unread chats", 130, 820, 4], ["Witness", "\"I'll pay next week\"", 690, 830, -5]].map(([a, b, x, y, r]) => `
+    <div class="abs" style="left:${x}px; top:${y}px; width: 280px; padding: 26px 22px; background: #fbf4e2; transform: rotate(${r}deg); box-shadow: 0 16px 34px rgb(0 0 0 / 0.35)">
+      <div style="position:absolute; left: 50%; top: -14px; width: 28px; height: 28px; margin-left: -14px; border-radius: 50%; background: #c0362c; box-shadow: 0 4px 6px rgb(0 0 0 / 0.4)"></div>
+      <div class="type" style="font-weight: 700; font-size: 24px; letter-spacing: 0.12em; text-transform: uppercase">${a}</div>
+      <div class="hand" style="font-size: 44px; color: #1c2a6b; margin-top: 8px; line-height: 1">${b}</div>
+    </div>`).join("")}
+  <div class="abs" style="left: 330px; top: 520px; width: 420px; padding: 34px 30px; background: var(--ink); color: #fff; transform: rotate(-2deg); box-shadow: 0 24px 60px rgb(0 0 0 / 0.5); text-align: center">
+    <div class="type" style="font-size: 24px; letter-spacing: 0.16em; color: var(--lime); font-weight: 700">THE CULPRIT</div>
+    <div class="serif" style="font-size: 54px; font-weight: 900; line-height: 1.02; margin-top: 12px">Not a person.<br>No system.</div>
+  </div>
+  <div class="narr" style="bottom: 70px">
+    <div class="quote" style="color: var(--ink); font-size: 40px">"Nobody stole it, kid. Nobody was keeping track of it."<b style="color: var(--ink)">— Bob</b></div>
+  </div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 9 · The fix: Gymix (real labels from the app)
+const card = (label, value, color = "#0d1117") => `<div style="background:#fff; border: 2px solid #e2e4de; border-radius: 20px; padding: 20px 22px"><div style="font-size: 22px; color: #5d6470">${label}</div><div style="font-size: 44px; font-weight: 800; color: ${color}; margin-top: 4px">${value}</div></div>`;
+S.push(`<div class="slide" style="background: linear-gradient(160deg, #121a26, #070b10)">
+  ${head(9)}
+  <div class="narr" style="top: 150px">
+    <div class="kicker">The fix</div>
+    <div class="big" style="font-size: 64px">Bob doesn't use a notebook.</div>
+  </div>
+  <div class="abs" style="left: 64px; top: 400px; width: 600px; border-radius: 34px; background: #f4f5f2; padding: 30px; box-shadow: 0 40px 110px rgb(0 0 0 / 0.55); z-index: 20">
+    <div style="display:flex; align-items:center; gap: 14px; margin-bottom: 22px"><span style="display:grid; place-items:center; width: 54px; height: 54px; border-radius: 14px; background: var(--lime)">${LOGO("#0d1117", 46)}</span><span style="font-weight: 800; font-size: 34px">Overview</span></div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px">
+      ${card("Active members", "86")}${card("Check-ins today", "41")}${card("Collected this month", "$3,870")}${card("Owed by members", "$90.00", "#c0362c")}
+    </div>
+    <div style="margin-top: 16px; background: #fdecea; color: var(--danger); border-radius: 18px; padding: 18px 22px; font-size: 24px; font-weight: 600">2 members frozen until they pay. Refused at the door, automatically.</div>
+  </div>
+  <div class="abs" style="left: 680px; top: 330px; z-index: 25">${bob("bob9", { w: 380, hold: "phone", smile: true })}</div>
+  <div class="narr" style="bottom: 70px; right: 64px; z-index: 30; background: rgb(7 11 16 / 0.85); padding: 26px 30px; border-radius: 24px">
+    <div class="quote" style="font-size: 34px">Every payment recorded, in dollars or lira at your own rate. Unpaid members freeze by themselves. Who owes what, one tap away.</div>
+  </div>
+  <div class="abs type" style="left: 64px; top: 1010px; font-size: 20px; color: rgb(255 255 255 / 0.4); letter-spacing: 0.08em">Illustration · sample numbers</div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>`);
+
+// 10 · Case closed
+S.push(`<div class="slide paper" style="background: #efe7d6">
+  ${head(10)}
+  <div class="abs" style="left: 64px; right: 64px; top: 170px; height: 640px; background: #e2d4b4; border-radius: 10px; box-shadow: inset 0 0 0 3px #c9b68c">
+    <div style="position:absolute; left: 0; top: -40px; width: 300px; height: 60px; background: #e2d4b4; border-radius: 12px 12px 0 0"></div>
+    <div class="type" style="position:absolute; left: 50px; top: 50px; font-size: 30px; font-weight: 700; letter-spacing: 0.12em">CASE #001</div>
+    <div class="serif" style="position:absolute; left: 50px; top: 110px; right: 50px; font-size: 76px; font-weight: 900; line-height: 0.98; letter-spacing: -0.02em">The Case of the<br>Missing Dollars</div>
+    <div class="type" style="position:absolute; left: 50px; top: 330px; font-size: 26px; line-height: 1.6; color: #3b3424">Status: solved<br>Culprit: no system<br>Now: every payment on record</div>
+    <div style="position:absolute; right: 50px; bottom: 60px; transform: rotate(-12deg); border: 10px solid #c0362c; color: #c0362c; padding: 16px 28px; font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 64px; letter-spacing: 0.12em; opacity: 0.92; mix-blend-mode: multiply">CASE CLOSED</div>
+  </div>
+  <div class="abs" style="left: 64px; right: 64px; bottom: 100px">
+    <div style="display:inline-flex; align-items:center; gap: 22px; background: var(--ink); color: #fff; border-radius: 999px; padding: 24px 38px; font-size: 40px; font-weight: 700">
+      <span style="display:grid; place-items:center; width: 60px; height: 60px; border-radius: 15px; background: var(--lime)">${LOGO("#0d1117", 52)}</span>
+      Try the live demo · link in bio
+    </div>
+    <div style="margin-top: 26px; font-size: 32px; font-weight: 600; color: var(--ink)">Gymix · $19.99 a month for the whole gym · 14 days free</div>
+    <div class="serif" style="margin-top: 26px; font-size: 36px; font-style: italic; color: rgb(13 17 23 / 0.65)">Detective Bob returns. Case #002, next week.</div>
+  </div>
+  <div class="vignette"></div><div class="grain" style="opacity:0.06"></div>
+</div>`);
+
+document.getElementById("slides").innerHTML = S.join("");
+window.SLIDES = S.length;
+window.showSlide = (i) => document.querySelectorAll(".slide").forEach((el, k) => el.classList.toggle("on", k === i));
+window.showSlide(0);
+</script>
+</body>
+</html>
