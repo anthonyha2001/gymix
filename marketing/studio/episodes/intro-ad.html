@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gymix · intro ad (boosted reel)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,800&family=Geist:wght@400;500;600;700;800;900&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --ink: #0d1117; --good: #1f7a3f; --bad: #c0362c; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); font-family: Geist, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #fff; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 0; visibility: hidden; }
+  .grid { position: absolute; inset: -240px; background-image: linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px); background-size: 60px 60px; }
+  .glow { position: absolute; left: 50%; top: 55%; width: 1600px; height: 1600px; margin: -800px 0 0 -800px; border-radius: 50%; background: radial-gradient(closest-side, rgb(200 241 53 / 0.15), transparent); }
+  .serif { font-family: Fraunces, Georgia, serif; font-style: italic; font-weight: 800; letter-spacing: -0.03em; }
+  .kicker { position: absolute; left: 80px; top: 300px; font-size: 30px; font-weight: 700; letter-spacing: 0.2em; color: var(--lime); }
+  .title { position: absolute; left: 80px; right: 80px; top: 360px; font-size: 92px; font-weight: 900; line-height: 0.98; letter-spacing: -0.045em; }
+  .laptop { position: absolute; left: 70px; top: 760px; width: 940px; }
+  .laptop .lid { border-radius: 28px 28px 0 0; background: #1b2028; padding: 18px 18px 0; box-shadow: 0 60px 140px rgb(0 0 0 / 0.6); }
+  .laptop .screen { border-radius: 10px 10px 0 0; overflow: hidden; height: 588px; position: relative; }
+  .laptop .screen img { position: absolute; left: 0; top: 0; width: 100%; transform-origin: 0 0; }
+  .laptop .base { height: 28px; margin: 0 -50px; border-radius: 0 0 28px 28px; background: linear-gradient(#2a313c, #151a21); }
+  .phone { position: absolute; width: 500px; height: 1000px; border-radius: 86px; background: #05070a; padding: 20px; box-shadow: 0 60px 140px rgb(0 0 0 / 0.6), 0 0 0 2px rgb(255 255 255 / 0.07); }
+  .phone .scr { position: absolute; inset: 20px; border-radius: 68px; overflow: hidden; background: #fff; }
+  .phone .scr img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .notch { position: absolute; top: 22px; left: 50%; width: 150px; height: 40px; margin-left: -75px; border-radius: 26px; background: #05070a; z-index: 3; }
+  .tapscr { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 22px; padding: 50px; color: #fff; }
+  .chip { display: inline-flex; align-items: center; gap: 16px; padding: 22px 30px; border-radius: 24px; background: rgb(255 255 255 / 0.06); border: 1px solid rgb(255 255 255 / 0.1); font-size: 40px; font-weight: 700; }
+  .chip i { width: 14px; height: 14px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 14px var(--lime); }
+  .strike { position: relative; display: inline-block; }
+  .strike::after { content: ""; position: absolute; left: -6px; right: -6px; top: 55%; height: 10px; border-radius: 5px; background: var(--lime); transform: scaleX(var(--s, 0)); transform-origin: left; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="grid" class="grid"></div>
+  <div id="glow" class="glow"></div>
+
+  <!-- 1 · hook -->
+  <div id="s1" class="layer">
+    <div id="h0" class="kicker" style="top: 420px">GYM OWNERS IN LEBANON</div>
+    <div id="h1" class="title" style="top: 490px; font-size: 100px">Still running your gym on…</div>
+    <div class="abs" style="left: 80px; top: 760px; font-size: 92px; font-weight: 900; letter-spacing: -0.045em; line-height: 1.15; white-space: nowrap">
+      <div id="h2"><span class="strike" id="k2">a notebook,</span></div>
+      <div id="h3"><span class="strike" id="k3">an Excel sheet,</span></div>
+      <div id="h4"><span class="strike" id="k4">40 WhatsApp chats?</span></div>
+    </div>
+  </div>
+
+  <!-- 2 · meet Gymix -->
+  <div id="s2" class="layer" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 40px">
+    <div id="m1" style="width: 260px; height: 260px; border-radius: 22%; background: var(--lime); display:grid; place-items:center; box-shadow: 0 30px 90px rgb(200 241 53 / 0.35)">
+      <svg viewBox="0 0 100 100" width="236" height="236"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="m2" style="font-size: 150px; font-weight: 900; letter-spacing: -0.05em; line-height: 1">Meet Gymix.</div>
+    <div id="m3" class="serif" style="font-size: 70px; color: var(--lime)">Your whole gym. One app.</div>
+  </div>
+
+  <!-- 3 · members -->
+  <div id="s3" class="layer">
+    <div class="kicker">01 · MEMBERS</div>
+    <div class="title">Every member.<br>Every membership.</div>
+    <div class="laptop"><div class="lid"><div class="screen"><img id="img3" src="../out/screens/members.png"></div></div><div class="base"></div></div>
+  </div>
+
+  <!-- 4 · payments -->
+  <div id="s4" class="layer">
+    <div class="kicker">02 · PAYMENTS</div>
+    <div class="title">Cash, Whish, OMT, card.<br><span style="color: var(--lime)">Dollars or lira.</span></div>
+    <div class="laptop"><div class="lid"><div class="screen"><img id="img4" src="../out/screens/billing.png"></div></div><div class="base"></div></div>
+  </div>
+
+  <!-- 5 · check-in -->
+  <div id="s5" class="layer">
+    <div class="kicker">03 · CHECK-IN</div>
+    <div class="title">Members tap in.<br>With their phone.</div>
+    <div id="stk5" class="abs" style="left: 90px; top: 1060px; width: 230px; height: 230px; border-radius: 56px; background: var(--lime); display:grid; place-items:center; box-shadow: 0 0 80px rgb(200 241 53 / 0.45)">
+      <svg viewBox="0 0 100 100" width="200" height="200"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="rg5" class="abs" style="left: 90px; top: 1060px; width: 230px; height: 230px; border-radius: 56px; border: 8px solid var(--lime)"></div>
+    <div class="abs" style="left: 90px; top: 1320px; width: 230px; text-align: center; font-size: 30px; font-weight: 600; color: rgb(255 255 255 / 0.6)">$1 sticker</div>
+    <div id="ph5" class="phone" style="left: 500px; top: 640px">
+      <div class="notch"></div>
+      <div class="scr" style="background: var(--good)">
+        <div class="tapscr">
+          <svg width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          <div style="font-size: 24px; font-weight: 600; letter-spacing: 0.18em; opacity: 0.8">CHECKED IN</div>
+          <div style="font-size: 58px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em">Welcome back, Karim</div>
+          <div style="font-size: 30px; opacity: 0.9">Monthly · until 29 Nov 2026</div>
+          <div style="margin-top: 14px; padding: 22px 44px; border-radius: 20px; background: #fff; color: var(--ink); font-size: 32px; font-weight: 600">Start training</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 · no more chasing -->
+  <div id="s6" class="layer">
+    <div class="kicker" style="color: #ff8a7a">04 · NO MORE CHASING</div>
+    <div class="title">Unpaid?<br><span style="color: #ff8a7a">Frozen automatically.</span></div>
+    <div id="ph6" class="phone" style="left: 290px; top: 760px">
+      <div class="notch"></div>
+      <div class="scr" style="background: var(--bad)">
+        <div class="tapscr">
+          <svg width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+          <div style="font-size: 58px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap">Not allowed in</div>
+          <div style="font-size: 38px; font-weight: 600">Fadi Germanos</div>
+          <div style="font-size: 31px; line-height: 1.35; opacity: 0.9; max-width: 380px">Account frozen: unpaid balance of $25.00. Please see the front desk.</div>
+          <div style="margin-top: 14px; padding: 20px 36px; border-radius: 20px; background: #fff; color: var(--ink); font-size: 30px; font-weight: 600">Go to my portal</div>
+        </div>
+      </div>
+    </div>
+    <div id="cap6" class="abs" style="left: 80px; right: 80px; top: 668px; font-size: 40px; font-weight: 600; color: rgb(255 255 255 / 0.75)">No speeches. No awkward talks.</div>
+  </div>
+
+  <!-- 7 · member app -->
+  <div id="s7" class="layer">
+    <div class="kicker">05 · MEMBER APP</div>
+    <div class="title">An app your members<br><span style="color: var(--lime)">actually open.</span></div>
+    <div id="ph7" class="phone" style="left: 290px; top: 700px">
+      <div class="notch"></div>
+      <div class="scr"><img id="img7a" src="../out/screens/member-home.png"><img id="img7b" src="../out/screens/member-progress.png" style="position:absolute; left:0; top:0"></div>
+    </div>
+  </div>
+
+  <!-- 8 · and more -->
+  <div id="s8" class="layer">
+    <div class="kicker">06 · AND MORE</div>
+    <div class="title">Everything else, too.</div>
+    <div class="abs" style="left: 80px; right: 80px; top: 640px; display:flex; flex-direction: column; gap: 22px">
+      <div class="chip" id="c1"><i></i>Classes &amp; bookings</div>
+      <div class="chip" id="c2"><i></i>Programs from your trainers</div>
+      <div class="chip" id="c3"><i></i>Team roles: trainers never see money</div>
+      <div class="chip" id="c4"><i></i>Chat with members</div>
+      <div class="chip" id="c5"><i></i>Who owes what, one screen</div>
+    </div>
+  </div>
+
+  <!-- 9 · price -->
+  <div id="s9" class="layer" style="background: var(--lime); color: var(--ink)">
+    <div class="abs" style="left: 80px; right: 80px; top: 520px">
+      <div id="p1" style="font-size: 44px; font-weight: 700; letter-spacing: 0.04em">All of it, for</div>
+      <div id="p2" style="font-size: 250px; font-weight: 900; letter-spacing: -0.06em; line-height: 0.95; margin-top: 10px">$19.99</div>
+      <div id="p3" style="font-size: 64px; font-weight: 800; letter-spacing: -0.03em; margin-top: 10px">a month. The whole gym.</div>
+      <div id="p4" style="font-size: 44px; font-weight: 600; margin-top: 50px">Unlimited members · 14 days free · no card</div>
+    </div>
+  </div>
+
+  <!-- 10 · logo + CTA -->
+  <div id="s10" class="layer" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 44px">
+    <div id="e1" style="width: 280px; height: 280px; border-radius: 22%; background: var(--lime); display:grid; place-items:center; box-shadow: 0 30px 90px rgb(200 241 53 / 0.35)">
+      <svg viewBox="0 0 100 100" width="252" height="252"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path id="ep1" pathLength="1" d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path id="ep2" pathLength="1" d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path id="ep3" pathLength="1" d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="e2" style="font-size: 140px; font-weight: 900; letter-spacing: -0.05em; line-height: 1">Gymix</div>
+    <div id="e3" class="serif" style="font-size: 62px; color: var(--lime)">Your gym, running itself.</div>
+    <div id="e4" style="margin-top: 30px; display:inline-flex; align-items:center; gap: 16px; padding: 26px 44px; border-radius: 999px; background: var(--lime); color: var(--ink); font-size: 44px; font-weight: 800">Try the live demo →</div>
+    <div id="e5" style="font-size: 32px; font-weight: 600; color: rgb(255 255 255 / 0.6)">No sign-up · built for gyms in Lebanon</div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const back = (x) => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const rise = (el, t, at, dur = 0.42, dist = 60) => {
+  const p = eo(prog(t, at, at + dur));
+  el.style.opacity = p;
+  el.style.transform = `translateY(${lerp(dist, 0, p)}px)`;
+  el.style.filter = `blur(${lerp(10, 0, p)}px)`;
+};
+
+// Scenes [id, start, end]
+const SC = [["s1", 0, 2.7], ["s2", 2.7, 4.4], ["s3", 4.4, 7.6], ["s4", 7.6, 10.8], ["s5", 10.8, 14.0], ["s6", 14.0, 17.2], ["s7", 17.2, 20.8], ["s8", 20.8, 23.6], ["s9", 23.6, 26.2], ["s10", 26.2, 30.5]];
+window.DURATION = 30.5;
+
+// Each scene enters with a short rise and leaves by sliding up and fading.
+function frame(id, t, a, b) {
+  const el = $(id);
+  const on = t >= a && t < b;
+  el.style.visibility = on ? "visible" : "hidden";
+  if (!on) return null;
+  const out = eio(prog(t, b - 0.28, b));
+  el.style.opacity = 1 - out;
+  el.style.transform = `translateY(${-out * 90}px)`;
+  return t - a;
+}
+// Kicker + title rise; the device slides up from below, then drifts slowly.
+function feature(id, lt, deviceSel) {
+  const s = $(id);
+  rise(s.querySelector(".kicker"), lt, 0.0, 0.35, 30);
+  rise(s.querySelector(".title"), lt, 0.08, 0.45, 50);
+  const dev = s.querySelector(deviceSel);
+  const p = eo(prog(lt, 0.15, 0.75));
+  dev.style.opacity = p;
+  dev.style.transform = `translateY(${lerp(500, 0, p) - lt * 14}px)`;
+}
+
+window.renderAt = function (t) {
+  $("grid").style.transform = `translateY(${-t * 12}px)`;
+  $("glow").style.opacity = 0.6 + 0.4 * Math.sin(t * 1.1);
+  let lt;
+
+  if ((lt = frame("s1", t, 0, 2.7)) !== null) {
+    rise($("h0"), lt, 0.0, 0.3, 20); rise($("h1"), lt, 0.1); rise($("h2"), lt, 0.55, 0.3); rise($("h3"), lt, 0.85, 0.3); rise($("h4"), lt, 1.15, 0.3);
+    ["k2", "k3", "k4"].forEach((k, i) => $(k).style.setProperty("--s", eio(prog(lt, 1.75 + i * 0.13, 2.05 + i * 0.13))));
+  }
+  if ((lt = frame("s2", t, 2.7, 4.4)) !== null) {
+    const p = back(prog(lt, 0, 0.45));
+    $("m1").style.transform = `scale(${lerp(0.4, 1, p)}) rotate(${lerp(-14, 0, eo(prog(lt, 0, 0.5)))}deg)`;
+    $("m1").style.opacity = prog(lt, 0, 0.15);
+    rise($("m2"), lt, 0.25); rise($("m3"), lt, 0.5);
+  }
+  if ((lt = frame("s3", t, 4.4, 7.6)) !== null) {
+    feature("s3", lt, ".laptop");
+    $("img3").style.transform = `scale(${lerp(1.27, 1.38, eio(prog(lt, 0.6, 3.0)))}) translate(-188px, ${-lerp(20, 110, eio(prog(lt, 0.6, 3.0)))}px)`;
+  }
+  if ((lt = frame("s4", t, 7.6, 10.8)) !== null) {
+    feature("s4", lt, ".laptop");
+    const z = eio(prog(lt, 1.0, 2.6));
+    $("img4").style.transform = `scale(${lerp(1.27, 1.5, z)}) translate(-188px, ${-lerp(20, 170, z)}px)`;
+  }
+  if ((lt = frame("s5", t, 10.8, 14.0)) !== null) {
+    feature("s5", lt, "#ph5");
+    $("stk5").style.transform = `scale(${lerp(0.8, 1, back(prog(lt, 0.2, 0.6)))})`;
+    const p = prog(lt, 0.9, 1.7);
+    $("rg5").style.opacity = p > 0 && p < 1 ? 1 - p : 0;
+    $("rg5").style.transform = `scale(${1 + eo(p) * 1.8})`;
+    $("ph5").style.transform += ` rotate(${lerp(10, 4, eo(prog(lt, 0.15, 0.9)))}deg)`;
+  }
+  if ((lt = frame("s6", t, 14.0, 17.2)) !== null) {
+    feature("s6", lt, "#ph6");
+    if (lt > 0.75 && lt < 1.25) $("ph6").style.transform += ` translateX(${Math.sin(prog(lt, 0.75, 1.25) * Math.PI * 6) * 18 * (1 - prog(lt, 0.75, 1.25))}px)`;
+    rise($("cap6"), lt, 1.0);
+  }
+  if ((lt = frame("s7", t, 17.2, 20.8)) !== null) {
+    feature("s7", lt, "#ph7");
+    $("img7b").style.opacity = eio(prog(lt, 1.9, 2.3));
+  }
+  if ((lt = frame("s8", t, 20.8, 23.6)) !== null) {
+    rise($("s8").querySelector(".kicker"), lt, 0, 0.3, 30); rise($("s8").querySelector(".title"), lt, 0.08);
+    ["c1", "c2", "c3", "c4", "c5"].forEach((c, i) => rise($(c), lt, 0.3 + i * 0.22, 0.35, 40));
+  }
+  if ((lt = frame("s9", t, 23.6, 26.2)) !== null) {
+    $("s9").style.clipPath = `circle(${eo(prog(lt, 0, 0.45)) * 150}% at 50% 50%)`;
+    rise($("p1"), lt, 0.2);
+    const p = back(prog(lt, 0.35, 0.8));
+    $("p2").style.opacity = prog(lt, 0.35, 0.5);
+    $("p2").style.transform = `scale(${lerp(0.7, 1, p)})`;
+    $("p2").style.transformOrigin = "left center";
+    rise($("p3"), lt, 0.75); rise($("p4"), lt, 1.1);
+  }
+  if ((lt = frame("s10", t, 26.2, 30.5)) !== null) {
+    $("s10").style.transform = "none"; $("s10").style.opacity = 1;
+    const p = back(prog(lt, 0, 0.5));
+    $("e1").style.transform = `scale(${lerp(0.5, 1, p)}) rotate(${lerp(-12, 0, eo(prog(lt, 0, 0.55)))}deg)`;
+    $("e1").style.opacity = prog(lt, 0, 0.15);
+    [["ep1", 0.1, 0.7], ["ep2", 0.6, 0.9], ["ep3", 0.72, 1.05]].forEach(([id, a, b]) => { const el = $(id); el.style.strokeDasharray = "1 1"; el.style.strokeDashoffset = 1 - eio(prog(lt, a, b)); });
+    rise($("e2"), lt, 0.6); rise($("e3"), lt, 0.9); rise($("e4"), lt, 1.3); rise($("e5"), lt, 1.6);
+    // the button breathes
+    if (lt > 1.8) $("e4").style.transform = `scale(${1 + Math.sin((lt - 1.8) * 4) * 0.025})`;
+  }
+};
+
+// ---------------------------------------------------------------- sound
+// 116 bpm: a pulse with soft kicks, a marimba line, chords per scene,
+// whooshes on each cut, a chime on the tap, a buzz on the freeze, a bell on the logo.
+const B = 60 / 116;
+const AUDIO = [];
+const chords = [[0, [57, 60, 64]], [2.7, [53, 57, 60]], [4.4, [57, 61, 64]], [7.6, [54, 57, 61]], [10.8, [50, 54, 57]], [14.0, [52, 55, 59]], [17.2, [57, 61, 64]], [20.8, [54, 57, 61]], [23.6, [50, 54, 57, 62]], [26.2, [57, 61, 64, 69]]];
+chords.forEach(([at, notes], i) => AUDIO.push({ k: "pad", at, dur: (chords[i + 1]?.[0] ?? 30.5) - at + 0.3, notes, gain: 0.85 }));
+for (let k = 0; k * B < 26.2; k++) AUDIO.push({ k: "thump", at: k * B, gain: k % 4 === 0 ? 0.42 : k % 2 ? 0.16 : 0.28 });
+const line = [69, 73, 76, 73, 71, 74, 78, 74];
+for (let k = 0; k * B * 2 < 26.2; k++) if (k >= 5) AUDIO.push({ k: "pluck", at: k * B * 2 + B, note: line[k % line.length] + (k % 16 > 7 ? 2 : 0), gain: 0.45 });
+[0.1, 0.55, 0.85, 1.15].forEach((at, i) => AUDIO.push({ k: "pluck", at, note: [69, 72, 76, 79][i], gain: 0.8 }));
+[1.75, 1.88, 2.01].forEach((at) => AUDIO.push({ k: "whoosh", at, dur: 0.18, gain: 0.25 }));
+AUDIO.push({ k: "bell", at: 2.75, note: 81, gain: 1 }); AUDIO.push({ k: "bell", at: 2.95, note: 88, gain: 0.6 });
+[4.4, 7.6, 10.8, 14.0, 17.2, 20.8, 23.6].forEach((at) => AUDIO.push({ k: "whoosh", at: at - 0.3, dur: 0.55, gain: 0.45 }));
+AUDIO.push({ k: "bell", at: 11.75, note: 88, gain: 0.8 }); AUDIO.push({ k: "bell", at: 11.85, note: 93, gain: 0.6 });
+[0, 0.1, 0.2].forEach((d, i) => AUDIO.push({ k: "pluck", at: 12.0 + d, note: [74, 78, 81][i], gain: 0.8 }));
+AUDIO.push({ k: "buzz", at: 14.75, gain: 1 });
+AUDIO.push({ k: "whoosh", at: 19.1, dur: 0.4, gain: 0.3 });
+[0.3, 0.52, 0.74, 0.96, 1.18].forEach((d, i) => AUDIO.push({ k: "pluck", at: 20.8 + d, note: [76, 78, 81, 83, 85][i], gain: 0.7 }));
+AUDIO.push({ k: "thump", at: 23.95, gain: 0.9 }); AUDIO.push({ k: "bell", at: 23.95, note: 74, gain: 0.8 });
+AUDIO.push({ k: "whoosh", at: 25.9, dur: 0.6, gain: 0.5 });
+AUDIO.push({ k: "bell", at: 26.3, note: 69, gain: 1 }); AUDIO.push({ k: "bell", at: 26.9, note: 76, gain: 0.8 }); AUDIO.push({ k: "bell", at: 27.15, note: 81, gain: 0.7 });
+window.AUDIO = AUDIO;
+
+window.renderAt(0);
+</script>
+</body>
+</html>

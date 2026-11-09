@@ -74,15 +74,29 @@ try {
   const list = await evaluate(`(() => { const h = [...document.querySelectorAll('h2, p, span')].find(e => e.innerText?.trim() === 'Latest check-ins'); let el = h; while (el && el.getBoundingClientRect().height < 400) el = el.parentElement; const r = el.getBoundingClientRect(); return { x: r.x - 12, y: r.y - 12, width: r.width + 24, height: Math.min(r.height, 720) + 12 }; })()`);
   await shot("checkin-list", list);
 
+  // More owner pages, full width.
+  for (const [name, url] of [["members", "/dashboard/members"], ["billing", "/dashboard/billing?tab=payments"], ["schedule", "/dashboard/schedule"], ["programs", "/dashboard/programs"]]) {
+    await go(url);
+    await hideChrome();
+    await sleep(600);
+    await shot(name, { x: 0, y: 0, width: 1280, height: 800 });
+  }
+
   // 3 · The member app on a phone.
   await go("/dashboard");
   await click("Member app");
   for (let i = 0; i < 40; i++) { await sleep(500); if ((await evaluate("location.pathname")) === "/portal") break; }
-  await size(430, 932, true);
+  await size(430, 940, true);
   await go("/portal");
   await hideChrome();
   await sleep(800);
-  await shot("member-home", { x: 0, y: 0, width: 430, height: 800 });
+  await shot("member-home", { x: 0, y: 0, width: 430, height: 898 });
+  for (const [name, url] of [["member-progress", "/portal/progress"], ["member-schedule", "/portal/schedule"]]) {
+    await go(url);
+    await hideChrome();
+    await sleep(600);
+    await shot(name, { x: 0, y: 0, width: 430, height: 898 });
+  }
 } finally {
   ws.close();
   chrome.kill();
