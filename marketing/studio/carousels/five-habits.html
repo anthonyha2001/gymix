@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>5 habits of gyms that get paid on time (plot twist carousel)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,600;1,9..144,800&family=Geist:wght@400;500;600;700;800;900&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --lime-soft: #e9f8a8; --ink: #0d1117; --canvas: #f4f3ee; --muted: #5d6470; --line: #dcdbd3; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1350px; overflow: hidden; background: var(--canvas); font-family: Geist, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+  .slide { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--canvas); }
+  .slide.on { visibility: visible; }
+  .abs { position: absolute; }
+  .serif { font-family: Fraunces, Georgia, serif; }
+  .top { position: absolute; left: 80px; right: 80px; top: 64px; display: flex; justify-content: space-between; font-size: 24px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .rule { position: absolute; left: 80px; right: 80px; top: 112px; height: 2px; background: var(--line); }
+  .num { position: absolute; left: 70px; top: 160px; font-family: Fraunces, Georgia, serif; font-weight: 900; font-size: 420px; line-height: 0.8; letter-spacing: -0.05em; color: transparent; -webkit-text-stroke: 3px var(--ink); }
+  .habit { position: absolute; left: 80px; right: 80px; top: 660px; font-size: 96px; font-weight: 800; line-height: 0.98; letter-spacing: -0.035em; }
+  .habit em { font-style: normal; background: linear-gradient(transparent 58%, var(--lime) 58%, var(--lime) 92%, transparent 92%); padding: 0 6px; margin: 0 -6px; }
+  .why { position: absolute; left: 80px; right: 120px; top: 1010px; font-size: 36px; line-height: 1.35; color: var(--muted); font-weight: 500; }
+  .why b { color: var(--ink); font-weight: 700; }
+  sup.ast { font-family: Fraunces, Georgia, serif; font-weight: 900; color: var(--ink); font-size: 0.7em; margin-left: 2px; }
+  .foot { position: absolute; left: 80px; right: 80px; bottom: 64px; display: flex; justify-content: space-between; align-items: center; font-size: 26px; font-weight: 600; color: var(--muted); }
+  .dots { display: flex; gap: 10px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--line); }
+  .dots i.on { background: var(--ink); width: 34px; border-radius: 6px; }
+  .shot { position: absolute; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 80px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(255 255 255 / 0.08); background: #fff; }
+  .shot img { display: block; width: 100%; }
+  .phone { position: absolute; border-radius: 64px; background: #05070a; padding: 16px; box-shadow: 0 40px 110px rgb(0 0 0 / 0.55); }
+  .phone .scr { border-radius: 50px; overflow: hidden; background: #fff; height: 100%; }
+  .phone img { display: block; width: 100%; }
+</style>
+</head>
+<body>
+<div id="slides"></div>
+<script>
+const TOTAL = 8;
+const LOGO = (stroke, size) => `<svg viewBox="0 0 100 100" width="${size}" height="${size}"><g transform="translate(3,-1.5)" fill="none" stroke="${stroke}" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>`;
+const dots = (i, dark) => `<span class="dots">${Array.from({ length: TOTAL }, (_, k) => `<i class="${k === i - 1 ? "on" : ""}" style="${dark ? (k === i - 1 ? "background:#fff" : "background:rgb(255 255 255 / 0.25)") : ""}"></i>`).join("")}</span>`;
+const topBar = (i, label = "5 habits · gym owners") => `<div class="top"><span>${label}</span><span>${String(i).padStart(2, "0")} / ${String(TOTAL).padStart(2, "0")}</span></div><div class="rule"></div>`;
+const habit = (i, n, text, why, footRight = "Keep swiping →") => `<div class="slide">
+  ${topBar(i)}
+  <div class="num">${n}</div>
+  <div class="habit">${text}<sup class="ast">*</sup></div>
+  <div class="why">${why}</div>
+  <div class="foot">${dots(i)}<span>${footRight}</span></div>
+</div>`;
+
+const S = [];
+
+// 1 · Cover: looks like a classic "save this" tips post
+S.push(`<div class="slide">
+  ${topBar(1, "For gym owners · save this")}
+  <div class="abs" style="left: 80px; right: 80px; top: 230px; font-size: 128px; font-weight: 900; line-height: 0.92; letter-spacing: -0.045em">
+    <span class="serif" style="font-weight: 900; font-size: 300px; line-height: 0.8; display:block; letter-spacing: -0.06em">5</span>
+    habits of gyms that <em style="font-style: normal; background: linear-gradient(transparent 55%, var(--lime) 55%, var(--lime) 92%, transparent 92%)">get paid on time.</em>
+  </div>
+  <div class="abs" style="left: 80px; right: 160px; top: 1010px; font-size: 36px; line-height: 1.35; color: var(--muted); font-weight: 500">No theory. Just what the gyms that never chase anyone do differently.</div>
+  <div class="foot">${dots(1)}<span style="color: var(--ink)">Swipe →</span></div>
+</div>`);
+
+// 2-6 · the five habits (each with a quiet asterisk)
+S.push(habit(2, "1", "They <em>never chase</em> anyone.", "No voice notes. No speeches at the desk. A member who hasn't paid simply <b>can't get in</b> until they do."));
+S.push(habit(3, "2", "They set the lira rate <em>once.</em>", "Not ten times a day. Members pay in <b>dollars or lira</b>, and the maths is already done."));
+S.push(habit(4, "3", "Their members <em>check themselves in.</em>", "One tap of the phone on a <b>$1 sticker</b> at the door. No cards to print, no turnstile to install."));
+S.push(habit(5, "4", "They know who owes what. <em>Right now.</em>", "Not \"let me check the notebook\". <b>One screen</b>, every payment, every balance."));
+S.push(habit(6, "5", "They spend <em>$19.99 a month</em> on all of it.", "For the whole gym. Unlimited members.<br><b style=\"font-size: 44px; display:block; margin-top: 26px\">Wait… $19.99 on what?</b>", "The answer →"));
+
+// 7 · The twist: the page flips to ink, the asterisks resolve
+S.push(`<div class="slide" style="background: var(--ink); color: #fff">
+  <div class="top" style="color: rgb(255 255 255 / 0.55)"><span>Plot twist</span><span>07 / 08</span></div>
+  <div class="rule" style="background: rgb(255 255 255 / 0.12)"></div>
+  <div class="abs" style="left: 80px; right: 80px; top: 160px">
+    <div class="serif" style="font-style: italic; font-weight: 800; font-size: 64px; color: var(--lime)">Plot twist.</div>
+    <div style="font-size: 92px; font-weight: 900; line-height: 0.95; letter-spacing: -0.04em; margin-top: 18px">It's not five habits.<br>It's one app.</div>
+    <div style="display:flex; align-items:center; gap: 18px; margin-top: 30px; font-size: 34px; font-weight: 600; color: rgb(255 255 255 / 0.75)">
+      <span class="serif" style="font-weight: 900; font-size: 54px; color: #fff">*</span> =
+      <span style="display:inline-flex; align-items:center; gap: 14px; color: #fff; font-weight: 800"><span style="display:grid; place-items:center; width: 56px; height: 56px; border-radius: 14px; background: var(--lime)">${LOGO("#0d1117", 48)}</span>Gymix</span>
+    </div>
+  </div>
+  <div class="shot" style="left: 60px; top: 640px; width: 600px"><img src="../out/screens/overview-stats.png"></div>
+  <div class="shot" style="left: 60px; top: 800px; width: 420px; height: 470px"><img src="../out/screens/checkin-list.png"></div>
+  <div class="phone" style="left: 650px; top: 600px; width: 370px; height: 700px"><div class="scr"><img src="../out/screens/member-home.png"></div></div>
+  <div class="abs" style="left: 66px; top: 745px; font-size: 22px; color: rgb(255 255 255 / 0.45); font-weight: 600; letter-spacing: 0.1em">REAL SCREENS · SAMPLE GYM</div>
+</div>`);
+
+// 8 · The call to action
+S.push(`<div class="slide" style="background: var(--lime)">
+  ${topBar(8, "Your turn")}
+  <div class="abs" style="left: 80px; right: 80px; top: 200px">
+    <div style="font-size: 116px; font-weight: 900; line-height: 0.92; letter-spacing: -0.045em">Steal all five habits in 10 minutes.</div>
+    <div style="margin-top: 50px; font-size: 40px; line-height: 1.3; font-weight: 600; max-width: 860px">Try the live demo: a full sample gym, with a guide on every page. No sign-up, nothing to install.</div>
+  </div>
+  <div class="abs" style="left: 80px; right: 80px; bottom: 150px">
+    <div style="display:inline-flex; align-items:center; gap: 22px; background: var(--ink); color: #fff; border-radius: 999px; padding: 26px 40px; font-size: 42px; font-weight: 700">
+      <span style="display:grid; place-items:center; width: 62px; height: 62px; border-radius: 16px; background: var(--lime)">${LOGO("#0d1117", 54)}</span>
+      Live demo · link in bio
+    </div>
+    <div style="margin-top: 30px; font-size: 30px; font-weight: 600">Gymix · $19.99 a month for the whole gym · 14 days free</div>
+  </div>
+  <div class="foot" style="color: var(--ink)">${dots(8)}<span>Save it for later</span></div>
+</div>`);
+
+document.getElementById("slides").innerHTML = S.join("");
+window.SLIDES = S.length;
+window.showSlide = (i) => document.querySelectorAll(".slide").forEach((el, k) => el.classList.toggle("on", k === i));
+window.showSlide(0);
+</script>
+</body>
+</html>
