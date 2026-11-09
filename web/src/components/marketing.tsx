@@ -199,7 +199,7 @@ export async function PricingCard() {
 const faq = ({ priceUsd, trialDays }: Pricing) => [
   {
     q: "Do my members need to download an app?",
-    a: "No store download. You send each member a personal link on WhatsApp; it opens their app straight away and can be added to their home screen like any other app, on iPhone and Android.",
+    a: "No store download. Gymix sends each member a personal link on WhatsApp, from our number or your own; it opens their app straight away and can be added to their home screen like any other app, on iPhone and Android.",
   },
   {
     q: "What do I need to buy for check-in?",

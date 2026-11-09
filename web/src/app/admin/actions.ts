@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { PRICING_TAG } from "@/lib/pricing-server";
+import { ensureTemplates, gymixKeys } from "@/lib/whatsapp";
 
 // A gym paid Gymix for some months.
 export async function recordSubscriptionPayment(gymId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -212,10 +213,20 @@ export async function saveWhatsAppKeys(_prev: ActionState, formData: FormData): 
   await requirePlatformAdmin();
   const token = text(formData, "token");
   const phoneId = text(formData, "phone_number_id");
-  if (phoneId && !/^\d{6,20}$/.test(phoneId)) return { error: "The phone number ID is the long number from WhatsApp Manager." };
+  const wabaId = text(formData, "waba_id");
+  const appSecret = text(formData, "app_secret");
+  if (phoneId && !/^\d{6,25}$/.test(phoneId)) return { error: "The phone number ID is the long number from WhatsApp Manager." };
+  if (wabaId && !/^\d{6,25}$/.test(wabaId)) return { error: "The WhatsApp Business account ID is the long number at the top of WhatsApp Manager." };
+  if (appSecret && !/^[0-9a-f]{32}$/i.test(appSecret)) return { error: "The app secret is 32 letters and numbers (Meta app → App settings → Basic)." };
   const { error } = await createAdminClient()
     .from("platform_secrets")
-    .update({ whatsapp_phone_number_id: phoneId, ...(token ? { whatsapp_token: token } : {}), updated_at: new Date().toISOString() })
+    .update({
+      whatsapp_phone_number_id: phoneId,
+      whatsapp_waba_id: wabaId,
+      ...(token ? { whatsapp_token: token } : {}),
+      ...(appSecret ? { whatsapp_app_secret: appSecret } : {}),
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", true);
   if (error) return { error: errorMessage(error, "Couldn't save.") };
   refresh();
@@ -241,4 +252,17 @@ export async function openGymAs(formData: FormData) {
   const role = text(formData, "role") as GymRole;
   const roles: GymRole[] = ["owner", "manager", "front_desk", "trainer", "member"];
   await openGymAsSupport(text(formData, "gym_id"), roles.includes(role) ? role : "owner");
+}
+
+// Creates the Gymix templates on the Gymix WhatsApp account (any missing) and
+// saves each one's review status.
+export async function syncGymixTemplates(): Promise<ActionState> {
+  await requirePlatformAdmin();
+  const keys = await gymixKeys();
+  if (!keys) return { error: "Save the phone number ID and token first." };
+  if (!keys.wabaId) return { error: "Save the WhatsApp Business account ID first." };
+  const { templates, error } = await ensureTemplates(keys.wabaId, keys.token);
+  await createAdminClient().from("platform_secrets").update({ whatsapp_templates: templates }).eq("id", true);
+  refresh();
+  return error ? { error } : { success: "Templates are on the Gymix account. Meta usually approves them within minutes." };
 }

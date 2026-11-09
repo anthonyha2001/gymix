@@ -12,6 +12,7 @@ import { NewLoginDialog } from "./new-login-dialog";
 import { MachineSheet } from "@/components/machine-sheet";
 import { accountStatus } from "@/lib/portal";
 import { formatUSD } from "@/lib/format";
+import { whatsappReady } from "@/lib/whatsapp";
 import { Lock, Nfc } from "lucide-react";
 
 export const metadata: Metadata = { title: "My gym" };
@@ -30,7 +31,7 @@ async function PortalContent({ searchParams }: { searchParams: PageProps<"/porta
   const { machine } = await searchParams;
   const { viewer, membership } = await requireMember();
   const supabase = await createClient();
-  const { data: me } = await supabase.from("members").select("id").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle();
+  const { data: me } = await supabase.from("members").select("id, phone").eq("gym_id", membership.gymId).eq("user_id", viewer.id).maybeSingle();
   if (!me) {
     return <Card className="p-5 text-sm text-muted">Your account isn&apos;t linked to a membership yet. Ask the front desk.</Card>;
   }
@@ -46,6 +47,8 @@ async function PortalContent({ searchParams }: { searchParams: PageProps<"/porta
           firstName={viewer.fullName.split(" ")[0] || "there"}
           gymName={membership.gymName}
           loginUrl={`${await requestOrigin()}/login`}
+          phone={me.phone}
+          whatsapp={await whatsappReady(membership.gymId)}
         />
       )}
       {typeof machine === "string" && !account.locked && <MachineSheet machineId={machine} viewer={viewer} />}

@@ -12,7 +12,11 @@ import { platformSettings } from "@/lib/subscription";
 import { requirePlatformAdmin } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "../(auth)/actions";
-import { extendTrial, openGymAsSupport, recordSubscriptionPayment, setGymSuspended } from "./actions";
+import { extendTrial, openGymAsSupport, recordSubscriptionPayment, setGymSuspended, syncGymixTemplates } from "./actions";
+import { ActionButton } from "../dashboard/members/action-button";
+import { TEMPLATE_LIST } from "@/lib/whatsapp-templates";
+import { gymixVerifyToken } from "@/lib/whatsapp-webhook";
+import { requestOrigin } from "@/lib/origin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { DailyChart } from "./daily-chart";
 import { Lab } from "./lab";
@@ -699,7 +703,7 @@ async function Gyms() {
         </Card>
         <Card className="p-5">
           <h2 className="font-semibold">WhatsApp (Gymix number)</h2>
-          <p className="mb-4 text-sm text-muted">Renewal reminders, payment receipts and new-member logins go out from this number for every gym.</p>
+          <p className="mb-4 text-sm text-muted">The default sender for every gym: renewal reminders, payment receipts, welcome messages, invites and login details. Gyms can switch to their own number in Settings → WhatsApp.</p>
           <WhatsAppKeys />
         </Card>
       </div>
@@ -935,7 +939,51 @@ async function MyGymLink() {
 }
 
 async function WhatsAppKeys() {
-  const { data } = await createAdminClient().from("platform_secrets").select("whatsapp_token, whatsapp_phone_number_id").maybeSingle();
+  const [{ data }, origin] = await Promise.all([
+    createAdminClient()
+      .from("platform_secrets")
+      .select("whatsapp_token, whatsapp_phone_number_id, whatsapp_waba_id, whatsapp_app_secret, whatsapp_templates")
+      .maybeSingle(),
+    requestOrigin(),
+  ]);
   const token = data?.whatsapp_token ?? "";
-  return <WhatsAppKeysForm tokenHint={token ? token.slice(-4) : null} phoneNumberId={data?.whatsapp_phone_number_id ?? ""} />;
+  const templates = (data?.whatsapp_templates ?? {}) as Record<string, string>;
+  return (
+    <div className="space-y-5">
+      <WhatsAppKeysForm
+        tokenHint={token ? token.slice(-4) : null}
+        phoneNumberId={data?.whatsapp_phone_number_id ?? ""}
+        wabaId={data?.whatsapp_waba_id ?? ""}
+        secretSaved={Boolean(data?.whatsapp_app_secret)}
+      />
+      <div className="space-y-2 border-t border-line pt-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-medium">Message templates</p>
+          <ActionButton action={syncGymixTemplates} label="Create or check templates" pendingLabel="Checking…" className="h-8 px-3 text-xs" />
+        </div>
+        <ul className="divide-y divide-line rounded-lg border border-line text-sm">
+          {TEMPLATE_LIST.map((t) => (
+            <li key={t.name} className="flex items-center justify-between gap-2 px-3 py-2">
+              <span className="font-mono text-xs">{t.name}</span>
+              <Badge tone={templates[t.name] === "APPROVED" ? "green" : templates[t.name] === "PENDING" ? "amber" : templates[t.name] ? "red" : "gray"}>
+                {templates[t.name]?.toLowerCase() ?? "not checked"}
+              </Badge>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {data?.whatsapp_app_secret && (
+        <div className="space-y-1 border-t border-line pt-4 text-xs text-muted">
+          <p className="text-sm font-medium text-ink">Delivery updates webhook</p>
+          <p>
+            Meta app → WhatsApp → Configuration → Webhook, subscribe to <b>messages</b>:
+          </p>
+          <p className="font-mono break-all text-ink">{origin}/api/whatsapp/webhook</p>
+          <p>
+            Verify token: <span className="font-mono text-ink">{gymixVerifyToken(data.whatsapp_app_secret)}</span>
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }

@@ -9,6 +9,8 @@ import { ChatModal } from "@/components/chat-modal";
 import { MemberPreviewModal } from "../preview-modal";
 import { Dialog } from "@/components/dialog";
 import { InviteShare } from "@/components/invite-share";
+import { WithWhatsApp } from "@/components/whatsapp-ready";
+import { sendInviteOnWhatsApp } from "@/app/whatsapp-actions";
 import {
   Badge,
   Card,
@@ -423,12 +425,18 @@ async function MemberContent({
               </p>
               <span className="flex flex-wrap items-center gap-2">
               <Dialog label="Reset password" variant="secondary" triggerClassName="h-8 px-3" title={`New password for ${member.full_name}`}>
-                <ResetPassword
-                  memberId={member.id!}
-                  firstName={firstName}
-                  phone={member.phone}
-                  gymName={staff.gymName}
-                  loginUrl={`${origin}/login`}
+                <WithWhatsApp
+                  gymId={staff.gymId}
+                  render={(whatsapp) => (
+                    <ResetPassword
+                      memberId={member.id!}
+                      firstName={firstName}
+                      phone={member.phone}
+                      whatsapp={whatsapp}
+                      gymName={staff.gymName}
+                      loginUrl={`${origin}/login`}
+                    />
+                  )}
                 />
               </Dialog>
               <ActionButton
@@ -453,14 +461,16 @@ async function MemberContent({
                   portal, nothing to sign up for.
                 </p>
               </div>
-              <InviteShare
-                url={inviteUrl!}
-                message={memberInviteMessage(
-                  firstName,
-                  staff.gymName,
-                  inviteUrl!,
+              <WithWhatsApp
+                gymId={staff.gymId}
+                render={(whatsapp) => (
+                  <InviteShare
+                    url={inviteUrl!}
+                    message={memberInviteMessage(firstName, staff.gymName, inviteUrl!)}
+                    phone={member.phone}
+                    send={whatsapp ? sendInviteOnWhatsApp.bind(null, member.id!) : undefined}
+                  />
                 )}
-                phone={member.phone}
               />
             </>
           ) : (

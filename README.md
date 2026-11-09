@@ -85,8 +85,8 @@ The super admin console has six tabs, each with a 7/30/90-day range:
     shows it; "Back to admin" leaves. Stored in `platform_admin_visits` (one gym at a time) and honoured by
     `my_gym_role()`, so every database permission check applies as for the owner.
   - **Send a notification** to every gym's team, or everyone including members (lands in their bell).
-  - **WhatsApp (Gymix number)**: the Meta phone number ID and access token, kept in `platform_secrets`
-    (server-only, no policies).
+  - **WhatsApp (Gymix number)**: the Meta phone number ID, WhatsApp Business account ID, access token and app
+    secret, kept in `platform_secrets` (server-only, no policies); template status and the webhook details.
 - **Revenue & pricing**: change the price, trial length and grace period; payment instructions; payment history;
   cleanup of old monitoring data.
 
@@ -204,20 +204,38 @@ every device is kept in step with memberships and payments (`supabase/migrations
 
 ## Automatic WhatsApp
 
-Sent from one Gymix number through Meta's WhatsApp Cloud API (`web/src/lib/whatsapp.ts`), at most once each
-(`whatsapp_log`, unique on kind + ref):
+Sent through Meta's WhatsApp Cloud API (`web/src/lib/whatsapp.ts`), never by opening WhatsApp on a phone (there
+are no wa.me links to members). Each gym chooses the sender in **Settings → WhatsApp**:
+
+- **Gymix number** (default): the keys in `/admin` (Gyms) or `WHATSAPP_TOKEN` / `WHATSAPP_PHONE_NUMBER_ID`.
+- **Their own number**: the owner pastes their phone number ID, WhatsApp Business account ID and a permanent
+  system-user token. Gymix checks them with Meta, creates the templates on their account
+  (`gym_whatsapp_accounts`, server-only) and switches to their number. Any template Meta hasn't approved there yet
+  still goes out from the Gymix number, so nothing is missed.
+
+Messages (`whatsapp_log`; the automatic ones at most once each, unique on kind + ref):
 
 - **Renewal reminder**: a daily Vercel cron (`/api/cron/whatsapp`, 07:00 UTC, protected by `CRON_SECRET`) messages
   members whose membership ends in the gym's "renewal reminder" days (Settings, default 3, 0 = off).
 - **Payment receipt**: when staff sell a membership with a payment or record a payment.
 - **Welcome**: a new member added with a phone gets their one-tap portal login link.
+- **Invite link** and **login details**: the "Send on WhatsApp" buttons (member profile, new password, and a member
+  sending their own first login to themselves). One per member and kind every 30 seconds.
 
-Setup: create these Utility templates (English) in WhatsApp Manager, then save the keys in `/admin` (Gyms) or set
-`WHATSAPP_TOKEN` and `WHATSAPP_PHONE_NUMBER_ID`. Without keys nothing is sent.
+**Message log** (Settings → WhatsApp): every message with time, member, type, number, sender, the text (passwords
+masked) and status, with filters and totals for 30 days. Statuses come from Meta's webhook
+(`/api/whatsapp/webhook` for the Gymix app, `/api/whatsapp/webhook/<token>` for a gym's own app), signed with
+the app secret; they only move forward (sent → delivered → read) and a failure keeps Meta's reason.
+
+Templates (Utility, English; Gymix creates them: "Create or check templates" in `/admin`, or on connecting a
+gym's number). Meta refuses a template that starts or ends with a variable.
 
 - `gymix_renewal_reminder`: Hi {{1}}, your {{2}} membership ends on {{3}}. Renew at the front desk to keep training.
 - `gymix_payment_received`: Hi {{1}}, {{2}} received your payment of {{3}}. Thank you!
-- `gymix_member_welcome`: Hi {{1}}, {{2}} has set up your Gymix account. Open your portal: {{3}}
+- `gymix_member_welcome`: Hi {{1}}, {{2}} has set up your Gymix account. Open your member app here: {{3}} (one tap, nothing to sign up for).
+- `gymix_login_details`: Hi {{1}}, here is your {{2}} member app login. Log in with {{3}} and the password {{4}} at {{5}} and keep this message private.
+
+Tests: `supabase/tests/whatsapp_test.sql`. `WHATSAPP_GRAPH_URL` points the app at a mock of the Meta API (tests only).
 
 ## How access works
 

@@ -1,4 +1,4 @@
-// Client-safe helpers for sharing invite links (WhatsApp click-to-chat).
+// Client-safe helpers for invite links and WhatsApp numbers.
 
 // Turns a Lebanese-style phone number into WhatsApp's international format:
 // "71 123 456" / "03 123456" / "+961 71 123 456" / "00961…" -> "96171123456".
@@ -10,13 +10,6 @@ export function waNumber(phone: string | null | undefined) {
   if (d.startsWith("0")) d = d.slice(1);
   if (d.length === 7 || d.length === 8) return `961${d}`;
   return d.length >= 10 ? d : null;
-}
-
-// wa.me opens WhatsApp (app or web) with the message ready; with no number the
-// sender picks the contact.
-export function whatsappUrl(phone: string | null | undefined, message: string) {
-  const n = waNumber(phone);
-  return `https://wa.me/${n ?? ""}?text=${encodeURIComponent(message)}`;
 }
 
 export function memberInviteMessage(firstName: string, gymName: string, url: string) {

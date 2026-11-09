@@ -28,7 +28,7 @@ export function SettingsForm({ name, lbpRate, graceDays, reminderDays }: { name:
         </Field>
         <Field
           label="WhatsApp renewal reminder (days before)"
-          hint="Members get a WhatsApp message this many days before their membership ends. 0 turns reminders off. Payment receipts and new-member logins are sent automatically too."
+          hint="Members get a WhatsApp message this many days before their membership ends. 0 turns reminders off. See every message sent, and choose the sending number, on the WhatsApp tab."
         >
           <input name="renewal_reminder_days" type="number" min={0} max={30} required defaultValue={reminderDays} className={inputClass} />
         </Field>

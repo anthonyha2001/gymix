@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, MessageCircle } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { buttonClass } from "@/components/ui";
-import { whatsappUrl } from "@/lib/invite-link";
+import { WhatsAppSendButton } from "@/components/whatsapp-send";
+import type { ActionState } from "@/lib/action-result";
 
 export function loginMessage(o: { firstName: string; gymName: string; loginId: string; code: string; password: string; loginUrl: string }) {
   return (
@@ -15,19 +16,23 @@ export function loginMessage(o: { firstName: string; gymName: string; loginId: s
   );
 }
 
-// Login, member code and password, with copy and WhatsApp buttons.
+// Login, member code and password, with copy and (when WhatsApp is set up)
+// send-on-WhatsApp buttons.
 export function LoginDetails({
   loginId,
   code,
   password,
   message,
+  send,
+  sendLabel,
   phone,
 }: {
   loginId: string;
   code: string;
   password: string;
   message: string;
-  // The member's phone, when staff send it; empty for "send to myself".
+  send?: () => Promise<ActionState>;
+  sendLabel?: string;
   phone?: string | null;
 }) {
   const [copied, setCopied] = useState(false);
@@ -57,10 +62,8 @@ export function LoginDetails({
           </dd>
         </div>
       </dl>
-      <div className="flex flex-wrap gap-2">
-        <a href={whatsappUrl(phone, message)} target="_blank" rel="noopener noreferrer" className={buttonClass("whatsapp")}>
-          <MessageCircle className="size-4" /> {phone ? "Send on WhatsApp" : "Save to WhatsApp"}
-        </a>
+      <div className="flex flex-wrap items-center gap-2">
+        {send && <WhatsAppSendButton send={send} label={sendLabel} disabledReason={phone ? undefined : "No phone number on file, so copy them instead."} />}
         <button type="button" onClick={copy} className={buttonClass("secondary")}>
           {copied ? <Check className="size-4" /> : <Copy className="size-4" />} {copied ? "Copied" : "Copy"}
         </button>

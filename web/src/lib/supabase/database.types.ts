@@ -747,16 +747,42 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"gyms": {
+                },"gym_whatsapp_accounts": {
                   Row: {
-                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number
+                    "app_secret": string | null,"checked_at": string | null,"connected_at": string,"display_phone": string | null,"gym_id": string,"last_error": string | null,"phone_number_id": string,"templates": NonNullable<Json>,"token": string,"updated_at": string,"verified_name": string | null,"waba_id": string,"webhook_token": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "app_secret"?: string | null,"checked_at"?: string | null,"connected_at"?: string,"display_phone"?: string | null,"gym_id": string,"last_error"?: string | null,"phone_number_id": string,"templates"?: NonNullable<Json>,"token": string,"updated_at"?: string,"verified_name"?: string | null,"waba_id": string,"webhook_token"?: string
                   }
                   Update: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number
+                    "app_secret"?: string | null,"checked_at"?: string | null,"connected_at"?: string,"display_phone"?: string | null,"gym_id"?: string,"last_error"?: string | null,"phone_number_id"?: string,"templates"?: NonNullable<Json>,"token"?: string,"updated_at"?: string,"verified_name"?: string | null,"waba_id"?: string,"webhook_token"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "gym_whatsapp_accounts_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: true
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "gym_whatsapp_accounts_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: true
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"gyms": {
+                  Row: {
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                  }
+                  Update: {
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
                   }
                   Relationships: [
                     
@@ -1559,14 +1585,14 @@ isOneToOne: false
                   ]
                 },"platform_secrets": {
                   Row: {
-                    "id": boolean,"updated_at": string,"whatsapp_phone_number_id": string,"whatsapp_token": string
+                    "id": boolean,"updated_at": string,"whatsapp_app_secret": string,"whatsapp_phone_number_id": string,"whatsapp_templates": NonNullable<Json>,"whatsapp_token": string,"whatsapp_waba_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "id"?: boolean,"updated_at"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_token"?: string
+                    "id"?: boolean,"updated_at"?: string,"whatsapp_app_secret"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_templates"?: NonNullable<Json>,"whatsapp_token"?: string,"whatsapp_waba_id"?: string
                   }
                   Update: {
-                    "id"?: boolean,"updated_at"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_token"?: string
+                    "id"?: boolean,"updated_at"?: string,"whatsapp_app_secret"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_templates"?: NonNullable<Json>,"whatsapp_token"?: string,"whatsapp_waba_id"?: string
                   }
                   Relationships: [
                     
@@ -2081,14 +2107,14 @@ isOneToOne: false
                   ]
                 },"whatsapp_log": {
                   Row: {
-                    "body": string | null,"created_at": string,"error": string | null,"gym_id": string,"id": string,"kind": string,"member_id": string | null,"ref": string,"status": string
+                    "body": string | null,"created_at": string,"error": string | null,"gym_id": string,"id": string,"kind": string,"member_id": string | null,"phone": string | null,"ref": string,"sender": string | null,"sent_by": string | null,"status": string,"updated_at": string,"wa_message_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "body"?: string | null,"created_at"?: string,"error"?: string | null,"gym_id": string,"id"?: string,"kind": string,"member_id"?: string | null,"ref": string,"status"?: string
+                    "body"?: string | null,"created_at"?: string,"error"?: string | null,"gym_id": string,"id"?: string,"kind": string,"member_id"?: string | null,"phone"?: string | null,"ref": string,"sender"?: string | null,"sent_by"?: string | null,"status"?: string,"updated_at"?: string,"wa_message_id"?: string | null
                   }
                   Update: {
-                    "body"?: string | null,"created_at"?: string,"error"?: string | null,"gym_id"?: string,"id"?: string,"kind"?: string,"member_id"?: string | null,"ref"?: string,"status"?: string
+                    "body"?: string | null,"created_at"?: string,"error"?: string | null,"gym_id"?: string,"id"?: string,"kind"?: string,"member_id"?: string | null,"phone"?: string | null,"ref"?: string,"sender"?: string | null,"sent_by"?: string | null,"status"?: string,"updated_at"?: string,"wa_message_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -2842,6 +2868,9 @@ isOneToOne: false
 "set_show_on_screens":
 { Args: { "p_gym_id": string,"p_show": boolean }; Returns: undefined
                            },
+"set_whatsapp_sender":
+{ Args: { "p_gym_id": string,"p_sender": string }; Returns: undefined
+                           },
 "simulated_check_in":
 { Args: { "p_gym_id": string }; Returns: {
               "allowed": boolean,"already_in": boolean,"balance_usd": number,"ends_on": string,"full_name": string,"member_id": string,"plan_name": string,"reason": string,"visits_left": number
@@ -2875,6 +2904,9 @@ isOneToOne: false
                            },
 "wants_notification":
 { Args: { "p_kind": string }; Returns: boolean
+                           },
+"whatsapp_status_update":
+{ Args: { "p_error"?: string,"p_status": string,"p_wa_message_id": string }; Returns: boolean
                            }
           }
           Enums: {

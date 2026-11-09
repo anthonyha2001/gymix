@@ -10,11 +10,11 @@ import { PAYMENT_METHODS, formatUSD, type PaymentMethod } from "@/lib/format";
 import { errorMessage, money, text, type ActionState } from "@/lib/action-result";
 import { requestOrigin } from "@/lib/origin";
 import { kickAccess } from "@/lib/access/server";
-import { firstName, sendWhatsApp, whatsappConfigured } from "@/lib/whatsapp";
+import { firstName, sendWhatsApp, whatsappReady } from "@/lib/whatsapp";
 
 // A payment receipt on WhatsApp, after the response is sent.
 async function sendReceipt(gymId: string, gymName: string, memberId: string, amountUsd: number, ref: string) {
-  if (!(await whatsappConfigured())) return;
+  if (!(await whatsappReady(gymId))) return;
   const supabase = await createClient();
   const { data: m } = await supabase.from("members").select("full_name, phone").eq("id", memberId).maybeSingle();
   if (!m?.phone) return;
@@ -77,7 +77,7 @@ export async function createMember(_prev: ActionState, formData: FormData): Prom
     if (inviteError) return { error: inviteError };
   }
   // New member with a phone: their login link goes out on WhatsApp.
-  if (parsed.details.phone && (await whatsappConfigured())) {
+  if (parsed.details.phone && (await whatsappReady(membership.gymId))) {
     const { data: token } = await supabase.rpc("member_invite_token", { p_member_id: data.id });
     if (token) {
       const url = `${await requestOrigin()}/join/${token}`;
@@ -115,7 +115,7 @@ export async function inviteToPortal(memberId: string): Promise<ActionState> {
   const inviteError = await memberInvite(memberId);
   if (inviteError) return { error: inviteError };
   refresh();
-  return { success: "Invite link ready — send it on WhatsApp or copy it." };
+  return { success: "Invite link ready. Send it on WhatsApp or copy it." };
 }
 
 export async function removePortalAccess(memberId: string) {

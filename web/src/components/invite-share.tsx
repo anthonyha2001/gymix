@@ -1,24 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, MessageCircle } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { buttonClass } from "@/components/ui";
-import { waNumber, whatsappUrl } from "@/lib/invite-link";
+import { WhatsAppSendButton } from "@/components/whatsapp-send";
+import type { ActionState } from "@/lib/action-result";
 
-// WhatsApp + copy buttons for an invite link.
+// Send-on-WhatsApp (through Gymix, no phone needed) and copy buttons for an
+// invite link. `send` is left out where WhatsApp isn't available (not set up,
+// or a staff invite with no phone number): copying still works.
 export function InviteShare({
   url,
   message,
+  send,
   phone,
   compact = false,
 }: {
   url: string;
   message: string;
+  send?: () => Promise<ActionState>;
   phone?: string | null;
   compact?: boolean;
 }) {
   const [copied, setCopied] = useState<"link" | "message" | null>(null);
-  const hasNumber = Boolean(waNumber(phone));
 
   async function copy(what: "link" | "message") {
     await navigator.clipboard.writeText(what === "link" ? url : message);
@@ -28,16 +32,8 @@ export function InviteShare({
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
-        <a
-          href={whatsappUrl(phone, message)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={buttonClass("whatsapp", compact ? "h-8 px-3 text-xs" : "")}
-        >
-          <MessageCircle className="size-4" />
-          {hasNumber ? "Send on WhatsApp" : "Share on WhatsApp"}
-        </a>
+      <div className="flex flex-wrap items-center gap-2">
+        {send && <WhatsAppSendButton send={send} compact={compact} disabledReason={phone ? undefined : "Add their phone number to send it on WhatsApp."} />}
         <button type="button" onClick={() => copy("link")} className={buttonClass("secondary", compact ? "h-8 px-3 text-xs" : "")}>
           {copied === "link" ? <Check className="size-4" /> : <Copy className="size-4" />}
           {copied === "link" ? "Copied" : "Copy link"}
@@ -48,9 +44,7 @@ export function InviteShare({
           </button>
         )}
       </div>
-      {!compact && (
-        <p className="break-all font-mono text-xs text-muted">{url}</p>
-      )}
+      {!compact && <p className="break-all font-mono text-xs text-muted">{url}</p>}
     </div>
   );
 }

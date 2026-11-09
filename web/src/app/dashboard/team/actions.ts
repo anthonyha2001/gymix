@@ -46,7 +46,7 @@ export async function inviteToGym(_prev: InviteState, formData: FormData): Promi
 
   refresh();
   return {
-    success: `Invite created for ${email} — send them the link on WhatsApp from Pending invites.`,
+    success: `Invite created for ${email} — copy their link from Pending invites.`,
   };
 }
 

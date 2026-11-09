@@ -156,7 +156,7 @@ export function PruneForm() {
   );
 }
 
-export function WhatsAppKeysForm({ tokenHint, phoneNumberId }: { tokenHint: string | null; phoneNumberId: string }) {
+export function WhatsAppKeysForm({ tokenHint, phoneNumberId, wabaId, secretSaved }: { tokenHint: string | null; phoneNumberId: string; wabaId: string; secretSaved: boolean }) {
   const [state, formAction, pending] = useActionState(saveWhatsAppKeys, {});
   return (
     <form action={formAction} className="space-y-4">
@@ -164,11 +164,17 @@ export function WhatsAppKeysForm({ tokenHint, phoneNumberId }: { tokenHint: stri
       <Field label="Phone number ID" hint="WhatsApp Manager → API setup. The long number under your Gymix phone number.">
         <input name="phone_number_id" inputMode="numeric" defaultValue={phoneNumberId} placeholder="123456789012345" className={inputClass} />
       </Field>
+      <Field label="WhatsApp Business account ID" hint="Lets Gymix create its message templates on this account.">
+        <input name="waba_id" inputMode="numeric" defaultValue={wabaId} placeholder="102345678901234" className={inputClass} />
+      </Field>
       <Field
         label="Access token"
         hint={tokenHint ? `Saved (ends in …${tokenHint}). Leave blank to keep it.` : "A permanent token from a system user in Meta Business settings."}
       >
         <input name="token" type="password" autoComplete="off" placeholder={tokenHint ? "••••••••" : "EAAG…"} className={inputClass} />
+      </Field>
+      <Field label="App secret" hint={secretSaved ? "Saved. Leave blank to keep it." : "Meta app → App settings → Basic. Needed for delivered and read ticks in each gym's log."}>
+        <input name="app_secret" type="password" autoComplete="off" placeholder={secretSaved ? "••••••••" : "32 letters and numbers"} className={inputClass} />
       </Field>
       <div className="flex items-center justify-end gap-3">
         {state.success && <span className="text-sm text-success">{state.success}</span>}

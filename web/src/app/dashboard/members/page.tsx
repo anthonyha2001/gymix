@@ -6,6 +6,8 @@ import { Plus, Search, UserRound } from "lucide-react";
 import { Dialog } from "@/components/dialog";
 import { Badge, Card, EmptyState, PageHeader, Skeleton, buttonClass, inputClass } from "@/components/ui";
 import { InviteShare } from "@/components/invite-share";
+import { whatsappReady } from "@/lib/whatsapp";
+import { sendInviteOnWhatsApp } from "@/app/whatsapp-actions";
 import { RouteModal } from "@/components/route-modal";
 import { memberInviteMessage } from "@/lib/invite-link";
 import { requestOrigin } from "@/lib/origin";
@@ -233,6 +235,7 @@ async function AddedDialog({ searchParams }: { searchParams: PageProps<"/dashboa
   ]);
   if (!member) return null;
   const url = invite ? `${await requestOrigin()}/join/${invite.token}` : null;
+  const whatsapp = await whatsappReady(membership.gymId);
 
   return (
     <RouteModal param="added" title={`${member.full_name} added`} description="Next: invite them to the member app, or open their profile to sell a membership." size="md">
@@ -240,7 +243,7 @@ async function AddedDialog({ searchParams }: { searchParams: PageProps<"/dashboa
         {url && (
           <div className="space-y-2">
             <p className="text-sm font-medium">Send the member app invite</p>
-            <InviteShare url={url} message={memberInviteMessage(member.full_name.split(" ")[0], membership.gymName, url)} phone={member.phone} />
+            <InviteShare url={url} message={memberInviteMessage(member.full_name.split(" ")[0], membership.gymName, url)} phone={member.phone} send={whatsapp ? sendInviteOnWhatsApp.bind(null, member.id) : undefined} />
           </div>
         )}
         <Link href={`/dashboard/members/${member.id}`} className={buttonClass("primary", "w-full")}>

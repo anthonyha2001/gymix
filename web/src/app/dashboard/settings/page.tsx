@@ -12,10 +12,11 @@ import { ActionButton } from "../members/action-button";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { rotateStickerLink, setTapSimulator } from "./actions";
 import { CopyLink, PortalPagesForm, SettingsForm } from "./settings-form";
+import { WhatsAppPanel } from "./whatsapp-panel";
 
 export const metadata: Metadata = { title: "Settings" };
 
-const TABS = ["gym", "app", "checkin", "subscription"] as const;
+const TABS = ["gym", "app", "whatsapp", "checkin", "subscription"] as const;
 
 export default function SettingsPage({ searchParams }: PageProps<"/dashboard/settings">) {
   return (
@@ -29,7 +30,8 @@ export default function SettingsPage({ searchParams }: PageProps<"/dashboard/set
 }
 
 async function SettingsContent({ searchParams }: { searchParams: PageProps<"/dashboard/settings">["searchParams"] }) {
-  const tab = activeTab((await searchParams).tab, TABS);
+  const query = await searchParams;
+  const tab = activeTab(query.tab, TABS);
   const { membership } = await requireStaff(["owner"]);
   const supabase = await createClient();
   const [{ data: token }, { data: gym }] = await Promise.all([
@@ -48,10 +50,20 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
         tabs={[
           { id: "gym", label: "Gym" },
           { id: "app", label: "Member app" },
+          { id: "whatsapp", label: "WhatsApp" },
           { id: "checkin", label: "Check-in sticker" },
           { id: "subscription", label: "Subscription" },
         ]}
       />
+      <TabPanel id="whatsapp" tabs={TABS}>
+        <Suspense fallback={<Skeleton className="h-[600px]" />}>
+          <WhatsAppPanel
+            gymId={membership.gymId}
+            timeZone={membership.timezone}
+            query={{ kind: str(query.kind), status: str(query.status), page: str(query.page) }}
+          />
+        </Suspense>
+      </TabPanel>
       <TabPanel id="subscription" tabs={TABS}>{<SubscriptionPanel gymId={membership.gymId} gymName={membership.gymName} />}</TabPanel>
 
       <TabPanel id="gym" tabs={TABS}>{(
@@ -151,3 +163,5 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
     </>
   );
 }
+
+const str = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
