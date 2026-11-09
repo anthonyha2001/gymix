@@ -280,3 +280,152 @@ dialog[open]:not(.sheet)::backdrop { animation: sheet-fade 200ms ease-out; }
 @media (prefers-reduced-motion: reduce) {
   .tap-waves { display: none; }
 }
+
+/* Opening screen (components/splash.tsx). Ink background, the lime tile
+   settles, the G draws, the tap waves follow, a ring ripples out, the wordmark
+   rises; then the whole screen lifts away into the page. */
+#gx-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #0d1117;
+  color: #fff;
+}
+html[data-splash="skip"] #gx-splash { display: none; }
+html[data-splash="leaving"] #gx-splash {
+  pointer-events: none;
+  animation: gx-splash-leave 650ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+html[data-splash="leaving"] .gx-splash-stage { animation: gx-splash-stage-out 650ms cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+/* No JavaScript at all: leave on a timer. */
+html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic-bezier(0.65, 0, 0.35, 1) forwards; pointer-events: none; }
+@media print { #gx-splash { display: none; } }
+
+.gx-splash-glow {
+  position: absolute;
+  width: 34rem;
+  height: 34rem;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(200 241 53 / 0.16), rgb(200 241 53 / 0.05) 55%, transparent);
+  opacity: 0;
+  animation: gx-splash-glow 2.4s 0.2s ease-out forwards;
+}
+.gx-splash-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.gx-splash-tile {
+  position: relative;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 22%;
+  background: #c8f135;
+  color: #0d1117;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), 0 18px 50px -12px rgb(200 241 53 / 0.45);
+  opacity: 0;
+  transform: scale(0.72);
+  animation: gx-splash-tile 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.gx-splash-mark { position: absolute; inset: 0; width: 100%; height: 100%; }
+.gx-splash-mark path { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+.gx-splash-p0 { animation: gx-splash-draw 850ms 280ms cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+.gx-splash-p1, .gx-splash-p2 { opacity: 0; }
+.gx-splash-p1 { animation: gx-splash-draw 420ms 960ms cubic-bezier(0.33, 1, 0.68, 1) forwards, gx-splash-in 1ms 960ms forwards; }
+.gx-splash-p2 { animation: gx-splash-draw 480ms 1100ms cubic-bezier(0.33, 1, 0.68, 1) forwards, gx-splash-in 1ms 1100ms forwards; }
+.gx-splash-echo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: #c8f135;
+}
+.gx-splash-echo path { opacity: 0; animation: gx-splash-echo 1.6s cubic-bezier(0.33, 1, 0.68, 1) infinite; }
+.gx-splash-e0 { --peak: 0.95; animation-delay: 1.5s !important; }
+.gx-splash-e1 { --peak: 0.6; animation-delay: 1.68s !important; }
+.gx-splash-e2 { --peak: 0.32; animation-delay: 1.86s !important; }
+.gx-splash-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+.gx-splash-sheen::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  width: 45%;
+  left: -60%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  transform: skewX(-12deg);
+  animation: gx-splash-sheen 900ms 1350ms cubic-bezier(0.45, 0, 0.25, 1) forwards;
+}
+.gx-splash-word {
+  margin-top: 1.25rem;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transform: translateY(8px);
+  filter: blur(4px);
+  animation: gx-splash-word 800ms 1050ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+/* Only seen if the page is still loading after the drawing. */
+.gx-splash-bar {
+  position: relative;
+  margin-top: 1.5rem;
+  width: 4.5rem;
+  height: 2px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.08);
+  opacity: 0;
+  animation: gx-splash-in 400ms 2.1s ease-out forwards;
+}
+.gx-splash-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  border-radius: inherit;
+  background: #c8f135;
+  animation: gx-splash-bar 1.1s 2.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  transform: translateX(-100%);
+}
+
+@keyframes gx-splash-tile {
+  0% { opacity: 0; transform: scale(0.72); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes gx-splash-draw { to { stroke-dashoffset: 0; } }
+@keyframes gx-splash-in { to { opacity: 1; } }
+@keyframes gx-splash-echo {
+  0% { opacity: 0; }
+  18% { opacity: var(--peak); }
+  55%, 100% { opacity: 0; }
+}
+@keyframes gx-splash-sheen { to { left: 130%; } }
+@keyframes gx-splash-word { to { opacity: 1; transform: none; filter: none; letter-spacing: -0.01em; } }
+@keyframes gx-splash-glow {
+  0% { opacity: 0; transform: scale(0.6); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes gx-splash-bar { to { transform: translateX(250%); } }
+@keyframes gx-splash-leave { to { opacity: 0; visibility: hidden; } }
+@keyframes gx-splash-stage-out { to { transform: scale(1.06); filter: blur(2px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  #gx-splash *, #gx-splash *::after { animation: none !important; }
+  .gx-splash-tile, .gx-splash-word, .gx-splash-p1, .gx-splash-p2 { opacity: 1; transform: none; filter: none; }
+  .gx-splash-mark path { stroke-dashoffset: 0; }
+  .gx-splash-glow, .gx-splash-echo, .gx-splash-bar { display: none; }
+  html[data-splash="leaving"] #gx-splash { animation: gx-splash-leave 300ms linear forwards; }
+}
