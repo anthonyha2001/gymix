@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gymix · The Receipt (viral reel)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,900&family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@500;700&family=Courier+Prime:wght@400;700&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --ink: #0d1117; --paper: #f6f3ea; --red: #c0362c; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; font-family: Geist, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #fff; }
+  #stage { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 85%, #1d2416, var(--ink) 65%); }
+  #cam { position: absolute; inset: -60px; }
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 60px; visibility: hidden; }
+  .grid { position: absolute; inset: -200px; background-image: linear-gradient(rgb(255 255 255 / 0.035) 2px, transparent 2px), linear-gradient(90deg, rgb(255 255 255 / 0.035) 2px, transparent 2px); background-size: 90px 90px; }
+  .big { font-weight: 900; letter-spacing: -0.05em; line-height: 0.92; }
+  .serif { font-family: Fraunces, Georgia, serif; font-style: italic; font-weight: 900; letter-spacing: -0.03em; }
+  .mono { font-family: "Geist Mono", monospace; }
+  /* the printer and the paper */
+  .slotbox { position: absolute; left: 0; right: 0; top: 0; height: 1540px; overflow: hidden; }
+  .paper { position: absolute; left: 150px; width: 780px; background: linear-gradient(90deg, #eeeadf, var(--paper) 12%, var(--paper) 88%, #ebe7db); color: #1a1a1a; font-family: "Courier Prime", "Courier New", monospace; padding: 70px 54px 40px; box-shadow: 0 30px 80px rgb(0 0 0 / 0.5);
+    -webkit-mask: linear-gradient(#000, #000) 0 22px / 100% calc(100% - 22px) no-repeat, conic-gradient(from -45deg at 50% 22px, #000 90deg, transparent 0) 0 0 / 44px 22px repeat-x; }
+  .paper .row { display: flex; align-items: baseline; gap: 12px; font-size: 34px; line-height: 1.25; padding: 10px 0; }
+  .paper .row .l { white-space: nowrap; }
+  .paper .row .dots { flex: 1; border-bottom: 3px dotted #9a958a; transform: translateY(-8px); }
+  .paper .row .r { white-space: nowrap; font-weight: 700; }
+  .paper .hd { text-align: center; font-size: 36px; font-weight: 700; letter-spacing: 0.08em; }
+  .paper .sub { text-align: center; font-size: 26px; color: #6a665d; margin-top: 6px; }
+  .paper .rule { border-top: 3px dashed #9a958a; margin: 22px 0; }
+  .paper .tot { display: flex; justify-content: space-between; font-size: 52px; font-weight: 700; padding: 8px 0; }
+  .paper .small { font-size: 24px; color: #6a665d; text-align: center; margin-top: 18px; }
+  .printer { position: absolute; left: 90px; width: 900px; top: 1510px; height: 300px; border-radius: 46px 46px 70px 70px; background: linear-gradient(#2b323d, #161b22); box-shadow: 0 -10px 40px rgb(0 0 0 / 0.5), inset 0 2px 0 rgb(255 255 255 / 0.08); z-index: 5; }
+  .printer .slot { position: absolute; left: 50px; right: 50px; top: 24px; height: 18px; border-radius: 9px; background: #05070a; box-shadow: inset 0 3px 6px #000; }
+  .printer .led { position: absolute; right: 90px; top: 110px; width: 22px; height: 22px; border-radius: 50%; }
+  .printer .brand { position: absolute; left: 90px; top: 96px; font-family: "Geist Mono", monospace; font-size: 30px; font-weight: 700; letter-spacing: 0.2em; color: rgb(255 255 255 / 0.35); }
+  #fx { position: absolute; inset: 0; pointer-events: none; z-index: 40; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 45; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="cam">
+  <div id="grid" class="grid"></div>
+
+  <!-- hook -->
+  <div id="sHook" class="layer">
+    <div id="h0" class="abs mono" style="left: 90px; top: 420px; font-size: 40px; font-weight: 700; letter-spacing: 0.18em; color: var(--lime)">GYM OWNERS</div>
+    <div id="h1" class="abs big" style="left: 90px; right: 60px; top: 490px; font-size: 128px">This is what your gym <span style="color: var(--lime)">really</span> costs you.</div>
+    <div id="h2" class="abs" style="left: 90px; top: 1000px; font-size: 44px; font-weight: 600; color: rgb(255 255 255 / 0.65)">Every month. Itemized.</div>
+  </div>
+
+  <!-- receipt 1 -->
+  <div id="sR1" class="layer">
+    <div class="slotbox"><div id="p1" class="paper"></div></div>
+  </div>
+  <!-- receipt 2 -->
+  <div id="sR2" class="layer">
+    <div class="slotbox"><div id="p2" class="paper"></div></div>
+  </div>
+
+  <!-- the printer (shared) -->
+  <div id="printer" class="printer" style="visibility:hidden"><div class="slot"></div><div class="brand">MONTH-END · PRINT</div><div id="led" class="led" style="background:#ff4d4d; box-shadow: 0 0 20px #ff4d4d"></div></div>
+
+  <!-- the year -->
+  <div id="sYear" class="layer" style="display:flex; flex-direction:column; justify-content:center; padding: 0 90px">
+    <div id="y1" style="font-size: 60px; font-weight: 700; color: rgb(255 255 255 / 0.7)">That's</div>
+    <div id="y2" class="big" style="font-size: 260px; color: #ff6b5e; letter-spacing: -0.07em"><span id="yN">$0</span></div>
+    <div id="y3" class="big" style="font-size: 110px">a year.</div>
+    <div id="y4" style="margin-top: 40px; font-size: 44px; font-weight: 600; color: rgb(255 255 255 / 0.65)">Plus 192 hours of your life.</div>
+  </div>
+
+  <!-- bridge -->
+  <div id="sBridge" class="layer" style="display:flex; align-items:center; justify-content:center; text-align:center">
+    <div id="b1" class="big" style="font-size: 120px">Now the <span class="serif" style="color: var(--lime)">other</span> receipt.</div>
+  </div>
+
+  <!-- outro -->
+  <div id="sOut" class="layer" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 40px; text-align:center">
+    <div id="o1" style="width: 260px; height: 260px; border-radius: 22%; background: var(--lime); display:grid; place-items:center; box-shadow: 0 30px 100px rgb(200 241 53 / 0.45)">
+      <svg viewBox="0 0 100 100" width="234" height="234"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path id="op1" pathLength="1" d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path id="op2" pathLength="1" d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path id="op3" pathLength="1" d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="o2" class="big" style="font-size: 130px">Gymix</div>
+    <div id="o3" style="font-size: 58px; font-weight: 800; letter-spacing: -0.02em; padding: 0 70px; line-height: 1.12">What does <span style="color: var(--lime)">your</span> gym's<br>receipt say?</div>
+    <div id="o4" style="margin-top: 10px; display:inline-flex; padding: 26px 46px; border-radius: 999px; background: var(--lime); color: var(--ink); font-size: 44px; font-weight: 800">Try the live demo · link in bio</div>
+    <div id="o5" class="mono" style="font-size: 24px; color: rgb(255 255 255 / 0.4); letter-spacing: 0.06em">Illustration: example gym, 80 members, $45/month</div>
+  </div>
+ </div>
+ <canvas id="fx" width="1080" height="1920"></canvas>
+ <div id="flash"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const back = (x) => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const vis = (el, on) => (el.style.visibility = on ? "visible" : "hidden");
+const rise = (el, t, at, dur = 0.3, dist = 70) => {
+  const p = eo(prog(t, at, at + dur));
+  el.style.opacity = p;
+  el.style.transform = `translateY(${lerp(dist, 0, p)}px)`;
+  el.style.filter = p < 1 ? `blur(${lerp(12, 0, p)}px)` : "none";
+};
+const rng = (seed) => () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+
+// ---------------------------------------------------------------- timing (110 bpm, laid-back groove)
+const B = 60 / 110, BAR = 4 * B;
+const T_R1 = 2 * BAR;                 // receipt 1 starts printing
+const SLOT = 1534;                    // where paper leaves the printer (inside the slotbox)
+
+// receipt 1: [html, beats to print]
+const R1 = [
+  [`<div class="hd">YOUR GYM</div><div class="sub">Monthly report · November</div><div class="rule"></div>`, 1],
+  [row(`"I'll pay next week"`, "$135"), 1],
+  [row("Expired, still training", "$90"), 1],
+  [row("Wrong lira rate ×30", "$48"), 1],
+  [row("Notebook page 47", "$45"), 1],
+  [row("Cash that \"went somewhere\"", "$60"), 1],
+  [`<div class="rule"></div>`, 0.5],
+  [row("Chasing payments", "9 h"), 1],
+  [row(`"Kam el sa3er lyom?"`, "4 h"), 1],
+  [row("Checking who expired", "3 h"), 1],
+  [row("Your weekend", "gone"), 1],
+  [`<div class="rule"></div><div class="tot"><span>TOTAL</span><span style="color:#c0362c">$378</span></div><div class="tot" style="font-size:40px"><span>+ TIME</span><span>16 h</span></div><div class="small">*** THANK YOU FOR NOT HAVING A SYSTEM ***</div>`, 2],
+];
+const R2 = [
+  [`<div class="hd" style="display:flex; align-items:center; justify-content:center; gap: 16px"><span style="display:inline-grid; place-items:center; width:54px; height:54px; border-radius:14px; background:#c8f135"><svg viewBox="0 0 100 100" width="46" height="46"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg></span>GYMIX</div><div class="sub">Same gym · same month</div><div class="rule"></div>`, 1],
+  [row("Unpaid members", "auto-frozen"), 1],
+  [row("Lira rate", "set once"), 1],
+  [row("Who owes what", "1 screen"), 1],
+  [row("Check-ins", "1 tap"), 1],
+  [`<div class="rule"></div><div class="tot"><span>TOTAL</span><span>$19.99</span></div><div class="tot" style="font-size:40px; color:#1f7a3f"><span>CHANGE</span><span>your weekends back</span></div><div class="small">*** WHOLE GYM · UNLIMITED MEMBERS ***</div>`, 2],
+];
+function row(l, r) { return `<div class="row"><span class="l">${l}</span><span class="dots"></span><span class="r">${r}</span></div>`; }
+
+// Build each paper, then measure where every chunk ends (so printing reveals it exactly).
+function build(id, rows) {
+  const el = $(id);
+  el.innerHTML = rows.map((r, i) => `<div data-i="${i}">${r[0]}</div>`).join("");
+  return el;
+}
+const P1 = build("p1", R1), P2 = build("p2", R2);
+function marks(paper, rows, t0) {
+  let at = t0;
+  const kids = [...paper.children];
+  return rows.map((r, i) => {
+    const bottom = kids[i].offsetTop + kids[i].offsetHeight;
+    const m = { at, end: at + Math.max(0.25, r[1] * B * 0.8), bottom };
+    at += r[1] * B;
+    return m;
+  });
+}
+let M1, M2, T_YEAR, T_BRIDGE, T_R2, T_OUT;
+function layout() {
+  M1 = marks(P1, R1, T_R1);
+  T_YEAR = M1[M1.length - 1].at + 2 * B + B;     // a beat after the total lands
+  T_BRIDGE = T_YEAR + 2 * BAR;
+  T_R2 = T_BRIDGE + BAR;
+  M2 = marks(P2, R2, T_R2);
+  T_OUT = M2[M2.length - 1].at + 2 * B + 2 * B;
+  window.DURATION = T_OUT + 4.6;
+}
+layout();
+
+// how much paper has come out at time t
+function printed(M, paper, t) {
+  let px = 70;
+  for (const m of M) {
+    if (t < m.at) break;
+    const p = eo(prog(t, m.at, m.end));
+    const prev = px;
+    px = lerp(prev, m.bottom + 40, p);
+    if (p < 1) break;
+  }
+  return px;
+}
+
+// ---------------------------------------------------------------- particles (paper bits + money)
+const fx = $("fx"), ctx = fx.getContext("2d");
+let BURSTS = [];
+function makeBursts() {
+  BURSTS = [
+    { at: T_YEAR, cx: 540, cy: 900, n: 70, col: ["#ff6b5e", "#ffffff"], kind: "bill" },
+    { at: T_BRIDGE - 0.05, cx: 540, cy: 600, n: 90, col: ["#f6f3ea", "#e3dfd4"], kind: "paper" },
+    { at: T_OUT, cx: 540, cy: 760, n: 90, col: ["#c8f135", "#ffffff"], kind: "conf" },
+  ].map((b, k) => { const r = rng(900 + k * 13); return { ...b, list: Array.from({ length: b.n }, () => ({ a: r() * Math.PI * 2, v: 600 + r() * 1800, w: b.kind === "bill" ? 70 : 16 + r() * 40, h: b.kind === "bill" ? 36 : 10 + r() * 26, rot: r() * 6, vr: (r() - 0.5) * 14, c: b.col[Math.floor(r() * b.col.length)] })) }; });
+}
+makeBursts();
+function drawFx(t) {
+  ctx.clearRect(0, 0, 1080, 1920);
+  BURSTS.forEach((b) => {
+    const dt = t - b.at;
+    if (dt < 0 || dt > 1.8) return;
+    b.list.forEach((p) => {
+      ctx.save();
+      ctx.translate(b.cx + Math.cos(p.a) * p.v * dt, b.cy + Math.sin(p.a) * p.v * dt + 1300 * dt * dt);
+      ctx.rotate(p.rot + p.vr * dt);
+      ctx.globalAlpha = Math.max(0, 1 - dt / 1.6);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      if (b.kind === "bill") { ctx.fillStyle = "rgb(0 0 0 / 0.25)"; ctx.font = "bold 22px monospace"; ctx.fillText("$", -6, 8); }
+      ctx.restore();
+    });
+  });
+}
+
+// ---------------------------------------------------------------- render
+let laidOut = false;
+window.renderAt = function (t) {
+  if (!laidOut) { layout(); makeBursts(); laidOut = true; }
+  const beatPh = (t % B) / B;
+  let sx = 0, sy = 0, flash = 0, zoom = 0;
+  [T_YEAR, T_BRIDGE - 0.05, T_OUT].forEach((at, k) => { const dt = t - at; if (dt >= 0 && dt < 0.7) { const a = Math.exp(-dt * 8); sx += Math.sin(dt * 70 + k) * 36 * a; sy += Math.cos(dt * 60) * 26 * a; zoom += a * 0.05; flash = Math.max(flash, Math.exp(-dt * 16) * 0.6); } });
+  // printer rumble while printing
+  const printing = (M, t) => M.some((m) => t >= m.at && t < m.end);
+  const rumble = (M1 && printing(M1, t)) || (M2 && printing(M2, t)) ? 1 : 0;
+  sx += Math.sin(t * 120) * 2.5 * rumble; sy += Math.cos(t * 97) * 2 * rumble;
+  $("cam").style.transform = `translate(${sx}px, ${sy}px) scale(${1 + zoom + (t > T_R2 && t < T_OUT ? Math.exp(-beatPh * 6) * 0.008 : 0)})`;
+  $("grid").style.transform = `translateY(${(-t * 40) % 90}px)`;
+  $("flash").style.opacity = flash;
+  drawFx(t);
+
+  // hook
+  const hk = t < T_R1;
+  vis($("sHook"), hk);
+  if (hk) {
+    rise($("h0"), t, 0.05, 0.3, 30); rise($("h1"), t, 0.25, 0.45); rise($("h2"), t, 1.4, 0.4, 40);
+    $("sHook").style.opacity = 1 - prog(t, T_R1 - 0.25, T_R1);
+  }
+
+  // printer: in during receipts
+  const prOn = t >= T_R1 - 0.5 && t < T_YEAR + 0.4 || t >= T_R2 - 0.5 && t < T_OUT;
+  vis($("printer"), prOn);
+  if (prOn) {
+    const inA = t < T_YEAR ? eo(prog(t, T_R1 - 0.5, T_R1)) : eo(prog(t, T_R2 - 0.5, T_R2));
+    const outA = t >= T_YEAR && t < T_R2 ? eio(prog(t, T_YEAR, T_YEAR + 0.4)) : t >= T_OUT - 0.4 ? eio(prog(t, T_OUT - 0.4, T_OUT)) : 0;
+    $("printer").style.transform = `translateY(${lerp(400, 0, inA) + outA * 500}px)`;
+    const green = t >= T_R2 - 0.5;
+    $("led").style.background = green ? "#c8f135" : "#ff4d4d";
+    $("led").style.boxShadow = `0 0 ${rumble ? 30 : 12}px ${green ? "#c8f135" : "#ff4d4d"}`;
+  }
+
+  // receipt 1
+  const r1 = t >= T_R1 && t < T_BRIDGE;
+  vis($("sR1"), r1);
+  if (r1) {
+    const px = printed(M1, P1, t);
+    let top = SLOT - px;
+    // after the total: the paper tears off and flies away (at the bridge)
+    top -= eio(prog(t, T_YEAR - 0.75, T_YEAR - 0.15)) * 230;
+    $("p1").style.top = top + "px";
+    const yearOut = eio(prog(t, T_YEAR, T_YEAR + 0.4));
+    $("sR1").style.opacity = 1 - yearOut * 0.85;
+    const rip1 = eio(prog(t, T_BRIDGE - 0.35, T_BRIDGE));
+    $("p1").style.transform = `translateY(${-rip1 * 1600}px) scale(${1 - yearOut * 0.08}) rotate(${-yearOut * 3 - rip1 * 14}deg)`;
+    $("p1").style.filter = yearOut > 0 ? `blur(${yearOut * 6}px)` : "none";
+  }
+
+  // the year
+  const yr = t >= T_YEAR && t < T_BRIDGE;
+  vis($("sYear"), yr);
+  if (yr) {
+    const lt = t - T_YEAR;
+    rise($("y1"), lt, 0.1, 0.25, 30);
+    const p = back(prog(lt, 0.25, 0.6));
+    $("y2").style.opacity = prog(lt, 0.25, 0.35);
+    $("y2").style.transform = `scale(${lerp(0.6, 1, p)})`; $("y2").style.transformOrigin = "left center";
+    $("yN").textContent = "$" + Math.round(4536 * eo(prog(lt, 0.25, 1.4))).toLocaleString("en-US");
+    rise($("y3"), lt, 0.7); rise($("y4"), lt, 1.3, 0.4, 40);
+    // tear away: the whole thing rips upward at the bridge
+    const rip = eio(prog(t, T_BRIDGE - 0.3, T_BRIDGE));
+    $("sYear").style.transform = `translateY(${-rip * 1200}px) rotate(${-rip * 8}deg)`;
+  }
+
+  // bridge
+  const br = t >= T_BRIDGE && t < T_R2;
+  vis($("sBridge"), br);
+  if (br) {
+    const lt = t - T_BRIDGE;
+    const p = back(prog(lt, 0.05, 0.4));
+    $("b1").style.opacity = prog(lt, 0.05, 0.15);
+    $("b1").style.transform = `scale(${lerp(1.5, 1, p)})`;
+    $("sBridge").style.opacity = 1 - prog(t, T_R2 - 0.25, T_R2);
+  }
+
+  // receipt 2
+  const r2 = t >= T_R2 && t < T_OUT;
+  vis($("sR2"), r2);
+  if (r2) {
+    const px = printed(M2, P2, t);
+    $("p2").style.top = (SLOT - px) + "px";
+    // lift the finished receipt toward the centre at the end
+    const lift = eio(prog(t, T_OUT - 0.9, T_OUT - 0.3));
+    $("p2").style.transform = `translateY(${-lift * 160}px) rotate(${lift * 2}deg)`;
+    $("sR2").style.opacity = 1 - prog(t, T_OUT - 0.2, T_OUT);
+  }
+
+  // outro
+  const ou = t >= T_OUT;
+  vis($("sOut"), ou);
+  if (ou) {
+    const lt = t - T_OUT;
+    const p = back(prog(lt, 0, 0.45));
+    $("o1").style.transform = `scale(${lerp(0.3, 1, p)}) rotate(${lerp(-25, 0, eo(prog(lt, 0, 0.5)))}deg)`;
+    $("o1").style.opacity = prog(lt, 0, 0.1);
+    [["op1", 0.05, 0.6], ["op2", 0.5, 0.8], ["op3", 0.62, 0.95]].forEach(([id, a, b]) => { const el = $(id); el.style.strokeDasharray = "1 1"; el.style.strokeDashoffset = 1 - eio(prog(lt, a, b)); });
+    rise($("o2"), lt, 0.45); rise($("o3"), lt, 0.8); rise($("o4"), lt, 1.2); rise($("o5"), lt, 1.5, 0.4, 20);
+    if (lt > 1.6) $("o4").style.transform = `scale(${1 + Math.exp(-((lt - 1.6) % B) / B * 6) * 0.04})`;
+  }
+};
+
+// ---------------------------------------------------------------- the track (110 bpm, warm minor groove → major lift)
+window.renderAt(0);
+const A = [];
+const bars = (from, to, fn) => { for (let b = from; b < to; b++) fn(b * BAR, b); };
+const END = window.DURATION;
+// hook: a soft pad and a register "open" click
+A.push({ k: "pad", at: 0, dur: T_R1 + 0.3, notes: [52, 55, 59], gain: 0.9 });
+A.push({ k: "stamp", at: 0.25, gain: 0.5 });
+A.push({ k: "riser", at: BAR, dur: BAR, gain: 0.6 });
+// receipt 1: E minor groove (Em, C, G, D), a printer "burr" on every line, a pluck per amount
+const PRG = [[40, [55, 59, 64]], [36, [55, 60, 64]], [43, [55, 59, 62]], [38, [54, 57, 62]]];
+bars(2, Math.ceil(T_YEAR / BAR), (s, b) => {
+  const [root, ch] = PRG[b % 4];
+  A.push({ k: "kick", at: s, gain: 0.9 }); A.push({ k: "kick", at: s + 2.5 * B, gain: 0.7 });
+  A.push({ k: "snare", at: s + B, gain: 0.7 }); A.push({ k: "snare", at: s + 3 * B, gain: 0.7 });
+  for (let e = 0; e < 8; e++) A.push({ k: "hat", at: s + e * B / 2, gain: e % 2 ? 0.45 : 0.3 });
+  A.push({ k: "bass", at: s, dur: B * 1.5, note: root - 12, gain: 0.85 }); A.push({ k: "bass", at: s + 2 * B, dur: B * 1.5, note: root - 12, gain: 0.75 });
+  A.push({ k: "pad", at: s, dur: BAR + 0.1, notes: ch, gain: 0.55 });
+});
+M1.forEach((m, i) => {
+  for (let k = 0; k < 7; k++) A.push({ k: "hat", at: m.at + k * 0.045, gain: 0.55 });   // the print head
+  if (i > 0 && i < R1.length - 1 && R1[i][1] >= 1) A.push({ k: "pluck", at: m.end - 0.05, note: [71, 74, 76, 79, 76, 0, 67, 69, 71, 64][i - 1] || 72, gain: 0.6 });
+});
+A.push({ k: "impact", at: M1[M1.length - 1].end, gain: 0.7 }); A.push({ k: "buzz", at: M1[M1.length - 1].end, gain: 0.6 });
+// the year: a heavy hit, money noise, a falling bass
+A.push({ k: "impact", at: T_YEAR, gain: 1 }); A.push({ k: "shatter", at: T_YEAR, gain: 0.5 });
+A.push({ k: "bass", at: T_YEAR, dur: BAR, note: 28, gain: 1 });
+A.push({ k: "pad", at: T_YEAR, dur: 2 * BAR, notes: [52, 55, 58], gain: 0.9 });
+for (let k = 0; k < 10; k++) A.push({ k: "pluck", at: T_YEAR + 0.25 + k * 0.1, note: 60 + k * 2, gain: 0.35 });
+A.push({ k: "riser", at: T_BRIDGE - BAR, dur: BAR, gain: 0.8 });
+// the tear
+A.push({ k: "whoosh", at: T_BRIDGE - 0.35, dur: 0.4, gain: 1 }); A.push({ k: "shatter", at: T_BRIDGE - 0.05, gain: 0.7 });
+// bridge: a bell, silence-ish
+A.push({ k: "bell", at: T_BRIDGE + 0.05, note: 76, gain: 1 }); A.push({ k: "bell", at: T_BRIDGE + 0.35, note: 83, gain: 0.7 });
+A.push({ k: "pad", at: T_BRIDGE, dur: BAR + 0.2, notes: [55, 59, 62, 67], gain: 1 });
+// receipt 2: G major, brighter, steady four-on-the-floor
+const PRG2 = [[43, [62, 67, 71]], [38, [62, 66, 69]], [40, [59, 64, 67]], [36, [60, 64, 67]]];
+bars(Math.floor(T_R2 / BAR), Math.ceil(T_OUT / BAR), (s, b) => {
+  const [root, ch] = PRG2[b % 4];
+  for (let q = 0; q < 4; q++) A.push({ k: "kick", at: s + q * B, gain: 0.95 });
+  A.push({ k: "snare", at: s + B, gain: 0.75 }); A.push({ k: "snare", at: s + 3 * B, gain: 0.75 });
+  for (let e = 0; e < 8; e++) A.push({ k: "hat", at: s + e * B / 2 + B / 4, gain: e % 2 ? 0.6 : 0.4 });
+  for (let e = 0; e < 8; e++) A.push({ k: "bass", at: s + e * B / 2, dur: B / 2 - 0.03, note: root - 12 + (e % 4 === 3 ? 12 : 0), gain: 0.8 });
+  A.push({ k: "stab", at: s, notes: ch, gain: 0.9 });
+});
+M2.forEach((m, i) => { for (let k = 0; k < 6; k++) A.push({ k: "hat", at: m.at + k * 0.045, gain: 0.5 }); if (i > 0) A.push({ k: "pluck", at: m.end - 0.05, note: [79, 81, 83, 86, 91][i - 1] || 84, gain: 0.8 }); });
+// ka-ching on the total
+const kc = M2[M2.length - 1].end;
+A.push({ k: "bell", at: kc, note: 96, gain: 1 }); A.push({ k: "bell", at: kc + 0.09, note: 100, gain: 0.9 }); A.push({ k: "stamp", at: kc, gain: 0.6 });
+// outro
+A.push({ k: "impact", at: T_OUT, gain: 1 });
+[67, 74, 79].forEach((n, i) => A.push({ k: "bell", at: T_OUT + 0.05 + i * 0.22, note: n, gain: 1 - i * 0.15 }));
+A.push({ k: "pad", at: T_OUT, dur: END - T_OUT, notes: [55, 59, 62, 67], gain: 1.1 });
+for (let q = 0; q < 4; q++) { A.push({ k: "kick", at: T_OUT + BAR + q * B, gain: 0.6 }); A.push({ k: "hat", at: T_OUT + BAR + q * B + B / 2, gain: 0.35 }); }
+A.push({ k: "bass", at: T_OUT, dur: BAR * 2, note: 31, gain: 0.7 });
+window.AUDIO = A;
+</script>
+</body>
+</html>
