@@ -118,6 +118,26 @@ number every owner sees on Settings, Subscription. A few days (the grace period,
   `drop_animation`, `self_pause`, `access_control` (lab), `live_occupancy` (lab), `pos` (lab), `screens` (lab),
   `self_service` (lab).
 
+## Live demo (`/demo`)
+
+"Start the demo" gives each visitor a private sample gym in the real app, **Atlas Fitness**, signed in as its
+owner: 25 members (active, ending soon, expired, paused, owing), payments, three weeks of check-ins, classes with
+bookings, a program with logged workouts, measurements, a shop with sales, a chat and a TV screen.
+
+- **Built by** `create_demo_gym()` (`supabase/migrations/20261110090000_demo_gyms.sql`), which runs the app's own
+  functions as the owner, then dates the history back. Two sign-ins per gym (`@demo.gymix.invalid`), with passwords
+  derived from the email and the service key (`web/src/lib/demo.ts`), so nothing is stored.
+- **Guide** (`web/src/components/demo-guide.tsx`, stops in `web/src/lib/demo-guide.ts`): a card on every page saying
+  what it's for and what to try with the sample data, and the next stop's links pulse. Only pages in the gym's menu
+  are included, so lab features join the tour once they're switched on for everyone. The bar on top switches to the
+  sample member's app (Karim) and back, starts a real trial, or exits.
+- **Safe**: WhatsApp messages are logged as delivered but never sent; connecting a real WhatsApp number and changing
+  the sample sign-ins' passwords are refused; sample gyms are left out of the admin gym list and lab.
+- **Limits and cleanup**: 5 demos per visitor per hour and 400 a day (`demo_starts`). Each gym is deleted after
+  24 hours (each new demo cleans up a few, plus the daily `/api/cron/demo`), or straight away on Exit or "Start my
+  free trial".
+- Tests: `supabase/tests/demo_test.sql`.
+
 ## Self-service reception
 
 Dashboard → **Reception** (front desk and up, feature `self_service`). A kiosk link, `/kiosk/<token>`, opens on a

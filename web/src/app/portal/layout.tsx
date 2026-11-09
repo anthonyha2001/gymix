@@ -12,6 +12,7 @@ import { InstallPrompt } from "@/components/install-prompt";
 import { ShakeQuickStart } from "@/components/shake-quick-start";
 import { DropCatch } from "@/components/drop-catch";
 import { SupportBanner } from "@/components/support-banner";
+import { DemoChrome } from "@/components/demo-chrome";
 import { hasFeature } from "@/lib/features";
 import { MotionGestures } from "@/components/motion-gestures";
 import { QrScanButton } from "@/components/qr-scanner";
@@ -41,6 +42,9 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
         </div>
       </header>
       <main className="press mx-auto w-full max-w-3xl flex-1 px-4 pt-6 pb-[calc(var(--bottom-bar)+1.5rem)]">
+        <Suspense fallback={null}>
+          <DemoChrome area="member" />
+        </Suspense>
         <Suspense fallback={null}>
           <SupportBanner />
         </Suspense>

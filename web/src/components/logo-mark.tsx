@@ -9,12 +9,13 @@ export const MARK_PATHS = [
 // Nudges the drawing to the optical centre of the square.
 export const MARK_TRANSFORM = "translate(3,-1.5)";
 
-export function LogoMark({ className = "" }: { className?: string }) {
+// drawable: each path has length 1, so CSS can draw it with stroke-dashoffset.
+export function LogoMark({ className = "", drawable = false }: { className?: string; drawable?: boolean }) {
   return (
     <svg viewBox="0 0 100 100" aria-hidden className={className}>
       <g transform={MARK_TRANSFORM} fill="none" stroke="currentColor" strokeLinejoin="round">
         {MARK_PATHS.map((p) => (
-          <path key={p.d} d={p.d} strokeWidth={p.width} strokeLinecap={p.cap} />
+          <path key={p.d} d={p.d} strokeWidth={p.width} strokeLinecap={p.cap} pathLength={drawable ? 1 : undefined} />
         ))}
       </g>
     </svg>

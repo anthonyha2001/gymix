@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Nfc, PlayCircle, Send, Store } from "lucide-react";
+import { Nfc, MousePointerClick, Send, Store } from "lucide-react";
 import {
   CtaButtons,
   FEATURES,
@@ -62,7 +62,7 @@ export default async function Home() {
               href="/demo"
               className="mt-4 inline-flex items-center gap-2 rounded-xl px-1 py-2 text-base font-semibold text-brand hover:text-white"
             >
-              <PlayCircle className="size-5" /> Watch the 5-minute demo
+              <MousePointerClick className="size-5" /> Try the live demo, no sign-up
             </Link>
             <p className="mt-2 text-sm text-white/50">No card needed. Set up in ten minutes.</p>
           </div>

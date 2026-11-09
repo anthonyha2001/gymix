@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { HoverLink } from "@/components/hover-link";
 import { notFound } from "next/navigation";
@@ -412,7 +413,11 @@ async function MemberContent({
       {typeof query.c === "string" && <ChatModal conversationId={query.c} viewerId={staffViewer.id} timeZone={staff.timezone} as="staff" />}
 
       {/* Door access (ZKTeco / Hikvision), when switched on for the gym */}
-      <TabPanel id="overview" tabs={tabs}>{canBill && <DoorAccessCard memberId={member.id!} gymId={staff.gymId} />}</TabPanel>
+      <TabPanel id="overview" tabs={tabs}>{canBill && (
+        <Suspense fallback={null}>
+          <DoorAccessCard memberId={member.id!} gymId={staff.gymId} />
+        </Suspense>
+      )}</TabPanel>
 
       {/* Portal access */}
       <TabPanel id="overview" tabs={tabs}>{canBill && (

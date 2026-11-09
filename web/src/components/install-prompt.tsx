@@ -75,6 +75,7 @@ export function InstallPrompt() {
   if (!open) return null;
   return (
     <div
+      data-install-prompt
       role="dialog"
       aria-label="Install Gymix"
       className="fixed inset-x-3 bottom-[calc(var(--bottom-bar)+0.75rem)] z-[55] mx-auto max-w-md rounded-2xl border border-line bg-surface p-4 shadow-2xl sm:bottom-6"

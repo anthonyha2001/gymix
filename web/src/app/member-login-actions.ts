@@ -27,6 +27,8 @@ export async function resetMemberPassword(memberId: string): Promise<ResetResult
     .maybeSingle();
   if (!member) return { error: "Member not found." };
   if (!member.user_id) return { error: "This member hasn't joined the member app yet. Send them their invite link." };
+  const { data: demoUser } = await createAdminClient().from("demo_users").select("user_id").eq("user_id", member.user_id).maybeSingle();
+  if (demoUser) return { error: "In the demo, Karim's password stays as it is so you can switch to his app. With real members this gives them a new one." };
 
   const admin = createAdminClient();
   const password = generatePassword();

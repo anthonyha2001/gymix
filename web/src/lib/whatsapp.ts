@@ -38,10 +38,10 @@ export const gymixKeys = cache(async (): Promise<(Keys & { wabaId: string; appSe
 const gymSetup = cache(async (gymId: string) => {
   const admin = createAdminClient();
   const [{ data: gym }, { data: account }] = await Promise.all([
-    admin.from("gyms").select("whatsapp_sender").eq("id", gymId).maybeSingle(),
+    admin.from("gyms").select("whatsapp_sender, demo_expires_at").eq("id", gymId).maybeSingle(),
     admin.from("gym_whatsapp_accounts").select("token, phone_number_id, templates").eq("gym_id", gymId).maybeSingle(),
   ]);
-  return { sender: (gym?.whatsapp_sender ?? "gymix") as SenderKind, account };
+  return { sender: (gym?.whatsapp_sender ?? "gymix") as SenderKind, account, demo: Boolean(gym?.demo_expires_at) };
 });
 
 // Who sends this kind of message for this gym, or null when nobody can.
@@ -57,6 +57,7 @@ export async function senderFor(gymId: string, kind: WhatsAppKind): Promise<(Key
 // Whether this gym can send WhatsApp messages at all (any template).
 export async function whatsappReady(gymId: string) {
   if (!(await hasFeature(gymId, "whatsapp"))) return false;
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY && (await gymSetup(gymId)).demo) return true;
   return (await senderFor(gymId, "payment")) !== null || (await senderFor(gymId, "welcome")) !== null;
 }
 
@@ -76,6 +77,24 @@ export async function sendWhatsApp(msg: {
   const to = waNumber(msg.phone);
   if (!to) return { status: "skipped", error: "No valid WhatsApp number." };
   if (!(await hasFeature(msg.gymId, "whatsapp"))) return { status: "skipped", error: "WhatsApp is off for this gym." };
+  // A sample gym (the demo): logged as if sent, never sent to anyone.
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY && (await gymSetup(msg.gymId)).demo) {
+    await createAdminClient().from("whatsapp_log").upsert(
+      {
+        gym_id: msg.gymId,
+        member_id: msg.memberId,
+        kind: msg.kind,
+        ref: msg.ref,
+        body: templateBody(msg.kind, msg.kind === "login" ? msg.params.map((p, i) => (i === 3 ? "••••-••••-••••" : p)) : msg.params),
+        phone: `+${to}`,
+        sender: "gymix",
+        status: "delivered",
+        sent_by: msg.sentBy ?? null,
+      },
+      { onConflict: "kind,ref", ignoreDuplicates: true },
+    );
+    return { status: "sent" };
+  }
   const sender = await senderFor(msg.gymId, msg.kind);
   if (!sender) return { status: "skipped", error: "WhatsApp isn't set up yet." };
 

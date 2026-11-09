@@ -5,6 +5,7 @@ import { ROLE_LABELS } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
 import { gymFeatures } from "@/lib/features";
 import { SupportBanner } from "@/components/support-banner";
+import { DemoChrome } from "@/components/demo-chrome";
 import { unreadCount } from "@/lib/chat";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "../(auth)/actions";
@@ -41,6 +42,9 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
         }
       />
       <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">
+        <Suspense fallback={null}>
+          <DemoChrome area="owner" />
+        </Suspense>
         <Suspense fallback={null}>
           <SupportBanner />
         </Suspense>

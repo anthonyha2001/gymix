@@ -623,6 +623,46 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"demo_starts": {
+                  Row: {
+                    "created_at": string,"id": number,"ip_hash": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: never,"ip_hash": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: never,"ip_hash"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"demo_users": {
+                  Row: {
+                    "gym_id": string,"role": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "gym_id": string,"role": string,"user_id": string
+                  }
+                  Update: {
+                    "gym_id"?: string,"role"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "demo_users_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gym_exercises"
+      referencedColumns: ["gym_id"]
+    },{
+      foreignKeyName: "demo_users_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"exercises": {
                   Row: {
                     "category": string | null,"equipment": string | null,"force": string | null,"id": string,"image_paths": (string)[],"instructions": (string)[],"level": string | null,"mechanic": string | null,"name": string,"primary_muscles": (string)[],"secondary_muscles": (string)[],"source": string
@@ -775,14 +815,14 @@ isOneToOne: true
                   ]
                 },"gyms": {
                   Row: {
-                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
                   }
                   Update: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
                   }
                   Relationships: [
                     
@@ -2556,6 +2596,9 @@ isOneToOne: false
 "copy_program":
 { Args: { "p_source_id": string,"p_target_id": string }; Returns: undefined
                            },
+"create_demo_gym":
+{ Args: { "p_member_user": string,"p_owner": string }; Returns: string
+                           },
 "create_gym":
 { Args: { "p_name": string }; Returns: string
                            },
@@ -2570,6 +2613,11 @@ isOneToOne: false
                            },
 "delete_member":
 { Args: { "p_member_id": string }; Returns: undefined
+                           },
+"expired_demo_gyms":
+{ Args: { "p_limit"?: number }; Returns: {
+              "gym_id": string,"user_ids": (string)[]
+            }[]
                            },
 "freeze_my_membership":
 { Args: { "p_action": string,"p_gym_id": string }; Returns: undefined

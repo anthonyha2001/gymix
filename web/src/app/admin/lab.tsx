@@ -19,7 +19,7 @@ const ROLLOUT = {
 export async function Lab() {
   const admin = createAdminClient();
   const [{ data: gyms }, { data: features }, { data: overrides }] = await Promise.all([
-    admin.from("gyms").select("id, name, is_lab").order("name"),
+    admin.from("gyms").select("id, name, is_lab").is("demo_expires_at", null).order("name"),
     admin.from("features").select("key, name, description, rollout").order("created_at"),
     admin.from("gym_feature_overrides").select("gym_id, feature_key, enabled"),
   ]);

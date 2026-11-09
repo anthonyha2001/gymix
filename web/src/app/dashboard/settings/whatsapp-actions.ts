@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireStaff } from "@/lib/session";
 import { errorMessage, text, type ActionState } from "@/lib/action-result";
 import { checkNumber, ensureTemplates } from "@/lib/whatsapp";
+import { demoExpiry } from "@/lib/demo";
 
 // Settings → WhatsApp (owner only). The account row is server-only: it is
 // written with the service role after the owner check.
@@ -14,6 +15,7 @@ const ID_RE = /^\d{6,25}$/;
 
 export async function connectWhatsApp(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const { membership } = await requireStaff(["owner"]);
+  if (await demoExpiry(membership.gymId)) return { error: "In the demo you can't connect a real WhatsApp number. Start your free trial to connect yours." };
   const phoneNumberId = text(formData, "phone_number_id").replace(/\s/g, "");
   const wabaId = text(formData, "waba_id").replace(/\s/g, "");
   const token = text(formData, "token").replace(/\s/g, "");

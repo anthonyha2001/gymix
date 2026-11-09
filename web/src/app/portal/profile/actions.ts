@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/session";
+import { isDemoEmail } from "@/lib/demo";
 import { errorMessage, text, type ActionState } from "@/lib/action-result";
 
 const PHOTO_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
@@ -73,7 +74,8 @@ export async function saveNotificationPrefs(prefs: Record<string, boolean>): Pro
 }
 
 export async function changePassword(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireMember();
+  const { viewer } = await requireMember();
+  if (isDemoEmail(viewer.email)) return { error: "The demo account's password can't be changed." };
   const password = formData.get("password");
   const confirm = formData.get("confirm");
   if (typeof password !== "string" || password.length < 8) return { error: "Password must be at least 8 characters." };
