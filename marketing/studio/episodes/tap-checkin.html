@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gymix · One tap (feature video)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,800&family=Geist:wght@400;500;600;700;800;900&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --ink: #0d1117; --good: #1f7a3f; --bad: #c0362c; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); font-family: Geist, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #fff; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); }
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 0; }
+  .grid { position: absolute; inset: -200px; background-image: linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px); background-size: 60px 60px; }
+  .glow { position: absolute; left: 50%; top: 50%; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; border-radius: 50%; background: radial-gradient(closest-side, rgb(200 241 53 / 0.16), transparent); }
+  .word { display: inline-block; }
+  .kin { position: absolute; left: 80px; right: 80px; font-weight: 900; letter-spacing: -0.045em; line-height: 0.95; }
+  .serif { font-family: Fraunces, Georgia, serif; font-style: italic; font-weight: 800; letter-spacing: -0.03em; }
+  .phone { position: absolute; width: 560px; height: 1140px; border-radius: 96px; background: #05070a; padding: 22px; box-shadow: 0 60px 140px rgb(0 0 0 / 0.6), 0 0 0 2px rgb(255 255 255 / 0.07); }
+  .phone .scr { position: absolute; inset: 22px; border-radius: 76px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 26px; padding: 60px; }
+  .notch { position: absolute; top: 24px; left: 50%; width: 170px; height: 44px; margin-left: -85px; border-radius: 30px; background: #05070a; z-index: 3; }
+  .wave { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 4px solid rgb(255 255 255 / 0.45); }
+  .caption { position: absolute; left: 80px; right: 80px; text-align: center; font-size: 84px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+  .pill { display: inline-flex; align-items: center; gap: 14px; padding: 20px 34px; border-radius: 999px; font-size: 40px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="grid" class="grid"></div>
+  <div id="glow" class="glow"></div>
+
+  <!-- 1 · kinetic type -->
+  <div id="sIntro" class="layer">
+    <div class="kin" style="top: 640px; font-size: 104px"><span class="word" id="w1">Checking in</span> <span class="word" id="w2">at the gym</span><br><span class="word" id="w3">should take</span></div>
+    <div class="kin serif" id="w4" style="top: 1000px; font-size: 220px; color: var(--lime)">one tap.</div>
+  </div>
+
+  <!-- 2 · the sticker and the phone -->
+  <div id="sTap" class="layer">
+    <div class="abs" style="left: 0; right: 0; top: 0; bottom: 0; background: linear-gradient(90deg, transparent 0, transparent 640px, #151b24 640px)"></div>
+    <div class="abs" style="left: 600px; top: 0; width: 40px; height: 1920px; background: #1d242e"></div>
+    <div id="sticker" class="abs" style="left: 330px; top: 760px; width: 260px; height: 260px; border-radius: 62px; background: var(--lime); display:grid; place-items:center; box-shadow: 0 0 80px rgb(200 241 53 / 0.45), 0 30px 60px rgb(0 0 0 / 0.45)">
+      <svg viewBox="0 0 100 100" width="220" height="220"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="r1" class="abs" style="left: 330px; top: 760px; width: 260px; height: 260px; border-radius: 62px; border: 8px solid var(--lime)"></div>
+    <div id="r2" class="abs" style="left: 330px; top: 760px; width: 260px; height: 260px; border-radius: 62px; border: 8px solid var(--lime)"></div>
+    <div id="r3" class="abs" style="left: 330px; top: 760px; width: 260px; height: 260px; border-radius: 62px; border: 8px solid var(--lime)"></div>
+    <div id="tapLabel" class="caption" style="top: 1600px; font-size: 64px; color: rgb(255 255 255 / 0.85)">Tap at the door.</div>
+  </div>
+
+  <!-- the phone (shared by the tap and the two results) -->
+  <div id="phone" class="phone" style="left: 260px; top: 390px">
+    <div class="notch"></div>
+    <div id="scrIdle" class="scr" style="background: linear-gradient(160deg, #1b2330, #0b0f15)">
+      <svg viewBox="0 0 100 100" width="120" height="120" style="opacity:0.9"><g transform="translate(3,-1.5)" fill="none" stroke="#c8f135" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+      <div style="font-size: 40px; font-weight: 700; color: rgb(255 255 255 / 0.85)">Checking you in…</div>
+    </div>
+    <div id="scrGood" class="scr" style="background: var(--good)">
+      <div id="gw1" class="wave"></div><div id="gw2" class="wave"></div><div id="gw3" class="wave"></div>
+      <svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:relative"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      <div style="position:relative; font-size: 28px; font-weight: 600; letter-spacing: 0.18em; opacity: 0.8">CHECKED IN</div>
+      <div style="position:relative; font-size: 68px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05">Welcome back, Karim</div>
+      <div style="position:relative; font-size: 34px; opacity: 0.9">Monthly · until 29 Nov 2026</div>
+      <div style="position:relative; margin-top: 18px; padding: 24px 50px; border-radius: 22px; background: #fff; color: var(--ink); font-size: 36px; font-weight: 600">Start training</div>
+      <div style="position:relative; font-size: 26px; opacity: 0.75">Opening your training screen…</div>
+    </div>
+    <div id="scrBad" class="scr" style="background: var(--bad)">
+      <div id="bw1" class="wave"></div><div id="bw2" class="wave"></div><div id="bw3" class="wave"></div>
+      <svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:relative"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+      <div style="position:relative; font-size: 62px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap">Not allowed in</div>
+      <div style="position:relative; font-size: 44px; font-weight: 600">Tarek Mansour</div>
+      <div style="position:relative; font-size: 36px; line-height: 1.35; opacity: 0.9; max-width: 420px">Membership expired on 30 Oct 2026. Please see the front desk.</div>
+      <div style="position:relative; margin-top: 18px; padding: 22px 40px; border-radius: 22px; background: #fff; color: var(--ink); font-size: 34px; font-weight: 600">Go to my portal</div>
+    </div>
+  </div>
+
+  <!-- result captions -->
+  <div id="capGood" class="caption" style="top: 150px">Paid? <span style="color: var(--lime)">You're in.</span></div>
+  <div id="capBad" class="caption" style="top: 150px">Expired? <span style="color: #ff8a7a">The door knows.</span></div>
+
+  <!-- 5 · no hardware -->
+  <div id="sNo" class="layer" style="display:flex; flex-direction:column; justify-content:center; padding: 0 80px; gap: 10px">
+    <div id="n1" style="font-size: 120px; font-weight: 900; letter-spacing: -0.045em; color: rgb(255 255 255 / 0.4)"><s>No cards.</s></div>
+    <div id="n2" style="font-size: 120px; font-weight: 900; letter-spacing: -0.045em; color: rgb(255 255 255 / 0.4)"><s>No turnstile.</s></div>
+    <div id="n3" style="font-size: 120px; font-weight: 900; letter-spacing: -0.045em; line-height: 1">A <span style="color: var(--lime)">$1 sticker.</span></div>
+  </div>
+
+  <!-- 6 · the logo -->
+  <div id="sLogo" class="layer" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 50px">
+    <div id="logoTile" style="width: 300px; height: 300px; border-radius: 22%; background: var(--lime); display:grid; place-items:center; box-shadow: 0 30px 90px rgb(200 241 53 / 0.35)">
+      <svg viewBox="0 0 100 100" width="270" height="270"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path id="lp1" pathLength="1" d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path id="lp2" pathLength="1" d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path id="lp3" pathLength="1" d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="logoWord" style="font-size: 140px; font-weight: 900; letter-spacing: -0.05em; line-height: 1">Gymix</div>
+    <div id="logoTag" class="serif" style="font-size: 64px; color: var(--lime)">Your gym, running itself.</div>
+    <div id="logoCta" style="margin-top: 30px; font-size: 38px; font-weight: 600; color: rgb(255 255 255 / 0.7)">Try the live demo · link in bio</div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const back = (x) => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const vis = (el, on) => (el.style.visibility = on ? "visible" : "hidden");
+const rise = (el, t, at, dur = 0.45, dist = 60) => {
+  const p = eo(prog(t, at, at + dur));
+  el.style.opacity = p;
+  el.style.transform = `translateY(${lerp(dist, 0, p)}px)`;
+  el.style.filter = `blur(${lerp(10, 0, p)}px)`;
+};
+const waves = (ids, t, at) => ids.forEach((id, k) => {
+  const p = prog(t, at + k * 0.18, at + k * 0.18 + 1.1);
+  const s = lerp(120, 1500, eo(p));
+  const el = $(id);
+  el.style.width = el.style.height = s + "px";
+  el.style.marginLeft = el.style.marginTop = -s / 2 + "px";
+  el.style.opacity = p > 0 && p < 1 ? (1 - p) * 0.9 : 0;
+});
+
+// Timeline (s): intro 0-2.3 · tap 2.3-5.3 · good 5.3-8.0 · bad 8.0-10.9 · no hardware 10.9-12.6 · logo 12.6-15.5
+window.DURATION = 15.5;
+
+window.renderAt = function (t) {
+  // background drift
+  $("grid").style.transform = `translateY(${-t * 14}px)`;
+  $("glow").style.opacity = 0.6 + 0.4 * Math.sin(t * 1.3);
+
+  // 1 · intro
+  const intro = t < 2.45;
+  vis($("sIntro"), intro);
+  if (intro) {
+    rise($("w1"), t, 0.05); rise($("w2"), t, 0.3); rise($("w3"), t, 0.55);
+    const p = prog(t, 1.05, 1.5);
+    $("w4").style.opacity = p;
+    $("w4").style.transform = `scale(${lerp(1.4, 1, back(p))})`;
+    $("w4").style.transformOrigin = "left center";
+    const out = eio(prog(t, 2.15, 2.45));
+    $("sIntro").style.opacity = 1 - out;
+    $("sIntro").style.transform = `translateY(${-out * 120}px)`;
+  }
+
+  // 2 · tap
+  const tap = t >= 2.3 && t < 5.5;
+  vis($("sTap"), tap);
+  if (tap) {
+    const lt = t - 2.3;
+    $("sTap").style.opacity = prog(lt, 0, 0.25) * (1 - prog(t, 5.2, 5.5));
+    $("sticker").style.transform = `scale(${lerp(0.85, 1, back(prog(lt, 0, 0.5)))})`;
+    // the touch: stickers squash a little on contact
+    const hit = prog(lt, 1.15, 1.35) - prog(lt, 1.35, 1.6);
+    $("sticker").style.transform += ` scale(${1 - hit * 0.06})`;
+    ["r1", "r2", "r3"].forEach((id, k) => {
+      const p = prog(lt, 1.2 + k * 0.2, 2.0 + k * 0.2);
+      $(id).style.opacity = p > 0 && p < 1 ? 1 - p : 0;
+      $(id).style.transform = `scale(${1 + eo(p) * 1.8})`;
+    });
+    rise($("tapLabel"), lt, 0.3);
+  }
+
+  // the phone: in from the right, touches the sticker, then centers for the results
+  const phoneOn = t >= 2.5 && t < 11.1;
+  vis($("phone"), phoneOn);
+  if (phoneOn) {
+    let x, y, r, s;
+    if (t < 5.3) {
+      const lt = t - 2.5;
+      const inP = eio(prog(lt, 0, 0.75));
+      const touch = eio(prog(lt, 0.75, 0.95)) - eio(prog(lt, 1.6, 2.1));
+      x = lerp(1180, 520, inP) - touch * 70;
+      y = lerp(520, 330, inP);
+      r = lerp(18, 8, inP);
+      s = 0.78;
+      if (t > 4.6) { const c = eio(prog(t, 4.6, 5.3)); x = lerp(x, 260, c); y = lerp(y, 390, c); r = lerp(r, 0, c); s = lerp(s, 1, c); }
+    } else {
+      x = 260; y = 390; r = 0; s = 1;
+      // a quick re-tap between the two results
+      if (t > 7.75 && t < 8.25) { const k = Math.sin(prog(t, 7.75, 8.25) * Math.PI); s = 1 - k * 0.08; r = -k * 4; }
+      if (t > 10.7) { const out = eio(prog(t, 10.7, 11.1)); s = lerp(1, 0.85, out); y = lerp(390, 300, out); $("phone").style.opacity = 1 - out; }
+      else $("phone").style.opacity = 1;
+    }
+    if (t < 10.7) $("phone").style.opacity = 1;
+    $("phone").style.left = x + "px";
+    $("phone").style.top = y + "px";
+    $("phone").style.transform = `rotate(${r}deg) scale(${s})`;
+    // which screen
+    vis($("scrIdle"), t < 5.3);
+    vis($("scrGood"), t >= 5.3 && t < 8.0);
+    vis($("scrBad"), t >= 8.0);
+    waves(["gw1", "gw2", "gw3"], t, 5.3);
+    waves(["bw1", "bw2", "bw3"], t, 8.0);
+    // a little "no" shake on the denied screen
+    if (t > 8.0 && t < 8.5) $("phone").style.transform += ` translateX(${Math.sin(prog(t, 8.0, 8.5) * Math.PI * 6) * 18 * (1 - prog(t, 8.0, 8.5))}px)`;
+  }
+  vis($("capGood"), t >= 5.4 && t < 8.0);
+  if (t >= 5.4 && t < 8.0) rise($("capGood"), t, 5.45);
+  vis($("capBad"), t >= 8.05 && t < 10.9);
+  if (t >= 8.05 && t < 10.9) { rise($("capBad"), t, 8.1); $("capBad").style.opacity = Math.min(Number($("capBad").style.opacity), 1 - prog(t, 10.6, 10.9)); }
+
+  // 5 · no hardware
+  const no = t >= 10.9 && t < 12.85;
+  vis($("sNo"), no);
+  if (no) {
+    rise($("n1"), t, 11.0, 0.35); rise($("n2"), t, 11.3, 0.35); rise($("n3"), t, 11.65, 0.45);
+    $("sNo").style.opacity = 1 - prog(t, 12.55, 12.85);
+  }
+
+  // 6 · logo
+  const lg = t >= 12.6;
+  vis($("sLogo"), lg);
+  if (lg) {
+    const lt = t - 12.6;
+    const tile = back(prog(lt, 0, 0.55));
+    $("logoTile").style.transform = `scale(${lerp(0.5, 1, tile)}) rotate(${lerp(-12, 0, eo(prog(lt, 0, 0.6)))}deg)`;
+    $("logoTile").style.opacity = prog(lt, 0, 0.2);
+    [["lp1", 0.15, 0.75], ["lp2", 0.65, 0.95], ["lp3", 0.78, 1.1]].forEach(([id, a, b]) => {
+      const el = $(id);
+      el.style.strokeDasharray = "1 1";
+      el.style.strokeDashoffset = 1 - eio(prog(lt, a, b));
+    });
+    rise($("logoWord"), lt, 0.7, 0.5, 40);
+    rise($("logoTag"), lt, 1.0, 0.5, 40);
+    rise($("logoCta"), lt, 1.4, 0.5, 30);
+  }
+};
+
+// ---------------------------------------------------------------- sound
+// A soft pulse in A major, a chime on each tap, a bright resolve for "checked in",
+// a buzz for "not allowed in", whooshes between scenes, and a bell on the logo.
+const beat = 60 / 112;
+const AUDIO = [];
+const chord = (at, dur, notes, gain = 0.9) => AUDIO.push({ k: "pad", at, dur, notes, gain });
+chord(0, 2.4, [57, 61, 64], 0.8);
+chord(2.3, 3.0, [54, 57, 61], 0.8);
+chord(5.3, 2.7, [62, 66, 69], 0.9);
+chord(8.0, 2.9, [52, 56, 59], 0.7);
+chord(10.9, 1.8, [62, 66, 69], 0.8);
+chord(12.6, 2.9, [57, 61, 64, 69], 1.0);
+for (let k = 0; k < 28; k++) { const at = k * beat; if (at < 12.6) AUDIO.push({ k: "thump", at, gain: k % 2 ? 0.18 : 0.28 }); }
+[0.05, 0.3, 0.55].forEach((at, k) => AUDIO.push({ k: "pluck", at, note: [69, 73, 76][k], gain: 0.7 }));
+AUDIO.push({ k: "bell", at: 1.05, note: 81, gain: 0.9 });
+AUDIO.push({ k: "whoosh", at: 2.05, dur: 0.6, gain: 0.5 });
+AUDIO.push({ k: "whoosh", at: 2.45, dur: 0.8, gain: 0.45, down: true });
+AUDIO.push({ k: "bell", at: 3.47, note: 88, gain: 0.8 });
+AUDIO.push({ k: "bell", at: 3.57, note: 93, gain: 0.6 });
+[0, 0.12, 0.24].forEach((d, k) => AUDIO.push({ k: "pluck", at: 5.3 + d, note: [74, 78, 81][k], gain: 0.9 }));
+AUDIO.push({ k: "bell", at: 5.62, note: 86, gain: 0.7 });
+AUDIO.push({ k: "whoosh", at: 7.7, dur: 0.5, gain: 0.35 });
+AUDIO.push({ k: "buzz", at: 8.0, gain: 1.0 });
+AUDIO.push({ k: "whoosh", at: 10.7, dur: 0.5, gain: 0.4, down: true });
+[11.0, 11.3].forEach((at) => AUDIO.push({ k: "thump", at, gain: 0.5 }));
+AUDIO.push({ k: "pluck", at: 11.65, note: 81, gain: 0.9 });
+AUDIO.push({ k: "whoosh", at: 12.4, dur: 0.6, gain: 0.5 });
+AUDIO.push({ k: "bell", at: 12.75, note: 69, gain: 1.0 });
+AUDIO.push({ k: "bell", at: 13.35, note: 76, gain: 0.8 });
+AUDIO.push({ k: "bell", at: 13.6, note: 81, gain: 0.7 });
+window.AUDIO = AUDIO;
+
+window.renderAt(0);
+</script>
+</body>
+</html>
