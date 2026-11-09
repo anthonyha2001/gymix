@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gymix · Excuses gym owners hear every month (viral reel)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,800;1,9..144,900&family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@500;700&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --ink: #0d1117; --ice: #8fdcff; --ice2: #d8f4ff; --bad: #c0362c; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; font-family: Geist, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #fff; }
+  #stage { position: absolute; inset: 0; overflow: hidden; background: var(--ink); }
+  #cam { position: absolute; inset: -60px; }
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 60px; visibility: hidden; }
+  .grid { position: absolute; inset: -200px; background-image: linear-gradient(rgb(255 255 255 / 0.04) 2px, transparent 2px), linear-gradient(90deg, rgb(255 255 255 / 0.04) 2px, transparent 2px); background-size: 90px 90px; }
+  #glow { position: absolute; left: 50%; top: 50%; width: 1700px; height: 1700px; margin: -850px 0 0 -850px; border-radius: 50%; background: radial-gradient(closest-side, rgb(200 241 53 / 0.22), transparent); }
+  .mono { font-family: "Geist Mono", monospace; }
+  .serif { font-family: Fraunces, Georgia, serif; font-style: italic; font-weight: 900; letter-spacing: -0.03em; }
+  .big { font-weight: 900; letter-spacing: -0.05em; line-height: 0.92; }
+  #fx { position: absolute; inset: 0; pointer-events: none; z-index: 40; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 45; pointer-events: none; }
+  #hud { position: absolute; left: 0; right: 0; top: 230px; display: flex; justify-content: center; z-index: 30; visibility: hidden; }
+  .bubble { position: absolute; left: 90px; right: 90px; top: 760px; z-index: 10; }
+  .bubble .who { display: flex; align-items: center; gap: 18px; font-size: 32px; font-weight: 600; color: rgb(255 255 255 / 0.6); margin: 0 0 18px 10px; }
+  .bubble .who i { display: block; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #6d7a8c, #3b4452); }
+  .bubble .txt { position: relative; background: #fff; color: var(--ink); border-radius: 56px 56px 56px 14px; padding: 46px 52px; font-size: 76px; font-weight: 800; line-height: 1.06; letter-spacing: -0.03em; box-shadow: 0 40px 100px rgb(0 0 0 / 0.5); }
+  .bubble .tr { margin: 18px 0 0 14px; font-size: 32px; font-weight: 600; color: rgb(255 255 255 / 0.55); }
+  .frost { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, rgb(200 240 255 / 0.85), rgb(140 210 245 / 0.55) 45%, rgb(220 248 255 / 0.8)); mix-blend-mode: normal; opacity: 0; }
+  .stamp { position: absolute; left: 50%; top: 1240px; z-index: 20; transform-origin: center; padding: 22px 54px; border: 14px solid var(--ice); border-radius: 26px; color: var(--ice); font-size: 150px; font-weight: 900; letter-spacing: 0.06em; text-shadow: 0 0 40px rgb(143 220 255 / 0.6); box-shadow: 0 0 60px rgb(143 220 255 / 0.35), inset 0 0 40px rgb(143 220 255 / 0.25); background: rgb(13 17 23 / 0.35); white-space: nowrap; }
+  .count { position: absolute; right: 90px; top: 360px; font-size: 360px; font-weight: 900; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 4px rgb(255 255 255 / 0.12); line-height: 1; }
+  .chip { display: inline-flex; align-items: center; gap: 16px; padding: 18px 30px; border-radius: 999px; background: rgb(255 255 255 / 0.08); border: 2px solid rgb(255 255 255 / 0.12); font-size: 34px; font-weight: 700; }
+  .phone { position: absolute; width: 540px; height: 1080px; border-radius: 92px; background: #05070a; padding: 22px; box-shadow: 0 60px 140px rgb(0 0 0 / 0.6), 0 0 0 2px rgb(255 255 255 / 0.08); }
+  .phone .scr { position: absolute; inset: 22px; border-radius: 72px; overflow: hidden; background: var(--bad); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 24px; padding: 50px; }
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="cam">
+  <div id="grid" class="grid"></div>
+  <div id="glow"></div>
+
+  <!-- intro -->
+  <div id="sIntro" class="layer">
+    <div id="i1" class="abs mono" style="left: 90px; top: 520px; font-size: 40px; font-weight: 700; letter-spacing: 0.2em; color: var(--lime)">GYM OWNERS IN LEBANON</div>
+    <div id="i2" class="abs big" style="left: 90px; right: 60px; top: 600px; font-size: 150px">Excuses<br>you hear<br><span style="color: var(--lime)">every month.</span></div>
+    <div id="i3" class="abs" style="left: 90px; top: 1180px; font-size: 46px; font-weight: 700; color: rgb(255 255 255 / 0.7)">Which one is your favourite?</div>
+  </div>
+
+  <!-- the seven excuses -->
+  <div id="hud"><div class="chip mono"><span style="color: var(--lime)">EXCUSE</span><span id="hudN">1</span><span style="opacity: 0.5">/ 7</span><span style="opacity:0.4">·</span><span>Owed:</span><span id="hudOwed" style="color: #ff9c8f">$45</span></div></div>
+  <div id="sEx" class="layer">
+    <div id="exCount" class="count">#1</div>
+    <div id="bubble" class="bubble">
+      <div class="who"><i></i><span id="who">Member · 9:41 PM</span></div>
+      <div class="txt" id="exTxt"><span id="exLine">I'll pay you next week, wallah.</span><div id="frost" class="frost"></div></div>
+      <div id="exTr" class="tr"></div>
+    </div>
+    <div id="stamp" class="stamp">FROZEN</div>
+  </div>
+
+  <!-- the twist -->
+  <div id="sTwist" class="layer">
+    <div id="t1" class="abs big" style="left: 90px; right: 60px; top: 380px; font-size: 128px">Gymix doesn't<br>accept excuses.</div>
+    <div id="t2" class="abs serif" style="left: 90px; top: 720px; font-size: 150px; color: var(--lime)">Only payments.</div>
+    <div id="tPhone" class="phone" style="left: 270px; top: 1000px">
+      <div class="scr">
+        <svg width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+        <div style="font-size: 60px; font-weight: 800; white-space: nowrap">Not allowed in</div>
+        <div style="font-size: 36px; opacity: 0.9; max-width: 400px; line-height: 1.35">Account frozen: unpaid balance of $45.00. Please see the front desk.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- rapid fire -->
+  <div id="sRapid" class="layer" style="display:flex; align-items:center; justify-content:center">
+    <div id="rWord" class="big" style="font-size: 170px; text-align: center; padding: 0 60px"></div>
+    <div id="rSub" class="abs mono" style="left: 0; right: 0; top: 1240px; text-align: center; font-size: 36px; letter-spacing: 0.14em; color: rgb(255 255 255 / 0.55)"></div>
+  </div>
+
+  <!-- price -->
+  <div id="sPrice" class="layer" style="background: var(--lime); color: var(--ink)">
+    <div id="pr1" class="abs mono" style="left: 90px; top: 520px; font-size: 40px; font-weight: 700; letter-spacing: 0.16em">ALL OF IT, FOR</div>
+    <div id="pr2" class="abs big" style="left: 80px; top: 590px; font-size: 330px; letter-spacing: -0.07em">$19.99</div>
+    <div id="pr3" class="abs big" style="left: 90px; top: 930px; font-size: 92px">a month.<br>The whole gym.</div>
+    <div id="pr4" class="abs" style="left: 90px; top: 1180px; font-size: 44px; font-weight: 700">Unlimited members · 14 days free</div>
+  </div>
+
+  <!-- outro -->
+  <div id="sOut" class="layer" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 40px; text-align:center">
+    <div id="o1" style="width: 270px; height: 270px; border-radius: 22%; background: var(--lime); display:grid; place-items:center; box-shadow: 0 30px 100px rgb(200 241 53 / 0.45)">
+      <svg viewBox="0 0 100 100" width="244" height="244"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path id="op1" pathLength="1" d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path id="op2" pathLength="1" d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path id="op3" pathLength="1" d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="o2" class="big" style="font-size: 140px">Gymix</div>
+    <div id="o3" style="font-size: 54px; font-weight: 800; letter-spacing: -0.02em; padding: 0 80px; line-height: 1.15">Tag a gym owner<br><span style="color: var(--lime)">who needs this.</span></div>
+    <div id="o4" style="margin-top: 16px; display:inline-flex; padding: 26px 46px; border-radius: 999px; background: var(--lime); color: var(--ink); font-size: 44px; font-weight: 800">Try the live demo · link in bio</div>
+  </div>
+ </div>
+ <canvas id="fx" width="1080" height="1920"></canvas>
+ <div id="flash"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const back = (x) => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const vis = (el, on) => (el.style.visibility = on ? "visible" : "hidden");
+const rise = (el, t, at, dur = 0.3, dist = 70) => {
+  const p = eo(prog(t, at, at + dur));
+  el.style.opacity = p;
+  el.style.transform = `translateY(${lerp(dist, 0, p)}px) scale(${lerp(0.96, 1, p)})`;
+  el.style.filter = `blur(${lerp(14, 0, p)}px)`;
+};
+const rng = (seed) => () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+
+// ---------------------------------------------------------------- timing (128 bpm)
+const B = 60 / 128, BAR = 4 * B;
+const T_EX = 2 * BAR;                 // 3.75: the drop, excuses start
+const T_TWIST = T_EX + 7 * BAR;       // 16.875
+const T_RAPID = T_TWIST + 2 * BAR;    // 20.625
+const T_PRICE = T_RAPID + 2 * BAR;    // 24.375
+const T_OUT = T_PRICE + 2 * BAR;      // 28.125
+window.DURATION = T_OUT + 4.4;        // 32.5
+
+const EX = [
+  ["I'll pay you next week, wallah.", ""],
+  ["I forgot my wallet in the car.", ""],
+  ["Ana sa7ib el owner.", "(\"I'm the owner's friend.\")"],
+  ["The Whish didn't go through.", ""],
+  ["I already paid the other guy.", ""],
+  ["I'm only here for 10 minutes.", ""],
+  ["I'll start paying in January.", ""],
+];
+const WHO = ["Member · 9:41 PM", "Member · 7:02 AM", "Member · 6:15 PM", "Member · 8:30 PM", "Member · 5:48 PM", "Member · 10:12 PM", "Member · 11:59 PM"];
+const SLAM = (i) => T_EX + i * BAR + 2 * B; // beat 3 of each bar
+const IMPACTS = [T_EX, ...EX.map((_, i) => SLAM(i)), T_TWIST + BAR + 0.5 * B, T_RAPID, T_PRICE + 0.1, T_OUT];
+
+const RAPID = [["Dollars or lira.", "AT YOUR RATE"], ["Tap to check in.", "A $1 STICKER"], ["Unpaid? Frozen.", "AUTOMATICALLY"], ["Member app.", "NO APP STORE"], ["Classes.", "BOOKINGS"], ["Trainer programs.", "IN THEIR POCKET"], ["Your whole team.", "THE RIGHT ACCESS"], ["One app.", "THE WHOLE GYM"]];
+const RCOL = ["#fff", "var(--lime)", "#ff9c8f", "#fff", "var(--lime)", "#fff", "var(--lime)", "#fff"];
+
+// ---------------------------------------------------------------- particles (ice shards)
+const fx = $("fx"), ctx = fx.getContext("2d");
+const SHARDS = IMPACTS.map((at, k) => {
+  const r = rng(1000 + k * 77);
+  return { at, list: Array.from({ length: 46 }, () => ({ a: r() * Math.PI * 2, v: 900 + r() * 1700, s: 12 + r() * 34, rot: r() * 6, vr: (r() - 0.5) * 18, hue: r() })) };
+});
+function drawFx(t) {
+  ctx.clearRect(0, 0, 1080, 1920);
+  SHARDS.forEach(({ at, list }, k) => {
+    const dt = t - at;
+    if (dt < 0 || dt > 1.4) return;
+    const cx = 540, cy = k === 0 || k >= 8 ? 960 : 1240;
+    const icy = k >= 1 && k <= 7;
+    list.forEach((p) => {
+      const x = cx + Math.cos(p.a) * p.v * dt;
+      const y = cy + Math.sin(p.a) * p.v * dt + 1400 * dt * dt;
+      const alpha = Math.max(0, 1 - dt / 1.2);
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(p.rot + p.vr * dt);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = icy ? (p.hue > 0.5 ? "#d8f4ff" : "#8fdcff") : p.hue > 0.5 ? "#c8f135" : "#ffffff";
+      ctx.beginPath();
+      ctx.moveTo(0, -p.s); ctx.lineTo(p.s * 0.6, p.s * 0.8); ctx.lineTo(-p.s * 0.7, p.s * 0.5);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    });
+    // shock ring
+    const ring = prog(dt, 0, 0.5);
+    if (ring < 1) {
+      ctx.globalAlpha = (1 - ring) * 0.8;
+      ctx.strokeStyle = icy ? "#8fdcff" : "#c8f135";
+      ctx.lineWidth = 14 * (1 - ring) + 2;
+      ctx.beginPath(); ctx.arc(cx, cy, 60 + eo(ring) * 900, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  });
+}
+
+// ---------------------------------------------------------------- render
+window.renderAt = function (t) {
+  // camera: beat pulse + impact shake
+  let shake = 0, sx = 0, sy = 0, flash = 0;
+  IMPACTS.forEach((at, k) => {
+    const dt = t - at;
+    if (dt >= 0 && dt < 0.6) {
+      const a = Math.exp(-dt * 9);
+      sx += Math.sin(dt * 70 + k) * 34 * a; sy += Math.cos(dt * 61 + k * 2) * 26 * a;
+      shake += a;
+      flash = Math.max(flash, Math.exp(-dt * 18) * (k === 0 || k >= 9 ? 0.75 : 0.4));
+    }
+  });
+  const beatPh = (t % B) / B;
+  const pulse = t > T_EX && t < T_OUT + BAR ? Math.exp(-beatPh * 6) : 0;
+  $("cam").style.transform = `translate(${sx}px, ${sy}px) scale(${1 + pulse * 0.012 + shake * 0.04})`;
+  $("glow").style.opacity = 0.35 + pulse * 0.6;
+  $("grid").style.transform = `translateY(${(-t * 90) % 90}px)`;
+  $("flash").style.opacity = flash;
+  drawFx(t);
+
+  // intro (with a digital glitch on the title)
+  const intro = t < T_EX;
+  vis($("sIntro"), intro);
+  if (intro) {
+    rise($("i1"), t, 0.05, 0.3, 30);
+    rise($("i2"), t, 0.3, 0.4);
+    rise($("i3"), t, 1.2, 0.35, 40);
+    const f = Math.floor(t * 30);
+    const g = (f % 7 === 0 || (t > 3.2 && f % 2 === 0)) ? 1 : 0;
+    $("i2").style.textShadow = g ? `${(f % 5) * 4 - 8}px 0 #ff3b6b, ${-((f % 3) * 5)}px 0 #3bd5ff` : "none";
+    // the build: everything zooms in toward the drop
+    const build = eio(prog(t, BAR, T_EX));
+    $("sIntro").style.transform = `scale(${1 + build * 0.12})`;
+    $("sIntro").style.opacity = 1 - prog(t, T_EX - 0.12, T_EX);
+  }
+
+  // excuses
+  const ex = t >= T_EX && t < T_TWIST;
+  vis($("sEx"), ex); vis($("hud"), ex);
+  if (ex) {
+    const i = Math.min(6, Math.floor((t - T_EX) / BAR));
+    const lt = t - T_EX - i * BAR;
+    $("exLine").textContent = EX[i][0];
+    $("exTr").textContent = EX[i][1];
+    $("who").textContent = WHO[i];
+    $("exCount").textContent = `#${i + 1}`;
+    $("hudN").textContent = i + 1;
+    $("hudOwed").textContent = `$${45 * (i + 1) - (lt < 2 * B ? 45 : 0) || 45}`;
+    // bubble pops in on beat 1, the count drifts behind
+    const pop = back(prog(lt, 0, 0.32));
+    $("bubble").style.transform = `translateY(${lerp(120, 0, eo(prog(lt, 0, 0.3)))}px) scale(${lerp(0.7, 1, pop)}) rotate(${lerp(-4, i % 2 ? 1.2 : -1.2, eo(prog(lt, 0, 0.4)))}deg)`;
+    $("bubble").style.opacity = prog(lt, 0, 0.12);
+    $("exCount").style.transform = `translateX(${lerp(200, 0, eo(prog(lt, 0, 0.5)))}px)`;
+    // FROZEN slams on beat 3: from huge to stamped, then the bubble ices over
+    const sl = prog(lt, 2 * B - 0.12, 2 * B);
+    const st = $("stamp");
+    st.style.opacity = sl > 0 ? 1 : 0;
+    st.style.visibility = sl > 0 ? "visible" : "hidden";
+    st.style.transform = `translate(-50%, 0) rotate(${-9 + (i % 3) * 3}deg) scale(${lerp(3.4, 1, eio(sl))})`;
+    const ice = prog(lt, 2 * B, 2 * B + 0.2);
+    $("frost").style.opacity = ice * 0.92;
+    $("exTxt").style.color = ice > 0.5 ? "#2b6f8f" : "var(--ink)";
+    // exit: whip to the next one on the last half beat
+    const out = eio(prog(lt, BAR - 0.18, BAR));
+    $("bubble").style.transform += ` translateX(${-out * 1400}px)`;
+    st.style.transform += ` translateX(${-out * 1400}px)`;
+    $("bubble").style.filter = st.style.filter = out > 0 ? `blur(${out * 20}px)` : "none";
+  }
+
+  // the twist
+  const tw = t >= T_TWIST && t < T_RAPID;
+  vis($("sTwist"), tw);
+  if (tw) {
+    const lt = t - T_TWIST;
+    rise($("t1"), lt, 0.05, 0.4);
+    const p = back(prog(lt, B * 2, B * 2 + 0.35));
+    $("t2").style.opacity = prog(lt, B * 2, B * 2 + 0.1);
+    $("t2").style.transform = `scale(${lerp(1.8, 1, p)}) rotate(${lerp(-6, -2, p)}deg)`;
+    $("t2").style.transformOrigin = "left center";
+    const ph = eo(prog(lt, BAR + 0.5 * B - 0.2, BAR + 0.5 * B));
+    $("tPhone").style.transform = `translateY(${lerp(1100, 0, ph)}px) rotate(${lerp(12, -3, ph)}deg)`;
+    $("sTwist").style.opacity = 1 - prog(t, T_RAPID - 0.1, T_RAPID);
+  }
+
+  // rapid fire: one feature per beat
+  const rf = t >= T_RAPID && t < T_PRICE;
+  vis($("sRapid"), rf);
+  if (rf) {
+    const k = Math.min(7, Math.floor((t - T_RAPID) / B));
+    const lt = t - T_RAPID - k * B;
+    $("rWord").textContent = RAPID[k][0];
+    $("rWord").style.color = RCOL[k];
+    $("rSub").textContent = RAPID[k][1];
+    const p = back(prog(lt, 0, 0.18));
+    $("rWord").style.transform = `scale(${lerp(1.5, 1, p)}) rotate(${(k % 2 ? 1 : -1) * lerp(4, 0, p)}deg)`;
+    $("rWord").style.filter = `blur(${lerp(10, 0, prog(lt, 0, 0.1))}px)`;
+    $("sRapid").style.background = k % 2 ? "transparent" : "rgb(255 255 255 / 0.02)";
+  }
+
+  // price
+  const pr = t >= T_PRICE && t < T_OUT;
+  vis($("sPrice"), pr);
+  if (pr) {
+    const lt = t - T_PRICE;
+    $("sPrice").style.clipPath = `circle(${eo(prog(lt, 0, 0.35)) * 150}% at 50% 50%)`;
+    rise($("pr1"), lt, 0.15);
+    const p = back(prog(lt, 0.3, 0.6));
+    $("pr2").style.opacity = prog(lt, 0.3, 0.38);
+    $("pr2").style.transform = `scale(${lerp(0.6, 1, p)})`;
+    $("pr2").style.transformOrigin = "left center";
+    rise($("pr3"), lt, 0.7); rise($("pr4"), lt, 1.1);
+  }
+
+  // outro
+  const ou = t >= T_OUT;
+  vis($("sOut"), ou);
+  if (ou) {
+    const lt = t - T_OUT;
+    const p = back(prog(lt, 0, 0.45));
+    $("o1").style.transform = `scale(${lerp(0.3, 1, p)}) rotate(${lerp(-25, 0, eo(prog(lt, 0, 0.5)))}deg)`;
+    $("o1").style.opacity = prog(lt, 0, 0.1);
+    [["op1", 0.05, 0.6], ["op2", 0.5, 0.8], ["op3", 0.62, 0.95]].forEach(([id, a, b]) => { const el = $(id); el.style.strokeDasharray = "1 1"; el.style.strokeDashoffset = 1 - eio(prog(lt, a, b)); });
+    rise($("o2"), lt, 0.45); rise($("o3"), lt, 0.8); rise($("o4"), lt, 1.2);
+    if (lt > 1.6) $("o4").style.transform = `scale(${1 + Math.exp(-((lt - 1.6) % B) / B * 6) * 0.04})`;
+  }
+};
+
+// ---------------------------------------------------------------- the track (128 bpm, A minor)
+const A = [];
+const bar = (n) => n * BAR;
+// progression per bar: Am, F, C, G
+const PROG = [[45, [57, 60, 64]], [41, [53, 57, 60]], [48, [55, 60, 64]], [43, [55, 59, 62]]];
+// intro: pad, filtered pulse, glitches, riser, snare roll
+A.push({ k: "pad", at: 0, dur: T_EX + 0.3, notes: [57, 60, 64], gain: 0.9 });
+for (let i = 0; i < 8; i++) A.push({ k: "hat", at: i * B, gain: 0.5 });
+for (let i = 0; i < 16; i++) A.push({ k: "hat", at: BAR + i * B / 2, gain: 0.35 + i * 0.03 });
+[0.3, 0.35, 1.2].forEach((at) => A.push({ k: "glitch", at, gain: 0.9 }));
+for (let i = 0; i < 4; i++) A.push({ k: "kick", at: i * B, gain: 0.55 });
+A.push({ k: "riser", at: BAR, dur: BAR, gain: 0.9 });
+for (let i = 0; i < 8; i++) A.push({ k: "snare", at: BAR + 2 * B + i * B / 4, gain: 0.25 + i * 0.09 });
+// the drop: 7 bars of the excuses
+for (let b = 0; b < 7; b++) {
+  const s = T_EX + bar(b);
+  const [root, chord] = PROG[b % 4];
+  for (let q = 0; q < 4; q++) A.push({ k: "kick", at: s + q * B, gain: 1 });
+  A.push({ k: "snare", at: s + B, gain: 0.85 }); A.push({ k: "snare", at: s + 3 * B, gain: 0.85 });
+  for (let e = 0; e < 8; e++) A.push({ k: "hat", at: s + e * B / 2 + B / 4, gain: e % 2 ? 0.7 : 0.45, open: e === 7 });
+  for (let e = 0; e < 8; e++) A.push({ k: "bass", at: s + e * B / 2, dur: B / 2 - 0.03, note: root - 12 + (e === 3 || e === 7 ? 12 : 0), gain: 0.9 });
+  A.push({ k: "stab", at: s, notes: chord, gain: 1 });
+  A.push({ k: "pluck", at: s + 0.02, note: chord[2] + 12, gain: 0.7 });  // the "pop" of the message
+  A.push({ k: "impact", at: SLAM(b), gain: 0.85 });
+  A.push({ k: "shatter", at: SLAM(b), gain: 0.9 });
+  A.push({ k: "stamp", at: SLAM(b), gain: 0.7 });
+  A.push({ k: "whoosh", at: s + BAR - 0.25, dur: 0.3, gain: 0.5 });
+}
+// the twist: drums drop out, a bell, then a riser into the phone slam
+A.push({ k: "impact", at: T_TWIST, gain: 0.5 });
+A.push({ k: "pad", at: T_TWIST, dur: 2 * BAR + 0.3, notes: [53, 57, 60, 64], gain: 1 });
+A.push({ k: "bass", at: T_TWIST, dur: BAR, note: 29, gain: 0.8 });
+A.push({ k: "bell", at: T_TWIST + 0.05, note: 76, gain: 0.9 });
+A.push({ k: "bell", at: T_TWIST + 2 * B, note: 81, gain: 1 });
+A.push({ k: "stab", at: T_TWIST + 2 * B, notes: [57, 60, 64, 69], gain: 1 });
+A.push({ k: "riser", at: T_TWIST + BAR - 0.4, dur: BAR * 0.5, gain: 0.8 });
+A.push({ k: "impact", at: T_TWIST + BAR + 0.5 * B, gain: 0.9 });
+A.push({ k: "buzz", at: T_TWIST + BAR + 0.5 * B, gain: 1 });
+for (let i = 0; i < 8; i++) A.push({ k: "snare", at: T_TWIST + BAR + 2 * B + i * B / 4, gain: 0.2 + i * 0.1 });
+// rapid fire: double-time hats, a stab on every word
+for (let b = 0; b < 2; b++) {
+  const s = T_RAPID + bar(b);
+  for (let q = 0; q < 4; q++) { A.push({ k: "kick", at: s + q * B, gain: 1 }); A.push({ k: "stab", at: s + q * B, notes: PROG[(b * 2 + (q >> 1)) % 4][1], gain: 0.9 }); }
+  A.push({ k: "snare", at: s + B, gain: 0.9 }); A.push({ k: "snare", at: s + 3 * B, gain: 0.9 });
+  for (let e = 0; e < 16; e++) A.push({ k: "hat", at: s + e * B / 4, gain: e % 4 === 2 ? 0.7 : 0.35 });
+  for (let e = 0; e < 8; e++) A.push({ k: "bass", at: s + e * B / 2, dur: B / 2 - 0.03, note: PROG[(b * 2 + (e >> 2)) % 4][0] - 12, gain: 0.9 });
+}
+// price: a hit, then a half-time groove
+A.push({ k: "impact", at: T_PRICE + 0.1, gain: 1 });
+A.push({ k: "bell", at: T_PRICE + 0.35, note: 81, gain: 1 });
+for (let b = 0; b < 2; b++) {
+  const s = T_PRICE + bar(b);
+  A.push({ k: "kick", at: s, gain: 1 }); A.push({ k: "kick", at: s + 2.5 * B, gain: 0.8 });
+  A.push({ k: "snare", at: s + 2 * B, gain: 0.9 });
+  for (let e = 0; e < 8; e++) A.push({ k: "hat", at: s + e * B / 2, gain: 0.45 });
+  A.push({ k: "bass", at: s, dur: BAR - 0.05, note: [33, 29][b], gain: 0.8 });
+  A.push({ k: "pad", at: s, dur: BAR + 0.2, notes: [[57, 60, 64], [53, 57, 60]][b], gain: 0.8 });
+}
+// outro: the logo hit, a resolving chord, one last bar of beat, then air
+A.push({ k: "impact", at: T_OUT, gain: 1 });
+A.push({ k: "shatter", at: T_OUT, gain: 0.5 });
+[69, 76, 81].forEach((n, i) => A.push({ k: "bell", at: T_OUT + 0.05 + i * 0.22, note: n, gain: 1 - i * 0.15 }));
+A.push({ k: "pad", at: T_OUT, dur: 4.4, notes: [57, 61, 64, 69], gain: 1.1 });
+for (let q = 0; q < 4; q++) { A.push({ k: "kick", at: T_OUT + BAR + q * B, gain: 0.7 }); A.push({ k: "hat", at: T_OUT + BAR + q * B + B / 2, gain: 0.4 }); }
+A.push({ k: "bass", at: T_OUT, dur: BAR * 2, note: 33, gain: 0.7 });
+window.AUDIO = A;
+
+window.renderAt(0);
+</script>
+</body>
+</html>

@@ -10,6 +10,13 @@
 //   { k: "buzz", at, gain }                              "not allowed" error tone
 //   { k: "ice", at, dur, gain }                          freezing crackle + glints
 //   { k: "stamp", at, gain }                             a rubber stamp hit
+//   { k: "kick", at, gain }  { k: "snare", at, gain }  { k: "hat", at, gain, open }   drums
+//   { k: "bass", at, dur, note, gain }                   saw bass, filtered
+//   { k: "stab", at, notes, gain }                       short bright chord
+//   { k: "riser", at, dur, gain }                        build-up sweep before a drop
+//   { k: "impact", at, gain }                            big boom for a slam
+//   { k: "shatter", at, gain }                           glass / ice breaking
+//   { k: "glitch", at, gain }                            digital stutter
 const SR = 44100;
 const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
 
@@ -128,6 +135,106 @@ export function synthWav(cues, duration) {
             const t = i / SR;
             add(at + i, Math.sin(2 * Math.PI * f * t) * Math.exp(-t * 14) * 0.05 * g, ((k % 5) - 2) * 0.3);
           }
+        }
+        break;
+      }
+      case "kick": {
+        for (let i = 0; i < SR * 0.5; i++) {
+          const t = i / SR;
+          const f = 45 + 110 * Math.exp(-t * 28);
+          const ph = 2 * Math.PI * (45 * t + (110 / 28) * (1 - Math.exp(-t * 28)));
+          add(start + i, (Math.sin(ph) * Math.exp(-t * 7) + (i < 90 ? noise() * 0.3 : 0)) * 0.75 * g);
+        }
+        break;
+      }
+      case "snare": {
+        let hp = 0, prev = 0;
+        for (let i = 0; i < SR * 0.3; i++) {
+          const t = i / SR;
+          const n = noise();
+          hp = 0.7 * (hp + n - prev); prev = n;
+          add(start + i, (hp * 0.55 * Math.exp(-t * 16) + Math.sin(2 * Math.PI * 190 * t) * 0.35 * Math.exp(-t * 30)) * g, 0.05);
+        }
+        break;
+      }
+      case "hat": {
+        let hp = 0, prev = 0;
+        const len = SR * (c.open ? 0.22 : 0.05);
+        for (let i = 0; i < len; i++) {
+          const t = i / SR;
+          const n = noise();
+          hp = 0.4 * (hp + n - prev); prev = n;
+          add(start + i, hp * Math.exp(-t * (c.open ? 14 : 80)) * 0.22 * g, 0.35);
+        }
+        break;
+      }
+      case "bass": {
+        const f = mtof(c.note);
+        const len = Math.floor(c.dur * SR);
+        let lp = 0;
+        for (let i = 0; i < len; i++) {
+          const t = i / SR;
+          let saw = 0;
+          for (let h = 1; h <= 8; h++) saw += Math.sin(2 * Math.PI * f * h * t) / h;
+          const cut = 0.05 + 0.25 * Math.exp(-t * 6);
+          lp += cut * (saw - lp);
+          const env = Math.min(1, i / 120) * Math.min(1, (len - i) / 400);
+          add(start + i, lp * env * 0.32 * g);
+        }
+        break;
+      }
+      case "stab": {
+        let lp = 0;
+        for (let i = 0; i < SR * 0.45; i++) {
+          const t = i / SR;
+          let v = 0;
+          for (const m of c.notes) { const f = mtof(m); for (let h = 1; h <= 5; h++) v += Math.sin(2 * Math.PI * f * h * t * (1 + (h % 2) * 0.002)) / h; }
+          lp += (0.12 + 0.3 * Math.exp(-t * 10)) * (v - lp);
+          add(start + i, lp * Math.exp(-t * 7) * 0.09 * g, 0);
+        }
+        break;
+      }
+      case "riser": {
+        const len = Math.floor(c.dur * SR);
+        let lp = 0, ph = 0;
+        for (let i = 0; i < len; i++) {
+          const x = i / len;
+          lp += (0.01 + 0.4 * x * x) * (noise() - lp);
+          const f = 200 + 1600 * x * x;
+          ph += (2 * Math.PI * f) / SR;
+          add(start + i, (lp * 0.8 + Math.sin(ph) * 0.12) * x * x * 0.9 * g, Math.sin(x * 20) * 0.3);
+        }
+        break;
+      }
+      case "impact": {
+        for (let i = 0; i < SR * 1.6; i++) {
+          const t = i / SR;
+          const ph = 2 * Math.PI * (32 * t + (90 / 9) * (1 - Math.exp(-t * 9)));
+          add(start + i, (Math.sin(ph) * Math.exp(-t * 2.6) * 0.9 + noise() * 0.6 * Math.exp(-t * 18)) * g);
+        }
+        break;
+      }
+      case "shatter": {
+        let hp = 0, prev = 0;
+        for (let i = 0; i < SR * 0.9; i++) {
+          const t = i / SR;
+          const n = noise();
+          hp = 0.92 * (hp + n - prev); prev = n;
+          const crack = noise() > 0.985 - t * 0.02 ? noise() * 0.8 : 0;
+          add(start + i, (hp * 0.4 * Math.exp(-t * 6) + crack * Math.exp(-t * 3)) * g, noise() * 0.7);
+        }
+        for (let k = 0; k < 10; k++) {
+          const at = start + Math.floor(k * 0.05 * SR);
+          const f = 2600 + ((k * 911) % 3400);
+          for (let i = 0; i < SR * 0.4; i++) { const t = i / SR; add(at + i, Math.sin(2 * Math.PI * f * t) * Math.exp(-t * 12) * 0.05 * g, ((k % 5) - 2) * 0.35); }
+        }
+        break;
+      }
+      case "glitch": {
+        for (let r = 0; r < 6; r++) {
+          const at = start + Math.floor(r * 0.035 * SR);
+          const f = 300 + ((r * 577) % 900);
+          for (let i = 0; i < SR * 0.03; i++) add(at + i, Math.sign(Math.sin(2 * Math.PI * f * (i / SR))) * 0.16 * g, (r % 2 ? 0.6 : -0.6));
         }
         break;
       }
