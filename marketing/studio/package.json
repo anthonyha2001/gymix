@@ -1,0 +1,12 @@
+{
+  "name": "gymix-studio",
+  "private": true,
+  "type": "module",
+  "description": "Renders Gymix animated episodes (HTML animations) to MP4 with headless Chrome and ffmpeg.",
+  "scripts": {
+    "render": "node render.mjs"
+  },
+  "dependencies": {
+    "ffmpeg-static": "5.2.0"
+  }
+}

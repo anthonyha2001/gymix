@@ -29,7 +29,10 @@ Deliver `marketing/work/<week>/plan.md` with:
 3. **For the founder:** the real-world actions only a human can do this week (visits, recording, posting, setting
    ads live), with a time estimate, keeping the total realistic for one founder.
 4. **Stop doing:** what to drop because the numbers say it isn't working (from week 2 on).
-Prefer what works in Lebanon: in-person gym visits, WhatsApp, Instagram Reels, trainers, word of mouth.
+**Hands-off mode (the default):** the founder doesn't film, visit gyms, call or post by hand. Plan only work the AI
+team can finish: animated episodes rendered in `marketing/studio/` (gymix-video), designs, captions, ads plans, SEO
+articles, auto-replies, and a weekly posting pack the founder (or a scheduler) uploads in one go. The live demo does
+the selling. Never put visits, filming or calls on the founder's list.
 
 ## Before anything
 Read `marketing/GYMIX_MARKETING_BRIEF.md` in full. It is the only source of truth about Gymix. Also read the task

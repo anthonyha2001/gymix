@@ -412,3 +412,20 @@ the web; none of them can post, send or spend.
 
 The ChatGPT/Claude/Gemini project setup in section 3 still works if you'd rather run some roles in those tools; the
 prompts there match the agents here.
+
+---
+
+## 12. Hands-off mode (the founder's choice, 9 November 2026)
+
+The founder doesn't film, visit gyms, call, or post by hand. The team works around that:
+
+- **Videos are animated**, made and rendered by gymix-video in `marketing/studio/` (HTML animations → MP4 with
+  headless Chrome and ffmpeg: `npm install` once, then `node render.mjs episodes/<episode>.html out/<name>.mp4`).
+  The star is the **Abou Bkra** animated series; app screens in videos copy the real app exactly.
+- **The live demo is the salesperson.** Every post, ad and reply points to it; it explains Gymix page by page.
+- **Outreach is inbound only:** replies to comments and messages, plus auto-replies set up once in Instagram and
+  WhatsApp Business that send the demo link. No visits, no calls.
+- **Posting:** a weekly pack (videos, images, captions, times) loaded once into Meta Business Suite's free scheduler,
+  or later published automatically through Meta's API, so nothing has to be posted by hand day to day.
+- **What can't be fully removed:** creating the social accounts, approving the money for ads, and a native speaker
+  reading Arabizi lines. Each is a one-time step or a few minutes a week.
