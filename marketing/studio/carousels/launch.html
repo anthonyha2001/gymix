@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Introducing Gymix (launch post)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,700;1,9..144,800&family=Geist:wght@400;500;600;700;800;900&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --ink: #0d1117; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1350px; overflow: hidden; background: var(--ink); font-family: Geist, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #fff; }
+  .slide { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--ink); }
+  .slide.on { visibility: visible; }
+  .abs { position: absolute; }
+  .glow { position: absolute; left: 160px; top: 560px; width: 1100px; height: 1100px; border-radius: 50%; background: radial-gradient(closest-side, rgb(200 241 53 / 0.22), rgb(200 241 53 / 0.06) 60%, transparent); }
+  .grid { position: absolute; inset: 0; background-image: linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px); background-size: 54px 54px; mask-image: linear-gradient(transparent, #000 30%, #000 70%, transparent); }
+  .laptop { position: absolute; left: 220px; top: 610px; width: 900px; }
+  .laptop .lid { border-radius: 26px 26px 0 0; background: #1b2028; padding: 18px 18px 0; box-shadow: 0 50px 120px rgb(0 0 0 / 0.6); }
+  .laptop .screen { border-radius: 10px 10px 0 0; overflow: hidden; height: 500px; }
+  .laptop .screen img { display: block; width: 100%; }
+  .laptop .base { height: 26px; margin: 0 -60px; border-radius: 0 0 26px 26px; background: linear-gradient(#2a313c, #151a21); }
+  .phone { position: absolute; left: 70px; top: 700px; width: 330px; height: 640px; border-radius: 58px; background: #05070a; padding: 14px; box-shadow: 0 50px 120px rgb(0 0 0 / 0.65), 0 0 0 2px rgb(255 255 255 / 0.06); }
+  .phone .scr { border-radius: 46px; overflow: hidden; height: 100%; background: #fff; }
+  .phone img { display: block; width: 100%; }
+  .chip { display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 999px; background: rgb(255 255 255 / 0.07); border: 1px solid rgb(255 255 255 / 0.1); font-size: 26px; font-weight: 600; color: rgb(255 255 255 / 0.9); white-space: nowrap; }
+  .chip i { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 10px var(--lime); }
+</style>
+</head>
+<body>
+<div class="slide on">
+  <div class="grid"></div>
+  <div class="glow"></div>
+
+  <!-- brand + label -->
+  <div class="abs" style="left: 70px; top: 64px; right: 70px; display:flex; align-items:center; justify-content:space-between">
+    <div style="display:flex; align-items:center; gap: 16px; font-size: 40px; font-weight: 800; letter-spacing: -0.02em">
+      <span style="display:grid; place-items:center; width: 64px; height: 64px; border-radius: 16px; background: var(--lime)">
+        <svg viewBox="0 0 100 100" width="56" height="56"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+      </span>
+      Gymix
+    </div>
+    <div style="font-size: 24px; font-weight: 700; letter-spacing: 0.18em; color: var(--lime)">BUILT FOR GYMS IN LEBANON</div>
+  </div>
+
+  <!-- headline -->
+  <div class="abs" style="left: 70px; right: 70px; top: 190px">
+    <div style="font-size: 132px; font-weight: 900; line-height: 0.9; letter-spacing: -0.05em">Your gym,<br><span style="font-family: Fraunces, Georgia, serif; font-style: italic; font-weight: 800; color: var(--lime); letter-spacing: -0.03em">running itself.</span></div>
+    <div style="margin-top: 30px; font-size: 33px; line-height: 1.35; font-weight: 500; color: rgb(255 255 255 / 0.72); max-width: 940px">Memberships, dollars and lira, <span style="white-space:nowrap">tap-to-check-in</span> and a member app. One system for the whole gym.</div>
+  </div>
+
+  <!-- product -->
+  <div class="laptop"><div class="lid"><div class="screen"><img src="../out/screens/overview-full.png"></div></div><div class="base"></div></div>
+  <div class="phone"><div class="scr"><img src="../out/screens/member-home.png"></div></div>
+
+  <!-- proof chips -->
+  <div class="abs" style="left: 440px; right: 70px; top: 1166px; display:flex; gap: 12px; justify-content: flex-end">
+    <span class="chip" style="font-size: 23px; padding: 12px 20px"><i></i>Unpaid? Frozen automatically</span>
+    <span class="chip" style="font-size: 23px; padding: 12px 20px"><i></i>14 days free</span>
+  </div>
+
+  <!-- offer bar -->
+  <div class="abs" style="left: 0; right: 0; bottom: 0; height: 96px; background: var(--lime); color: var(--ink); display:flex; align-items:center; justify-content:space-between; padding: 0 70px; font-size: 29px; font-weight: 800; white-space: nowrap">
+    <span>$19.99 a month for the whole gym</span>
+    <span style="display:flex; align-items:center; gap: 12px">Live demo · link in bio <span style="font-size: 34px">→</span></span>
+  </div>
+</div>
+<script>
+window.SLIDES = 1;
+window.showSlide = () => {};
+</script>
+</body>
+</html>

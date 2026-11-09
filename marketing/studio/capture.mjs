@@ -64,6 +64,7 @@ try {
   await sleep(500);
   const stats = await evaluate(`(() => { const h = [...document.querySelectorAll('p, span, div')].find(e => e.innerText?.trim() === 'Active members'); let el = h; for (let i = 0; i < 6 && el; i++) { el = el.parentElement; if (el && el.getBoundingClientRect().width > 900) break; } const r = el.getBoundingClientRect(); return { x: r.x - 16, y: r.y - 16, width: r.width + 32, height: r.height + 32 }; })()`);
   await shot("overview-stats", stats);
+  await shot("overview-full", { x: 0, y: 0, width: 1280, height: 800 });
 
   // 2 · A refused check-in at the desk (an expired member).
   await go("/dashboard/check-in");
