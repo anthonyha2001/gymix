@@ -390,3 +390,25 @@ Draft (specialist) → Localize if needed → **Brand Guardian: PASS** → nativ
 - **Keep a swipe file** (Library tab) of approved pieces that performed: agents write better when they see what
   worked.
 - **One owner per agent prompt:** only the founder edits the prompts, so the team doesn't drift.
+
+---
+
+## 11. The team, built (Claude Code)
+
+The 13 agents exist as Claude Code subagents in `.claude/agents/` (`gymix-cmo`, `gymix-researcher`,
+`gymix-copywriter`, `gymix-localizer`, `gymix-social`, `gymix-designer`, `gymix-video`, `gymix-ads`,
+`gymix-outreach`, `gymix-seo`, `gymix-onboarding`, `gymix-analyst`, `gymix-guardian`). Each one has its role, the
+shared rules and the voice built in, and reads the brief before every task. The Researcher and SEO Writer can search
+the web; none of them can post, send or spend.
+
+- **Run a week:** in Claude Code, type `/marketing-week` (optionally with a focus: `/marketing-week focus on
+  CrossFit boxes in Jounieh`). The CMO plans, the specialists draft in parallel, the Guardian checks, the board is
+  updated, and you get a short list: what's ready, what you do this week, and the questions only you can answer.
+- **Use one agent directly:** "ask gymix-copywriter for 5 Abou Bkra hooks", "have gymix-guardian check this
+  caption: …".
+- **Friday:** paste the week's numbers and say "run the analyst".
+- **The board:** `marketing/board/` (CSV files that open in Google Sheets). **The work:** `marketing/work/<week>/`.
+- **Change an agent:** edit its file in `.claude/agents/`. Change a fact: edit the brief; every agent reads it fresh.
+
+The ChatGPT/Claude/Gemini project setup in section 3 still works if you'd rather run some roles in those tools; the
+prompts there match the agents here.
