@@ -364,15 +364,106 @@ in dollars and lira, for **$19.99 a month**. Unlike foreign gym software priced 
 - **Imagery:** real Lebanese gyms and real people (not stock bodybuilders), phones tapping a sticker at the door,
   the front desk, a trainer with a client, the member app on a phone. Lime used as an accent.
 
-### 7.2 Voice and tone
-- **Short, direct, confident, warm.** Like a friend who owns a gym and figured it out.
-- **Plain words.** Say "get paid", not "optimise revenue collection". Say "members", not "end users".
-- **Concrete.** "A $1 sticker at the door", not "seamless access control".
-- **A little humour is good** (the cracked-screen joke is part of the brand), never at the customer's expense.
-- **Never:** corporate buzzwords ("revolutionary", "cutting-edge", "synergy", "leverage", "game-changer"), fear
-  tactics, or negative comments about Lebanon's situation. Talk about practical problems (rates, cash, payments),
-  not politics or crisis.
-- **No politics, religion or sectarian references. Ever.**
+### 7.2 Voice: the smart, teasing Lebanese friend
+
+**Gymix talks like the friend who has run a gym in Lebanon for ten years, has heard every excuse, teases you about
+it with love, and then quietly fixes it.** Smart first, funny second, Lebanese all the way through. Owners should read
+a post, laugh, think "wallah, that's my gym", and tap the link.
+
+#### The character
+- **Sharp, not loud.** The joke comes from noticing something true that nobody says out loud. No shouting, no
+  "🔥🔥🔥 GAME CHANGER", no clown energy.
+- **Teasing, with love.** We roast the *situation* (the notebook, the excuses, the chaos), never the person. The owner
+  is always the hero; the problem is the villain.
+- **Confident and a bit cheeky.** We know the product works; we don't beg. "Try it. Break it. It's not your gym (yet)."
+- **Lebanese by instinct.** Code-switching (Hi, kifak, ça va), everyday phrases, the rhythm of how people actually talk
+  at a front desk in Achrafieh or Jounieh. Never a tourist's version of Lebanon.
+
+#### The recipe for a smart line (use it for every hook, caption and ad)
+1. **The truth:** something every Lebanese gym owner knows is real. ("He's been saying 'bkra' since October.")
+2. **The twist:** a tease, a reveal or a play on words. ("Bkra bedfa3? Tayyeb. W bkra btfout.")
+3. **The fact:** one product fact from section 2, exactly as written. ("Unpaid members freeze automatically.")
+4. **The nudge:** the call to action, light. ("Try it on a sample gym, no sign-up.")
+
+One joke per piece, then get out. If you have to explain it, cut it.
+
+#### Recurring characters and bits (build series around them)
+- **Abou Bkra:** the member who always pays "tomorrow". Every gym has one. Gymix's auto-freeze is his natural enemy.
+  *"Abou Bkra met the auto-freeze today. Bkra, he paid."*
+- **El Daftar (the notebook):** the old front-desk notebook, retiring with honours. Coffee stains, three handwritings,
+  a page torn out in 2019. *"El daftar served you well. Let it rest."*
+- **January Members:** 80 new faces on 2 January, "wein ra7o?" by February. Gymix's reminders and streaks keep them.
+- **The Wasta Member:** "ana men jama3it el owner" (I'm the owner's friend). *"El freeze ma bya3ref wasta."* (The
+  freeze doesn't know anyone.)
+- **The Rate Question:** "kam el sa3er lyom?" asked at the desk ten times a day. You set your rate once; Gymix does
+  the maths. (Keep it about daily logistics, never about the crisis.)
+- **The Trainer's PDF:** programs sent as blurry PDFs on WhatsApp at 11pm. Gymix puts them in the member's app.
+- **40 Chats:** the owner's WhatsApp, with 40 unread "kifak, fi class bokra?" messages.
+
+All characters are fictional types, never real people, never named after a real member or gym.
+
+#### The hook bank (use, remix, test; dialect lines NEED NATIVE CHECK)
+**Getting paid**
+- "Bkra bedfa3? Tayyeb. W bkra btfout." (Pay tomorrow? Fine. And you get in tomorrow.)
+- "El freeze ma bya3ref wasta."
+- "Unpaid? Frozen. Paid? Welcome back, habibi."
+- "The only thing in your gym that never skips a day: the auto-freeze."
+- "Your front desk deserves better than 'ma3leh, bkra'."
+- "Collecting fees shouldn't need a speech, a guilt trip and a cousin."
+
+**The notebook and the chaos**
+- "40 WhatsApp chats. 3 notebooks. 1 calculator. 0 idea who paid. Or: one app."
+- "El daftar did its best. It's time."
+- "Your notebook can't send reminders. It also can't count. Respectfully."
+- "Kam el sa3er lyom? Set it once. Gymix does the maths. You do the gym."
+
+**Check-in**
+- "A $1 sticker at the door. Tap, you're in. Didn't pay? The sticker knows."
+- "Members tap their phone at the door like it's a metro in Paris. Except it's your gym in Zalka."
+- "No turnstile, no installer, no 'el technician jeye bokra'."
+
+**Members and retention**
+- "January members are like New Year's resolutions. Gymix sends the reminder before they become February ghosts."
+- "Your members already live on their phones. Now your gym does too. No App Store, no download, no 'shou el password?'"
+- "Streaks, PRs, confetti. Your members will come back just to not lose the streak. We don't judge."
+
+**Price**
+- "$19.99 a month for the whole gym. Less than one member's monthly fee. Way less than one member's excuses."
+- "$19.99. Not per member. Not per trainer. Not 'call us for a quote'. Per gym. Khalas."
+
+**The live demo**
+- "Run a gym for a day. No sign-up, no salesman, no 'n7ki ba3den'."
+- "Try it. Break it. It's not your gym (yet)."
+- "Check in a member. Freeze another one. Sell a membership. All before your coffee gets cold."
+- "Abou Bkra is in the demo too. Go freeze him. It's therapeutic."
+
+#### Smart, not cringe: the checks
+- **Specific beats generic.** "Abou Bkra since October" beats "late payers". "Zalka" beats "your area".
+- **Truth first.** Every joke stands on a real owner's problem and a real Gymix fact. No fact, no joke.
+- **One language switch per line is plenty.** "Unpaid? Frozen. Paid? Welcome back, habibi." Not a word salad.
+- **No forced slang, no emoji spam** (one emoji at most in a social caption, none in ads or designs).
+- **Read it out loud in a Lebanese accent.** If a gym owner in Jdeideh wouldn't say it, rewrite it.
+- **Variety:** not every post is a joke. Mix in useful owner tips and straight product clips (section 10.1).
+
+#### How playful, by channel
+| Channel | Playful | Notes |
+|---|---|---|
+| Instagram / TikTok | High | Characters, hooks, trends. The home of Abou Bkra. |
+| Ads | Medium | One clever hook, then the facts and the CTA. Clarity wins the click. |
+| WhatsApp to new owners | Light | Warm, one light line max. Respect their time. |
+| Website, one-pager, emails | Light | Clear first; one smart line per section. |
+| Onboarding and support | Warm, almost none | Never tease someone who is stuck, paying or upset. Be quick and kind. |
+| Press, LinkedIn | Low | Smart and confident, not jokey. |
+
+#### Never tease
+- People's bodies, weight, looks, age or gender. (No "summer body" shaming, ever.)
+- Religion, sects, regions as stereotypes, politics, the crisis, money troubles, power cuts, emigration.
+- Customers in support, or any real member or gym.
+- Competitors by name (tease "the notebook" and "expensive foreign software" instead).
+- Anything that would embarrass an owner if their members saw it.
+
+**Never use:** corporate buzzwords ("revolutionary", "cutting-edge", "synergy", "leverage", "game-changer") and fear
+tactics.
 
 ### 7.3 Languages
 Lebanon is multilingual. Match the language to the channel and audience:
@@ -387,11 +478,12 @@ Lebanon is multilingual. Match the language to the channel and audience:
   "Whish", "OMT").
 
 Example of the right tone in Lebanese dialect (Arabizi):
-> "Ba3dak 3am tl7a2 el members ta yedf3o? Ma3 Gymix, li ma dafa3 bya3mol freeze automatic, w ma byfout 3al gym
-> la ydfa3. $19.99 bel chahr la kel el gym. Jarrebo 14 yom free."
+> "Abou Bkra 3am y2ellak 'bkra bedfa3' men October? Ma3 Gymix, li ma dafa3 bya3mol freeze la7alo, w el freeze ma
+> bya3ref wasta. $19.99 bel chahr la kel el gym. Jarreb 3a gym demo, bala ma tsajjel."
 
-(Translation: "Still chasing members to pay? With Gymix, whoever didn't pay gets frozen automatically and can't
-get into the gym until they pay. $19.99 a month for the whole gym. Try it free for 14 days.")
+(Translation: "Abou Bkra has been telling you 'I'll pay tomorrow' since October? With Gymix, whoever didn't pay
+freezes automatically, and the freeze doesn't know any wasta. $19.99 a month for the whole gym. Try it on a demo
+gym, no sign-up.")
 
 The AI should get a Lebanese speaker to check dialect copy before it's published.
 
@@ -561,6 +653,18 @@ Adapt these, but keep the facts exactly as they are.
 - Quick cuts: check in a member, the expired one gets refused, sell a membership, switch to the member's phone.
 - Text: "Try it now. No sign-up." End card: `[WEBSITE]/demo`.
 
+**Reel 8: "Abou Bkra" series (15s each, the brand's recurring character)**
+- Ep. 1 "Bkra": Abou Bkra at the desk, "bkra bedfa3, wallah". Cut to the next day: he taps the sticker, red screen.
+  Text: "Bkra bedfa3? Tayyeb. W bkra btfout."
+- Ep. 2 "Wasta": "Ana men jama3it el owner." Tap. Red. Text: "El freeze ma bya3ref wasta."
+- Ep. 3 "Redemption": he pays on Whish, taps, green. The desk claps. Text: "Welcome back, habibi."
+- Shot with friends or staff playing him (with their permission), never a real member being shamed.
+
+**Reel 9: "El daftar retires" (20s)**
+- A front-desk notebook gets a retirement party: balloons, a tiny cake, coffee stains on every page.
+- Text: "After 7 years, 3 handwritings and 1 torn page, el daftar retires." End: the Gymix dashboard. "We'll take it
+  from here."
+
 **Reel 6: "The member's morning" (15s)**
 - Notification "Leg day today 💪" → home screen with today's workout → tap at the door → log sets → PR confetti.
 
@@ -663,6 +767,8 @@ Adapt these, but keep the facts exactly as they are.
     measure.
 11. **When the price or offer changes,** the founder will update section 2.4. Always use the latest numbers in
     this file.
+12. **Sound like Gymix (section 7.2):** smart first, funny second, Lebanese all the way. Truth, twist, fact, nudge.
+    Tease situations, never people. If it could be any software company's post, rewrite it.
 
 ### Example prompts the founder can use with you
 - "Write 10 Instagram captions for Reel 1 in Lebanese Arabizi and English."
