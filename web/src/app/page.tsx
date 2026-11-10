@@ -95,13 +95,15 @@ export default async function Home() {
       <MarketingNav />
 
       {/* Hero */}
-      <section className="px-5 pt-24 pb-16 sm:pt-36">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="relative overflow-hidden px-5 pt-24 pb-16 sm:pt-36">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[1100px] bg-[radial-gradient(55%_45%_at_50%_62%,rgb(200_241_53/0.22),transparent_70%)]" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ink/10 to-transparent" />
+        <div className="relative mx-auto max-w-4xl text-center">
           <Reveal>
             <Kicker>Gymix · Built for gyms in Lebanon</Kicker>
           </Reveal>
           <Reveal delay={150}>
-            <h1 className="mt-8 font-serif text-[3.1rem] leading-[1.02] tracking-[-0.02em] sm:text-[5.5rem]">
+            <h1 className="mt-8 font-serif text-[3.4rem] leading-[0.98] tracking-[-0.03em] sm:text-[6.5rem]">
               Your gym,<br /> <em className="text-ink/50">running itself.</em>
             </h1>
           </Reveal>
@@ -111,9 +113,26 @@ export default async function Home() {
             </p>
           </Reveal>
           <Reveal delay={450}>{cta}</Reveal>
+          <Reveal delay={550}>
+            <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-ink/50">
+              {["Dollars & lira", "Whish · OMT · card", "Tap-to-check-in", "Member app", "Unlimited members"].map((x) => (
+                <li key={x} className="flex items-center gap-2">
+                  <span className="size-1.5 rounded-full bg-brand-strong" />
+                  {x}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </div>
-        <Reveal delay={600} className="mx-auto mt-20 max-w-6xl sm:mt-28">
+        <Reveal delay={650} className="relative mx-auto mt-20 max-w-6xl sm:mt-24">
           <Frame src="/landing/overview-full.png" alt="The Gymix dashboard" priority />
+          <div className="absolute -right-2 -bottom-10 w-[30%] max-w-[250px] sm:-right-8 sm:-bottom-16">
+            <div className="rounded-[18%/8.5%] bg-ink p-[4%] shadow-[0_40px_80px_-25px_rgb(13_17_23/0.6)] ring-1 ring-white/10">
+              <div className="relative aspect-[9/19] overflow-hidden rounded-[14%/6.6%] bg-white">
+                <Image src="/landing/member-home.png" alt="The Gymix member app" fill sizes="250px" className="object-cover object-top" />
+              </div>
+            </div>
+          </div>
         </Reveal>
       </section>
 
