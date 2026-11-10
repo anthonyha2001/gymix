@@ -478,3 +478,19 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
   .lx-reveal { opacity: 1; transform: none; filter: none; transition: none; }
   .lx-rise, .lx-shine, .lx-shine-dark, .lx-ripple, .lx-pop, .lx-shake, .lx-tick, .lx-marquee { animation: none; }
 }
+
+/* ---------- Landing v3: scroll storytelling ---------- */
+.lx-aura { background: radial-gradient(60% 50% at 50% 0%, rgb(200 241 53 / 0.14), transparent 70%); }
+.lx-stage { perspective: 1600px; }
+.lx-laptop { transform-origin: 50% 100%; transform: rotateX(calc((1 - var(--tilt, 0)) * 22deg)) scale(calc(0.9 + var(--tilt, 0) * 0.1)); transition: transform 0.12s linear; will-change: transform; }
+.lx-chapter, .lx-screen { opacity: 0; transform: translateY(30px); filter: blur(8px); transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.7s; pointer-events: none; }
+.lx-screen { transform: translateY(40px) scale(0.96); }
+.lx-dot { transition: background 0.4s, width 0.4s; }
+.lx-story[data-step="0"] [data-i="0"], .lx-story[data-step="1"] [data-i="1"], .lx-story[data-step="2"] [data-i="2"],
+.lx-story[data-step="3"] [data-i="3"], .lx-story[data-step="4"] [data-i="4"], .lx-story[data-step="5"] [data-i="5"] { opacity: 1; transform: none; filter: none; pointer-events: auto; }
+.lx-story[data-step="0"] .lx-dot[data-i="0"], .lx-story[data-step="1"] .lx-dot[data-i="1"], .lx-story[data-step="2"] .lx-dot[data-i="2"],
+.lx-story[data-step="3"] .lx-dot[data-i="3"], .lx-story[data-step="4"] .lx-dot[data-i="4"], .lx-story[data-step="5"] .lx-dot[data-i="5"] { background: var(--color-brand); width: 3rem; }
+@media (prefers-reduced-motion: reduce) {
+  .lx-laptop { transform: none; }
+  .lx-chapter, .lx-screen { transition: none; }
+}

@@ -1,86 +1,37 @@
 "use client";
 
-import Link from "next/link";
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowRight, Check, CheckCircle2, Loader2, XCircle } from "lucide-react";
-import { LogoMark } from "@/components/logo-mark";
+import Image from "next/image";
+import { useEffect, useRef, type ReactNode } from "react";
+import { CheckCircle2, XCircle } from "lucide-react";
 
-// ---------------------------------------------------------------- "your gym": the page becomes the visitor's gym
-const GymNameCtx = createContext<{ name: string; setName: (v: string) => void }>({ name: "", setName: () => {} });
-const KEY = "gx-landing-gym";
+// The landing page's scroll storytelling: reveals, a laptop that tilts into
+// place, and a pinned device whose screen follows the chapter you're reading.
+// Everything is driven by CSS variables set on scroll (no re-renders).
 
-export function GymNameProvider({ children }: { children: ReactNode }) {
-  const [name, setNameState] = useState("");
+function useScrollVar(ref: React.RefObject<HTMLElement | null>, onProgress: (p: number, el: HTMLElement) => void) {
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(KEY);
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- read once from the browser after mount
-      if (saved) setNameState(saved);
-    } catch {}
-  }, []);
-  const setName = (v: string) => {
-    const clean = v.slice(0, 28);
-    setNameState(clean);
-    try {
-      localStorage.setItem(KEY, clean);
-    } catch {}
-  };
-  return <GymNameCtx.Provider value={{ name, setName }}>{children}</GymNameCtx.Provider>;
+    const el = ref.current;
+    if (!el) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const total = r.height - vh;
+      const p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+      onProgress(p, el);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [ref, onProgress]);
 }
-
-export function useGymName(fallback = "your gym") {
-  const { name } = useContext(GymNameCtx);
-  return name.trim() || fallback;
-}
-
-export function GymNameInput() {
-  const { name, setName } = useContext(GymNameCtx);
-  return (
-    <label className="block">
-      <span className="text-sm font-semibold tracking-widest text-white/50 uppercase">What&apos;s your gym called?</span>
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="e.g. Iron House"
-        autoComplete="organization"
-        className="mt-3 w-full max-w-md rounded-2xl border border-white/15 bg-white/[0.06] px-5 py-4 text-2xl font-bold text-white placeholder:text-white/30 focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/20"
-      />
-    </label>
-  );
-}
-
-// The headline: "<Gym>, running itself."
-export function GymHeadline() {
-  const name = useGymName("");
-  return (
-    <h1 className="text-5xl leading-[0.95] font-black tracking-tight sm:text-7xl">
-      <span key={name ? "n" : "d"} className="lx-pop inline-block">{name ? `${name},` : "Your gym,"}</span>
-      <br />
-      <span className="lx-shine font-serif italic">running itself.</span>
-    </h1>
-  );
-}
-
-// Inline text that follows the gym name.
-export function GymName({ fallback = "your gym" }: { fallback?: string }) {
-  return <>{useGymName(fallback)}</>;
-}
-
-export function GymCta() {
-  const { name } = useContext(GymNameCtx);
-  const n = name.trim();
-  return (
-    <Link
-      href={n ? `/signup?gym=${encodeURIComponent(n)}` : "/signup"}
-      className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-4 text-lg font-bold text-ink transition hover:scale-[1.03] hover:bg-brand-strong"
-    >
-      {n ? `Open ${n} on Gymix` : "Start your free trial"} <ArrowRight className="size-5" />
-    </Link>
-  );
-}
-
-// The interactive pieces of the landing page: a sticker you can tap, a calculator
-// that prints your gym's real monthly leak, scroll reveals and a cursor glow.
 
 // ---------------------------------------------------------------- reveal on scroll
 export function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
@@ -95,7 +46,7 @@ export function Reveal({ children, delay = 0, className = "" }: { children: Reac
           io.disconnect();
         }
       },
-      { threshold: 0.15 },
+      { threshold: 0.2 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -107,325 +58,151 @@ export function Reveal({ children, delay = 0, className = "" }: { children: Reac
   );
 }
 
-// ---------------------------------------------------------------- cursor glow
-export function GlowField({ children, className = "" }: { children: ReactNode; className?: string }) {
+// ---------------------------------------------------------------- hero laptop: tilts up as you scroll
+const tilt = (p: number, el: HTMLElement) => el.style.setProperty("--tilt", String(Math.min(1, p * 2.2)));
+
+export function HeroLaptop() {
   const ref = useRef<HTMLDivElement>(null);
+  useScrollVar(ref, tilt);
   return (
-    <div
-      ref={ref}
-      className={`relative ${className}`}
-      onPointerMove={(e) => {
-        const r = ref.current?.getBoundingClientRect();
-        if (!r || !ref.current) return;
-        ref.current.style.setProperty("--gx", `${e.clientX - r.left}px`);
-        ref.current.style.setProperty("--gy", `${e.clientY - r.top}px`);
-      }}
-    >
-      <div aria-hidden className="lx-glow pointer-events-none absolute inset-0" />
-      {children}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------- tap the sticker
-type Screen = "idle" | "checking" | "in" | "out";
-
-export function TapDemo() {
-  const gym = useGymName("Atlas Fitness");
-  const [who, setWho] = useState<"paid" | "unpaid">("paid");
-  const [screen, setScreen] = useState<Screen>("idle");
-  const [taps, setTaps] = useState(0);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  function tap() {
-    if (timer.current) clearTimeout(timer.current);
-    setTaps((n) => n + 1);
-    setScreen("checking");
-    timer.current = setTimeout(() => setScreen(who === "paid" ? "in" : "out"), 650);
-  }
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
-
-  return (
-    <div className="relative mx-auto w-full max-w-[460px]">
-      {/* who's tapping */}
-      <div className="mb-6 flex justify-center gap-2" role="radiogroup" aria-label="Try as">
-        {(["paid", "unpaid"] as const).map((w) => (
-          <button
-            key={w}
-            type="button"
-            role="radio"
-            aria-checked={who === w}
-            onClick={() => {
-              setWho(w);
-              setScreen("idle");
-            }}
-            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              who === w ? "bg-brand text-ink" : "bg-white/10 text-white/70 hover:bg-white/15"
-            }`}
-          >
-            {w === "paid" ? "Member who paid" : "Member who didn't"}
-          </button>
-        ))}
-      </div>
-
-      <div className="relative flex items-center justify-center gap-6">
-        {/* the sticker */}
-        <button
-          type="button"
-          onClick={tap}
-          aria-label="Tap the Gymix sticker"
-          className="group relative grid size-28 shrink-0 place-items-center rounded-[28px] bg-brand shadow-[0_0_60px_rgb(200_241_53/0.45)] transition active:scale-95 sm:size-32"
-        >
-          <span key={taps} aria-hidden className="lx-ripple absolute inset-0 rounded-[28px]" />
-          <span key={`b${taps}`} aria-hidden className="lx-ripple lx-ripple-2 absolute inset-0 rounded-[28px]" />
-          <LogoMark className="size-24 text-ink transition group-hover:scale-105 sm:size-28" />
-          <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-semibold tracking-widest text-white/60 uppercase">
-            {taps ? "Tap again" : "Tap me"}
-          </span>
-        </button>
-
-        {/* the phone: same screens as the real app */}
-        <div className="relative h-[380px] w-[200px] shrink-0 rounded-[38px] bg-[#05070a] p-2.5 shadow-2xl shadow-black/60 ring-1 ring-white/10 sm:h-[420px] sm:w-[220px]">
-          <div className="absolute top-3 left-1/2 z-10 h-5 w-16 -translate-x-1/2 rounded-full bg-[#05070a]" />
-          <div
-            className={`relative flex h-full flex-col items-center justify-center gap-2 overflow-hidden rounded-[30px] px-4 text-center text-white transition-colors duration-300 ${
-              screen === "in" ? "bg-success" : screen === "out" ? "bg-danger" : "bg-gradient-to-b from-[#1b2330] to-[#0b0f15]"
-            }`}
-          >
-            {screen === "idle" && (
-              <>
-                <LogoMark className="size-12 text-brand" />
-                <p className="text-sm font-semibold text-white/80">{gym}</p>
-                <p className="text-xs text-white/50">Waiting for a tap…</p>
-              </>
-            )}
-            {screen === "checking" && (
-              <>
-                <Loader2 className="size-10 animate-spin" />
-                <p className="text-base font-semibold">Checking you in…</p>
-              </>
-            )}
-            {screen === "in" && (
-              <div className="lx-pop flex flex-col items-center gap-2">
-                <CheckCircle2 className="size-12" />
-                <p className="text-[10px] font-medium tracking-widest uppercase opacity-80">Checked in</p>
-                <p className="text-2xl leading-tight font-bold">Welcome back, Karim</p>
-                <p className="text-xs opacity-90">{gym} · Monthly</p>
-                <span className="mt-2 rounded-lg bg-white px-4 py-2 text-xs font-semibold text-ink">Start training</span>
-              </div>
-            )}
-            {screen === "out" && (
-              <div className="lx-pop lx-shake flex flex-col items-center gap-2">
-                <XCircle className="size-12" />
-                <p className="text-xl font-bold">Not allowed in</p>
-                <p className="text-sm font-medium">Fadi Germanos</p>
-                <p className="text-xs leading-snug opacity-90">Account frozen: unpaid balance of $25.00. Please see the front desk.</p>
-              </div>
-            )}
+    <div ref={ref} className="lx-stage relative mx-auto w-full max-w-5xl px-4">
+      <div className="lx-laptop">
+        <div className="rounded-t-[22px] bg-[#1b2028] p-3 pb-0 shadow-[0_60px_140px_-30px_rgb(0_0_0/0.7)] ring-1 ring-white/10 sm:p-4 sm:pb-0">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-t-lg">
+            <Image src="/landing/overview-full.png" alt="The Gymix owner dashboard" fill priority sizes="(min-width: 1024px) 960px, 100vw" className="object-cover object-top" />
           </div>
         </div>
-      </div>
-      <p className="mt-14 text-center text-sm text-white/55">
-        {screen === "out"
-          ? "No speech at the desk. The door already knows."
-          : screen === "in"
-            ? "That's the whole check-in. One tap, on a $1 sticker."
-            : "This is the real check-in screen your members see."}
-      </p>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------- the leak calculator
-function Slider({ label, value, min, max, step, onChange, format }: { label: string; value: number; min: number; max: number; step: number; onChange: (v: number) => void; format: (v: number) => string }) {
-  const pct = ((value - min) / (max - min)) * 100;
-  return (
-    <label className="block">
-      <span className="flex items-baseline justify-between text-sm">
-        <span className="font-medium text-ink/70">{label}</span>
-        <span className="text-lg font-bold tabular-nums">{format(value)}</span>
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="lx-range mt-2 w-full"
-        style={{ "--p": `${pct}%` } as React.CSSProperties}
-      />
-    </label>
-  );
-}
-
-const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
-
-export function LeakCalculator({ priceUsd }: { priceUsd: number }) {
-  const gym = useGymName("Your gym");
-  const [members, setMembers] = useState(80);
-  const [fee, setFee] = useState(45);
-  const [late, setLate] = useState(15);
-
-  // Conservative assumptions, stated on the receipt.
-  const lines = [
-    { l: `"I'll pay next week" (${late}% of members)`, v: members * (late / 100) * fee * 0.35 },
-    { l: "Expired, still training", v: members * 0.03 * fee },
-    { l: "Wrong lira rate & rounding", v: members * fee * 0.012 },
-    { l: "Cash nobody wrote down", v: members * fee * 0.01 },
-  ];
-  const monthly = lines.reduce((s, x) => s + x.v, 0);
-  const hours = Math.round(members * (late / 100) * 0.6 + members * 0.04);
-  const times = monthly / priceUsd;
-
-  return (
-    <div className="grid items-start gap-8 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
-      <div className="space-y-7 rounded-3xl bg-white p-6 shadow-[0_30px_80px_-30px_rgb(13_17_23/0.35)] ring-1 ring-ink/5 sm:p-8">
-        <Slider label="Members" value={members} min={20} max={500} step={5} onChange={setMembers} format={(v) => String(v)} />
-        <Slider label="Monthly fee" value={fee} min={15} max={120} step={1} onChange={setFee} format={(v) => `$${v}`} />
-        <Slider label="Members who pay late" value={late} min={0} max={50} step={1} onChange={setLate} format={(v) => `${v}%`} />
-        <p className="text-xs leading-relaxed text-ink/50">
-          An estimate with cautious assumptions: a third of late payments slip a whole month, 3% of members train after expiring, about 2% lost to rates and
-          unrecorded cash. Your numbers may be higher.
-        </p>
-      </div>
-
-      {/* the receipt */}
-      <div className="lx-receipt relative mx-auto w-full max-w-md bg-[#f6f3ea] px-7 pt-10 pb-8 font-mono text-[#1a1a1a] shadow-[0_40px_90px_-30px_rgb(0_0_0/0.55)]">
-        <p className="text-center text-base font-bold tracking-[0.18em] uppercase">{gym}</p>
-        <p className="text-center text-xs text-[#6a665d]">What it quietly loses · every month</p>
-        <div className="my-4 border-t-2 border-dashed border-[#a7a296]" />
-        <ul className="space-y-2 text-sm">
-          {lines.map((x) => (
-            <li key={x.l} className="flex items-baseline gap-2">
-              <span className="min-w-0">{x.l}</span>
-              <span className="flex-1 translate-y-[-3px] border-b-2 border-dotted border-[#b1ac9f]" />
-              <span key={Math.round(x.v)} className="lx-tick font-bold tabular-nums">{usd(x.v)}</span>
-            </li>
-          ))}
-          <li className="flex items-baseline gap-2">
-            <span>Hours chasing &amp; checking</span>
-            <span className="flex-1 translate-y-[-3px] border-b-2 border-dotted border-[#b1ac9f]" />
-            <span key={hours} className="lx-tick font-bold tabular-nums">{hours} h</span>
-          </li>
-        </ul>
-        <div className="my-4 border-t-2 border-dashed border-[#a7a296]" />
-        <div className="flex items-baseline justify-between text-2xl font-bold">
-          <span>TOTAL</span>
-          <span key={Math.round(monthly)} className="lx-tick text-danger tabular-nums">{usd(monthly)}</span>
-        </div>
-        <p className="mt-1 text-right text-sm text-[#6a665d]">
-          = <b key={Math.round(monthly * 12)} className="lx-tick text-[#1a1a1a]">{usd(monthly * 12)}</b> a year
-        </p>
-        <div className="my-4 border-t-2 border-dashed border-[#a7a296]" />
-        <div className="flex items-center justify-between gap-3 rounded-xl bg-ink px-4 py-3 font-sans text-white">
-          <span className="flex items-center gap-2 text-sm font-semibold">
-            <span className="grid size-7 place-items-center rounded-lg bg-brand">
-              <LogoMark className="size-6 text-ink" />
-            </span>
-            Gymix
-          </span>
-          <span className="text-sm">
-            ${priceUsd.toFixed(2)}/mo ·{" "}
-            <b className="text-brand">{times >= 1 ? `pays for itself ${times.toFixed(times >= 10 ? 0 : 1)}×` : "already worth it"}</b>
-          </span>
-        </div>
-        <p className="mt-4 text-center text-[11px] tracking-wider text-[#6a665d]">*** THANK YOU FOR NOT HAVING A SYSTEM ***</p>
+        <div className="mx-[-4%] h-4 rounded-b-[18px] bg-gradient-to-b from-[#2a313c] to-[#11151b] sm:h-5" />
       </div>
     </div>
   );
 }
 
-// ---------------------------------------------------------------- 24 hours with Gymix
-const DAY = [
-  { t: "06:58", title: "The first member taps in.", body: "You're still asleep. The sticker at the door checks them in, and refuses anyone who didn't pay.", tag: "Tap check-in" },
-  { t: "09:30", title: "Paid in lira. Maths done.", body: "Front desk takes cash in dollars or lira at your rate, or Whish and OMT. The invoice updates itself.", tag: "Dollars + lira" },
-  { t: "13:00", title: "Three days late? Frozen.", body: "Unpaid members freeze automatically and their app shows what they owe. Nobody has to say a word.", tag: "Auto-freeze" },
-  { t: "17:45", title: "Spinning is full.", body: "Members book classes from their phone. You see who's coming before they arrive.", tag: "Classes" },
-  { t: "19:10", title: "Karim breaks a personal record.", body: "His trainer's program is in his pocket. Confetti on his phone, a streak he won't want to lose.", tag: "Member app" },
-  { t: "23:59", title: "You check one screen.", body: "Who came, who paid, who owes, who's ending this week. Then you go to bed.", tag: "Your dashboard" },
+// ---------------------------------------------------------------- the pinned story
+type Chapter = { kicker: string; title: string; body: string; screen: ReactNode };
+
+function Laptop({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="w-full">
+      <div className="rounded-t-[18px] bg-[#1b2028] p-2.5 pb-0 shadow-2xl ring-1 ring-white/10">
+        <div className="relative aspect-[16/10] overflow-hidden rounded-t-md">
+          <Image src={src} alt={alt} fill sizes="(min-width: 1024px) 620px, 90vw" className="object-cover object-top" />
+        </div>
+      </div>
+      <div className="mx-[-4%] h-3.5 rounded-b-2xl bg-gradient-to-b from-[#2a313c] to-[#11151b]" />
+    </div>
+  );
+}
+
+function Phone({ children }: { children: ReactNode }) {
+  return (
+    <div className="relative mx-auto h-[520px] w-[262px] rounded-[44px] bg-[#05070a] p-3 shadow-2xl ring-1 ring-white/10">
+      <div className="absolute top-4 left-1/2 z-10 h-6 w-20 -translate-x-1/2 rounded-full bg-[#05070a]" />
+      <div className="relative h-full overflow-hidden rounded-[34px]">{children}</div>
+    </div>
+  );
+}
+
+const CHAPTERS: Chapter[] = [
+  {
+    kicker: "01 · Members",
+    title: "Every member. Every membership.",
+    body: "Who's active, who's ending this week, who owes. One list, always right, with or without the notebook.",
+    screen: <Laptop src="/landing/members.png" alt="Members list" />,
+  },
+  {
+    kicker: "02 · Payments",
+    title: "Dollars or lira. Done.",
+    body: "Cash, Whish, OMT, card or transfer. Set your rate once and every payment, invoice and balance follows.",
+    screen: <Laptop src="/landing/billing.png" alt="Billing and payments" />,
+  },
+  {
+    kicker: "03 · Check-in",
+    title: "Members tap in with their phone.",
+    body: "A $1 sticker at the door. No cards to print, no turnstile to install, no queue at the desk.",
+    screen: (
+      <Phone>
+        <div className="flex h-full flex-col items-center justify-center gap-3 bg-success px-6 text-center text-white">
+          <CheckCircle2 className="size-16" />
+          <p className="text-xs font-medium tracking-widest uppercase opacity-80">Checked in</p>
+          <p className="text-3xl leading-tight font-bold">Welcome back, Karim</p>
+          <p className="text-sm opacity-90">Monthly · until 29 Nov 2026</p>
+          <span className="mt-3 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-ink">Start training</span>
+        </div>
+      </Phone>
+    ),
+  },
+  {
+    kicker: "04 · Getting paid",
+    title: "Unpaid? Stopped at the door.",
+    body: "A few days after an unpaid invoice the member is frozen automatically, and told why. Nobody at your desk has to say a word.",
+    screen: (
+      <Phone>
+        <div className="flex h-full flex-col items-center justify-center gap-3 bg-danger px-6 text-center text-white">
+          <XCircle className="size-16" />
+          <p className="text-3xl font-bold">Not allowed in</p>
+          <p className="text-lg font-medium">Fadi Germanos</p>
+          <p className="text-sm leading-snug opacity-90">Account frozen: unpaid balance of $25.00. Please see the front desk.</p>
+        </div>
+      </Phone>
+    ),
+  },
+  {
+    kicker: "05 · The member app",
+    title: "An app your members actually open.",
+    body: "Today's workout from their trainer, classes to book, personal records and progress. Installed from a link, no app store.",
+    screen: (
+      <Phone>
+        <Image src="/landing/member-home.png" alt="The member app" fill sizes="262px" className="object-cover object-top" />
+      </Phone>
+    ),
+  },
+  {
+    kicker: "06 · Your day",
+    title: "Classes, programs, your whole team.",
+    body: "Schedules and bookings, programs built from your real machines, and roles for managers, front desk and trainers. Trainers never see money.",
+    screen: <Laptop src="/landing/schedule.png" alt="Class schedule" />,
+  },
 ];
 
-export function DayTimeline() {
-  const gym = useGymName("your gym");
-  return (
-    <ol className="relative mx-auto max-w-3xl">
-      <span aria-hidden className="absolute top-2 bottom-2 left-[27px] w-px bg-gradient-to-b from-brand via-white/20 to-transparent sm:left-[39px]" />
-      {DAY.map((d, i) => (
-        <li key={d.t} className="relative pb-12 pl-16 last:pb-0 sm:pl-24">
-          <Reveal delay={i * 40}>
-            <span className="absolute top-1 left-0 grid size-14 place-items-center rounded-2xl bg-ink font-mono text-xs font-bold text-brand ring-1 ring-white/10 sm:size-20 sm:text-base">
-              {d.t}
-            </span>
-            <span className="inline-flex rounded-full bg-brand/15 px-3 py-1 text-xs font-semibold text-brand">
-              {d.tag} · {gym}
-            </span>
-            <h3 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">{d.title}</h3>
-            <p className="mt-2 max-w-xl text-white/65">{d.body}</p>
-          </Reveal>
-        </li>
-      ))}
-    </ol>
-  );
-}
+const setStep = (p: number, el: HTMLElement) => {
+  const i = Math.min(CHAPTERS.length - 1, Math.floor(p * CHAPTERS.length));
+  if (el.dataset.step !== String(i)) el.dataset.step = String(i);
+  el.style.setProperty("--story", String(p));
+};
 
-// ---------------------------------------------------------------- the "vs" toggle
-export function BeforeAfter() {
-  const [on, setOn] = useState(true);
-  const rows = [
-    ["A notebook, three handwritings", "Every payment on record"],
-    ["\"Kam el sa3er lyom?\" ×10 a day", "Your rate, set once"],
-    ["Chasing people on WhatsApp", "Unpaid? Frozen automatically"],
-    ["Who's expired? No idea", "Ending this week: one list"],
-    ["Programs as blurry PDFs", "Programs in their app"],
-  ];
+export function Story() {
+  const ref = useRef<HTMLDivElement>(null);
+  useScrollVar(ref, setStep);
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mx-auto mb-8 flex w-fit items-center gap-1 rounded-full bg-ink/5 p-1.5">
-        {[false, true].map((v) => (
-          <button
-            key={String(v)}
-            type="button"
-            onClick={() => setOn(v)}
-            className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${on === v ? (v ? "bg-brand text-ink shadow" : "bg-ink text-white shadow") : "text-ink/60"}`}
-          >
-            {v ? "With Gymix" : "Without"}
-          </button>
-        ))}
-      </div>
-      <ul className="space-y-3">
-        {rows.map(([a, b], i) => (
-          <li
-            key={a}
-            className={`flex items-center gap-4 rounded-2xl px-5 py-4 text-lg font-semibold transition-all duration-500 ${on ? "bg-white shadow-sm ring-1 ring-ink/5" : "bg-ink/[0.04] text-ink/60"}`}
-            style={{ transitionDelay: `${i * 60}ms` }}
-          >
-            <span className={`grid size-8 shrink-0 place-items-center rounded-full transition ${on ? "bg-brand text-ink" : "bg-danger/10 text-danger"}`}>
-              {on ? <Check className="size-4" /> : <XCircle className="size-4" />}
-            </span>
-            <span className="relative">
-              <span className={`block transition-all duration-500 ${on ? "translate-y-2 opacity-0 blur-sm" : ""}`}>{a}</span>
-              <span className={`absolute inset-0 transition-all duration-500 ${on ? "" : "-translate-y-2 opacity-0 blur-sm"}`}>{b}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------- marquee
-export function Marquee({ items }: { items: string[] }) {
-  const row = [...items, ...items];
-  return (
-    <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
-      <div className="lx-marquee flex w-max gap-10 py-1">
-        {row.map((t, i) => (
-          <span key={i} className="flex items-center gap-10 text-lg font-semibold whitespace-nowrap text-white/50">
-            {t}
-            <span className="size-1.5 rounded-full bg-brand" />
-          </span>
-        ))}
+    <div ref={ref} data-step="0" className="lx-story relative" style={{ height: `${CHAPTERS.length * 90 + 40}vh` }}>
+      <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          {/* chapters */}
+          <div className="relative min-h-[300px] lg:min-h-[340px]">
+            {CHAPTERS.map((c, i) => (
+              <div key={c.kicker} data-i={i} className="lx-chapter absolute inset-0 flex flex-col justify-center">
+                <p className="text-sm font-semibold tracking-[0.2em] text-brand uppercase">{c.kicker}</p>
+                <h3 className="mt-4 text-4xl leading-[1.02] font-black tracking-tight text-white sm:text-5xl">{c.title}</h3>
+                <p className="mt-5 max-w-md text-lg leading-relaxed text-white/60">{c.body}</p>
+              </div>
+            ))}
+            {/* progress */}
+            <div className="absolute -bottom-16 left-0 flex gap-2 lg:-bottom-20">
+              {CHAPTERS.map((c, i) => (
+                <span key={c.kicker} data-i={i} className="lx-dot h-1 w-8 rounded-full bg-white/15" />
+              ))}
+            </div>
+          </div>
+          {/* screens */}
+          <div className="relative h-[440px] sm:h-[540px]">
+            {CHAPTERS.map((c, i) => (
+              <div key={c.kicker} data-i={i} className="lx-screen absolute inset-0 flex items-center justify-center">
+                {c.screen}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
