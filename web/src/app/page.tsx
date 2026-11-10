@@ -2,7 +2,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, MousePointerClick } from "lucide-react";
 import { CtaButtons, FaqList, FinalCta, MarketingFooter, MarketingNav, PricingCard } from "@/components/marketing";
-import { BeforeAfter, DayTimeline, GlowField, LeakCalculator, Marquee, Reveal, TapDemo } from "@/components/landing-interactive";
+import {
+  BeforeAfter,
+  DayTimeline,
+  GlowField,
+  GymCta,
+  GymHeadline,
+  GymName,
+  GymNameInput,
+  GymNameProvider,
+  LeakCalculator,
+  Reveal,
+  TapDemo,
+} from "@/components/landing-interactive";
 import { formatPrice } from "@/lib/pricing";
 import { getPricing } from "@/lib/pricing-server";
 
@@ -17,6 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   const { priceUsd, trialDays } = await getPricing();
   return (
+    <GymNameProvider>
     <div className="flex flex-1 flex-col bg-canvas">
       <MarketingNav />
 
@@ -28,16 +41,17 @@ export default async function Home() {
             <p className="lx-rise inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-semibold tracking-widest text-brand uppercase ring-1 ring-white/10">
               <span className="size-1.5 animate-pulse rounded-full bg-brand" /> Built for gyms in Lebanon
             </p>
-            <h1 className="lx-rise mt-6 text-5xl leading-[0.95] font-black tracking-tight sm:text-7xl" style={{ animationDelay: "80ms" }}>
-              Your gym,
-              <br />
-              <span className="lx-shine font-serif italic">running itself.</span>
-            </h1>
-            <p className="lx-rise mt-6 max-w-xl text-lg text-white/70" style={{ animationDelay: "160ms" }}>
-              Members tap in with their phone. Unpaid ones are stopped at the door. Payments in dollars or lira, programs in their pocket, and your whole gym on one
-              screen. {formatPrice(priceUsd)} a month.
+            <div className="lx-rise mt-6" style={{ animationDelay: "80ms" }}>
+              <GymHeadline />
+            </div>
+            <div className="lx-rise mt-8" style={{ animationDelay: "160ms" }}>
+              <GymNameInput />
+            </div>
+            <p className="lx-rise mt-6 max-w-xl text-lg text-white/70" style={{ animationDelay: "240ms" }}>
+              Members tap in with their phone. Unpaid ones are stopped at the door. Dollars or lira, programs in their pocket, the whole gym on one screen.{" "}
+              {formatPrice(priceUsd)} a month.
             </p>
-            <div className="lx-rise mt-8" style={{ animationDelay: "240ms" }}>
+            <div className="lx-rise mt-8" style={{ animationDelay: "300ms" }}>
               <CtaButtons />
             </div>
             <Link
@@ -53,9 +67,6 @@ export default async function Home() {
             <TapDemo />
           </div>
         </section>
-        <div className="relative border-t border-white/10 py-5">
-          <Marquee items={["Beirut", "Jounieh", "Zalka", "Jbeil", "Zahle", "Tripoli", "Saida", "Achrafieh", "Hamra", "Dbayeh", "Tyre", "Baabda"]} />
-        </div>
       </GlowField>
 
       {/* 2 · The leak: the owner does the maths on their own gym */}
@@ -63,7 +74,9 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl">
           <Reveal className="mx-auto mb-12 max-w-2xl text-center">
             <p className="text-sm font-semibold tracking-widest text-ink/50 uppercase">The receipt nobody prints</p>
-            <h2 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">What is your gym leaking every month?</h2>
+            <h2 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">
+              What is <GymName /> leaking every month?
+            </h2>
             <p className="mt-4 text-lg text-ink/60">Move the sliders to your gym. The receipt prints itself.</p>
           </Reveal>
           <Reveal delay={100}>
@@ -86,7 +99,9 @@ export default async function Home() {
       {/* 4 · 24 hours with Gymix */}
       <section id="how" className="scroll-mt-20 overflow-hidden bg-ink px-4 py-20 text-white md:py-28">
         <Reveal className="mx-auto mb-14 max-w-2xl text-center">
-          <p className="text-sm font-semibold tracking-widest text-brand uppercase">24 hours at your gym</p>
+          <p className="text-sm font-semibold tracking-widest text-brand uppercase">
+            24 hours at <GymName />
+          </p>
           <h2 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">It works while you sleep.</h2>
         </Reveal>
         <DayTimeline />
@@ -117,8 +132,20 @@ export default async function Home() {
           <FaqList />
         </div>
       </section>
+      <section className="bg-ink px-4 py-20 text-center text-white">
+        <Reveal>
+          <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
+            <GymName fallback="Your gym" /> is one click away.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-white/65">{trialDays} days free. No card. Set up in ten minutes.</p>
+          <div className="mt-8">
+            <GymCta />
+          </div>
+        </Reveal>
+      </section>
       <FinalCta />
       <MarketingFooter />
     </div>
+    </GymNameProvider>
   );
 }

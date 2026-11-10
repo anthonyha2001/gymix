@@ -1,8 +1,83 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Check, CheckCircle2, Loader2, XCircle } from "lucide-react";
+import Link from "next/link";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { ArrowRight, Check, CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { LogoMark } from "@/components/logo-mark";
+
+// ---------------------------------------------------------------- "your gym": the page becomes the visitor's gym
+const GymNameCtx = createContext<{ name: string; setName: (v: string) => void }>({ name: "", setName: () => {} });
+const KEY = "gx-landing-gym";
+
+export function GymNameProvider({ children }: { children: ReactNode }) {
+  const [name, setNameState] = useState("");
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- read once from the browser after mount
+      if (saved) setNameState(saved);
+    } catch {}
+  }, []);
+  const setName = (v: string) => {
+    const clean = v.slice(0, 28);
+    setNameState(clean);
+    try {
+      localStorage.setItem(KEY, clean);
+    } catch {}
+  };
+  return <GymNameCtx.Provider value={{ name, setName }}>{children}</GymNameCtx.Provider>;
+}
+
+export function useGymName(fallback = "your gym") {
+  const { name } = useContext(GymNameCtx);
+  return name.trim() || fallback;
+}
+
+export function GymNameInput() {
+  const { name, setName } = useContext(GymNameCtx);
+  return (
+    <label className="block">
+      <span className="text-sm font-semibold tracking-widest text-white/50 uppercase">What&apos;s your gym called?</span>
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="e.g. Iron House"
+        autoComplete="organization"
+        className="mt-3 w-full max-w-md rounded-2xl border border-white/15 bg-white/[0.06] px-5 py-4 text-2xl font-bold text-white placeholder:text-white/30 focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/20"
+      />
+    </label>
+  );
+}
+
+// The headline: "<Gym>, running itself."
+export function GymHeadline() {
+  const name = useGymName("");
+  return (
+    <h1 className="text-5xl leading-[0.95] font-black tracking-tight sm:text-7xl">
+      <span key={name ? "n" : "d"} className="lx-pop inline-block">{name ? `${name},` : "Your gym,"}</span>
+      <br />
+      <span className="lx-shine font-serif italic">running itself.</span>
+    </h1>
+  );
+}
+
+// Inline text that follows the gym name.
+export function GymName({ fallback = "your gym" }: { fallback?: string }) {
+  return <>{useGymName(fallback)}</>;
+}
+
+export function GymCta() {
+  const { name } = useContext(GymNameCtx);
+  const n = name.trim();
+  return (
+    <Link
+      href={n ? `/signup?gym=${encodeURIComponent(n)}` : "/signup"}
+      className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-4 text-lg font-bold text-ink transition hover:scale-[1.03] hover:bg-brand-strong"
+    >
+      {n ? `Open ${n} on Gymix` : "Start your free trial"} <ArrowRight className="size-5" />
+    </Link>
+  );
+}
 
 // The interactive pieces of the landing page: a sticker you can tap, a calculator
 // that prints your gym's real monthly leak, scroll reveals and a cursor glow.
@@ -56,6 +131,7 @@ export function GlowField({ children, className = "" }: { children: ReactNode; c
 type Screen = "idle" | "checking" | "in" | "out";
 
 export function TapDemo() {
+  const gym = useGymName("Atlas Fitness");
   const [who, setWho] = useState<"paid" | "unpaid">("paid");
   const [screen, setScreen] = useState<Screen>("idle");
   const [taps, setTaps] = useState(0);
@@ -119,7 +195,8 @@ export function TapDemo() {
             {screen === "idle" && (
               <>
                 <LogoMark className="size-12 text-brand" />
-                <p className="text-sm font-semibold text-white/80">Waiting for a tap…</p>
+                <p className="text-sm font-semibold text-white/80">{gym}</p>
+                <p className="text-xs text-white/50">Waiting for a tap…</p>
               </>
             )}
             {screen === "checking" && (
@@ -133,7 +210,7 @@ export function TapDemo() {
                 <CheckCircle2 className="size-12" />
                 <p className="text-[10px] font-medium tracking-widest uppercase opacity-80">Checked in</p>
                 <p className="text-2xl leading-tight font-bold">Welcome back, Karim</p>
-                <p className="text-xs opacity-90">Monthly · until 29 Nov</p>
+                <p className="text-xs opacity-90">{gym} · Monthly</p>
                 <span className="mt-2 rounded-lg bg-white px-4 py-2 text-xs font-semibold text-ink">Start training</span>
               </div>
             )}
@@ -185,6 +262,7 @@ function Slider({ label, value, min, max, step, onChange, format }: { label: str
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 
 export function LeakCalculator({ priceUsd }: { priceUsd: number }) {
+  const gym = useGymName("Your gym");
   const [members, setMembers] = useState(80);
   const [fee, setFee] = useState(45);
   const [late, setLate] = useState(15);
@@ -214,7 +292,7 @@ export function LeakCalculator({ priceUsd }: { priceUsd: number }) {
 
       {/* the receipt */}
       <div className="lx-receipt relative mx-auto w-full max-w-md bg-[#f6f3ea] px-7 pt-10 pb-8 font-mono text-[#1a1a1a] shadow-[0_40px_90px_-30px_rgb(0_0_0/0.55)]">
-        <p className="text-center text-base font-bold tracking-[0.18em]">YOUR GYM</p>
+        <p className="text-center text-base font-bold tracking-[0.18em] uppercase">{gym}</p>
         <p className="text-center text-xs text-[#6a665d]">What it quietly loses · every month</p>
         <div className="my-4 border-t-2 border-dashed border-[#a7a296]" />
         <ul className="space-y-2 text-sm">
@@ -269,6 +347,7 @@ const DAY = [
 ];
 
 export function DayTimeline() {
+  const gym = useGymName("your gym");
   return (
     <ol className="relative mx-auto max-w-3xl">
       <span aria-hidden className="absolute top-2 bottom-2 left-[27px] w-px bg-gradient-to-b from-brand via-white/20 to-transparent sm:left-[39px]" />
@@ -278,7 +357,9 @@ export function DayTimeline() {
             <span className="absolute top-1 left-0 grid size-14 place-items-center rounded-2xl bg-ink font-mono text-xs font-bold text-brand ring-1 ring-white/10 sm:size-20 sm:text-base">
               {d.t}
             </span>
-            <span className="inline-flex rounded-full bg-brand/15 px-3 py-1 text-xs font-semibold text-brand">{d.tag}</span>
+            <span className="inline-flex rounded-full bg-brand/15 px-3 py-1 text-xs font-semibold text-brand">
+              {d.tag} · {gym}
+            </span>
             <h3 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">{d.title}</h3>
             <p className="mt-2 max-w-xl text-white/65">{d.body}</p>
           </Reveal>
