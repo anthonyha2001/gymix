@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { FaqList, MarketingFooter, MarketingNav, PricingCard } from "@/components/marketing";
 import { Reveal } from "@/components/landing-interactive";
 import { formatPrice } from "@/lib/pricing";
@@ -91,56 +91,95 @@ export default async function Home() {
   );
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f6f5f1] text-ink">
+    <div className="flex flex-1 flex-col bg-white text-ink">
       <MarketingNav />
 
       {/* Hero */}
-      <section className="relative overflow-hidden px-5 pt-24 pb-16 sm:pt-36">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[1100px] bg-[radial-gradient(55%_45%_at_50%_62%,rgb(200_241_53/0.22),transparent_70%)]" />
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ink/10 to-transparent" />
-        <div className="relative mx-auto max-w-4xl text-center">
-          <Reveal>
-            <Kicker>Gymix · Built for gyms in Lebanon</Kicker>
-          </Reveal>
-          <Reveal delay={150}>
-            <h1 className="mt-8 font-serif text-[3.4rem] leading-[0.98] tracking-[-0.03em] sm:text-[6.5rem]">
-              Your gym,<br /> <em className="text-ink/50">running itself.</em>
-            </h1>
-          </Reveal>
-          <Reveal delay={300}>
-            <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-ink/60">
-              Memberships, payments and check-in, beautifully handled. So you spend your time on the floor, not at the desk.
-            </p>
-          </Reveal>
-          <Reveal delay={450}>{cta}</Reveal>
-          <Reveal delay={550}>
-            <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-ink/50">
-              {["Dollars & lira", "Whish · OMT · card", "Tap-to-check-in", "Member app", "Unlimited members"].map((x) => (
-                <li key={x} className="flex items-center gap-2">
-                  <span className="size-1.5 rounded-full bg-brand-strong" />
-                  {x}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
-        <Reveal delay={650} className="relative mx-auto mt-20 max-w-6xl sm:mt-24">
-          <Frame src="/landing/overview-full.png" alt="The Gymix dashboard" priority />
-          <div className="absolute -right-2 -bottom-10 w-[30%] max-w-[250px] sm:-right-8 sm:-bottom-16">
-            <div className="rounded-[18%/8.5%] bg-ink p-[4%] shadow-[0_40px_80px_-25px_rgb(13_17_23/0.6)] ring-1 ring-white/10">
-              <div className="relative aspect-[9/19] overflow-hidden rounded-[14%/6.6%] bg-white">
-                <Image src="/landing/member-home.png" alt="The Gymix member app" fill sizes="250px" className="object-cover object-top" />
+      <section className="bg-ink text-white">
+        <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 pt-16 pb-20 sm:pt-24 lg:grid-cols-12 lg:gap-10 lg:pb-28">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <p className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white/70">
+                <span className="size-1.5 rounded-full bg-brand" /> Gym management software · Lebanon
+              </p>
+            </Reveal>
+            <Reveal delay={100}>
+              <h1 className="mt-6 text-[2.75rem] leading-[1.02] font-extrabold tracking-[-0.035em] sm:text-6xl">
+                Run your gym.
+                <br />
+                <span className="text-brand">Get paid on time.</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={200}>
+              <p className="mt-6 max-w-md text-lg leading-relaxed text-white/65">
+                Gymix handles memberships, payments in dollars and lira, and check-in, and gives your members an app they actually use.
+              </p>
+            </Reveal>
+            <Reveal delay={300}>
+              <ul className="mt-8 space-y-3 text-[15px] text-white/85">
+                {[
+                  "Unpaid members are stopped at the door automatically",
+                  "Members check in by tapping their phone on a $1 sticker",
+                  "Every payment, balance and renewal on one screen",
+                ].map((x) => (
+                  <li key={x} className="flex gap-3">
+                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand/15 text-brand">
+                      <Check className="size-3.5" />
+                    </span>
+                    {x}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+            <Reveal delay={400}>
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+                <Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-brand-strong">
+                  Start {trialDays}-day free trial <ArrowRight className="size-4" />
+                </Link>
+                <Link href="/demo" className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-white/10">
+                  Try the live demo
+                </Link>
+              </div>
+              <p className="mt-4 text-sm text-white/45">No card required · {price}/month for the whole gym</p>
+            </Reveal>
+          </div>
+          <Reveal delay={250} className="relative lg:col-span-7">
+            <div className="rounded-2xl bg-white/[0.04] p-2 ring-1 ring-white/10">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl">
+                <Image src="/landing/overview-full.png" alt="The Gymix dashboard" fill priority sizes="(min-width: 1024px) 700px, 100vw" className="object-cover object-left-top" />
               </div>
             </div>
-          </div>
-        </Reveal>
+            <div className="absolute -right-2 -bottom-10 w-[26%] max-w-[180px] sm:-right-6">
+              <div className="rounded-[18%/8.5%] bg-[#05070a] p-[4%] shadow-2xl ring-1 ring-white/15">
+                <div className="relative aspect-[9/19] overflow-hidden rounded-[14%/6.6%] bg-white">
+                  <Image src="/landing/member-home.png" alt="The Gymix member app" fill sizes="200px" className="object-cover object-top" />
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+        <div className="border-t border-white/10">
+          <dl className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-5 lg:grid-cols-4">
+            {[
+              [price, "per month, whole gym"],
+              ["USD + LBP", "at your own rate"],
+              ["10 min", "to set up"],
+              ["0", "apps to install"],
+            ].map(([n, l]) => (
+              <div key={l} className="py-7 sm:py-9">
+                <dt className="text-2xl font-extrabold tracking-tight sm:text-3xl">{n}</dt>
+                <dd className="mt-1 text-sm text-white/55">{l}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </section>
 
       {/* A quiet statement */}
       <section className="px-5 py-28 sm:py-40">
         <Reveal className="mx-auto max-w-3xl text-center">
-          <p className="font-serif text-3xl leading-[1.3] text-ink/80 sm:text-5xl sm:leading-[1.2]">
-            Less chasing. Less counting. <em className="text-ink/45">More training.</em>
+          <p className="font-extrabold tracking-tight text-3xl leading-[1.3] text-ink/80 sm:text-5xl sm:leading-[1.2]">
+            Less chasing. Less counting. <em className="not-italic text-ink/45">More training.</em>
           </p>
         </Reveal>
       </section>
@@ -152,7 +191,7 @@ export default async function Home() {
             <div key={c.kicker} className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
               <Reveal className={`lg:col-span-5 ${i % 2 ? "lg:order-2" : ""}`}>
                 <Kicker>{c.kicker}</Kicker>
-                <h2 className="mt-5 font-serif text-4xl leading-[1.08] tracking-[-0.01em] sm:text-5xl [&_em]:text-ink/50">{c.title}</h2>
+                <h2 className="mt-5 font-extrabold tracking-tight text-4xl leading-[1.08] tracking-[-0.01em] sm:text-5xl [&_em]:not-italic [&_em]:text-ink/45">{c.title}</h2>
                 <p className="mt-6 max-w-md text-lg leading-relaxed text-ink/60">{c.body}</p>
               </Reveal>
               <Reveal delay={200} className={`lg:col-span-7 ${i % 2 ? "lg:order-1" : ""}`}>
@@ -172,7 +211,7 @@ export default async function Home() {
             ["A $1 sticker", "is all the hardware you need."],
           ].map(([n, l], i) => (
             <Reveal key={l} delay={i * 150}>
-              <p className="font-serif text-4xl tracking-[-0.01em] sm:text-5xl">{n}</p>
+              <p className="font-extrabold tracking-tight text-4xl tracking-[-0.01em] sm:text-5xl">{n}</p>
               <p className="mt-3 text-ink/55">{l}</p>
             </Reveal>
           ))}
@@ -180,11 +219,11 @@ export default async function Home() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="scroll-mt-20 bg-white px-5 py-28 sm:py-36">
+      <section id="pricing" className="scroll-mt-20 bg-canvas px-5 py-28 sm:py-36">
         <Reveal className="mx-auto mb-16 max-w-2xl text-center">
           <Kicker>Pricing</Kicker>
-          <h2 className="mt-5 font-serif text-4xl sm:text-6xl">
-            One price. <em className="text-ink/50">Everything.</em>
+          <h2 className="mt-5 font-extrabold tracking-tight text-4xl sm:text-6xl">
+            One price. <em className="not-italic text-ink/45">Everything.</em>
           </h2>
           <p className="mt-6 text-lg text-ink/60">
             {price} a month · unlimited members and staff · {trialDays} days free, no card.
@@ -199,7 +238,7 @@ export default async function Home() {
       <section className="px-5 py-24 sm:py-32">
         <div className="mx-auto max-w-3xl">
           <Reveal className="mb-12 text-center">
-            <h2 className="font-serif text-4xl sm:text-5xl">Questions, answered.</h2>
+            <h2 className="font-extrabold tracking-tight text-4xl sm:text-5xl">Questions, answered.</h2>
           </Reveal>
           <FaqList />
         </div>
@@ -208,8 +247,8 @@ export default async function Home() {
       {/* Close */}
       <section className="px-5 pt-16 pb-36 text-center">
         <Reveal>
-          <h2 className="mx-auto max-w-3xl font-serif text-5xl leading-[1.05] tracking-[-0.02em] sm:text-7xl">
-            Ready when <em className="text-ink/50">you are.</em>
+          <h2 className="mx-auto max-w-3xl font-extrabold tracking-tight text-5xl leading-[1.05] tracking-[-0.02em] sm:text-7xl">
+            Ready when <em className="not-italic text-ink/45">you are.</em>
           </h2>
           {cta}
         </Reveal>
