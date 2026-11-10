@@ -74,6 +74,13 @@ export function HeroLaptop() {
         </div>
         <div className="mx-[-4%] h-4 rounded-b-[18px] bg-gradient-to-b from-[#2a313c] to-[#11151b] sm:h-5" />
       </div>
+      <div className="lx-float absolute right-1 -bottom-10 w-[28%] max-w-[230px] sm:right-6 sm:-bottom-16">
+        <div className="relative aspect-[9/19] rounded-[22%/10.5%] bg-[#05070a] p-[4%] shadow-[0_40px_90px_-20px_rgb(0_0_0/0.8)] ring-1 ring-white/10">
+          <div className="relative h-full overflow-hidden rounded-[18%/8.5%]">
+            <Image src="/landing/member-home.png" alt="The Gymix member app" fill sizes="230px" className="object-cover object-top" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -172,6 +179,28 @@ const setStep = (p: number, el: HTMLElement) => {
 };
 
 export function Story() {
+  return (
+    <>
+      <div className="space-y-24 px-4 py-20 lg:hidden">
+        {CHAPTERS.map((c) => (
+          <div key={c.kicker} className="mx-auto max-w-md">
+            <Reveal>
+              <p className="text-sm font-semibold tracking-[0.2em] text-brand uppercase">{c.kicker}</p>
+              <h3 className="mt-3 text-3xl leading-[1.05] font-black tracking-tight text-white">{c.title}</h3>
+              <p className="mt-3 text-base leading-relaxed text-white/60">{c.body}</p>
+            </Reveal>
+            <Reveal delay={120} className="mt-8 flex justify-center">{c.screen}</Reveal>
+          </div>
+        ))}
+      </div>
+      <div className="hidden lg:block">
+        <PinnedStory />
+      </div>
+    </>
+  );
+}
+
+function PinnedStory() {
   const ref = useRef<HTMLDivElement>(null);
   useScrollVar(ref, setStep);
   return (
@@ -179,7 +208,7 @@ export function Story() {
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           {/* chapters */}
-          <div className="relative min-h-[300px] lg:min-h-[340px]">
+          <div className="relative min-h-[340px]">
             {CHAPTERS.map((c, i) => (
               <div key={c.kicker} data-i={i} className="lx-chapter absolute inset-0 flex flex-col justify-center">
                 <p className="text-sm font-semibold tracking-[0.2em] text-brand uppercase">{c.kicker}</p>
@@ -188,14 +217,14 @@ export function Story() {
               </div>
             ))}
             {/* progress */}
-            <div className="absolute -bottom-16 left-0 flex gap-2 lg:-bottom-20">
+            <div className="absolute -bottom-20 left-0 flex gap-2">
               {CHAPTERS.map((c, i) => (
                 <span key={c.kicker} data-i={i} className="lx-dot h-1 w-8 rounded-full bg-white/15" />
               ))}
             </div>
           </div>
           {/* screens */}
-          <div className="relative h-[440px] sm:h-[540px]">
+          <div className="relative h-[540px]">
             {CHAPTERS.map((c, i) => (
               <div key={c.kicker} data-i={i} className="lx-screen absolute inset-0 flex items-center justify-center">
                 {c.screen}
@@ -203,6 +232,28 @@ export function Story() {
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------- words that light up as you scroll
+const scrub = (p: number, el: HTMLElement) => el.style.setProperty("--p", p.toFixed(4));
+
+export function ScrubText({ text, highlight = [] }: { text: string; highlight?: string[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useScrollVar(ref, scrub);
+  const words = text.split(" ");
+  return (
+    <div ref={ref} className="relative h-[220vh]">
+      <div className="sticky top-0 flex h-screen items-center">
+        <p className="mx-auto max-w-5xl px-5 text-[2rem] leading-[1.12] font-black tracking-[-0.03em] sm:text-6xl" style={{ ["--n" as string]: words.length }}>
+          {words.map((w, i) => (
+            <span key={i} className={`lx-word ${highlight.some((h) => w.toLowerCase().startsWith(h)) ? "text-brand" : ""}`} style={{ ["--i" as string]: i }}>
+              {w}{" "}
+            </span>
+          ))}
+        </p>
       </div>
     </div>
   );

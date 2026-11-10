@@ -494,3 +494,6 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
   .lx-laptop { transform: none; }
   .lx-chapter, .lx-screen { transition: none; }
 }
+.lx-word { opacity: clamp(0.12, calc(var(--p, 0) * (var(--n) + 6) - var(--i) + 1), 1); transition: opacity 0.15s linear; }
+.lx-float { transform: translateY(calc((1 - var(--tilt, 0)) * 120px)) rotate(calc((1 - var(--tilt, 0)) * 6deg)); transition: transform 0.12s linear; }
+@media (prefers-reduced-motion: reduce) { .lx-word { opacity: 1; } .lx-float { transform: none; } }

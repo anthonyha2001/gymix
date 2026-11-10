@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CtaButtons, FaqList, MarketingFooter, MarketingNav, PricingCard } from "@/components/marketing";
-import { HeroLaptop, Reveal, Story } from "@/components/landing-interactive";
+import { HeroLaptop, Reveal, ScrubText, Story } from "@/components/landing-interactive";
 import { formatPrice } from "@/lib/pricing";
 import { getPricing } from "@/lib/pricing-server";
 
@@ -37,13 +37,18 @@ export default async function Home() {
           <div className="lx-rise mt-10 flex justify-center" style={{ animationDelay: "300ms" }}>
             <CtaButtons />
           </div>
-          <p className="lx-rise mt-4 text-sm text-white/40" style={{ animationDelay: "380ms" }}>
-            {price} a month · {trialDays} days free · no card
-          </p>
         </div>
         <div className="relative mt-20">
           <HeroLaptop />
         </div>
+      </section>
+
+      {/* The statement: words light up as you scroll */}
+      <section className="pt-28">
+        <ScrubText
+          text="Every month, gyms in Lebanon lose money to a notebook, a calculator and forty WhatsApp chats. Members pay next week. The rate changes every day. Nobody knows who expired. Gymix ends all of it."
+          highlight={["gymix"]}
+        />
       </section>
 
       {/* The story */}
