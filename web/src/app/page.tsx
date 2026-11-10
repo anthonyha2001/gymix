@@ -32,7 +32,7 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="mx-auto w-[260px] rounded-[46px] bg-ink p-3 shadow-[0_50px_100px_-40px_rgb(13_17_23/0.55)] sm:w-[300px]">
       <div className="relative aspect-[9/19] overflow-hidden rounded-[36px] bg-white">
-        <Image src={src} alt={alt} fill sizes="300px" className="object-cover object-top" />
+        <Image src={src} alt={alt} fill sizes="300px" className="origin-top scale-[1.08] object-cover object-top" />
       </div>
     </div>
   );
@@ -153,7 +153,7 @@ export default async function Home() {
             <div className="absolute -right-2 -bottom-10 w-[26%] max-w-[180px] sm:-right-6">
               <div className="rounded-[18%/8.5%] bg-[#05070a] p-[4%] shadow-2xl ring-1 ring-white/15">
                 <div className="relative aspect-[9/19] overflow-hidden rounded-[14%/6.6%] bg-white">
-                  <Image src="/landing/member-home.png" alt="The Gymix member app" fill sizes="200px" className="object-cover object-top" />
+                  <Image src="/landing/member-home.png" alt="The Gymix member app" fill sizes="200px" className="origin-top scale-[1.08] object-cover object-top" />
                 </div>
               </div>
             </div>
