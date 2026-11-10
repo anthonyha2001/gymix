@@ -2,6 +2,7 @@
 
 /* Gymix design tokens. Light theme only for now. */
 @theme {
+  --font-serif: var(--font-fraunces), Georgia, serif;
   --color-canvas: #f4f5f2;
   --color-surface: #ffffff;
   --color-line: #e2e4de;
@@ -497,3 +498,6 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 .lx-word { opacity: clamp(0.12, calc(var(--p, 0) * (var(--n) + 6) - var(--i) + 1), 1); transition: opacity 0.15s linear; }
 .lx-float { transform: translateY(calc((1 - var(--tilt, 0)) * 120px)) rotate(calc((1 - var(--tilt, 0)) * 6deg)); transition: transform 0.12s linear; }
 @media (prefers-reduced-motion: reduce) { .lx-word { opacity: 1; } .lx-float { transform: none; } }
+/* Landing v5 (calm): slow, quiet fades only. */
+.lx-reveal { opacity: 0; transform: translateY(16px); filter: none; transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+.lx-reveal.lx-in { opacity: 1; transform: none; }

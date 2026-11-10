@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Fraunces, Geist } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/toaster";
 import { Splash } from "@/components/splash";
@@ -8,6 +8,9 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
+
+// The landing page's serif.
+const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], style: ["normal", "italic"], weight: ["400", "500"] });
 
 export const metadata: Metadata = {
   title: { default: "Gymix", template: "%s · Gymix" },
@@ -25,7 +28,7 @@ export const viewport: Viewport = { themeColor: "#0d1117", viewportFit: "cover",
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // suppressHydrationWarning: the splash script sets data-splash before React loads.
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.variable} ${fraunces.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col font-sans">
         <Splash />
         {children}
