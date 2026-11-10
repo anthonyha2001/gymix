@@ -258,3 +258,71 @@ export function ScrubText({ text, highlight = [] }: { text: string; highlight?: 
     </div>
   );
 }
+
+// ---------------------------------------------------------------- hero particles: drifting "tap waves"
+// Tiny lime copies of the logo's two waves drift up, turn slowly and fade;
+// now and then one "taps" and sends out a thin ring, like a phone on the sticker.
+export function TapWaves() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let w = 0, h = 0, raf = 0, last = performance.now();
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const resize = () => {
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    const count = Math.round(Math.min(26, Math.max(10, (w * h) / 42000)));
+    type P = { x: number; y: number; s: number; vy: number; vx: number; rot: number; vr: number; a: number; life: number; ring: number };
+    const spawn = (y?: number): P => ({
+      x: Math.random() * w, y: y ?? h + 20, s: 6 + Math.random() * 12, vy: 8 + Math.random() * 16, vx: (Math.random() - 0.5) * 6,
+      rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.4, a: 0.25 + Math.random() * 0.45, life: 0, ring: -1,
+    });
+    const ps: P[] = Array.from({ length: count }, () => spawn(Math.random() * h));
+    const draw = (p: P) => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      const fade = Math.min(1, p.life / 1.5) * Math.min(1, p.y / (h * 0.35));
+      ctx.globalAlpha = p.a * fade;
+      ctx.strokeStyle = "#c8f135";
+      ctx.lineCap = "round";
+      ctx.lineWidth = Math.max(1.4, p.s * 0.16);
+      ctx.beginPath(); ctx.arc(0, 0, p.s * 0.55, -Math.PI * 0.45, -Math.PI * 0.05); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, p.s, -Math.PI * 0.45, -Math.PI * 0.05); ctx.stroke();
+      ctx.restore();
+      if (p.ring >= 0) {
+        const r = p.ring;
+        ctx.globalAlpha = (1 - r) * 0.35 * fade;
+        ctx.strokeStyle = "#c8f135";
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.s + r * 60, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    };
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < ps.length; i++) {
+        const p = ps[i];
+        p.life += dt; p.y -= p.vy * dt; p.x += p.vx * dt + Math.sin(p.life * 0.8 + i) * 0.15; p.rot += p.vr * dt;
+        if (p.ring >= 0) { p.ring += dt / 1.6; if (p.ring >= 1) p.ring = -1; }
+        else if (Math.random() < dt * 0.04) p.ring = 0;
+        if (p.y < -30) ps[i] = spawn();
+        draw(p);
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    window.addEventListener("resize", resize);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
+  }, []);
+  return <canvas ref={ref} aria-hidden className="pointer-events-none absolute inset-0 h-full w-full" />;
+}

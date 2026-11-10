@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { FaqList, MarketingFooter, MarketingNav, PricingCard } from "@/components/marketing";
-import { Reveal } from "@/components/landing-interactive";
+import { Reveal, TapWaves } from "@/components/landing-interactive";
 import { formatPrice } from "@/lib/pricing";
 import { getPricing } from "@/lib/pricing-server";
 
@@ -95,8 +95,9 @@ export default async function Home() {
       <MarketingNav />
 
       {/* Hero */}
-      <section className="bg-ink text-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 pt-16 pb-20 sm:pt-24 lg:grid-cols-12 lg:gap-10 lg:pb-28">
+      <section className="relative overflow-hidden bg-ink text-white">
+        <TapWaves />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 pt-16 pb-20 sm:pt-24 lg:grid-cols-12 lg:gap-10 lg:pb-28">
           <div className="lg:col-span-5">
             <Reveal>
               <p className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white/70">
@@ -158,7 +159,7 @@ export default async function Home() {
             </div>
           </Reveal>
         </div>
-        <div className="border-t border-white/10">
+        <div className="relative border-t border-white/10">
           <dl className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-5 lg:grid-cols-4">
             {[
               [price, "per month, whole gym"],
