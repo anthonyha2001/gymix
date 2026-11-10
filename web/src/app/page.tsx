@@ -91,7 +91,7 @@ export default async function Home() {
   );
 
   return (
-    <div className="flex flex-1 flex-col bg-white text-ink">
+    <div className="lx-paper flex flex-1 flex-col text-ink">
       <MarketingNav />
 
       {/* Hero */}

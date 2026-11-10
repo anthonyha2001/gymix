@@ -501,3 +501,17 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 /* Landing v5 (calm): slow, quiet fades only. */
 .lx-reveal { opacity: 0; transform: translateY(16px); filter: none; transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
 .lx-reveal.lx-in { opacity: 1; transform: none; }
+/* Landing: the light sections' backdrop. Faint lime tap-wave rings from the
+   corners over a barely-visible dot grid; fixed, so it gives a little depth. */
+.lx-paper {
+  background-color: #fff;
+  background-image:
+    repeating-radial-gradient(circle at 100% 18%, transparent 0 46px, rgb(169 209 15 / 0.16) 46px 47.5px, transparent 47.5px 92px),
+    repeating-radial-gradient(circle at 0% 85%, transparent 0 46px, rgb(169 209 15 / 0.12) 46px 47.5px, transparent 47.5px 92px),
+    radial-gradient(rgb(13 17 23 / 0.07) 1px, transparent 1.5px);
+  background-size: 100% 100%, 100% 100%, 26px 26px;
+  background-attachment: fixed, fixed, fixed;
+  -webkit-mask: none;
+}
+.lx-paper > section:not(.bg-ink):not(.bg-canvas) { background: transparent; }
+@media (max-width: 767px) { .lx-paper { background-attachment: scroll, scroll, scroll; } }
