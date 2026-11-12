@@ -939,3 +939,45 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 @keyframes gx-push-demo-in { from { transform: translateY(-24px) scale(0.96); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes gx-sent { 0% { transform: none; } 30% { transform: scale(1.04); box-shadow: 0 0 0 4px rgb(200 241 53 / 0.5); } 100% { transform: none; box-shadow: 0 0 0 0 rgb(200 241 53 / 0); } }
 @media (prefers-reduced-motion: reduce) { .announce-banner { animation: none; } }
+
+/* ------------------------------------------------------- landing showcase */
+.lx-door-result { animation: gx-lx-door 4.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+@keyframes gx-lx-door {
+  0%, 38% { transform: translateY(24px) scale(0.92); opacity: 0; }
+  48%, 88% { transform: none; opacity: 1; }
+  100% { transform: translateY(12px); opacity: 0; }
+}
+.lx-slide { animation: gx-lx-slide 3.6s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+@keyframes gx-lx-slide {
+  0%, 15% { transform: translateX(0); }
+  55%, 75% { transform: translateX(calc(15rem - 3.5rem - 0.5rem)); background: #c8f135; color: #0d1117; }
+  100% { transform: translateX(0); }
+}
+.lx-swipe { animation: gx-lx-swipe 5s cubic-bezier(0.45, 0, 0.25, 1) infinite; transform-origin: 50% 110%; }
+@keyframes gx-lx-swipe {
+  0%, 20% { transform: none; }
+  45%, 60% { transform: translateX(48px) rotate(5deg); }
+  80%, 100% { transform: none; }
+}
+.lx-join { opacity: 0; animation: gx-lx-join 5s ease-in-out infinite; }
+@keyframes gx-lx-join { 0%, 25% { opacity: 0; transform: rotate(-14deg) scale(0.8); } 45%, 60% { opacity: 1; transform: rotate(-14deg) scale(1); } 80%, 100% { opacity: 0; } }
+.lx-note { animation: gx-lx-note 7.2s cubic-bezier(0.34, 1.4, 0.64, 1) infinite backwards; }
+@keyframes gx-lx-note {
+  0% { transform: translateY(-18px) scale(0.95); opacity: 0; }
+  6%, 85% { transform: none; opacity: 1; }
+  95%, 100% { transform: translateY(-8px); opacity: 0; }
+}
+.lx-ring { animation: gx-bounce 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; box-shadow: 0 0 0 10px rgb(200 241 53 / 0.08), 0 0 60px rgb(200 241 53 / 0.35); }
+.lx-timer > span { transform-origin: left; animation: gx-timer 5s linear infinite; }
+/* Bento icon tiles: each has its own small loop. */
+.lx-b-pulse::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 rgb(200 241 53 / 0.5); animation: gx-live 2.4s ease-out infinite; }
+.lx-b-ring::after { content: ""; position: absolute; inset: -4px; border-radius: 1.2rem; border: 1.5px solid rgb(200 241 53 / 0.6); animation: gx-ready 2.4s ease-out infinite; }
+.lx-b-pin svg { animation: gx-lx-pin 1.8s ease-in-out infinite; }
+@keyframes gx-lx-pin { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.lx-b-count svg { animation: gx-beat 1.6s ease-in-out infinite; }
+.lx-b-scan::after, .lx-b-qr::after { content: ""; position: absolute; left: 18%; right: 18%; height: 2px; border-radius: 2px; background: #c8f135; box-shadow: 0 0 8px #c8f135; animation: gx-lx-scan 1.8s ease-in-out infinite; }
+@keyframes gx-lx-scan { 0%, 100% { top: 22%; } 50% { top: 76%; } }
+.group:hover .lx-b { transform: rotate(-6deg) scale(1.06); transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .lx-door-result, .lx-slide, .lx-swipe, .lx-join, .lx-note, .lx-ring, .lx-timer > span, .lx-b-pulse::before, .lx-b-ring::after, .lx-b-pin svg, .lx-b-count svg, .lx-b-scan::after, .lx-b-qr::after { animation: none; opacity: 1; }
+}

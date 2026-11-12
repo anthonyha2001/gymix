@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { FaqList, MarketingFooter, MarketingNav, PricingCard } from "@/components/marketing";
 import { Reveal, TapWaves } from "@/components/landing-interactive";
+import { Bento, ChallengeShowcase, DeskShowcase, DoorShowcase, NotifyShowcase } from "@/components/landing-showcase";
 import { formatPrice } from "@/lib/pricing";
 import { getPricing } from "@/lib/pricing-server";
 
@@ -11,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { priceUsd, trialDays } = await getPricing();
   return {
     title: { absolute: "Gymix · The operating system for your gym" },
-    description: `Memberships, payments in dollars and lira, tap-to-check-in, trainer programs and a member app. ${formatPrice(priceUsd)} a month. ${trialDays} days free.`,
+    description: `Memberships, payments in dollars and lira, doors that open with a tap, challenges, push notifications and a member app. ${formatPrice(priceUsd)} a month. ${trialDays} days free.`,
   };
 }
 
@@ -74,7 +75,7 @@ export default async function Home() {
           A gym <em>in their pocket.</em>
         </>
       ),
-      body: "Today's workout from their trainer, classes to book, progress to be proud of. They tap their phone at the door to check in. No app store.",
+      body: "Today's workout from their trainer, classes to book, a rest timer, progress to be proud of. It works offline, and on the home screen as a widget.",
       media: <PhoneFrame src="/landing/member-home.png" alt="The Gymix member app" />,
     },
   ];
@@ -120,7 +121,7 @@ export default async function Home() {
               <ul className="mt-8 space-y-3 text-[15px] text-white/85">
                 {[
                   "Unpaid members are stopped at the door automatically",
-                  "Members check in by tapping their phone on a $1 sticker",
+                  "Doors open with a tap of the phone, in under 3 seconds",
                   "Every payment, balance and renewal on one screen",
                 ].map((x) => (
                   <li key={x} className="flex gap-3">
@@ -164,8 +165,8 @@ export default async function Home() {
             {[
               [price, "per month, whole gym"],
               ["USD + LBP", "at your own rate"],
-              ["10 min", "to set up"],
-              ["0", "apps to install"],
+              ["< 3 s", "from tap to open door"],
+              ["iPhone · Android", "and any browser"],
             ].map(([n, l]) => (
               <div key={l} className="py-7 sm:py-9">
                 <dt className="text-2xl font-extrabold tracking-tight sm:text-3xl">{n}</dt>
@@ -202,6 +203,12 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      <DoorShowcase />
+      <ChallengeShowcase />
+      <NotifyShowcase />
+      <DeskShowcase />
+      <Bento />
 
       {/* Facts */}
       <section id="how" className="scroll-mt-20 px-5 py-32 sm:py-44">
