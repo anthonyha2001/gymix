@@ -16,7 +16,18 @@ const canWrite = () => typeof window !== "undefined" && "NDEFReader" in window;
 
 // Writes a link onto a blank NFC sticker held against the phone, so no other
 // app is needed. Only Chrome on Android allows this; elsewhere it explains why.
-export function NfcWriteButton({ url, label = "Write to sticker", className = "" }: { url: string; label?: string; className?: string }) {
+export function NfcWriteButton({
+  url,
+  label = "Write to sticker",
+  className = "",
+  onWritten,
+}: {
+  url: string;
+  label?: string;
+  className?: string;
+  // Called once the sticker holds the link (e.g. to mark the machine done).
+  onWritten?: () => unknown;
+}) {
   const supported = useSyncExternalStore(() => () => {}, canWrite, () => false);
   const [state, setState] = useState<"idle" | "waiting" | "done" | "error">("idle");
   const [error, setError] = useState("");
@@ -48,6 +59,7 @@ export function NfcWriteButton({ url, label = "Write to sticker", className = ""
       await new Reader().write({ records: [{ recordType: "url", data: url }] }, { signal: ctl.signal });
       navigator.vibrate?.(80);
       setState("done");
+      onWritten?.();
       setTimeout(() => setState((s) => (s === "done" ? "idle" : s)), 4000);
     } catch (e) {
       if (ctl.signal.aborted) return;

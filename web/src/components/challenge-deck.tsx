@@ -70,7 +70,7 @@ export function ChallengeDeck({ cards, onDecide }: { cards: MemberChallenge[]; o
 
   return (
     <section aria-label="New challenges" className="relative">
-      <div className="relative mx-auto h-[25rem] max-w-sm">
+      <div className="relative mx-auto h-[28rem] max-w-sm">
         {/* The next cards wait underneath, slightly smaller. */}
         {queue.slice(1, 3).map((c, i) => (
           <div

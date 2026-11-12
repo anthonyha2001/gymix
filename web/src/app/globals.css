@@ -558,6 +558,55 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
   45%, 100% { transform: translateX(100%); }
 }
 .challenge-emoji { animation: gx-challenge-float 3.2s ease-in-out infinite; transform-origin: 30% 80%; }
+
+/* The premium card: a lime light circles the edge, a fine grid fades into
+   the dark, a giant line icon is watermarked bottom-right. */
+@property --gx-edge { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.challenge-frame {
+  background:
+    conic-gradient(from var(--gx-edge), rgb(255 255 255 / 0.08) 0deg, rgb(255 255 255 / 0.08) 200deg, rgb(200 241 53 / 0.95) 280deg, rgb(255 255 255 / 0.9) 300deg, rgb(200 241 53 / 0.6) 315deg, rgb(255 255 255 / 0.08) 360deg);
+  animation: gx-edge 6s linear infinite;
+}
+@keyframes gx-edge { to { --gx-edge: 360deg; } }
+.challenge-inner {
+  background:
+    radial-gradient(120% 70% at 100% 0%, rgb(200 241 53 / 0.10), transparent 55%),
+    radial-gradient(90% 60% at 0% 100%, rgb(255 255 255 / 0.05), transparent 60%),
+    linear-gradient(160deg, #161c25 0%, #0b0f15 55%, #07090d 100%);
+}
+.challenge-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(100% 70% at 100% 0%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(100% 70% at 100% 0%, #000 0%, transparent 70%);
+}
+.challenge-mark {
+  position: absolute;
+  right: -3.5rem;
+  top: 2.5rem;
+  width: 17rem;
+  height: 17rem;
+  color: rgb(200 241 53 / 0.07);
+  transform: rotate(-12deg);
+  pointer-events: none;
+  animation: gx-challenge-drift 9s ease-in-out infinite;
+}
+@keyframes gx-challenge-drift {
+  0%, 100% { transform: rotate(-12deg) translateY(0); }
+  50% { transform: rotate(-8deg) translateY(-8px); }
+}
+.challenge-badge { box-shadow: 0 0 0 4px rgb(200 241 53 / 0.12), 0 8px 24px -6px rgb(200 241 53 / 0.55); }
+.challenge-live { box-shadow: 0 0 0 0 currentColor; animation: gx-live 1.8s ease-out infinite; color: rgb(200 241 53 / 0.6); }
+@keyframes gx-live {
+  0% { box-shadow: 0 0 0 0 rgb(200 241 53 / 0.55); }
+  100% { box-shadow: 0 0 0 7px rgb(200 241 53 / 0); }
+}
+.challenge-time { box-shadow: 0 0 12px rgb(200 241 53 / 0.6); }
 @keyframes gx-challenge-float {
   0%, 100% { transform: translateY(0) rotate(-4deg); }
   50% { transform: translateY(-6px) rotate(4deg); }
@@ -575,7 +624,7 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 }
 .medal-pop { display: inline-block; animation: gx-bounce 520ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
 @media (prefers-reduced-motion: reduce) {
-  .challenge-sheen, .challenge-emoji, .deck-enter > .challenge-face, .board-me, .medal-pop { animation: none; }
+  .challenge-sheen, .challenge-emoji, .deck-enter > .challenge-face, .board-me, .medal-pop, .challenge-frame, .challenge-mark, .challenge-live { animation: none; }
   .ring-fill { transition: none; }
 }
 
@@ -722,4 +771,34 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 .gx-map .leaflet-popup-content-wrapper { border-radius: 14px; }
 @media (prefers-reduced-motion: reduce) {
   .gx-pin-body, .gx-pin-pulse { animation: none; }
+}
+
+/* ------------------------------------------------------------ NFC stickers
+   The machine being written sits in a target; while waiting for the sticker,
+   lime rings ripple out of it; once written, the tick pops in. */
+.nfc-target { position: relative; display: grid; place-items: center; }
+.nfc-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 2.4rem;
+  border: 2px solid #c8f135;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.nfc-target.is-waiting .nfc-ring { animation: gx-nfc-ring 1.8s cubic-bezier(0.2, 0.6, 0.35, 1) infinite; }
+.nfc-target.is-waiting .nfc-ring:nth-child(2) { animation-delay: 0.6s; }
+.nfc-target.is-waiting .nfc-ring:nth-child(3) { animation-delay: 1.2s; }
+@keyframes gx-nfc-ring {
+  0% { width: 7rem; height: 7rem; opacity: 0.9; }
+  100% { width: 13rem; height: 13rem; border-radius: 4rem; opacity: 0; }
+}
+.nfc-target.is-written > span:last-child { animation: gx-bounce 520ms cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 0 0 6px rgb(200 241 53 / 0.25), 0 0 40px rgb(200 241 53 / 0.5); }
+.nfc-check { animation: gx-bounce 480ms 80ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
+@media (prefers-reduced-motion: reduce) {
+  .nfc-target.is-waiting .nfc-ring { animation: none; opacity: 0.5; }
+  .nfc-target.is-written > span:last-child, .nfc-check { animation: none; }
 }

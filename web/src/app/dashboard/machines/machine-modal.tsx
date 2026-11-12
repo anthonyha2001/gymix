@@ -8,10 +8,13 @@ import { RouteModal } from "@/components/route-modal";
 import { Card, SectionTitle, buttonClass } from "@/components/ui";
 import { capitalize, mediaUrl, musclesLabel } from "@/lib/exercises";
 import { requestOrigin } from "@/lib/origin";
+import { machineStickerUrl } from "@/lib/url";
+import Link from "next/link";
+import { CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CopyLink } from "../settings/settings-form";
 import { ActionButton } from "../members/action-button";
-import { addMachineExercise, deleteMachine, removeMachineExercise, updateMachine } from "./actions";
+import { addMachineExercise, deleteMachine, removeMachineExercise, setStickerDone, updateMachine } from "./actions";
 import { AddExercisesToMachine, EditMachineForm } from "./machine-form";
 
 // One machine (?machine=<id>), as a dialog over the Equipment page.
@@ -26,8 +29,10 @@ export async function MachineModal({ machineId, gymId, canManage }: { machineId:
   if (!machine) return null;
 
   const exercises = machine.machine_exercises.map((me) => me.exercises).filter((e) => e !== null);
-  const stickerUrl = `${await requestOrigin()}/m/${machine.id}`;
-  const qr = await qrFor(stickerUrl, 140);
+  const origin = await requestOrigin();
+  const stickerUrl = machineStickerUrl(origin, machine.id);
+  // The printed QR uses the plain link (taps from it don't count as the sticker).
+  const qr = await qrFor(`${origin}/m/${machine.id}`, 140);
 
   return (
     <RouteModal param="machine" title={machine.name} size="xl">
@@ -122,14 +127,30 @@ export async function MachineModal({ machineId, gymId, canManage }: { machineId:
 
       <Card className="grid gap-5 p-5 md:grid-cols-[1fr_140px]">
         <div className="space-y-3">
-          <h2 className="font-semibold">Machine sticker</h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-semibold">Machine sticker</h2>
+            {machine.sticker_tapped_at ? (
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-success">
+                <CheckCircle2 className="size-3.5" /> Working
+              </span>
+            ) : machine.sticker_at ? (
+              <span className="text-xs font-medium">Sticker on · not tapped yet</span>
+            ) : (
+              <span className="text-xs text-muted">No sticker yet</span>
+            )}
+          </div>
           <p className="text-sm text-muted">
             Put an NFC sticker on the machine with this link. Members tap it (or scan the QR code from their app) and the
             machine slides up in their app: how to use it and their last weights on it.
           </p>
-          <NfcWriteButton url={stickerUrl} />
+          {canManage && <NfcWriteButton url={stickerUrl} onWritten={setStickerDone.bind(null, machine.id, true)} />}
           <CopyLink url={stickerUrl} />
-          <QrDownload text={stickerUrl} name={machine.name} />
+          <QrDownload text={`${origin}/m/${machine.id}`} name={machine.name} />
+          {canManage && (
+            <Link href="/dashboard/machines/stickers" className="block text-sm font-medium underline underline-offset-4">
+              Set up all machine stickers, one after the other
+            </Link>
+          )}
         </div>
         <figure className="text-center">
           <div className="mx-auto w-[140px] rounded-lg border border-line bg-white p-1" dangerouslySetInnerHTML={{ __html: qr.svg }} />

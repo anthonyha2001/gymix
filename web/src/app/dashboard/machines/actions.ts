@@ -137,3 +137,18 @@ export async function deleteMachine(machineId: string) {
   if (machine?.photo_path) await supabase.storage.from("gym-media").remove([machine.photo_path]);
   redirect("/dashboard/machines?tab=machines");
 }
+
+// The machine's NFC sticker: written from Gymix, or ticked done after writing
+// it with another app. `done: false` puts it back on the to-do list.
+export async function setStickerDone(machineId: string, done: boolean): Promise<ActionState> {
+  const { membership } = await requireStaff(MANAGER_ROLES);
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("gym_machines")
+    .update({ sticker_at: done ? new Date().toISOString() : null })
+    .eq("id", machineId)
+    .eq("gym_id", membership.gymId);
+  if (error) return { error: errorMessage(error, "Couldn't save the sticker.") };
+  refresh();
+  return {};
+}

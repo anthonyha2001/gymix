@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
-import { Plus, QrCode } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle2, Nfc, Plus } from "lucide-react";
 import { ExerciseAnimation } from "@/components/exercise-media";
 import { Dialog } from "@/components/dialog";
-import { Card, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
+import { Card, PageHeader, SectionTitle, Skeleton, buttonClass } from "@/components/ui";
 import { NewMachineForm } from "./machine-form";
 import { mediaUrl, musclesLabel } from "@/lib/exercises";
 import { MANAGER_ROLES } from "@/lib/roles";
@@ -13,7 +14,6 @@ import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { MachineModal } from "./machine-modal";
-import { MachineStickers } from "./machine-stickers";
 import { EquipmentForm } from "./equipment-form";
 
 export const metadata: Metadata = { title: "Equipment" };
@@ -48,7 +48,7 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
     supabase.from("gym_exercises").select("id", { count: "exact", head: true }).eq("gym_id", membership.gymId),
     supabase
       .from("gym_machines")
-      .select("id, name, photo_path, machine_exercises(exercises(name, primary_muscles, image_paths))")
+      .select("id, name, photo_path, sticker_at, sticker_tapped_at, machine_exercises(exercises(name, primary_muscles, image_paths))")
       .eq("gym_id", membership.gymId)
       .order("name"),
   ]);
@@ -97,18 +97,13 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
         <SectionTitle
           action={
             <div className="flex flex-wrap gap-2">
-              {!!machines?.length && (
-                <Dialog
-                  label="Stickers & QR codes"
-                  icon={<QrCode className="size-4" />}
-                  title="Stickers & QR codes"
-                  description="One per machine. Write each NFC sticker from your phone, or print the QR codes for phones without NFC."
-                  size="xl"
-                  variant="secondary"
-                  triggerClassName="h-9"
-                >
-                  <MachineStickers machines={machines.map((m) => ({ id: m.id, name: m.name }))} />
-                </Dialog>
+              {canManage && !!machines?.length && (
+                <Link href="/dashboard/machines/stickers" className={buttonClass("secondary", "h-9")}>
+                  <Nfc className="size-4" /> Set up stickers
+                  <span className="rounded-full bg-canvas px-1.5 text-xs tabular-nums text-muted">
+                    {machines.filter((m) => m.sticker_at).length}/{machines.length}
+                  </span>
+                </Link>
               )}
               {canManage && (
                 <Dialog label="Add machine" icon={<Plus className="size-4" />} title="Add a machine" size="xl" triggerClassName="h-9">
@@ -147,6 +142,19 @@ async function EquipmentContent({ searchParams }: { searchParams: PageProps<"/da
                         {exercises.length} exercise{exercises.length === 1 ? "" : "s"}
                       </p>
                       <p className="mt-1 line-clamp-2 text-xs text-muted">{musclesLabel(muscles)}</p>
+                      {m.sticker_tapped_at ? (
+                        <p className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-success">
+                          <CheckCircle2 className="size-3.5" /> Sticker working
+                        </p>
+                      ) : m.sticker_at ? (
+                        <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium">
+                          <span className="size-1.5 rounded-full bg-brand ring-2 ring-brand/30" /> Sticker on
+                        </p>
+                      ) : (
+                        <p className="mt-2 inline-flex items-center gap-1 text-xs text-muted">
+                          <Nfc className="size-3.5" /> No sticker yet
+                        </p>
+                      )}
                     </div>
                   </div>
                 </HoverLink>

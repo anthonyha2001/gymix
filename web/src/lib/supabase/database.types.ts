@@ -771,14 +771,14 @@ isOneToOne: false
                   ]
                 },"gym_machines": {
                   Row: {
-                    "created_at": string,"created_by": string | null,"description": string | null,"gym_id": string,"id": string,"name": string,"photo_path": string | null
+                    "created_at": string,"created_by": string | null,"description": string | null,"gym_id": string,"id": string,"name": string,"photo_path": string | null,"sticker_at": string | null,"sticker_tapped_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"gym_id": string,"id"?: string,"name": string,"photo_path"?: string | null
+                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"gym_id": string,"id"?: string,"name": string,"photo_path"?: string | null,"sticker_at"?: string | null,"sticker_tapped_at"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"gym_id"?: string,"id"?: string,"name"?: string,"photo_path"?: string | null
+                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"gym_id"?: string,"id"?: string,"name"?: string,"photo_path"?: string | null,"sticker_at"?: string | null,"sticker_tapped_at"?: string | null
                   }
                   Relationships: [
                     {
@@ -2496,6 +2496,9 @@ isOneToOne: false
                            },
 "distance_m":
 { Args: { "p_lat1": number,"p_lat2": number,"p_lng1": number,"p_lng2": number }; Returns: number
+                           },
+"machine_sticker_tapped":
+{ Args: { "p_machine_id": string }; Returns: undefined
                            },
 "presence_ping":
 { Args: { "p_accuracy_m"?: number,"p_gym_id": string,"p_lat": number,"p_lng": number }; Returns: string
