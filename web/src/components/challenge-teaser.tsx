@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Trophy } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { METRICS, formatScore, isMetric, type MemberChallenge } from "@/lib/challenges";
 
@@ -20,7 +20,7 @@ export async function ChallengeTeaser({ gymId }: { gymId: string }) {
       <Link href="/portal/challenges" className="challenge-face group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-ink p-5 text-white shadow-lg">
         <span aria-hidden className="challenge-glow" />
         <span aria-hidden className="challenge-sheen" />
-        <span aria-hidden className="challenge-emoji relative text-4xl">{m?.emoji ?? "🏆"}</span>
+        <span aria-hidden className="challenge-emoji relative grid size-12 shrink-0 place-items-center rounded-2xl bg-brand text-ink">{(() => { const Icon = m?.icon ?? Trophy; return <Icon className="size-6" strokeWidth={2.25} />; })()}</span>
         <span className="relative min-w-0 flex-1">
           <span className="block text-[11px] font-semibold uppercase tracking-widest text-brand">
             {fresh.length > 1 ? `${fresh.length} new challenges` : "New challenge"}

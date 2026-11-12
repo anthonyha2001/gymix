@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { Plus, Trophy } from "lucide-react";
+import { Gift, Plus, Trophy } from "lucide-react";
+import { RankMedal } from "@/components/rank-medal";
 import { Dialog } from "@/components/dialog";
 import { RowMenu } from "@/components/row-menu";
 import { Badge, Card, PageHeader, Skeleton } from "@/components/ui";
@@ -12,7 +13,7 @@ import { formatDate, todayIn } from "@/lib/format";
 import { MANAGER_ROLES } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
-import { METRICS, MEDALS, formatScore, isMetric, type Metric } from "@/lib/challenges";
+import { METRICS, formatScore, isMetric, type Metric } from "@/lib/challenges";
 import { createChallenge, deleteChallenge, updateChallenge } from "./actions";
 import { ChallengeForm } from "./challenge-form";
 
@@ -92,7 +93,7 @@ async function ChallengeCard({ challenge: c, state, joined, today }: { challenge
   return (
     <Card className="flex flex-col overflow-hidden">
       <div className="flex items-start gap-3 p-5">
-        <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-2xl bg-ink text-2xl">{m?.emoji ?? "🏆"}</span>
+        <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-2xl bg-ink text-brand">{(() => { const Icon = m?.icon ?? Trophy; return <Icon className="size-6" />; })()}</span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="truncate font-semibold">{c.title}</h2>
@@ -107,7 +108,7 @@ async function ChallengeCard({ challenge: c, state, joined, today }: { challenge
             <p className="mt-1 text-sm">
               {c.target ? <>Goal {formatScore(c.metric, c.target)}</> : null}
               {c.target && c.prize ? " · " : null}
-              {c.prize ? <>🎁 {c.prize}</> : null}
+              {c.prize ? <span className="inline-flex items-center gap-1"><Gift className="size-3.5 text-muted" />{c.prize}</span> : null}
             </p>
           )}
         </div>
@@ -150,7 +151,7 @@ async function ChallengeCard({ challenge: c, state, joined, today }: { challenge
         <ol className="flex-1 divide-y divide-line">
           {board.map((r, i) => (
             <li key={`${r.member_id}-${i}`} className="flex items-center gap-3 px-5 py-2.5 text-sm">
-              <span className="w-6 text-center">{r.rank <= 3 ? <span className="medal-pop" style={{ animationDelay: `${i * 80}ms` }}>{MEDALS[r.rank - 1]}</span> : r.rank}</span>
+              <span className="grid w-7 place-items-center">{r.rank <= 3 ? <RankMedal rank={r.rank} className="medal-pop" style={{ animationDelay: `${i * 80}ms` }} /> : r.rank}</span>
               {r.member_id ? (
                 <Link href={`/dashboard/members/${r.member_id}`} className="min-w-0 flex-1 truncate font-medium hover:underline">
                   {r.name}

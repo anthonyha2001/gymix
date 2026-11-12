@@ -67,7 +67,7 @@ export function OutboxSync() {
       await count();
       if (r.sent) {
         showToast(`Synced ${r.sent} change${r.sent === 1 ? "" : "s"} from your phone ✓`);
-        for (const pr of r.prs) showToast(`New personal record: ${pr}! 🏆`);
+        for (const pr of r.prs) showToast(`New personal record: ${pr}!`);
         router.refresh();
       }
       if (r.failed) showToast(`${r.failed} change${r.failed === 1 ? "" : "s"} couldn't be saved (the workout was removed).`, "error");

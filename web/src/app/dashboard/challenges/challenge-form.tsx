@@ -8,6 +8,16 @@ import type { ActionState } from "@/lib/action-result";
 import { METRICS, type Metric } from "@/lib/challenges";
 import { ChallengeCardFace } from "@/components/challenge-card";
 
+function ChoiceLabel({ metric }: { metric: Metric }) {
+  const { icon: Icon, label } = METRICS[metric];
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <Icon aria-hidden className="size-4 shrink-0" />
+      {label}
+    </span>
+  );
+}
+
 type Action = (prev: ActionState, formData: FormData) => Promise<ActionState>;
 
 export type ChallengeValues = {
@@ -65,12 +75,13 @@ export function ChallengeForm({ action, today, initial, submitLabel }: { action:
             name="metric"
             label="What counts"
             columns={2}
+            size="lg"
             value={metric}
             onChange={(v) => {
               setMetric(v as Metric);
               suggest(v as Metric, range.end);
             }}
-            options={(Object.keys(METRICS) as Metric[]).map((k) => ({ value: k, label: `${METRICS[k].emoji} ${METRICS[k].label}`, hint: METRICS[k].hint }))}
+            options={(Object.keys(METRICS) as Metric[]).map((k) => ({ value: k, label: <ChoiceLabel metric={k} />, hint: METRICS[k].hint }))}
           />
         </Field>
         <Field label="When" group>

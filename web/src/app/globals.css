@@ -534,7 +534,7 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 
 /* ---------------------------------------------------------------- challenges
    Card faces glow and catch a light; a new card pops up into the deck; the
-   emoji floats; progress rings fill; the member's own leaderboard row glows. */
+   icon floats; progress rings fill; the member's own leaderboard row glows. */
 .challenge-glow {
   position: absolute;
   inset: -40% -30% auto auto;

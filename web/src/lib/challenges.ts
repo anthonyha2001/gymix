@@ -1,11 +1,13 @@
 // Monthly challenges: what a challenge can count, and how to show it. Client-safe.
+import { CalendarCheck, Dumbbell, Flame, Weight } from "lucide-react";
+
 // Mirrors public.challenges.metric and member_challenges() in the database.
 
 export const METRICS = {
-  visits: { label: "Most visits", unit: "day", units: "days", verb: "Come to the gym", emoji: "🔥", hint: "Days at the gym (one per day)" },
-  workouts: { label: "Most workouts", unit: "workout", units: "workouts", verb: "Finish workouts in the app", emoji: "💪", hint: "Finished workouts with logged sets" },
-  volume: { label: "Most weight lifted", unit: "kg", units: "kg", verb: "Log your sets", emoji: "🏋️", hint: "Kilograms lifted: weight × reps of every set" },
-  classes: { label: "Most classes", unit: "class", units: "classes", verb: "Attend classes", emoji: "🎯", hint: "Classes attended" },
+  visits: { label: "Most visits", unit: "day", units: "days", verb: "Come to the gym", icon: Flame, hint: "Days at the gym (one per day)" },
+  workouts: { label: "Most workouts", unit: "workout", units: "workouts", verb: "Finish workouts in the app", icon: Dumbbell, hint: "Finished workouts with logged sets" },
+  volume: { label: "Most weight lifted", unit: "kg", units: "kg", verb: "Log your sets", icon: Weight, hint: "Weight × reps of every logged set" },
+  classes: { label: "Most classes", unit: "class", units: "classes", verb: "Attend classes", icon: CalendarCheck, hint: "Classes attended" },
 } as const;
 
 export type Metric = keyof typeof METRICS;
@@ -40,4 +42,3 @@ export type MemberChallenge = {
   top: ChallengeTop[];
 };
 
-export const MEDALS = ["🥇", "🥈", "🥉"] as const;

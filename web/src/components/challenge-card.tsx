@@ -1,7 +1,7 @@
-import { CalendarDays, Gift, Target, Users } from "lucide-react";
+import { CalendarDays, Gift, Target, Trophy, Users } from "lucide-react";
 import { METRICS, formatScore, isMetric } from "@/lib/challenges";
 
-// The face of a challenge card: dark, with the gym's lime, a big emoji and a
+// The face of a challenge card: dark, with the gym's lime, a big icon and a
 // light that sweeps across it. Used in the swipe deck, the member's list and
 // the staff preview. No hooks: renders on the server or the client.
 export type CardFaceData = {
@@ -36,8 +36,11 @@ export function ChallengeCardFace({ challenge: c, preview = false }: { challenge
       </div>
 
       <div className="relative mt-8 flex-1">
-        <span aria-hidden className="challenge-emoji block text-6xl leading-none">
-          {m?.emoji ?? "🏆"}
+        <span aria-hidden className="challenge-emoji grid size-16 place-items-center rounded-2xl bg-brand text-ink shadow-[0_0_40px_-6px_rgba(200,241,53,0.6)]">
+          {(() => {
+            const Icon = m?.icon ?? Trophy;
+            return <Icon className="size-8" strokeWidth={2.25} />;
+          })()}
         </span>
         <h3 className="mt-5 text-[1.7rem] font-bold leading-tight tracking-tight">{c.title}</h3>
         <p className="mt-2 text-sm text-white/70">{c.description || (m ? `${m.verb}. ${m.hint}.` : "")}</p>

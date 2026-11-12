@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { ChevronRight, Loader2, Trophy } from "lucide-react";
 import { ChallengeDeck } from "@/components/challenge-deck";
 import { CountUp } from "@/components/count-up";
+import { RankMedal } from "@/components/rank-medal";
 import { Modal } from "@/components/dialog";
-import { METRICS, MEDALS, formatScore, isMetric, type MemberChallenge } from "@/lib/challenges";
+import { METRICS, formatScore, isMetric, type MemberChallenge } from "@/lib/challenges";
 import { loadBoard, setChallengeEntry, type BoardRow } from "./actions";
 
 // The member's challenges: new ones to swipe, the ones they're in (with a
@@ -134,12 +135,12 @@ function ChallengeRow({ challenge: c, onOpen }: { challenge: MemberChallenge; on
   // Without a goal, the ring shows how close the member is to first place.
   const leader = Number(c.top[0]?.score ?? 0);
   const max = c.target ? Number(c.target) : Math.max(leader, score, 1);
-  const medal = c.state === "ended" && c.rank && c.rank <= 3 ? MEDALS[c.rank - 1] : null;
+  const medal = c.state === "ended" && c.rank && c.rank <= 3 ? c.rank : null;
   return (
     <button type="button" onClick={onOpen} className="flex w-full items-center gap-4 rounded-3xl border border-line bg-surface p-4 text-left shadow-sm transition hover:border-ink/20">
       <Ring value={score} max={max}>
         {medal ? (
-          <span className="medal-pop text-2xl">{medal}</span>
+          <RankMedal rank={medal} className="medal-pop size-9 text-sm" />
         ) : (
           <>
             <span className="block text-sm font-bold">#{c.rank ? <CountUp value={String(c.rank)} /> : "–"}</span>
@@ -149,7 +150,7 @@ function ChallengeRow({ challenge: c, onOpen }: { challenge: MemberChallenge; on
       </Ring>
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-2">
-          <span aria-hidden>{m?.emoji}</span>
+          {m ? <m.icon aria-hidden className="size-4 shrink-0 text-muted" /> : null}
           <span className="truncate font-semibold">{c.title}</span>
         </span>
         <span className="mt-0.5 block text-sm">
@@ -159,7 +160,7 @@ function ChallengeRow({ challenge: c, onOpen }: { challenge: MemberChallenge; on
         </span>
         <span className="block text-xs text-muted">
           {c.state === "ended" ? (c.rank ? `Finished #${c.rank} of ${c.participants}` : "Ended") : `${c.days_left} day${c.days_left === 1 ? "" : "s"} left`}
-          {c.prize ? ` · 🎁 ${c.prize}` : ""}
+          {c.prize ? ` · Prize: ${c.prize}` : ""}
         </span>
       </span>
       <ChevronRight className="size-5 shrink-0 text-muted" />
@@ -192,7 +193,7 @@ function Board({ challenge: c }: { challenge: MemberChallenge }) {
           key={`${r.rank}-${r.name}-${i}`}
           className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 ${r.is_me ? "board-me bg-brand/15" : i < 3 ? "bg-canvas" : ""}`}
         >
-          <span className="w-8 text-center text-lg font-bold tabular-nums">{r.rank <= 3 ? <span className="medal-pop" style={{ animationDelay: `${i * 90}ms` }}>{MEDALS[r.rank - 1]}</span> : r.rank}</span>
+          <span className="w-8 text-center text-lg font-bold tabular-nums">{r.rank <= 3 ? <RankMedal rank={r.rank} className="medal-pop" style={{ animationDelay: `${i * 90}ms` }} /> : r.rank}</span>
           <span className="min-w-0 flex-1 truncate font-medium">
             {r.name}
             {r.is_me ? <span className="ml-1.5 text-xs text-muted">(you)</span> : null}
