@@ -88,7 +88,7 @@ reset role;
 select pg_temp.act_as('ds-owner@test.lb');
 select public.set_door_location(pg_temp.v('gym'), null, null);
 reset role;
-select pg_temp.ok((select door_lat is null and door_radius_m is null from public.gyms where id = pg_temp.v('gym')), 'location cleared');
+select pg_temp.ok((select door_lat is not null and door_radius_m is null from public.gyms where id = pg_temp.v('gym')), 'check switched off, gym location kept');
 
 -- Rate limit: 12 openings in 10 minutes.
 update public.access_commands set created_at = now() - interval '6 seconds' where member_id = pg_temp.v('nour') and kind = 'open_door';

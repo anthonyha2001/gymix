@@ -220,8 +220,8 @@ async function ZonesPanel({ gymId, zones }: { gymId: string; zones: { id: string
 async function TapsPanel({ gymId }: { gymId: string }) {
   const supabase = await createClient();
   const { data: gym } = await supabase.from("gyms").select("door_lat, door_lng, door_radius_m").eq("id", gymId).single();
-  const current =
-    gym?.door_lat != null && gym.door_lng != null && gym.door_radius_m != null ? { lat: gym.door_lat, lng: gym.door_lng, radius: gym.door_radius_m } : null;
+  const current = gym?.door_lat != null && gym.door_lng != null ? { lat: gym.door_lat, lng: gym.door_lng, radius: gym.door_radius_m } : null;
+  const on = current?.radius != null;
   return (
     <div className="space-y-4">
       <Card className="p-5">
@@ -235,11 +235,13 @@ async function TapsPanel({ gymId }: { gymId: string }) {
       <Card className="p-5">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="font-semibold">Only when the phone is at the gym</h2>
-          <Badge tone={current ? "green" : "gray"}>{current ? `On, within ${current.radius} m` : "Off"}</Badge>
+          <Badge tone={on ? "green" : "gray"}>{on ? `On, within ${current?.radius} m` : "Off"}</Badge>
         </div>
         <p className="mt-1 mb-4 text-sm text-muted">
           Stops a sticker link being used from home (for example to let a friend in). Members&apos; phones are asked for their location when they tap, and
-          the door only opens near the gym. Stand inside the gym and press the button below to save its location.
+          the door only opens near the gym. It uses your gym&apos;s location from Settings → Gym → Location (or press the button below while
+          you&apos;re inside). While it&apos;s on, the member app also checks every few minutes, while open, whether members counted inside are
+          still at the gym, so the live count stays accurate.
         </p>
         <DoorLocationForm action={setDoorLocation} current={current} />
       </Card>

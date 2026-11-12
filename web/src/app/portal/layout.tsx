@@ -10,6 +10,7 @@ import { accountStatus, hiddenPortalPages } from "@/lib/portal";
 import { PortalNav } from "./portal-nav";
 import { InstallPrompt } from "@/components/install-prompt";
 import { OutboxSync } from "@/components/outbox-sync";
+import { PresenceCheck } from "@/components/presence-check";
 import { ShakeQuickStart } from "@/components/shake-quick-start";
 import { DropCatch } from "@/components/drop-catch";
 import { SupportBanner } from "@/components/support-banner";
@@ -61,6 +62,9 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
       <InstallPrompt />
       <OutboxSync />
       <Suspense>
+        <Presence />
+      </Suspense>
+      <Suspense>
         <Drop />
       </Suspense>
       <MotionGestures />
@@ -92,6 +96,14 @@ async function MemberBell() {
   const { membership } = await requireMember();
   const { items, unread } = await loadNotifications(membership.gymId, true);
   return <NotificationBell items={items} unread={unread} />;
+}
+
+// Location checks for the live count, where the gym switched them on.
+async function Presence() {
+  const { membership } = await requireMember();
+  const supabase = await createClient();
+  const { data: gym } = await supabase.from("gyms").select("door_radius_m").eq("id", membership.gymId).single();
+  return <PresenceCheck enabled={gym?.door_radius_m != null} />;
 }
 
 // Shake the phone to open the Programs page (not while the account is locked).

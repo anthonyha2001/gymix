@@ -10,7 +10,9 @@ import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { ActionButton } from "../members/action-button";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
-import { rotateStickerLink, setTapSimulator } from "./actions";
+import { rotateStickerLink, saveGymLocation, setTapSimulator } from "./actions";
+import { GymLocation } from "./gym-location";
+import { MapPin } from "lucide-react";
 import { CopyLink, PortalPagesForm, SettingsForm } from "./settings-form";
 import { WhatsAppPanel } from "./whatsapp-panel";
 
@@ -36,7 +38,7 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
   const supabase = await createClient();
   const [{ data: token }, { data: gym }] = await Promise.all([
     supabase.rpc("get_checkin_token", { p_gym_id: membership.gymId }),
-    supabase.from("gyms").select("tap_simulator, portal_hidden, unpaid_grace_days, renewal_reminder_days").eq("id", membership.gymId).single(),
+    supabase.from("gyms").select("tap_simulator, portal_hidden, unpaid_grace_days, renewal_reminder_days, door_lat, door_lng, door_radius_m, address").eq("id", membership.gymId).single(),
   ]);
 
   const url = `${await requestOrigin()}/c/${token}`;
@@ -67,10 +69,28 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
       <TabPanel id="subscription" tabs={TABS}>{<SubscriptionPanel gymId={membership.gymId} gymName={membership.gymName} />}</TabPanel>
 
       <TabPanel id="gym" tabs={TABS}>{(
+      <>
       <Card className="space-y-4 p-5">
         <h2 className="font-semibold">Gym</h2>
         <SettingsForm name={membership.gymName} lbpRate={membership.lbpRate} graceDays={gym?.unpaid_grace_days ?? 3} reminderDays={gym?.renewal_reminder_days ?? 3} />
       </Card>
+      <Card className="mt-4 space-y-4 p-5">
+        <div>
+          <h2 className="flex items-center gap-2 font-semibold">
+            <MapPin className="size-4" /> Location
+          </h2>
+          <p className="text-sm text-muted">
+            Where your gym is. It puts you on the Gymix map, lets door stickers check the phone is at the gym (Access → Phone taps), and keeps
+            the live count accurate.
+          </p>
+        </div>
+        <GymLocation
+          action={saveGymLocation}
+          initial={gym?.door_lat != null && gym.door_lng != null ? { lat: gym.door_lat, lng: gym.door_lng, address: gym.address } : null}
+          doorRadius={gym?.door_radius_m ?? null}
+        />
+      </Card>
+      </>
       )}</TabPanel>
 
       <TabPanel id="app" tabs={TABS}>{(

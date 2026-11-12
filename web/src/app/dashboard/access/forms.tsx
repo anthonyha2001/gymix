@@ -249,7 +249,7 @@ export function CardForm({ action, initial }: { action: Action; initial: string 
 
 // "Phone must be at the gym": the owner stands at the gym and saves its
 // location; door sticker taps then only open within the chosen distance.
-export function DoorLocationForm({ action, current }: { action: Action; current: { lat: number; lng: number; radius: number } | null }) {
+export function DoorLocationForm({ action, current }: { action: Action; current: { lat: number; lng: number; radius: number | null } | null }) {
   const [state, formAction, pending] = useActionState(action, {});
   const [spot, setSpot] = useState<{ lat: number; lng: number; accuracy: number | null } | null>(
     current ? { lat: current.lat, lng: current.lng, accuracy: null } : null,
@@ -307,12 +307,12 @@ export function DoorLocationForm({ action, current }: { action: Action; current:
         />
       </Field>
       <div className="flex flex-wrap justify-end gap-2">
-        {current && (
+        {current?.radius != null && (
           <button type="submit" name="off" value="1" disabled={pending} className={buttonClass("ghost")}>
             Turn off
           </button>
         )}
-        <Button disabled={pending || !spot}>{pending ? "Saving…" : current ? "Save" : "Turn on"}</Button>
+        <Button disabled={pending || !spot}>{pending ? "Saving…" : current?.radius != null ? "Save" : "Turn on"}</Button>
       </div>
     </form>
   );

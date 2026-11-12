@@ -205,6 +205,25 @@ Dashboard → **Challenges** (owners and managers, feature `challenges`, on for 
   the gym's timezone. `challenge_board()` ranks joined members; other members see first name and initial only.
 - Tests: `supabase/tests/challenges_test.sql`.
 
+## Gym location, maps and who is still inside
+
+(`supabase/migrations/*_presence.sql`, `web/src/components/gym-map.tsx`)
+
+- **Gym location**: owners set it in Settings → Gym → Location (address search via OpenStreetMap, "I'm at the gym",
+  or tap/drag the pin); stored in `gyms.door_lat/door_lng/address` (`set_gym_location`). "Phone must be at the
+  gym" (Access → Phone taps) is a switch on top of it (`door_radius_m` set = on).
+- **Gymix map**: `/admin` → Map shows every gym with a location, named, coloured by subscription (lime paying, amber
+  trial, red overdue/suspended), and lists gyms not on the map yet. Maps are Leaflet with OpenStreetMap tiles.
+- **Exits**: every door sticker tap is now a door event (`method = 'phone'`): the exit sticker records an exit; a
+  sticker on a two-way door is an exit for a member already inside 10+ minutes. Any exit ends the visit
+  (`checkins.left_at`, `left_how`); coming back in reopens it (trigger `access_events_presence`).
+- **Location checks**: in gyms with the switch on, the member app (while open, only if location was already allowed;
+  never prompts) calls `presence_ping` every 10 minutes and on return to the app: at the gym → `seen_at` (keeps the
+  visit counted past the usual length); clearly away (beyond twice the radius, ≥ 300 m) → visit ended; in between →
+  nothing. Door exits win over location.
+- **Live count**: checked-in members who haven't left, within the usual visit length; four hours for members who came
+  in through a door reader today (readers catch exits); or seen at the gym by the app in the last 30 minutes.
+
 ## Live occupancy
 
 Dashboard → **Live** (front desk and up, feature `live_occupancy`) and a "Right now at the gym" card on the member's

@@ -53,3 +53,25 @@ export async function setPortalPages(_prev: ActionState, formData: FormData): Pr
   refresh();
   return { success: "Saved. Members see the new set of pages right away." };
 }
+
+// Where the gym is (Settings → Gym → Location): for the Gymix map, door
+// stickers' "phone must be at the gym" and the live count.
+export async function saveGymLocation(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const { membership } = await requireStaff(["owner"]);
+  const clear = text(formData, "clear") === "1";
+  const lat = Number(text(formData, "lat"));
+  const lng = Number(text(formData, "lng"));
+  if (!clear && (!text(formData, "lat") || !Number.isFinite(lat) || !Number.isFinite(lng))) {
+    return { error: "Put the pin on your gym first." };
+  }
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_gym_location", {
+    p_gym_id: membership.gymId,
+    p_lat: clear ? null : lat,
+    p_lng: clear ? null : lng,
+    p_address: clear ? undefined : text(formData, "address") || undefined,
+  });
+  if (error) return { error: errorMessage(error, "Couldn't save the location.") };
+  refresh();
+  return { success: clear ? "Location removed. Door stickers no longer check where the phone is." : "Location saved." };
+}

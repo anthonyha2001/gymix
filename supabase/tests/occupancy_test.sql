@@ -70,7 +70,8 @@ select id as dev from public.access_devices where serial_number = 'OCC0001' \gse
 select public.access_ingest_event(:'dev', access_pin::text, now() - interval '30 minutes', 'in', true) from public.members where gym_id = :'gym' and full_name in ('Person 1', 'Person 2', 'Person 3');
 select public.access_ingest_event(:'dev', access_pin::text, now() - interval '5 minutes', 'out', true) from public.members where gym_id = :'gym' and full_name = 'Person 1';
 select pg_temp.act_as('oo@test.lb');
-select pg_temp.ok((select people = 2 and method = 'doors' and entries_today = 3 and exits_today = 1 from public.gym_occupancy(:'gym')), 'doors: in minus out');
+-- Persons 2 and 3 came in by the door, 1 left by it; Person 4 checked in at the desk 20 minutes ago and still counts.
+select pg_temp.ok((select people = 3 and method = 'doors' and entries_today = 3 and exits_today = 1 from public.gym_occupancy(:'gym')), 'doors: in minus out, plus recent desk check-ins');
 reset role;
 
 -- 3. A sensor wins while it reports.

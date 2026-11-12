@@ -20,6 +20,8 @@ import { requestOrigin } from "@/lib/origin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { DailyChart } from "./daily-chart";
 import { Lab } from "./lab";
+import { GymsMapView } from "@/components/gyms-map-view";
+import type { MapPin } from "@/components/gym-map";
 import { BroadcastForm, ExtendTrialForm, PlatformSettingsForm, PricingForm, PruneForm, RecordPaymentForm, SuspendForm, WhatsAppKeysForm } from "./forms";
 import {
   ADMIN_TZ,
@@ -44,6 +46,7 @@ const TABS = [
   { id: "logins", label: "Logins" },
   { id: "errors", label: "Errors" },
   { id: "gyms", label: "Gyms" },
+  { id: "map", label: "Map" },
   { id: "revenue", label: "Revenue & pricing" },
   { id: "lab", label: "Lab & features" },
 ] as const;
@@ -130,6 +133,8 @@ async function TabBody({ tab, days }: { tab: Tab; days: number }) {
       return <Errors days={days} />;
     case "gyms":
       return <Gyms />;
+    case "map":
+      return <GymsOnMap />;
     case "revenue":
       return <Revenue days={days} />;
     case "lab":
@@ -676,6 +681,70 @@ async function Errors({ days }: { days: number }) {
 }
 
 // ---------------------------------------------------------------- gyms
+
+// ---------------------------------------------------------------- map
+// Every Gymix gym on a map, coloured by subscription: lime paying, amber on
+// trial, red overdue or suspended. Gyms set their pin in Settings → Gym.
+const SUB_TONE: Record<string, MapPin["tone"]> = { active: "good", trial: "warn", grace: "bad", expired: "bad", suspended: "bad" };
+const SUB_LABEL: Record<string, string> = { active: "Paying", trial: "Trial", grace: "Overdue", expired: "Expired", suspended: "Suspended" };
+
+async function GymsOnMap() {
+  const pricing = await getPricing();
+  const rows = await gymRows(pricing);
+  const { data: places } = await createAdminClient().from("gyms").select("id, door_lat, door_lng, address");
+  const where = new Map((places ?? []).map((p) => [p.id, p]));
+  const pins: MapPin[] = [];
+  const missing: GymRow[] = [];
+  for (const g of rows) {
+    const p = where.get(g.gym_id);
+    if (p?.door_lat == null || p.door_lng == null) {
+      missing.push(g);
+      continue;
+    }
+    pins.push({
+      id: g.gym_id,
+      lat: p.door_lat,
+      lng: p.door_lng,
+      name: g.name,
+      tone: SUB_TONE[g.sub] ?? "neutral",
+      detail: [`${g.members} members`, SUB_LABEL[g.sub] ?? g.sub, p.address].filter(Boolean).join(" · "),
+    });
+  }
+  const counts = (["active", "trial", "grace", "expired", "suspended"] as const)
+    .map((k) => ({ k, n: pins.filter((p) => p.tone === SUB_TONE[k] && rows.find((r) => r.gym_id === p.id)?.sub === k).length }))
+    .filter((c) => c.n);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        <b>{pins.length}</b> of {rows.length} gyms on the map
+        {counts.map((c) => (
+          <Badge key={c.k} tone={c.k === "active" ? "green" : c.k === "trial" ? "amber" : "red"}>
+            {c.n} {SUB_LABEL[c.k].toLowerCase()}
+          </Badge>
+        ))}
+      </div>
+      {pins.length ? (
+        <GymsMapView pins={pins} />
+      ) : (
+        <Card className="p-8 text-center text-sm text-muted">No gym has set its location yet. Owners do it in Settings → Gym → Location.</Card>
+      )}
+      {missing.length > 0 && (
+        <Card className="p-5">
+          <h2 className="font-semibold">Not on the map yet ({missing.length})</h2>
+          <p className="mt-1 text-sm text-muted">These gyms haven&apos;t set their location (Settings → Gym → Location).</p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {missing.map((g) => (
+              <li key={g.gym_id} className="rounded-full border border-line px-3 py-1 text-sm">
+                {g.name}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+    </div>
+  );
+}
 
 async function Gyms() {
   const pricing = await getPricing();

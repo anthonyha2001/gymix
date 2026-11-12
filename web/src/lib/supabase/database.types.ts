@@ -433,7 +433,7 @@ isOneToOne: false
                   ]
                 },"checkins": {
                   Row: {
-                    "allowed": boolean,"checked_in_at": string,"checked_in_by": string | null,"gym_id": string,"id": string,"member_id": string,"membership_id": string | null,"reason": string | null,"source": string
+                    "allowed": boolean,"checked_in_at": string,"checked_in_by": string | null,"gym_id": string,"id": string,"left_at": string | null,"left_how": string | null,"member_id": string,"membership_id": string | null,"reason": string | null,"seen_at": string | null,"source": string
                   }
                   ComputedFields: never
                   Insert: {
@@ -861,14 +861,14 @@ isOneToOne: true
                   ]
                 },"gyms": {
                   Row: {
-                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"door_lat": number | null,"door_lng": number | null,"door_radius_m": number | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"door_lat": number | null,"door_lng": number | null,"address": string | null,"door_radius_m": number | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
                   }
                   Update: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
                   }
                   Relationships: [
                     
@@ -2496,6 +2496,12 @@ isOneToOne: false
                            },
 "distance_m":
 { Args: { "p_lat1": number,"p_lat2": number,"p_lng1": number,"p_lng2": number }; Returns: number
+                           },
+"presence_ping":
+{ Args: { "p_accuracy_m"?: number,"p_gym_id": string,"p_lat": number,"p_lng": number }; Returns: string
+                           },
+"set_gym_location":
+{ Args: { "p_address"?: string,"p_gym_id": string,"p_lat": number | null,"p_lng": number | null }; Returns: undefined
                            },
 "door_needs_location":
 { Args: { "p_token": string }; Returns: boolean
