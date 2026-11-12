@@ -197,3 +197,27 @@ export async function setMemberCard(memberId: string, _prev: ActionState, formDa
   refresh();
   return { success: "Card saved. Doors are being updated." };
 }
+
+// ---------------------------------------------------------------- phone taps
+// "Phone must be at the gym": the gym's location and how far from it a door
+// sticker tap may come. No location: the sticker works wherever the phone is.
+export async function setDoorLocation(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const { membership } = await requireAccess();
+  const off = text(formData, "off") === "1";
+  const lat = Number(text(formData, "lat"));
+  const lng = Number(text(formData, "lng"));
+  const radius = Number(text(formData, "radius") || "150");
+  if (!off && (!text(formData, "lat") || !Number.isFinite(lat) || !Number.isFinite(lng))) {
+    return { error: "Press “Use this phone's location” while you're at the gym first." };
+  }
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_door_location", {
+    p_gym_id: membership.gymId,
+    p_lat: off ? null : lat,
+    p_lng: off ? null : lng,
+    p_radius_m: radius,
+  });
+  if (error) return { error: errorMessage(error, "Couldn't save the location.") };
+  refresh();
+  return { success: off ? "Door stickers now work wherever the phone is." : "Door stickers now only open at the gym." };
+}

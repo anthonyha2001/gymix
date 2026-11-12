@@ -13,7 +13,8 @@ export type FeatureKey =
   | "live_occupancy"
   | "pos"
   | "screens"
-  | "self_service";
+  | "self_service"
+  | "challenges";
 
 const ALL: FeatureKey[] = ["whatsapp", "shake_to_open", "drop_animation", "self_pause"];
 

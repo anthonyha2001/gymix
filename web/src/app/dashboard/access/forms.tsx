@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { useActionState, useState } from "react";
+import { Check, Copy, MapPin } from "lucide-react";
 import { useDialogAction } from "@/components/dialog";
 import { ChoiceChips } from "@/components/form-controls";
 import { Alert, Button, Field, buttonClass, inputClass } from "@/components/ui";
@@ -242,6 +242,77 @@ export function CardForm({ action, initial }: { action: Action; initial: string 
       </Field>
       <div className="flex justify-end">
         <Button disabled={pending}>{pending ? "Saving…" : "Save card"}</Button>
+      </div>
+    </form>
+  );
+}
+
+// "Phone must be at the gym": the owner stands at the gym and saves its
+// location; door sticker taps then only open within the chosen distance.
+export function DoorLocationForm({ action, current }: { action: Action; current: { lat: number; lng: number; radius: number } | null }) {
+  const [state, formAction, pending] = useActionState(action, {});
+  const [spot, setSpot] = useState<{ lat: number; lng: number; accuracy: number | null } | null>(
+    current ? { lat: current.lat, lng: current.lng, accuracy: null } : null,
+  );
+  const [finding, setFinding] = useState(false);
+  const [problem, setProblem] = useState<string | null>(null);
+
+  function findMe() {
+    if (!("geolocation" in navigator)) return setProblem("This browser can't share its location.");
+    setFinding(true);
+    setProblem(null);
+    navigator.geolocation.getCurrentPosition(
+      (p) => {
+        setFinding(false);
+        setSpot({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: Math.round(p.coords.accuracy) });
+      },
+      () => {
+        setFinding(false);
+        setProblem("Couldn't get the location. Allow location for this site and try again, at the gym.");
+      },
+      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 },
+    );
+  }
+
+  return (
+    <form action={formAction} className="space-y-4">
+      {state.error && <Alert tone="error">{state.error}</Alert>}
+      {state.success && <Alert tone="success">{state.success}</Alert>}
+      {problem && <Alert tone="error">{problem}</Alert>}
+      <input type="hidden" name="lat" value={spot?.lat ?? ""} />
+      <input type="hidden" name="lng" value={spot?.lng ?? ""} />
+      <div className="flex flex-wrap items-center gap-3">
+        <button type="button" onClick={findMe} disabled={finding} className={buttonClass("secondary")}>
+          <MapPin className="size-4" />
+          {finding ? "Finding you…" : spot ? "Use this phone's location again" : "Use this phone's location"}
+        </button>
+        {spot && (
+          <span className="text-sm text-muted">
+            {spot.lat.toFixed(5)}, {spot.lng.toFixed(5)}
+            {spot.accuracy !== null ? ` (±${spot.accuracy} m)` : ""}
+          </span>
+        )}
+      </div>
+      <Field label="Opens within" group>
+        <ChoiceChips
+          name="radius"
+          label="Opens within"
+          defaultValue={String(current?.radius ?? 150)}
+          options={[
+            { value: "100", label: "100 m" },
+            { value: "150", label: "150 m", hint: "Recommended" },
+            { value: "300", label: "300 m" },
+            { value: "500", label: "500 m" },
+          ]}
+        />
+      </Field>
+      <div className="flex flex-wrap justify-end gap-2">
+        {current && (
+          <button type="submit" name="off" value="1" disabled={pending} className={buttonClass("ghost")}>
+            Turn off
+          </button>
+        )}
+        <Button disabled={pending || !spot}>{pending ? "Saving…" : current ? "Save" : "Turn on"}</Button>
       </div>
     </form>
   );

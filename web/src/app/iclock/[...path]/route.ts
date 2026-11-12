@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { deviceBySerial, text } from "@/lib/access/server";
+import { deviceBySerial, openFirst, text } from "@/lib/access/server";
 import { localToDate, utcOffsetHours } from "@/lib/access/time";
 import {
   commandLine,
@@ -23,28 +23,35 @@ const endpoint = (path: string[]) => (path[0] ?? "").toLowerCase().replace(/\.as
 export async function GET(request: Request, { params }: Ctx) {
   const url = new URL(request.url);
   const serial = url.searchParams.get("SN") ?? "";
+  const kind = endpoint((await params).path);
+  const db = createAdminClient();
+
+  // Asked every 2 seconds by every terminal, so it costs one database call:
+  // note the device and take its commands (nothing if unknown or paused).
+  if (kind === "getrequest") {
+    if (!serial) return text("OK");
+    const info = deviceInfo(url.searchParams.get("INFO"));
+    const { data: commands } = await db.rpc("access_zk_poll", { p_serial: serial, p_info: info ?? undefined });
+    if (!commands?.length) return text("OK");
+    const lines: string[] = [];
+    // A door opening goes first, before any member updates.
+    for (const cmd of [...commands].sort(openFirst)) {
+      const line = commandLine({ id: cmd.id, kind: cmd.kind, payload: cmd.payload as Record<string, unknown> });
+      if (line) lines.push(line);
+      else await db.rpc("access_command_done", { p_device_id: cmd.device_id, p_command_id: cmd.id, p_ok: false, p_result: "Not something a ZKTeco terminal does" });
+    }
+    return text(lines.length ? lines.join("\n") + "\n" : "OK");
+  }
+
   const device = serial ? await deviceBySerial(serial) : null;
   // Unknown or switched-off devices get a plain answer and nothing else.
   if (!device || !device.is_active) return text("OK");
-  const db = createAdminClient();
   const tz = device.gyms?.timezone ?? "Asia/Beirut";
 
-  switch (endpoint((await params).path)) {
+  switch (kind) {
     case "cdata":
       await db.rpc("access_device_seen", { p_device_id: device.id, p_info: { pushver: url.searchParams.get("pushver"), protocol: "push" } });
       return text(handshake(serial, utcOffsetHours(tz)));
-    case "getrequest": {
-      const info = deviceInfo(url.searchParams.get("INFO"));
-      await db.rpc("access_device_seen", { p_device_id: device.id, p_info: info ?? undefined });
-      const { data: commands } = await db.rpc("access_take_commands", { p_device_id: device.id, p_limit: 20 });
-      const lines: string[] = [];
-      for (const cmd of commands ?? []) {
-        const line = commandLine({ id: cmd.id, kind: cmd.kind, payload: cmd.payload as Record<string, unknown> });
-        if (line) lines.push(line);
-        else await db.rpc("access_command_done", { p_device_id: device.id, p_command_id: cmd.id, p_ok: false, p_result: "Not something a ZKTeco terminal does" });
-      }
-      return text(lines.length ? lines.join("\n") + "\n" : "OK");
-    }
     case "ping":
       await db.rpc("access_device_seen", { p_device_id: device.id });
       return text("OK");

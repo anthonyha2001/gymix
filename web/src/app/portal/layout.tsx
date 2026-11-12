@@ -13,7 +13,7 @@ import { ShakeQuickStart } from "@/components/shake-quick-start";
 import { DropCatch } from "@/components/drop-catch";
 import { SupportBanner } from "@/components/support-banner";
 import { DemoChrome } from "@/components/demo-chrome";
-import { hasFeature } from "@/lib/features";
+import { gymFeatures, hasFeature } from "@/lib/features";
 import { MotionGestures } from "@/components/motion-gestures";
 import { QrScanButton } from "@/components/qr-scanner";
 import { NotificationBell } from "@/components/notification-bell";
@@ -68,12 +68,13 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
 
 async function NavWithUnread() {
   const { viewer, membership } = await requireMember();
-  const [unread, hidden, account] = await Promise.all([
+  const [unread, hidden, account, features] = await Promise.all([
     unreadCount(await createClient(), viewer.id),
     hiddenPortalPages(membership.gymId),
     accountStatus(membership.gymId),
+    gymFeatures(membership.gymId),
   ]);
-  return <PortalNav unread={unread} hidden={hidden} frozen={account.locked} />;
+  return <PortalNav unread={unread} hidden={hidden} frozen={account.locked} features={[...features]} />;
 }
 
 // Double-space NFC tap simulator, while the gym has it switched on.

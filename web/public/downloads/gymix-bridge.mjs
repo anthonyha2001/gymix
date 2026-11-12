@@ -17,7 +17,7 @@ import http from "node:http";
 import os from "node:os";
 import { createHash, randomBytes } from "node:crypto";
 
-const VERSION = "1.0.0";
+const VERSION = "1.2.0";
 const GYMIX = (process.env.GYMIX_URL ?? "").replace(/\/+$/, "");
 const TOKEN = process.env.GYMIX_BRIDGE_TOKEN ?? "";
 const PORT = Number(process.env.BRIDGE_PORT ?? 8091);
@@ -100,7 +100,12 @@ async function runSteps(device, steps) {
 async function gymix(method, body) {
   const res = await fetch(`${GYMIX}/api/access/bridge`, {
     method,
-    headers: { Authorization: `Bearer ${TOKEN}`, "X-Bridge-Version": VERSION, ...(body ? { "Content-Type": "application/json" } : {}) },
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      "X-Bridge-Version": VERSION,
+      "X-Bridge-Realtime": rt.connected ? "1" : "0",
+      ...(body ? { "Content-Type": "application/json" } : {}),
+    },
     body: body ? JSON.stringify(body) : undefined,
     signal: AbortSignal.timeout(15000),
   });
@@ -169,12 +174,81 @@ const server = http.createServer(async (req, res) => {
 });
 server.listen(PORT, () => log(`Gymix Bridge ${VERSION} listening on ${IP}:${PORT}, connected to ${GYMIX}`));
 
+// ---------------------------------------------------------------- instant signals (Supabase Realtime)
+// Gymix signals this bridge the moment a door should open, so it can ask for
+// work every 10 seconds instead of every 2 (fewer requests, same speed). The
+// signal carries nothing: the work is still fetched from Gymix with the token.
+// Needs Node 22+ (built-in WebSocket); otherwise the bridge just asks every 2 s.
+const rt = { ws: null, connected: false, retryAt: 0, wake: null, pending: false };
+
+function nap(ms) {
+  // A signal that came while busy: go again straight away.
+  if (rt.pending) {
+    rt.pending = false;
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    const t = setTimeout(done, ms);
+    function done() {
+      clearTimeout(t);
+      rt.wake = null;
+      resolve();
+    }
+    rt.wake = done;
+  });
+}
+
+function listen(cfg) {
+  if (rt.ws || !cfg?.url || !cfg?.key || !cfg?.topic || typeof WebSocket !== "function" || Date.now() < rt.retryAt) return;
+  const topic = `realtime:${cfg.topic}`;
+  let ref = 0;
+  let beat;
+  const ws = new WebSocket(`${cfg.url.replace(/^http/, "ws")}/realtime/v1/websocket?apikey=${encodeURIComponent(cfg.key)}&vsn=1.0.0`);
+  rt.ws = ws;
+  const send = (msg) => ws.readyState === 1 && ws.send(JSON.stringify(msg));
+  ws.onopen = () => {
+    send({ topic, event: "phx_join", payload: { config: { broadcast: { self: false }, presence: { key: "" }, private: false } }, ref: String(++ref), join_ref: "1" });
+    beat = setInterval(() => send({ topic: "phoenix", event: "heartbeat", payload: {}, ref: String(++ref) }), 25_000);
+  };
+  ws.onmessage = (e) => {
+    let msg;
+    try {
+      msg = JSON.parse(typeof e.data === "string" ? e.data : String(e.data));
+    } catch {
+      return;
+    }
+    if (msg.topic !== topic) return;
+    if (msg.event === "phx_reply" && msg.ref === "1") {
+      rt.connected = msg.payload?.status === "ok";
+      log(rt.connected ? "Instant door signals: on" : "Instant door signals refused; asking every 2 s instead");
+      if (!rt.connected) ws.close();
+    } else if (msg.event === "broadcast") {
+      if (rt.wake) rt.wake();
+      else rt.pending = true;
+    } else if (msg.event === "phx_error" || msg.event === "phx_close") {
+      ws.close();
+    }
+  };
+  ws.onerror = () => {};
+  ws.onclose = () => {
+    clearInterval(beat);
+    if (rt.connected) log("Instant door signals: lost, reconnecting");
+    rt.ws = null;
+    rt.connected = false;
+    rt.retryAt = Date.now() + 30_000;
+    // Stop the long wait: until signals are back, ask every 2 seconds.
+    rt.wake?.();
+  };
+}
+
 // ---------------------------------------------------------------- main loop
 let failures = 0;
+const doneChecks = [];
 for (;;) {
   try {
     const work = await gymix("GET");
     failures = 0;
+    listen(work.realtime);
     for (const d of work.devices) devices.set(d.id, { ...devices.get(d.id), ...d });
     for (const id of [...devices.keys()]) if (!work.devices.some((d) => d.id === id)) devices.delete(id);
 
@@ -193,15 +267,27 @@ for (;;) {
       log(`${d?.name ?? cmd.device_id}: command ${cmd.id} ${error ? `failed: ${error}` : "done"}`);
     }
 
-    const checks = [];
+    // Device checks run on the side (an offline device can take seconds to
+    // time out) and are reported on a later round, so a door opening is never
+    // held up behind them.
     for (const d of devices.values()) {
       if (!d.checkedAt || Date.now() - d.checkedAt > 60_000) {
         d.checkedAt = Date.now();
-        checks.push(await checkDevice(d));
+        checkDevice(d).then(
+          (report) => {
+            // The loop replaces device objects each round: keep what the check learnt.
+            const current = devices.get(d.id);
+            if (current && d.configuredAt) current.configuredAt = d.configuredAt;
+            doneChecks.push(report);
+          },
+          () => {},
+        );
       }
     }
+    const checks = doneChecks.splice(0);
     if (results.length || checks.length) await gymix("POST", { results, devices: checks });
-    await sleep((work.poll_seconds ?? 5) * 1000);
+    // Until the next round, or sooner if Gymix signals a door opening.
+    await nap((work.poll_seconds ?? 2) * 1000);
   } catch (e) {
     failures++;
     log(e.message);

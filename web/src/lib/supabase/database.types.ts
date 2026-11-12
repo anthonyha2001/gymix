@@ -95,14 +95,14 @@ isOneToOne: true
                   ]
                 },"access_commands": {
                   Row: {
-                    "attempts": number,"created_at": string,"device_id": string,"done_at": string | null,"gym_id": string,"id": number,"kind": string,"member_id": string | null,"payload": NonNullable<Json>,"result": string | null,"sent_at": string | null,"status": string
+                    "attempts": number,"created_at": string,"device_id": string,"done_at": string | null,"expires_at": string | null,"gym_id": string,"id": number,"kind": string,"member_id": string | null,"payload": NonNullable<Json>,"requested_by": string | null,"result": string | null,"sent_at": string | null,"status": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "attempts"?: number,"created_at"?: string,"device_id": string,"done_at"?: string | null,"gym_id": string,"id"?: never,"kind": string,"member_id"?: string | null,"payload"?: NonNullable<Json>,"result"?: string | null,"sent_at"?: string | null,"status"?: string
+                    "attempts"?: number,"created_at"?: string,"device_id": string,"done_at"?: string | null,"expires_at"?: string | null,"gym_id": string,"id"?: never,"kind": string,"member_id"?: string | null,"payload"?: NonNullable<Json>,"requested_by"?: string | null,"result"?: string | null,"sent_at"?: string | null,"status"?: string
                   }
                   Update: {
-                    "attempts"?: number,"created_at"?: string,"device_id"?: string,"done_at"?: string | null,"gym_id"?: string,"id"?: never,"kind"?: string,"member_id"?: string | null,"payload"?: NonNullable<Json>,"result"?: string | null,"sent_at"?: string | null,"status"?: string
+                    "attempts"?: number,"created_at"?: string,"device_id"?: string,"done_at"?: string | null,"expires_at"?: string | null,"gym_id"?: string,"id"?: never,"kind"?: string,"member_id"?: string | null,"payload"?: NonNullable<Json>,"requested_by"?: string | null,"result"?: string | null,"sent_at"?: string | null,"status"?: string
                   }
                   Relationships: [
                     {
@@ -159,14 +159,14 @@ isOneToOne: true
                   ]
                 },"access_devices": {
                   Row: {
-                    "connection": string,"created_at": string,"direction": string,"door_no": number,"event_token": string,"gym_id": string,"host": string | null,"id": string,"info": NonNullable<Json>,"is_active": boolean,"last_error": string | null,"last_reconciled_on": string | null,"last_seen_at": string | null,"name": string,"serial_number": string | null,"username": string,"vendor": string,"zone_id": string | null
+                    "connection": string,"created_at": string,"direction": string,"door_no": number,"event_token": string,"gym_id": string,"host": string | null,"id": string,"info": NonNullable<Json>,"is_active": boolean,"last_error": string | null,"last_reconciled_on": string | null,"last_seen_at": string | null,"name": string,"serial_number": string | null,"tap_token": string,"username": string,"vendor": string,"zone_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "connection": string,"created_at"?: string,"direction"?: string,"door_no"?: number,"event_token"?: string,"gym_id": string,"host"?: string | null,"id"?: string,"info"?: NonNullable<Json>,"is_active"?: boolean,"last_error"?: string | null,"last_reconciled_on"?: string | null,"last_seen_at"?: string | null,"name": string,"serial_number"?: string | null,"username"?: string,"vendor": string,"zone_id"?: string | null
+                    "connection": string,"created_at"?: string,"direction"?: string,"door_no"?: number,"event_token"?: string,"gym_id": string,"host"?: string | null,"id"?: string,"info"?: NonNullable<Json>,"is_active"?: boolean,"last_error"?: string | null,"last_reconciled_on"?: string | null,"last_seen_at"?: string | null,"name": string,"serial_number"?: string | null,"tap_token"?: string,"username"?: string,"vendor": string,"zone_id"?: string | null
                   }
                   Update: {
-                    "connection"?: string,"created_at"?: string,"direction"?: string,"door_no"?: number,"event_token"?: string,"gym_id"?: string,"host"?: string | null,"id"?: string,"info"?: NonNullable<Json>,"is_active"?: boolean,"last_error"?: string | null,"last_reconciled_on"?: string | null,"last_seen_at"?: string | null,"name"?: string,"serial_number"?: string | null,"username"?: string,"vendor"?: string,"zone_id"?: string | null
+                    "connection"?: string,"created_at"?: string,"direction"?: string,"door_no"?: number,"event_token"?: string,"gym_id"?: string,"host"?: string | null,"id"?: string,"info"?: NonNullable<Json>,"is_active"?: boolean,"last_error"?: string | null,"last_reconciled_on"?: string | null,"last_seen_at"?: string | null,"name"?: string,"serial_number"?: string | null,"tap_token"?: string,"username"?: string,"vendor"?: string,"zone_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -382,6 +382,52 @@ isOneToOne: false
       columns: ["recorded_by"]
 isOneToOne: false
       referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"challenge_entries": {
+                  Row: {
+                    "challenge_id": string,"gym_id": string,"member_id": string,"status": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "challenge_id": string,"gym_id": string,"member_id": string,"status": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "challenge_id"?: string,"gym_id"?: string,"member_id"?: string,"status"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "challenge_entries_challenge_id_fkey"
+      columns: ["challenge_id"]
+isOneToOne: false
+      referencedRelation: "challenges"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "challenge_entries_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "members"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"challenges": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"description": string | null,"ends_on": string,"gym_id": string,"id": string,"metric": string,"prize": string | null,"starts_on": string,"target": number | null,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"ends_on": string,"gym_id": string,"id"?: string,"metric": string,"prize"?: string | null,"starts_on": string,"target"?: number | null,"title": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"description"?: string | null,"ends_on"?: string,"gym_id"?: string,"id"?: string,"metric"?: string,"prize"?: string | null,"starts_on"?: string,"target"?: number | null,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "challenges_gym_id_fkey"
+      columns: ["gym_id"]
+isOneToOne: false
+      referencedRelation: "gyms"
       referencedColumns: ["id"]
     }
                   ]
@@ -815,14 +861,14 @@ isOneToOne: true
                   ]
                 },"gyms": {
                   Row: {
-                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"door_lat": number | null,"door_lng": number | null,"door_radius_m": number | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
                   }
                   Update: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
                   }
                   Relationships: [
                     
@@ -2420,6 +2466,43 @@ isOneToOne: false
             "accept_invite":
 { Args: { "p_token": string }; Returns: Database["public"]['Enums']["gym_role"]
                            },
+"access_doors":
+{ Args: { "p_gym_id": string }; Returns: {
+              "connection": string,"direction": string,"id": string,"is_active": boolean,"last_seen_at": string | null,"name": string,"zone_name": string | null
+            }[]
+                           },
+"access_open_door":
+{ Args: { "p_device_id": string }; Returns: number
+                           },
+"access_open_status":
+{ Args: { "p_command_id": number }; Returns: string
+                           },
+"challenge_board":
+{ Args: { "p_challenge_id": string,"p_limit"?: number }; Returns: {
+              "completed": boolean,"is_me": boolean,"member_id": string | null,"name": string,"rank": number,"score": number
+            }[]
+                           },
+"challenge_set_entry":
+{ Args: { "p_challenge_id": string,"p_join": boolean }; Returns: undefined
+                           },
+"member_challenges":
+{ Args: { "p_gym_id": string }; Returns: Json
+                           },
+"access_bridge_poll":
+{ Args: { "p_token": string,"p_version"?: string }; Returns: Json
+                           },
+"access_zk_poll":
+{ Args: { "p_info"?: Json,"p_serial": string }; Returns: Database["public"]["Tables"]["access_commands"]["Row"][]
+                           },
+"distance_m":
+{ Args: { "p_lat1": number,"p_lat2": number,"p_lng1": number,"p_lng2": number }; Returns: number
+                           },
+"door_needs_location":
+{ Args: { "p_token": string }; Returns: boolean
+                           },
+"set_door_location":
+{ Args: { "p_gym_id": string,"p_lat": number | null,"p_lng": number | null,"p_radius_m"?: number }; Returns: undefined
+                           },
 "access_bridge_status":
 { Args: { "p_gym_id": string }; Returns: {
               "last_seen_at": string,"version": string
@@ -2463,11 +2546,13 @@ isOneToOne: false
 "created_at": string,
 "device_id": string,
 "done_at": string | null,
+"expires_at": string | null,
 "gym_id": string,
 "id": number,
 "kind": string,
 "member_id": string | null,
 "payload": NonNullable<Json>,
+"requested_by": string | null,
 "result": string | null,
 "sent_at": string | null,
 "status": string
@@ -2883,6 +2968,11 @@ isOneToOne: false
                            },
 "screen_preview":
 { Args: { "p_screen_id": string }; Returns: Json
+                           },
+"door_tap":
+{ Args: { "p_accuracy_m"?: number,"p_lat"?: number,"p_lng"?: number,"p_token": string }; Returns: {
+              "allowed": boolean,"already_in": boolean,"command_id": number | null,"device_id": string,"door_name": string,"ends_on": string | null,"full_name": string,"plan_name": string | null,"reason": string | null,"visits_left": number | null
+            }[]
                            },
 "self_check_in":
 { Args: { "p_token": string }; Returns: {

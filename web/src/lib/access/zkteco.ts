@@ -4,7 +4,7 @@
 //   POST /iclock/cdata?SN=…&table=…    it uploads attendance (ATTLOG) and
 //                                      operations (OPERLOG: users, cards,
 //                                      fingerprints, faces) as text lines
-//   GET  /iclock/getrequest?SN=…       it asks for work: we answer with
+//   GET  /iclock/getrequest?SN=…       it asks for work (every 2 s): we answer with
 //                                      commands, one per line, or "OK"
 //   POST /iclock/devicecmd?SN=…        it reports how each command went
 // Fields within a line are separated by tabs.
@@ -27,7 +27,8 @@ export function handshake(serial: string, offsetHours: number) {
     "OPERLOGStamp=9999",
     "ATTPHOTOStamp=None",
     "ErrorDelay=30",
-    "Delay=10",
+    // Ask for work every 2 seconds, so a door opened from Gymix opens within ~3 s.
+    "Delay=2",
     "TransTimes=00:00;12:00",
     "TransInterval=1",
     "TransFlag=TransData AttLog OpLog EnrollUser ChgUser EnrollFP ChgFP FACE",
@@ -130,6 +131,9 @@ export function commandLine(cmd: ZkCommand): string | null {
       return `C:${cmd.id}:SET OPTION DateTime=${Math.floor(Date.now() / 1000)}`;
     case "reboot":
       return `C:${cmd.id}:REBOOT`;
+    case "open_door":
+      // Releases the lock for the time set on the device (usually 5 s).
+      return `C:${cmd.id}:AC_UNLOCK`;
     case "clear_users":
       return `C:${cmd.id}:CLEAR DATA`;
     default:

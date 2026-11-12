@@ -14,12 +14,13 @@ import {
   MessageCircle,
   Play,
   TrendingUp,
+  Trophy,
   UserRound,
 } from "lucide-react";
 import { Modal } from "@/components/dialog";
 import type { PortalPage } from "@/lib/portal-pages";
 
-type Tab = { href: string; label: string; icon: typeof House; page?: PortalPage };
+type Tab = { href: string; label: string; icon: typeof House; page?: PortalPage; feature?: string };
 
 // Five tabs; everything else lives under "More".
 const MAIN: Tab[] = [
@@ -29,6 +30,7 @@ const MAIN: Tab[] = [
   { href: "/portal/progress", label: "Progress", icon: TrendingUp, page: "progress" },
 ];
 const MORE: (Tab & { hint: string })[] = [
+  { href: "/portal/challenges", label: "Challenges", icon: Trophy, feature: "challenges", hint: "Monthly challenges and leaderboards" },
   { href: "/portal/programs", label: "Programs", icon: ClipboardList, page: "programs", hint: "Your training programs" },
   { href: "/portal/machines", label: "Machines", icon: Dumbbell, page: "machines", hint: "How to use each machine" },
   { href: "/portal/messages", label: "Chat", icon: MessageCircle, page: "messages", hint: "Talk to your trainer" },
@@ -39,10 +41,10 @@ const isActive = (pathname: string, href: string) => (href === "/portal" ? pathn
 
 // Bottom tab bar, fixed to the foot of the screen and clear of the iPhone's
 // home indicator.
-export function PortalNav({ unread = 0, hidden = [], frozen = false }: { unread?: number; hidden?: PortalPage[]; frozen?: boolean }) {
+export function PortalNav({ unread = 0, hidden = [], frozen = false, features = [] }: { unread?: number; hidden?: PortalPage[]; frozen?: boolean; features?: string[] }) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
-  const shown = (t: Tab) => !t.page || !hidden.includes(t.page);
+  const shown = (t: Tab) => (!t.page || !hidden.includes(t.page)) && (!t.feature || features.includes(t.feature));
   const tabs = MAIN.filter(shown);
   const more = MORE.filter(shown);
   const moreActive = more.some((t) => isActive(pathname, t.href));

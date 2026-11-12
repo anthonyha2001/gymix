@@ -86,7 +86,7 @@ export function TapCheckIn({ token, simulated = false }: { token?: string; simul
   );
 }
 
-function Screen({ tone, children }: { tone: "good" | "bad" | "neutral"; children: React.ReactNode }) {
+export function Screen({ tone, children }: { tone: "good" | "bad" | "neutral"; children: React.ReactNode }) {
   const styles = {
     good: "bg-success text-white",
     bad: "bg-danger text-white",

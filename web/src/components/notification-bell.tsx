@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
-import { Bell, CalendarClock, ClipboardList, MessageCircle, Apple, Dumbbell, CreditCard, BellRing, Lock } from "lucide-react";
+import { Bell, CalendarClock, ClipboardList, MessageCircle, Apple, Dumbbell, CreditCard, BellRing, Lock, Trophy, DoorOpen } from "lucide-react";
 import type { NotificationItem } from "@/lib/notifications";
 import { markNotificationsRead } from "@/app/notification-actions";
 
@@ -18,6 +18,8 @@ const ICONS: Record<string, typeof Bell> = {
   course: CreditCard,
   reminder: BellRing,
   billing: Lock,
+  challenge: Trophy,
+  kiosk: DoorOpen,
 };
 
 function ago(iso: string) {

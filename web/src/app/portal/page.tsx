@@ -14,6 +14,7 @@ import { accountStatus } from "@/lib/portal";
 import { formatUSD } from "@/lib/format";
 import { whatsappReady } from "@/lib/whatsapp";
 import { Lock, Nfc } from "lucide-react";
+import { ChallengeTeaser } from "@/components/challenge-teaser";
 
 export const metadata: Metadata = { title: "My gym" };
 
@@ -55,6 +56,11 @@ async function PortalContent({ searchParams }: { searchParams: PageProps<"/porta
       {account.frozen && <FrozenNotice owed={account.overdueUsd || account.balanceUsd} />}
       {!account.frozen && account.locked && <InactiveNotice status={account.membership} />}
       <GymNowCard gymId={membership.gymId} gymName={membership.gymName} timeZone={membership.timezone} />
+      {!account.locked && (await hasFeature(membership.gymId, "challenges")) && (
+        <Suspense fallback={null}>
+          <ChallengeTeaser gymId={membership.gymId} />
+        </Suspense>
+      )}
       <MemberHome supabase={supabase} memberId={me.id} gymName={membership.gymName} timeZone={membership.timezone} locked={account.locked} canPause={await hasFeature(membership.gymId, "self_pause")} />
 
     </>

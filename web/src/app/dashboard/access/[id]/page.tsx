@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
-import { ArrowLeft, DoorOpen } from "lucide-react";
+import { ArrowLeft, DoorOpen, Nfc } from "lucide-react";
+import { SlideToOpen } from "@/components/slide-to-open";
 import { RowMenu } from "@/components/row-menu";
 import { Alert, Badge, Card, EmptyState, SectionTitle, Skeleton } from "@/components/ui";
 import { formatDateTime } from "@/lib/format";
@@ -43,7 +44,7 @@ async function DeviceContent({ params, searchParams }: Pick<PageProps<"/dashboar
   const [{ data: zones }, { data: counts }, { data: problems }, { data: events }, { data: bridge }] = await Promise.all([
     supabase.from("access_zones").select("id, name").eq("gym_id", membership.gymId).order("name"),
     supabase.rpc("access_device_counts", { p_gym_id: membership.gymId }),
-    supabase.from("access_commands").select("id, kind, result, done_at, payload").eq("device_id", id).eq("status", "failed").order("id", { ascending: false }).limit(8),
+    supabase.from("access_commands").select("id, kind, result, done_at, payload").eq("device_id", id).eq("status", "failed").neq("kind", "open_door").order("id", { ascending: false }).limit(8),
     supabase
       .from("access_events")
       .select("id, occurred_at, direction, method, outcome, pin, members(id, full_name)")
@@ -52,6 +53,16 @@ async function DeviceContent({ params, searchParams }: Pick<PageProps<"/dashboar
       .limit(25),
     supabase.rpc("access_bridge_status", { p_gym_id: membership.gymId }).maybeSingle(),
   ]);
+  const { data: openings } = await supabase
+    .from("access_commands")
+    .select("id, created_at, status, requested_by, members(id, full_name)")
+    .eq("device_id", id)
+    .eq("kind", "open_door")
+    .order("id", { ascending: false })
+    .limit(10);
+  const staffIds = [...new Set((openings ?? []).filter((o) => !o.members && o.requested_by).map((o) => o.requested_by as string))];
+  const { data: staff } = staffIds.length ? await supabase.from("profiles").select("id, full_name").in("id", staffIds) : { data: [] };
+  const staffNames = new Map((staff ?? []).map((p) => [p.id, p.full_name]));
   const c = (counts ?? []).find((r) => r.device_id === id);
   const status = deviceStatus(device);
   const origin = await requestOrigin();
@@ -116,6 +127,12 @@ async function DeviceContent({ params, searchParams }: Pick<PageProps<"/dashboar
 
       {device.last_error && device.is_active && <Alert tone="error">{device.last_error}</Alert>}
 
+      {device.is_active && (
+        <div className="max-w-md">
+          <SlideToOpen deviceId={id} name={device.name} />
+        </div>
+      )}
+
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
           ["Members on the device", String(c?.granted ?? 0)],
@@ -149,6 +166,49 @@ async function DeviceContent({ params, searchParams }: Pick<PageProps<"/dashboar
             )}
           </div>
         </details>
+      </Card>
+
+      <Card className="p-5">
+        <h2 className="flex items-center gap-2 font-semibold">
+          <Nfc className="size-4" /> Open by tapping a phone
+        </h2>
+        <p className="mt-1 mb-4 text-sm text-muted">
+          Write this link on an NFC sticker (any NFC writer app, &quot;URL&quot; record) and stick it next to this door. Members tap it with their phone: Gymix
+          checks them in and, if their membership allows this door, opens it within about 3 seconds.
+          {device.direction === "out" ? " On an exit door it opens for any member, without a check-in." : ""}
+        </p>
+        <CopyField label="NFC sticker link" value={`${origin}/d/${device.tap_token}`} secret />
+        <p className="mt-2 text-xs text-muted">
+          The link only works for signed-in members of this gym. Every opening is logged below.
+          {device.vendor === "zkteco" ? " If this device was connected before today, restart it once so it checks for openings every 2 seconds." : ""}
+        </p>
+        {!!openings?.length && (
+          <ul className="mt-4 divide-y divide-line border-t border-line">
+            {openings.map((o) => (
+              <li key={o.id} className="flex flex-wrap items-center gap-3 py-2.5 text-sm">
+                <span className="w-28 shrink-0 text-xs text-muted tabular-nums">{formatDateTime(o.created_at, membership.timezone)}</span>
+                <span className="min-w-0 flex-1">
+                  {o.members ? (
+                    <>
+                      <Link href={`/dashboard/members/${o.members.id}`} className="font-medium hover:underline">
+                        {o.members.full_name}
+                      </Link>
+                      <span className="block text-xs text-muted">Tapped the sticker</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-medium">{(o.requested_by && staffNames.get(o.requested_by)) || "Staff"}</span>
+                      <span className="block text-xs text-muted">Opened from Gymix</span>
+                    </>
+                  )}
+                </span>
+                <Badge tone={o.status === "done" ? "green" : o.status === "failed" ? "red" : "amber"}>
+                  {o.status === "done" ? "Opened" : o.status === "failed" ? "Didn't open" : "Sent"}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
 
       {!!problems?.length && (

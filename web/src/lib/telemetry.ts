@@ -29,7 +29,7 @@ export const VISITOR_COOKIE = "gx_vid";
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
 
 // Paths whose next segment is a secret (invite and check-in links): never stored.
-const SECRET_PREFIXES = ["/join/", "/c/"];
+const SECRET_PREFIXES = ["/join/", "/c/", "/d/"];
 
 // The pathname with ids and secret tokens replaced, so pages group together
 // and no link that grants access ends up in the log. Query strings are dropped.

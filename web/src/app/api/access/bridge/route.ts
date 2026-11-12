@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { planFor } from "@/lib/access/hikvision";
+import { realtimeConfig } from "@/lib/access/server";
 import { requestOrigin } from "@/lib/origin";
 import type { Json } from "@/lib/supabase/database.types";
 
@@ -13,56 +14,59 @@ async function bridgeGym(request: Request) {
   const token = request.headers.get("authorization")?.match(/^Bearer\s+([0-9a-f]{64})$/i)?.[1];
   if (!token) return null;
   const db = createAdminClient();
-  const { data } = await db
-    .from("access_bridges")
-    .update({ last_seen_at: new Date().toISOString(), version: request.headers.get("x-bridge-version")?.slice(0, 40) ?? null })
-    .eq("token", token)
-    .select("gym_id")
-    .maybeSingle();
-  return data?.gym_id ?? null;
+  const { data } = await db.from("access_bridges").select("gym_id, last_seen_at, version").eq("token", token).maybeSingle();
+  if (!data) return null;
+  // The bridge calls every 2 seconds: note it every 15 seconds, not every call.
+  const version = request.headers.get("x-bridge-version")?.slice(0, 40) ?? null;
+  if (!data.last_seen_at || Date.now() - new Date(data.last_seen_at).getTime() > 15_000 || version !== data.version) {
+    await db.from("access_bridges").update({ last_seen_at: new Date().toISOString(), version }).eq("token", token);
+  }
+  return data.gym_id;
 }
 
 const json = (body: unknown, status = 200) => Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
 
+type PollDevice = { id: string; name: string; host: string; username: string; door_no: number; event_token: string; password: string };
+type PollCommand = { id: number; device_id: string; kind: string; payload: Record<string, unknown> };
+
+// The bridge asks every few seconds, so this is one database call: devices,
+// logins and commands (door openings first) together.
 export async function GET(request: Request) {
-  const gymId = await bridgeGym(request);
-  if (!gymId) return json({ error: "This bridge token is not valid." }, 401);
+  const token = request.headers.get("authorization")?.match(/^Bearer\s+([0-9a-f]{64})$/i)?.[1];
+  if (!token) return json({ error: "This bridge token is not valid." }, 401);
   const db = createAdminClient();
-  const { data: devices } = await db
-    .from("access_devices")
-    .select("id, name, host, username, door_no, event_token, access_device_secrets(password)")
-    .eq("gym_id", gymId)
-    .eq("vendor", "hikvision")
-    .eq("connection", "bridge")
-    .eq("is_active", true);
+  const { data } = await db.rpc("access_bridge_poll", { p_token: token, p_version: request.headers.get("x-bridge-version")?.slice(0, 40) ?? undefined });
+  const poll = data as { devices: PollDevice[]; commands: PollCommand[] } | null;
+  if (!poll) return json({ error: "This bridge token is not valid." }, 401);
 
   const origin = await requestOrigin();
+  const doorNo = new Map(poll.devices.map((d) => [d.id, d.door_no]));
   const commands: { id: number; device_id: string; steps: ReturnType<typeof planFor> }[] = [];
-  for (const d of devices ?? []) {
-    if (!d.host) continue;
-    const { data: taken } = await db.rpc("access_take_commands", { p_device_id: d.id, p_limit: 25 });
-    for (const c of taken ?? []) {
-      const steps = planFor(c.kind, c.payload as Record<string, unknown>, d.door_no);
-      if (!steps.length) {
-        await db.rpc("access_command_done", { p_device_id: d.id, p_command_id: c.id, p_ok: false, p_result: "Not something this device does" });
-        continue;
-      }
-      commands.push({ id: c.id, device_id: d.id, steps });
+  for (const c of poll.commands) {
+    const steps = planFor(c.kind, c.payload, doorNo.get(c.device_id) ?? 1);
+    if (!steps.length) {
+      await db.rpc("access_command_done", { p_device_id: c.device_id, p_command_id: c.id, p_ok: false, p_result: "Not something this device does" });
+      continue;
     }
+    commands.push({ id: c.id, device_id: c.device_id, steps });
   }
 
+  // A bridge listening for instant signals (Supabase Realtime) is told the
+  // moment a door should open, so it only needs to ask every 10 seconds (in
+  // case a signal is lost: still inside the 15 s an opening lasts). Without
+  // it, every 2 seconds, so a door opens within ~3 s either way.
+  const instant = request.headers.get("x-bridge-realtime") === "1";
   return json({
-    poll_seconds: commands.length ? 1 : 5,
-    devices: (devices ?? [])
-      .filter((d) => d.host)
-      .map((d) => ({
-        id: d.id,
-        name: d.name,
-        host: d.host,
-        username: d.username,
-        password: (Array.isArray(d.access_device_secrets) ? d.access_device_secrets[0]?.password : d.access_device_secrets?.password) ?? "",
-        event_url: `${origin}/api/access/hikvision/${d.event_token}`,
-      })),
+    poll_seconds: commands.length ? 1 : instant ? 10 : 2,
+    realtime: realtimeConfig(token),
+    devices: poll.devices.map((d) => ({
+      id: d.id,
+      name: d.name,
+      host: d.host,
+      username: d.username,
+      password: d.password,
+      event_url: `${origin}/api/access/hikvision/${d.event_token}`,
+    })),
     commands,
   });
 }

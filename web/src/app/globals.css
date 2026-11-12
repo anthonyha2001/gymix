@@ -515,3 +515,136 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 }
 .lx-paper > section:not(.bg-ink):not(.bg-canvas) { background: transparent; }
 @media (max-width: 767px) { .lx-paper { background-attachment: scroll, scroll, scroll; } }
+
+/* ---------------------------------------------------------------- challenges
+   Card faces glow and catch a light; a new card pops up into the deck; the
+   emoji floats; progress rings fill; the member's own leaderboard row glows. */
+.challenge-glow {
+  position: absolute;
+  inset: -40% -30% auto auto;
+  width: 22rem;
+  height: 22rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(200 241 53 / 0.35), transparent 65%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+.challenge-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.10) 50%, transparent 65%);
+  transform: translateX(-100%);
+  animation: gx-challenge-sheen 3.8s 600ms ease-in-out infinite;
+}
+@keyframes gx-challenge-sheen {
+  0% { transform: translateX(-100%); }
+  45%, 100% { transform: translateX(100%); }
+}
+.challenge-emoji { animation: gx-challenge-float 3.2s ease-in-out infinite; transform-origin: 30% 80%; }
+@keyframes gx-challenge-float {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-6px) rotate(4deg); }
+}
+.deck-enter > .challenge-face { animation: gx-deck-in 420ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
+@keyframes gx-deck-in {
+  from { transform: translateY(18px) scale(0.94); opacity: 0.6; }
+  to { transform: none; opacity: 1; }
+}
+.ring-fill { transition: stroke-dashoffset 1100ms cubic-bezier(0.22, 1, 0.36, 1); }
+.board-me { animation: gx-board-me 2.4s ease-in-out infinite; }
+@keyframes gx-board-me {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgb(200 241 53 / 0.9), 0 0 0 0 rgb(200 241 53 / 0); }
+  50% { box-shadow: inset 0 0 0 1px rgb(200 241 53 / 0.9), 0 0 18px 0 rgb(200 241 53 / 0.45); }
+}
+.medal-pop { display: inline-block; animation: gx-bounce 520ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
+@media (prefers-reduced-motion: reduce) {
+  .challenge-sheen, .challenge-emoji, .deck-enter > .challenge-face, .board-me, .medal-pop { animation: none; }
+  .ring-fill { transition: none; }
+}
+
+/* ---------------------------------------------------------------- slide to open
+   The label shimmers like a lock screen, the handle breathes until touched,
+   a success sends a ring out of the handle, a failure shakes the track. */
+.slide-label {
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.45) 0%, #fff 45%, rgb(255 255 255 / 0.45) 60%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  animation: gx-slide-shine 2.4s linear infinite;
+}
+.slide-label svg { color: rgb(255 255 255 / 0.6); }
+@keyframes gx-slide-shine { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+.slide-knob-idle { animation: gx-slide-breathe 2.4s ease-in-out infinite; }
+@keyframes gx-slide-breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(200 241 53 / 0.55); }
+  50% { box-shadow: 0 0 0 10px rgb(200 241 53 / 0); }
+}
+.slide-burst {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  animation: lx-ripple 900ms ease-out forwards;
+}
+.slide-shake { animation: lx-shake 480ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@media (prefers-reduced-motion: reduce) {
+  .slide-label, .slide-knob-idle, .slide-burst, .slide-shake { animation: none; }
+  .slide-label { color: #fff !important; background: none; }
+}
+
+/* ---------------------------------------------------------------- door tap
+   From the NFC tap to the open door on one screen: lime rings ripple out of
+   the middle like the tap's radio wave (faster, brighter heartbeat while the
+   door opens), then one ring floods the screen; a refusal shakes. */
+.door-waves { position: absolute; inset: 0; pointer-events: none; }
+.door-waves > i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6rem;
+  height: 6rem;
+  margin: -3rem 0 0 -3rem;
+  border-radius: 9999px;
+  border: 2px solid rgb(200 241 53 / 0.85);
+  background: radial-gradient(circle, rgb(200 241 53 / 0.18), transparent 70%);
+  opacity: 0;
+  animation: gx-door-wave 1.8s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+}
+.door-waves > i:nth-child(2) { animation-delay: 0.45s; }
+.door-waves > i:nth-child(3) { animation-delay: 0.9s; }
+.door-waves > i:nth-child(4) { animation-delay: 1.35s; }
+@keyframes gx-door-wave {
+  0% { transform: scale(0.9); opacity: 0.95; }
+  100% { transform: scale(7); opacity: 0; }
+}
+/* Open: the rings stop being born. */
+.door-waves-done > i { animation-iteration-count: 1; }
+.door-flood {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6rem;
+  height: 6rem;
+  margin: -3rem 0 0 -3rem;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.35);
+  pointer-events: none;
+  animation: gx-door-flood 900ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes gx-door-flood {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(18); opacity: 0; }
+}
+/* The middle beats with the waves. */
+.door-core { animation: gx-door-core 900ms ease-in-out infinite; box-shadow: 0 0 40px rgb(200 241 53 / 0.45); }
+@keyframes gx-door-core { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+.bg-success .door-core, .door-stage-bad .door-core { animation: gx-bounce 480ms cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: none; }
+.door-icon-swing { animation: gx-door-swing 900ms ease-in-out infinite; }
+@keyframes gx-door-swing { 0%, 100% { transform: perspective(120px) rotateY(0); } 50% { transform: perspective(120px) rotateY(-28deg); } }
+.door-stage-bad { animation: lx-shake 520ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@media (prefers-reduced-motion: reduce) {
+  .door-waves, .door-flood { display: none; }
+  .door-core, .door-icon-swing, .door-stage-bad { animation: none; }
+}

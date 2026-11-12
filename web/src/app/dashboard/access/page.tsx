@@ -14,13 +14,13 @@ import { MANAGER_ROLES } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { ActionButton } from "../members/action-button";
-import { createDevice, createZone, deleteZone, renameZone, setPlanZones, syncNow } from "./actions";
-import { CopyField, DeviceForm, NameForm, PlanZonesForm } from "./forms";
+import { createDevice, createZone, deleteZone, renameZone, setDoorLocation, setPlanZones, syncNow } from "./actions";
+import { CopyField, DeviceForm, DoorLocationForm, NameForm, PlanZonesForm } from "./forms";
 import { CONNECTION_LABEL, DIRECTION_LABEL, METHOD_LABEL, OutcomeBadge, VENDOR_LABEL, ago, deviceStatus, isRecent } from "./shared";
 
 export const metadata: Metadata = { title: "Access" };
 
-const TABS = ["devices", "zones", "activity", "bridge"] as const;
+const TABS = ["devices", "zones", "taps", "activity", "bridge"] as const;
 
 export default function AccessPage({ searchParams }: PageProps<"/dashboard/access">) {
   return (
@@ -67,6 +67,7 @@ async function AccessContent({ searchParams }: { searchParams: PageProps<"/dashb
         tabs={[
           { id: "devices", label: "Devices", count: devices?.length || undefined },
           { id: "zones", label: "Zones" },
+          { id: "taps", label: "Phone taps" },
           { id: "activity", label: "Activity" },
           { id: "bridge", label: "Gymix Bridge" },
         ]}
@@ -131,6 +132,12 @@ async function AccessContent({ searchParams }: { searchParams: PageProps<"/dashb
       <TabPanel id="zones" tabs={TABS}>
         <Suspense fallback={<Skeleton className="h-64" />}>
           <ZonesPanel gymId={membership.gymId} zones={zones ?? []} />
+        </Suspense>
+      </TabPanel>
+
+      <TabPanel id="taps" tabs={TABS}>
+        <Suspense fallback={<Skeleton className="h-64" />}>
+          <TapsPanel gymId={membership.gymId} />
         </Suspense>
       </TabPanel>
 
@@ -204,6 +211,38 @@ async function ZonesPanel({ gymId, zones }: { gymId: string; zones: { id: string
           </ul>
         </Card>
       )}
+    </div>
+  );
+}
+
+// Door stickers: members tap a door's NFC sticker to open it. Optionally only
+// when the phone is at the gym.
+async function TapsPanel({ gymId }: { gymId: string }) {
+  const supabase = await createClient();
+  const { data: gym } = await supabase.from("gyms").select("door_lat, door_lng, door_radius_m").eq("id", gymId).single();
+  const current =
+    gym?.door_lat != null && gym.door_lng != null && gym.door_radius_m != null ? { lat: gym.door_lat, lng: gym.door_lng, radius: gym.door_radius_m } : null;
+  return (
+    <div className="space-y-4">
+      <Card className="p-5">
+        <h2 className="font-semibold">Members open doors with their phone</h2>
+        <p className="mt-1 text-sm text-muted">
+          Each door has its own NFC sticker link (open a device to find it). A member taps the sticker, Gymix checks them in and, if their membership allows
+          that door, opens it within about 3 seconds. Only signed-in members of this gym can use it, at most 12 openings in 10 minutes, and every opening is
+          logged on the door&apos;s page.
+        </p>
+      </Card>
+      <Card className="p-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="font-semibold">Only when the phone is at the gym</h2>
+          <Badge tone={current ? "green" : "gray"}>{current ? `On, within ${current.radius} m` : "Off"}</Badge>
+        </div>
+        <p className="mt-1 mb-4 text-sm text-muted">
+          Stops a sticker link being used from home (for example to let a friend in). Members&apos; phones are asked for their location when they tap, and
+          the door only opens near the gym. Stand inside the gym and press the button below to save its location.
+        </p>
+        <DoorLocationForm action={setDoorLocation} current={current} />
+      </Card>
     </div>
   );
 }

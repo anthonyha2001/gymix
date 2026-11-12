@@ -83,6 +83,15 @@ export function planFor(kind: string, payload: Record<string, unknown>, doorNo =
     return [{ method: "PUT", path: "/ISAPI/System/time", xml: `<Time><timeMode>NTP</timeMode></Time>` }];
   }
   if (kind === "reboot") return [{ method: "PUT", path: "/ISAPI/System/reboot" }];
+  if (kind === "open_door") {
+    return [
+      {
+        method: "PUT",
+        path: `/ISAPI/AccessControl/RemoteControl/door/${doorNo}`,
+        xml: `<RemoteControlDoor version="2.0" xmlns="http://www.isapi.org/ver20/XMLSchema"><cmd>open</cmd></RemoteControlDoor>`,
+      },
+    ];
+  }
   return [];
 }
 

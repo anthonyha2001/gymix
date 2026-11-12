@@ -1,9 +1,11 @@
 import { Suspense } from "react";
 import { LogOut } from "lucide-react";
 import { Skeleton } from "@/components/ui";
-import { ROLE_LABELS } from "@/lib/roles";
+import { BILLING_ROLES, ROLE_LABELS } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
-import { gymFeatures } from "@/lib/features";
+import { gymFeatures, hasFeature } from "@/lib/features";
+import { hoursAgoIso } from "@/lib/format";
+import { DoorsMenu, type Door } from "@/components/doors-menu";
 import { SupportBanner } from "@/components/support-banner";
 import { DemoChrome } from "@/components/demo-chrome";
 import { unreadCount } from "@/lib/chat";
@@ -36,9 +38,14 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
           </Suspense>
         }
         bell={
-          <Suspense fallback={<div className="size-9" />}>
-            <Bell />
-          </Suspense>
+          <div className="flex items-center gap-0.5">
+            <Suspense fallback={null}>
+              <Doors />
+            </Suspense>
+            <Suspense fallback={<div className="size-9" />}>
+              <Bell />
+            </Suspense>
+          </div>
         }
       />
       <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">
@@ -95,6 +102,25 @@ async function Bell() {
   const { membership } = await requireStaff();
   const { items, unread } = await loadNotifications(membership.gymId, false);
   return <NotificationBell items={items} unread={unread} />;
+}
+
+// The "Open a door" shortcut, for staff who handle the desk, when the gym has doors.
+async function Doors() {
+  const { membership } = await requireStaff();
+  if (!BILLING_ROLES.includes(membership.role) || !(await hasFeature(membership.gymId, "access_control"))) return null;
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("access_doors", { p_gym_id: membership.gymId });
+  if (!data?.length) return null;
+  // Devices call every few seconds: 3 minutes of silence is offline.
+  const recent = new Date(hoursAgoIso(0.05)).getTime();
+  const doors: Door[] = data.map((d) => ({
+    id: d.id,
+    name: d.name,
+    zone: d.zone_name,
+    active: d.is_active,
+    online: d.connection === "direct" || (d.last_seen_at !== null && new Date(d.last_seen_at).getTime() > recent),
+  }));
+  return <DoorsMenu doors={doors} />;
 }
 
 async function AccountCard() {

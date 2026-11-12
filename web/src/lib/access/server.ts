@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { after } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hikRequest, parseDeviceInfo, planFor, runPlan, type HikTarget } from "./hikvision";
@@ -72,7 +73,7 @@ export async function runDirectDevice(device: DeviceRow) {
   for (let round = 0; round < 10; round++) {
     const { data: commands } = await db.rpc("access_take_commands", { p_device_id: device.id, p_limit: 25 });
     if (!commands?.length) break;
-    for (const cmd of commands) {
+    for (const cmd of [...commands].sort(openFirst)) {
       const steps = planFor(cmd.kind, cmd.payload as Record<string, unknown>, device.door_no);
       let error: string | null = steps.length ? null : "Not something this device does";
       if (steps.length) {
@@ -116,6 +117,73 @@ export function kickAccess(gymId: string) {
       // Picked up by the next run.
     }
   });
+}
+
+// ---------------------------------------------------------------- instant signal to the bridge
+// The Gymix Bridge listens on a Supabase Realtime broadcast channel named
+// after a hash of its token (so it can't be guessed). A signal only means
+// "ask Gymix for work now": the work itself is still fetched with the token.
+export function bridgeTopic(token: string) {
+  return `gymix-bridge-${createHash("sha256").update(token).digest("hex").slice(0, 32)}`;
+}
+
+// What the bridge needs to listen (the public project URL and anon key).
+export function realtimeConfig(token: string) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return url && key ? { url, key, topic: bridgeTopic(token) } : null;
+}
+
+async function nudgeBridge(gymId: string) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return;
+  const { data } = await createAdminClient().from("access_bridges").select("token").eq("gym_id", gymId).maybeSingle();
+  if (!data) return;
+  try {
+    await fetch(`${url}/realtime/v1/api/broadcast`, {
+      method: "POST",
+      headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: [{ topic: bridgeTopic(data.token), event: "work", payload: {} }] }),
+      signal: AbortSignal.timeout(3000),
+    });
+  } catch {
+    // The bridge still asks on its own every 10 seconds.
+  }
+}
+
+// Sort order for queued commands: door openings first, then oldest first.
+export function openFirst(a: { id: number; kind: string }, b: { id: number; kind: string }) {
+  return Number(b.kind === "open_door") - Number(a.kind === "open_door") || a.id - b.id;
+}
+
+// Opens a door now where Gymix can: a Hikvision device reached directly gets
+// the opening immediately. ZKTeco devices and the Gymix Bridge collect it on
+// their next call (every 2 seconds). Anything else queued is sent afterwards.
+export async function deliverOpenNow(deviceId: string) {
+  const db = createAdminClient();
+  const { data } = await db.from("access_devices").select(DEVICE_COLUMNS).eq("id", deviceId).maybeSingle();
+  const device = data as DeviceRow | null;
+  if (!device || !device.is_active) return;
+  if (device.connection === "bridge") return nudgeBridge(device.gym_id);
+  if (device.connection !== "direct") return;
+  const target = await targetFor(device);
+  if (!target) return;
+  const { data: taken } = await db.rpc("access_take_commands", { p_device_id: device.id, p_limit: 1 });
+  const cmd = taken?.[0];
+  if (cmd?.kind === "open_door") {
+    let error: string | null;
+    try {
+      error = await runPlan(target, planFor(cmd.kind, cmd.payload as Record<string, unknown>, device.door_no));
+    } catch {
+      error = `Gymix can't reach ${device.host}.`;
+    }
+    await db.rpc("access_command_done", { p_device_id: device.id, p_command_id: cmd.id, p_ok: !error, p_result: error ?? undefined });
+  } else if (cmd) {
+    // Not an opening after all (it was already collected): put it back.
+    await db.from("access_commands").update({ status: "queued", attempts: Math.max(0, cmd.attempts - 1) }).eq("id", cmd.id);
+  }
+  kickAccess(device.gym_id);
 }
 
 export const text = (body: string, status = 200) =>

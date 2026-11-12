@@ -176,6 +176,20 @@ while nothing is paid on it), deliveries (`pos_receive_stock`, optionally updati
 Barcode scanners work anywhere on the Register (they type the code and Enter); phones can scan with the camera where
 the browser supports it. Tests: `supabase/tests/pos_test.sql`.
 
+## Monthly challenges
+
+Dashboard → **Challenges** (owners and managers, feature `challenges`, on for everyone) and the member app's
+**Challenges** page (`supabase/migrations/*_challenges.sql`).
+
+- The gym posts a challenge: what counts (`visits` days at the gym, `workouts` finished with logged sets,
+  `volume` kg lifted, `classes` attended), dates (up to ~3 months; "rest of this month" / "next month" presets),
+  an optional goal and prize. Every member with an account is notified (`challenges_announce` trigger).
+- Members swipe new challenges as cards: right joins, left skips (buttons and arrow keys too); joining bursts
+  confetti. Joined challenges show a filling progress ring, their rank and a leaderboard sheet; ended ones show medals.
+- Scores are never typed in: `challenge_scores()` counts from check-ins, workouts, set logs and class bookings in
+  the gym's timezone. `challenge_board()` ranks joined members; other members see first name and initial only.
+- Tests: `supabase/tests/challenges_test.sql`.
+
 ## Live occupancy
 
 Dashboard → **Live** (front desk and up, feature `live_occupancy`) and a "Right now at the gym" card on the member's
@@ -216,6 +230,23 @@ every device is kept in step with memberships and payments (`supabase/migrations
   them online, points their event notifications at itself and relays events to Gymix, and relays ZKTeco push
   traffic for terminals without HTTPS (port 8091). Access → Gymix Bridge → Download for Windows gives a `.cmd`
   with the gym's address and token filled in.
+- **Opening a door** (`*_open_door.sql`, `web/src/app/door-actions.ts`): owners, managers and front desk press
+  **Open door** (the door icon next to the bell, or the door's page); members tap the door's own NFC sticker
+  (`/d/<tap_token>`, link on the door's page), which checks them in and opens the door if their membership allows
+  that zone (exit doors open for any member, without a check-in). An `open_door` command jumps the queue and
+  expires after 15 s, so a door never opens late and is never retried. ZKTeco gets `AC_UNLOCK`, Hikvision
+  `PUT /ISAPI/AccessControl/RemoteControl/door/<n>`. ZKTeco devices (`Delay=2` at the handshake; restart devices
+  connected earlier) and the bridge ask for work every 2 s, so the door opens in about 1–3 s; directly reachable
+  Hikvision devices open at once. Every opening is listed on the door's page with who asked. Staff open doors with **slide to open** (a handle that
+  follows the thumb; letting go early springs it back), so a stray tap never opens a door.
+- **Sticker security** (`*_door_security_and_polling.sql`): Access → Phone taps → "Only when the phone is at the
+  gym" saves the gym's location (`set_door_location`); taps then send the phone's location and `door_tap` refuses
+  anything farther than the radius (the phone's stated accuracy is allowed for, up to 150 m). Members get at most 12
+  openings in 10 minutes.
+- **Polling cost**: each ZKTeco `getrequest` is one database call (`access_zk_poll`), and so is each bridge poll
+  (`access_bridge_poll`); "last seen" is written at most every 15 s. The bridge (Node 22+) also listens on a Supabase
+  Realtime broadcast channel named after a hash of its token: an opening sends it a signal (`nudgeBridge`), so it
+  polls every 10 s instead of 2 (still inside an opening's 15 s), and drops back to 2 s whenever the channel is down.
 - **Entries** become check-ins (source `device`) at the event time; exits are kept for live occupancy. If a device
   lets in someone Gymix wouldn't, the check-in is recorded as refused and the device is corrected.
 - **Tests**: `supabase/tests/access_test.sql`, and against a running app and local database
