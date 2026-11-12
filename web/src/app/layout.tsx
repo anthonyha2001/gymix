@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist } from "next/font/google";
 import "./globals.css";
@@ -38,7 +39,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Toaster />
         <NativeBridge />
         <CrashReporter />
-        <SiteTracker />
+        {/* Reads the URL, so it waits for it (keeps pages prerenderable). */}
+        <Suspense fallback={null}>
+          <SiteTracker />
+        </Suspense>
       </body>
     </html>
   );

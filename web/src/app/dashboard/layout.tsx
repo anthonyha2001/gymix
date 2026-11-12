@@ -17,6 +17,7 @@ import { navFor } from "./nav-items";
 import { InstallPrompt } from "@/components/install-prompt";
 import { PushKeeper } from "@/components/push-keeper";
 import { NotificationBell } from "@/components/notification-bell";
+import { SupportWidget } from "@/components/support-widget";
 import { loadNotifications } from "@/lib/notifications";
 import { NavLinks, NavSkeleton, Sidebar } from "./sidebar";
 import { SubscriptionGate } from "./subscription-gate";
@@ -42,6 +43,9 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
         }
         bell={
           <div className="flex items-center gap-0.5">
+            <Suspense fallback={null}>
+              <Help />
+            </Suspense>
             <Suspense fallback={null}>
               <Doors />
             </Suspense>
@@ -103,6 +107,12 @@ async function RoleNav() {
       }, features)}
     />
   );
+}
+
+// Gym staff's line to Gymix support.
+async function Help() {
+  const { membership } = await requireStaff();
+  return <SupportWidget gymId={membership.gymId} />;
 }
 
 async function Bell() {

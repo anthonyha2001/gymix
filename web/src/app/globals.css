@@ -1037,3 +1037,7 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 .room-tip::before { display: none; }
 @media (prefers-reduced-motion: reduce) { .room-dot-core, .room-dot-pulse { animation: none; } }
 .room-map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.62) contrast(1.15) saturate(0.35); }
+.room-msg { animation: gx-room-in 360ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.support-sheet { animation: gx-support-in 380ms cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes gx-support-in { from { transform: translateX(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .room-msg, .support-sheet { animation: none; } }

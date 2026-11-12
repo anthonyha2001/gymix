@@ -197,7 +197,9 @@ function Palette({ gyms, onClose }: { gyms: GymLite[]; onClose: () => void }) {
   const [sel, setSel] = useState(0);
   const [pending, start] = useTransition();
   const input = useRef<HTMLInputElement>(null);
-  useEffect(() => input.current?.focus(), []);
+  useEffect(() => {
+    input.current?.focus();
+  }, []);
 
   const items = useMemo(() => {
     const s = q.trim().toLowerCase();

@@ -18,6 +18,8 @@ const PROBES: { file: string; probe: (db: ReturnType<typeof createAdminClient>) 
   { file: "20261113120000_widget.sql", probe: (db) => db.rpc("widget_data", { p_token: "probe" }) },
   { file: "20261113130000_program_sharing.sql", probe: (db) => db.from("gyms").select("program_sharing").limit(0) },
   { file: "20261113140000_retention.sql", probe: (db) => db.from("gyms").select("winback_days").limit(0) },
+  { file: "20261114090000_control_room.sql", probe: (db) => db.from("support_tickets").select("id").limit(0) },
+  { file: "20261114100000_clients.sql", probe: (db) => db.from("access_requests").select("id").limit(0) },
 ];
 
 // "Doesn't exist" answers from Postgres / PostgREST; anything else (like "Not
