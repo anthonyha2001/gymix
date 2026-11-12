@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Card, Skeleton } from "@/components/ui";
+import { redirect } from "next/navigation";
 import { SignupForm } from "../auth-forms";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Sign up" };
 
@@ -25,6 +27,12 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
 async function SignupBody({ searchParams }: { searchParams: PageProps<"/signup">["searchParams"] }) {
   const { next, email } = await searchParams;
   const nextPath = typeof next === "string" ? next : undefined;
+  // New gyms ask for Gymix (/request) unless self-serve sign-up is switched on.
+  // Invited staff and members (who arrive with ?next=) still sign up here.
+  if (!nextPath) {
+    const { data } = await (await createClient()).from("platform_settings").select("open_signup").maybeSingle();
+    if (!data?.open_signup) redirect("/request");
+  }
   return (
     <>
       <SignupForm next={nextPath} email={typeof email === "string" ? email : undefined} />

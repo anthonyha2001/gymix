@@ -41,8 +41,8 @@ export function MarketingNav() {
           <Link href="/login" className="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:text-white">
             Log in
           </Link>
-          <Link href="/signup" className="inline-flex h-10 items-center rounded-xl bg-brand px-4 text-sm font-semibold whitespace-pre text-ink hover:bg-brand-strong">
-            Start free<span className="hidden sm:inline"> trial</span>
+          <Link href="/request" className="inline-flex h-10 items-center rounded-xl bg-brand px-4 text-sm font-semibold whitespace-pre text-ink hover:bg-brand-strong">
+            Request<span className="hidden sm:inline"> access</span>
           </Link>
         </div>
       </div>
@@ -54,8 +54,8 @@ export async function CtaButtons({ dark = true }: { dark?: boolean }) {
   const { priceUsd, trialDays } = await getPricing();
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Link href="/signup" className="inline-flex h-12 items-center gap-2 rounded-xl bg-brand px-6 text-base font-semibold text-ink shadow-[0_8px_30px_-8px_rgba(200,241,53,0.6)] transition hover:-translate-y-0.5 hover:bg-brand-strong">
-        Start your {trialDays}-day free trial <ArrowRight className="size-4" />
+      <Link href="/request" className="inline-flex h-12 items-center gap-2 rounded-xl bg-brand px-6 text-base font-semibold text-ink shadow-[0_8px_30px_-8px_rgba(200,241,53,0.6)] transition hover:-translate-y-0.5 hover:bg-brand-strong">
+        Request access <ArrowRight className="size-4" />
       </Link>
       <Link
         href="/pricing"
@@ -177,8 +177,8 @@ export async function PricingCard() {
           <span className="text-muted">/ month</span>
         </p>
         <p className="mt-2 text-sm text-muted">Per gym. Not per member, not per staff. Everything included.</p>
-        <Link href="/signup" className="mt-6 flex h-12 items-center justify-center gap-2 rounded-xl bg-ink text-base font-semibold text-white transition hover:bg-ink/90">
-          Start your free trial <ArrowRight className="size-4" />
+        <Link href="/request" className="mt-6 flex h-12 items-center justify-center gap-2 rounded-xl bg-ink text-base font-semibold text-white transition hover:bg-ink/90">
+          Request access <ArrowRight className="size-4" />
         </Link>
         <p className="mt-2 text-center text-xs text-muted">No card needed. Pay by Whish, OMT or bank transfer when the trial ends.</p>
         <ul className="mt-6 space-y-3 border-t border-line pt-6 text-sm">
@@ -254,7 +254,7 @@ export async function FinalCta() {
           Try every feature free for {trialDays} days. If it doesn&apos;t save you time in the first week, don&apos;t pay.
         </p>
         <div className="mt-8 flex justify-center">
-          <Link href="/signup" className="inline-flex h-12 items-center gap-2 rounded-xl bg-ink px-6 text-base font-semibold text-white transition hover:-translate-y-0.5">
+          <Link href="/request" className="inline-flex h-12 items-center gap-2 rounded-xl bg-ink px-6 text-base font-semibold text-white transition hover:-translate-y-0.5">
             Set up your gym <ArrowRight className="size-4" />
           </Link>
         </div>
@@ -274,7 +274,7 @@ export function MarketingFooter() {
         <nav aria-label="Footer" className="flex gap-4">
           <Link href="/pricing" className="hover:text-ink">Pricing</Link>
           <Link href="/login" className="hover:text-ink">Log in</Link>
-          <Link href="/signup" className="hover:text-ink">Start free trial</Link>
+          <Link href="/request" className="hover:text-ink">Request access</Link>
           <Link href="/privacy" className="hover:text-ink">Privacy</Link>
           <Link href="/terms" className="hover:text-ink">Terms</Link>
         </nav>

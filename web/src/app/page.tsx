@@ -82,8 +82,8 @@ export default async function Home() {
 
   const cta = (
     <div className="mt-11 flex flex-col items-center justify-center gap-4 sm:flex-row">
-      <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-ink px-8 py-4 text-base font-medium text-white transition hover:bg-ink/85">
-        Start {trialDays} days free <ArrowRight className="size-4" />
+      <Link href="/request" className="inline-flex items-center gap-2 rounded-full bg-ink px-8 py-4 text-base font-medium text-white transition hover:bg-ink/85">
+        Request access <ArrowRight className="size-4" />
       </Link>
       <Link href="/demo" className="px-4 py-4 text-base font-medium text-ink/65 transition hover:text-ink">
         Explore the live demo
@@ -135,14 +135,14 @@ export default async function Home() {
             </Reveal>
             <Reveal delay={400}>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                <Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-brand-strong">
-                  Start {trialDays}-day free trial <ArrowRight className="size-4" />
+                <Link href="/request" className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-brand-strong">
+                  Request access <ArrowRight className="size-4" />
                 </Link>
                 <Link href="/demo" className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-white/10">
                   Try the live demo
                 </Link>
               </div>
-              <p className="mt-4 text-sm text-white/45">No card required · {price}/month for the whole gym</p>
+              <p className="mt-4 text-sm text-white/45">{price}/month for the whole gym · we set it up with you</p>
             </Reveal>
           </div>
           <Reveal delay={250} className="relative lg:col-span-7">

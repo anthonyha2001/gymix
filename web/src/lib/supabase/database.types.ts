@@ -749,6 +749,126 @@ isOneToOne: false
                     "audience"?: string,"body"?: string | null,"created_at"?: string,"created_by"?: string | null,"gym_id"?: string,"id"?: string,"sent_to"?: number,"title"?: string
                   }
                   Relationships: []
+                },"site_sessions": {
+                  Row: {
+                    "id": string,"visitor_id": string,"user_id": string | null,"started_at": string,"last_seen_at": string,"landing_path": string | null,"exit_path": string | null,"referrer": string | null,"referrer_host": string | null,"utm_source": string | null,"utm_medium": string | null,"utm_campaign": string | null,"country": string | null,"region": string | null,"city": string | null,"lat": number | null,"lng": number | null,"device": string | null,"browser": string | null,"os": string | null,"platform": string | null,"app_version": string | null,"screen": string | null,"language": string | null,"timezone": string | null,"pageviews": number,"clicks": number,"active_ms": number,"is_new": boolean
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id": string,"visitor_id": string,"user_id"?: string | null,"started_at"?: string,"last_seen_at"?: string,"landing_path"?: string | null,"exit_path"?: string | null,"referrer"?: string | null,"referrer_host"?: string | null,"utm_source"?: string | null,"utm_medium"?: string | null,"utm_campaign"?: string | null,"country"?: string | null,"region"?: string | null,"city"?: string | null,"lat"?: number | null,"lng"?: number | null,"device"?: string | null,"browser"?: string | null,"os"?: string | null,"platform"?: string | null,"app_version"?: string | null,"screen"?: string | null,"language"?: string | null,"timezone"?: string | null,"pageviews"?: number,"clicks"?: number,"active_ms"?: number,"is_new"?: boolean
+                  }
+                  Update: {
+                    "id"?: string,"visitor_id"?: string,"user_id"?: string | null,"started_at"?: string,"last_seen_at"?: string,"landing_path"?: string | null,"exit_path"?: string | null,"referrer"?: string | null,"referrer_host"?: string | null,"utm_source"?: string | null,"utm_medium"?: string | null,"utm_campaign"?: string | null,"country"?: string | null,"region"?: string | null,"city"?: string | null,"lat"?: number | null,"lng"?: number | null,"device"?: string | null,"browser"?: string | null,"os"?: string | null,"platform"?: string | null,"app_version"?: string | null,"screen"?: string | null,"language"?: string | null,"timezone"?: string | null,"pageviews"?: number,"clicks"?: number,"active_ms"?: number,"is_new"?: boolean
+                  }
+                  Relationships: []
+                },"site_pageviews": {
+                  Row: {
+                    "id": string,"session_id": string,"path": string,"title": string | null,"entered_at": string,"left_at": string | null,"active_ms": number,"max_scroll": number,"clicks": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id": string,"session_id": string,"path": string,"title"?: string | null,"entered_at"?: string,"left_at"?: string | null,"active_ms"?: number,"max_scroll"?: number,"clicks"?: number
+                  }
+                  Update: {
+                    "id"?: string,"session_id"?: string,"path"?: string,"title"?: string | null,"entered_at"?: string,"left_at"?: string | null,"active_ms"?: number,"max_scroll"?: number,"clicks"?: number
+                  }
+                  Relationships: []
+                },"site_events": {
+                  Row: {
+                    "id": number,"session_id": string,"pageview_id": string | null,"kind": string,"label": string | null,"path": string | null,"x": number | null,"y": number | null,"created_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: number,"session_id": string,"pageview_id"?: string | null,"kind": string,"label"?: string | null,"path"?: string | null,"x"?: number | null,"y"?: number | null,"created_at"?: string
+                  }
+                  Update: {
+                    "id"?: number,"session_id"?: string,"pageview_id"?: string | null,"kind"?: string,"label"?: string | null,"path"?: string | null,"x"?: number | null,"y"?: number | null,"created_at"?: string
+                  }
+                  Relationships: []
+                },"support_tickets": {
+                  Row: {
+                    "id": string,"number": number,"gym_id": string | null,"user_id": string | null,"subject": string,"status": string,"priority": string,"category": string | null,"assigned_to": string | null,"path": string | null,"device": string | null,"created_at": string,"last_message_at": string,"first_reply_at": string | null,"solved_at": string | null,"admin_unread": boolean,"user_unread": boolean
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"number"?: number,"gym_id"?: string | null,"user_id"?: string | null,"subject": string,"status"?: string,"priority"?: string,"category"?: string | null,"assigned_to"?: string | null,"path"?: string | null,"device"?: string | null,"created_at"?: string,"last_message_at"?: string,"first_reply_at"?: string | null,"solved_at"?: string | null,"admin_unread"?: boolean,"user_unread"?: boolean
+                  }
+                  Update: {
+                    "id"?: string,"number"?: number,"gym_id"?: string | null,"user_id"?: string | null,"subject"?: string,"status"?: string,"priority"?: string,"category"?: string | null,"assigned_to"?: string | null,"path"?: string | null,"device"?: string | null,"created_at"?: string,"last_message_at"?: string,"first_reply_at"?: string | null,"solved_at"?: string | null,"admin_unread"?: boolean,"user_unread"?: boolean
+                  }
+                  Relationships: []
+                },"support_messages": {
+                  Row: {
+                    "id": string,"ticket_id": string,"author_id": string | null,"from_gymix": boolean,"internal": boolean,"body": string,"created_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"ticket_id": string,"author_id"?: string | null,"from_gymix"?: boolean,"internal"?: boolean,"body": string,"created_at"?: string
+                  }
+                  Update: {
+                    "id"?: string,"ticket_id"?: string,"author_id"?: string | null,"from_gymix"?: boolean,"internal"?: boolean,"body"?: string,"created_at"?: string
+                  }
+                  Relationships: []
+                },"social_accounts": {
+                  Row: {
+                    "id": string,"platform": string,"handle": string,"external_id": string | null,"followers": number | null,"following": number | null,"posts_count": number | null,"audience": Json,"connected": boolean,"last_synced_at": string | null,"sync_error": string | null,"created_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"platform": string,"handle": string,"external_id"?: string | null,"followers"?: number | null,"following"?: number | null,"posts_count"?: number | null,"audience"?: Json,"connected"?: boolean,"last_synced_at"?: string | null,"sync_error"?: string | null,"created_at"?: string
+                  }
+                  Update: {
+                    "id"?: string,"platform"?: string,"handle"?: string,"external_id"?: string | null,"followers"?: number | null,"following"?: number | null,"posts_count"?: number | null,"audience"?: Json,"connected"?: boolean,"last_synced_at"?: string | null,"sync_error"?: string | null,"created_at"?: string
+                  }
+                  Relationships: []
+                },"social_tokens": {
+                  Row: {
+                    "account_id": string,"token": string,"expires_at": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_id": string,"token": string,"expires_at"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "account_id"?: string,"token"?: string,"expires_at"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: []
+                },"social_posts": {
+                  Row: {
+                    "id": string,"account_id": string,"external_id": string | null,"posted_at": string,"kind": string | null,"caption": string | null,"permalink": string | null,"thumbnail_url": string | null,"views": number,"reach": number,"likes": number,"comments": number,"shares": number,"saves": number,"link_clicks": number,"last_synced_at": string | null,"created_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"account_id": string,"external_id"?: string | null,"posted_at"?: string,"kind"?: string | null,"caption"?: string | null,"permalink"?: string | null,"thumbnail_url"?: string | null,"views"?: number,"reach"?: number,"likes"?: number,"comments"?: number,"shares"?: number,"saves"?: number,"link_clicks"?: number,"last_synced_at"?: string | null,"created_at"?: string
+                  }
+                  Update: {
+                    "id"?: string,"account_id"?: string,"external_id"?: string | null,"posted_at"?: string,"kind"?: string | null,"caption"?: string | null,"permalink"?: string | null,"thumbnail_url"?: string | null,"views"?: number,"reach"?: number,"likes"?: number,"comments"?: number,"shares"?: number,"saves"?: number,"link_clicks"?: number,"last_synced_at"?: string | null,"created_at"?: string
+                  }
+                  Relationships: []
+                },"social_daily": {
+                  Row: {
+                    "account_id": string,"day": string,"followers": number | null,"reach": number | null,"impressions": number | null,"profile_views": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_id": string,"day": string,"followers"?: number | null,"reach"?: number | null,"impressions"?: number | null,"profile_views"?: number | null
+                  }
+                  Update: {
+                    "account_id"?: string,"day"?: string,"followers"?: number | null,"reach"?: number | null,"impressions"?: number | null,"profile_views"?: number | null
+                  }
+                  Relationships: []
+                },"access_requests": {
+                  Row: {
+                    "id": string,"owner_name": string,"phone": string,"email": string,"gym_name": string,"city": string | null,"members": string | null,"message": string | null,"source": string | null,"status": string,"notes": string | null,"gym_id": string | null,"created_at": string,"contacted_at": string | null,"paid_at": string | null,"welcome_sent_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"owner_name": string,"phone": string,"email": string,"gym_name": string,"city"?: string | null,"members"?: string | null,"message"?: string | null,"source"?: string | null,"status"?: string,"notes"?: string | null,"gym_id"?: string | null,"created_at"?: string,"contacted_at"?: string | null,"paid_at"?: string | null,"welcome_sent_at"?: string | null
+                  }
+                  Update: {
+                    "id"?: string,"owner_name"?: string,"phone"?: string,"email"?: string,"gym_name"?: string,"city"?: string | null,"members"?: string | null,"message"?: string | null,"source"?: string | null,"status"?: string,"notes"?: string | null,"gym_id"?: string | null,"created_at"?: string,"contacted_at"?: string | null,"paid_at"?: string | null,"welcome_sent_at"?: string | null
+                  }
+                  Relationships: []
                 },"gym_feature_overrides": {
                   Row: {
                     "enabled": boolean,"feature_key": string,"gym_id": string
@@ -873,14 +993,14 @@ isOneToOne: true
                   ]
                 },"gyms": {
                   Row: {
-                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"door_lat": number | null,"door_lng": number | null,"address": string | null,"door_radius_m": number | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string,"program_sharing": string,"winback_days": number | null,"daily_summary": boolean
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"door_lat": number | null,"door_lng": number | null,"address": string | null,"door_radius_m": number | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string,"program_sharing": string,"winback_days": number | null,"daily_summary": boolean,"welcome_sent_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string,"program_sharing"?: string,"winback_days"?: number | null,"daily_summary"?: boolean
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string,"program_sharing"?: string,"winback_days"?: number | null,"daily_summary"?: boolean,"welcome_sent_at"?: string | null
                   }
                   Update: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string,"program_sharing"?: string,"winback_days"?: number | null,"daily_summary"?: boolean
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string,"program_sharing"?: string,"winback_days"?: number | null,"daily_summary"?: boolean,"welcome_sent_at"?: string | null
                   }
                   Relationships: [
                     
@@ -1709,14 +1829,14 @@ isOneToOne: false
                   ]
                 },"platform_settings": {
                   Row: {
-                    "grace_days": number,"id": boolean,"payment_instructions": string,"price_usd": number,"trial_days": number,"updated_at": string,"whatsapp": string
+                    "grace_days": number,"id": boolean,"payment_instructions": string,"price_usd": number,"trial_days": number,"updated_at": string,"whatsapp": string,"open_signup": boolean
                   }
                   ComputedFields: never
                   Insert: {
-                    "grace_days"?: number,"id"?: boolean,"payment_instructions"?: string,"price_usd"?: number,"trial_days"?: number,"updated_at"?: string,"whatsapp"?: string
+                    "grace_days"?: number,"id"?: boolean,"payment_instructions"?: string,"price_usd"?: number,"trial_days"?: number,"updated_at"?: string,"whatsapp"?: string,"open_signup"?: boolean
                   }
                   Update: {
-                    "grace_days"?: number,"id"?: boolean,"payment_instructions"?: string,"price_usd"?: number,"trial_days"?: number,"updated_at"?: string,"whatsapp"?: string
+                    "grace_days"?: number,"id"?: boolean,"payment_instructions"?: string,"price_usd"?: number,"trial_days"?: number,"updated_at"?: string,"whatsapp"?: string,"open_signup"?: boolean
                   }
                   Relationships: [
                     
@@ -2553,6 +2673,56 @@ isOneToOne: false
                            },
 "send_announcement":
 { Args: { "p_audience": string,"p_body"?: string,"p_gym_id": string,"p_title": string }; Returns: number
+                           },
+"site_track":
+{ Args: { "p": Json }; Returns: undefined
+                           },
+"admin_provision_gym":
+{ Args: { "p_owner": string,"p_name": string }; Returns: string
+                           },
+"admin_mark_welcome_sent":
+{ Args: { "p_gym_id": string }; Returns: undefined
+                           },
+"submit_access_request":
+{ Args: { "p_owner_name": string,"p_phone": string,"p_email": string,"p_gym_name": string,"p_city"?: string,"p_members"?: string,"p_message"?: string,"p_source"?: string }; Returns: string
+                           },
+"admin_update_request":
+{ Args: { "p_id": string,"p_status"?: string,"p_notes"?: string,"p_gym_id"?: string,"p_welcome_sent"?: boolean }; Returns: undefined
+                           },
+"admin_live":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"admin_visitors":
+{ Args: { "p_days"?: number }; Returns: Json
+                           },
+"admin_sessions":
+{ Args: { "p_limit"?: number,"p_country"?: string,"p_source"?: string }; Returns: Json
+                           },
+"admin_session":
+{ Args: { "p_id": string }; Returns: Json
+                           },
+"admin_app_stats":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"prune_site_analytics":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"open_support_ticket":
+{ Args: { "p_subject": string,"p_body": string,"p_category"?: string,"p_gym_id"?: string,"p_path"?: string,"p_device"?: string }; Returns: string
+                           },
+"reply_support_ticket":
+{ Args: { "p_ticket_id": string,"p_body": string,"p_internal"?: boolean }; Returns: undefined
+                           },
+"read_support_ticket":
+{ Args: { "p_ticket_id": string }; Returns: undefined
+                           },
+"admin_update_ticket":
+{ Args: { "p_ticket_id": string,"p_status"?: string,"p_priority"?: string,"p_assign"?: string,"p_unassign"?: boolean }; Returns: undefined
+                           },
+"admin_gym_health":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "gym_id": string,"name": string,"is_lab": boolean,"created_at": string,"trial_ends_at": string | null,"paid_until": string | null,"suspended": boolean,"members": number,"active_members": number,"checkins_7d": number,"checkins_prev_7d": number,"collected_30d": number,"staff": number,"last_staff_seen": string | null,"errors_7d": number,"open_tickets": number,"score": number,"lat": number | null,"lng": number | null
+            }[]
                            },
 "notify_me_test":
 { Args: { "p_gym_id": string }; Returns: undefined

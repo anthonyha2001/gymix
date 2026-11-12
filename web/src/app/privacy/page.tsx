@@ -33,6 +33,7 @@ const sections: LegalSection[] = [
         <li><b>Training:</b> workouts, sets, programs, body measurements, nutrition plans and challenges you join.</li>
         <li><b>Messages:</b> chats between you and your gym&apos;s staff.</li>
         <li><b>Device:</b> basic technical details (browser, app version, rough country from your connection) to keep the service secure and working.</li>
+        <li><b>Site analytics, if you accept them:</b> which pages you visit, for how long, how far you scroll, which buttons you click, and the city your connection comes from. Gymix&apos;s own, never shared or used for ads. Choose &quot;Essential only&quot; and none of it is recorded.</li>
       </ul>
     ),
   },

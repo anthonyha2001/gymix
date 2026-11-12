@@ -204,7 +204,7 @@ export async function setFeatureOverride(key: string, _prev: ActionState, formDa
 export async function leaveSupport() {
   const viewer = await requirePlatformAdmin();
   await createAdminClient().from("platform_admin_visits").delete().eq("user_id", viewer.id);
-  redirect("/admin?tab=gyms");
+  redirect("/admin/gyms");
 }
 
 // Keys for the Gymix WhatsApp number (Meta Cloud API). Kept server-side only;

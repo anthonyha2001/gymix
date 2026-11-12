@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/toaster";
 import { NativeBridge } from "@/components/native-bridge";
 import { CrashReporter } from "@/components/crash-reporter";
+import { SiteTracker } from "@/components/site-tracker";
 import { Splash } from "@/components/splash";
 
 const geistSans = Geist({
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Toaster />
         <NativeBridge />
         <CrashReporter />
+        <SiteTracker />
       </body>
     </html>
   );
