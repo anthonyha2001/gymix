@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState, useEffect, useState, useTransition } from "react";
-import { Check, CloudUpload, Plus, Timer, Trophy, X } from "lucide-react";
+import { Check, CloudUpload, Plus, Trophy, X } from "lucide-react";
 import { Confetti } from "@/components/confetti";
+import { RestTimer, type Rest } from "@/components/rest-timer";
 import { Dialog } from "@/components/dialog";
 import { ExercisePicker } from "@/components/exercise-picker";
 import { showToast } from "@/components/toaster";
@@ -46,7 +47,7 @@ export function WorkoutLogger({
   finished: boolean;
 }) {
   const [logged, setLogged] = useState<Logged>(initialLogged);
-  const [restEndsAt, setRestEndsAt] = useState<number | null>(null);
+  const [rest, setRest] = useState<Rest | null>(null);
   const [pr, setPr] = useState<string | null>(null);
   // Sets saved on the phone, waiting for a connection ("exerciseId:set").
   const [waiting, setWaiting] = useState<Set<string>>(new Set());
@@ -93,7 +94,7 @@ export function WorkoutLogger({
       const notes = String(formData.get("notes") ?? "").trim();
       await queue({ kind: "finish", sessionId, notes: notes || null, finishedAt: new Date().toISOString() });
       setFinishedOffline(true);
-      setRestEndsAt(null);
+      setRest(null);
       return { success: "Workout saved on your phone. It's sent as soon as you're back online." };
     };
     if (typeof navigator !== "undefined" && navigator.onLine === false) return saveOffline();
@@ -145,7 +146,7 @@ export function WorkoutLogger({
           disabled={finished}
           onLogged={(setNumber, value, isPr) => {
             setLogged((cur) => ({ ...cur, [ex.exerciseId]: { ...cur[ex.exerciseId], [setNumber]: value } }));
-            if (ex.restSeconds > 0) setRestEndsAt(Date.now() + ex.restSeconds * 1000);
+            if (ex.restSeconds > 0) setRest({ endsAt: Date.now() + ex.restSeconds * 1000, total: ex.restSeconds, label: ex.name });
             if (isPr) {
               setPr(`${ex.name} ${formatKg(value.weight)}`);
               navigator.vibrate?.([60, 40, 60]);
@@ -196,9 +197,13 @@ export function WorkoutLogger({
       {/* Always on screen: the rest timer while it runs, and Finish. */}
       {!finished && (
         <>
-          <div aria-hidden className={restEndsAt ? "h-32" : "h-20"} />
+          <div aria-hidden className={rest ? "h-36" : "h-20"} />
           <div className="fixed inset-x-0 bottom-(--bottom-bar) z-40 border-t border-line bg-surface/95 backdrop-blur">
-            {restEndsAt && <RestTimer endsAt={restEndsAt} onDone={() => setRestEndsAt(null)} />}
+            {rest && (
+              <div className="rest-enter bg-ink text-white">
+                <RestTimer rest={rest} onChange={setRest} onDone={() => setRest(null)} />
+              </div>
+            )}
             <div className="mx-auto max-w-3xl px-4 py-3">
               <Button type="submit" form="finish-workout" disabled={finishing || totalSets === 0} className="h-12 w-full text-base">
                 {finishing ? "Saving…" : `Finish workout (${totalSets} ${totalSets === 1 ? "set" : "sets"})`}
@@ -417,35 +422,6 @@ function SetRow({
         </p>
       )}
       {error && <p className="mt-1 text-xs text-danger">{error}</p>}
-    </div>
-  );
-}
-
-function RestTimer({ endsAt, onDone }: { endsAt: number; onDone: () => void }) {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 250);
-    return () => clearInterval(id);
-  }, []);
-  const left = Math.max(0, Math.ceil((endsAt - now) / 1000));
-
-  return (
-    <div className="bg-ink text-white">
-      <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-        <span className="flex items-center gap-2">
-          <Timer className="size-5 text-brand" />
-          {left > 0 ? (
-            <>
-              Rest <span className="text-xl font-bold tabular-nums">{Math.floor(left / 60)}:{String(left % 60).padStart(2, "0")}</span>
-            </>
-          ) : (
-            <span className="font-semibold text-brand">Next set — go!</span>
-          )}
-        </span>
-        <button type="button" onClick={onDone} className="rounded-lg px-3 py-1.5 text-sm hover:bg-white/10">
-          {left > 0 ? "Skip" : "Close"}
-        </button>
-      </div>
     </div>
   );
 }

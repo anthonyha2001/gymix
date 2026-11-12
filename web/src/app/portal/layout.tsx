@@ -17,6 +17,8 @@ import { SupportBanner } from "@/components/support-banner";
 import { DemoChrome } from "@/components/demo-chrome";
 import { gymFeatures, hasFeature } from "@/lib/features";
 import { MotionGestures } from "@/components/motion-gestures";
+import { PushKeeper } from "@/components/push-keeper";
+import { WidgetLink } from "@/components/widget-link";
 import { QrScanButton } from "@/components/qr-scanner";
 import { NotificationBell } from "@/components/notification-bell";
 import { loadNotifications } from "@/lib/notifications";
@@ -68,6 +70,10 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
         <Drop />
       </Suspense>
       <MotionGestures />
+      <PushKeeper />
+      <Suspense>
+        <Widget />
+      </Suspense>
     </div>
   );
 }
@@ -96,6 +102,12 @@ async function MemberBell() {
   const { membership } = await requireMember();
   const { items, unread } = await loadNotifications(membership.gymId, true);
   return <NotificationBell items={items} unread={unread} />;
+}
+
+// Hands the phone's home-screen widget its token (in the app only).
+async function Widget() {
+  const { viewer } = await requireMember();
+  return <WidgetLink userId={viewer.id} />;
 }
 
 // Location checks for the live count, where the gym switched them on.

@@ -4,4 +4,5 @@
     <string name="title_activity_main">Gymix</string>
     <string name="package_name">com.gymix.app</string>
     <string name="custom_url_scheme">com.gymix.app</string>
+    <string name="widget_description">How busy your gym is, days left and today's workout</string>
 </resources>

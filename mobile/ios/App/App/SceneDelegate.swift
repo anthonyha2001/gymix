@@ -1,6 +1,7 @@
 import UIKit
 import Capacitor
 import WebKit
+import WidgetKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -34,6 +35,7 @@ final class GymixViewController: CAPBridgeViewController {
 
     override func capacitorDidLoad() {
         super.capacitorDidLoad()
+        bridge?.registerPluginInstance(GymixWidgetPlugin())
         guard let webView = webView else { return }
         let proxy = GymixUIDelegate(original: webView.uiDelegate)
         uiProxy = proxy
@@ -78,5 +80,39 @@ final class GymixUIDelegate: NSObject, WKUIDelegate {
                  type: WKMediaCaptureType,
                  decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(isGymix(origin) ? .grant : .prompt)
+    }
+}
+
+// "GymixWidget" in JavaScript: the app hands the home-screen widget where to
+// ask for its data and the person's widget token, through the App Group both
+// share (group.com.gymix.app), then asks it to refresh.
+@objc(GymixWidgetPlugin)
+public class GymixWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "GymixWidgetPlugin"
+    public let jsName = "GymixWidget"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "connect", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "disconnect", returnType: CAPPluginReturnPromise),
+    ]
+    static let group = "group.com.gymix.app"
+
+    @objc func connect(_ call: CAPPluginCall) {
+        guard let url = call.getString("url"), let token = call.getString("token") else {
+            call.reject("url and token are required")
+            return
+        }
+        let defaults = UserDefaults(suiteName: Self.group)
+        defaults?.set(url, forKey: "url")
+        defaults?.set(token, forKey: "token")
+        WidgetCenter.shared.reloadAllTimelines()
+        call.resolve()
+    }
+
+    @objc func disconnect(_ call: CAPPluginCall) {
+        let defaults = UserDefaults(suiteName: Self.group)
+        defaults?.removeObject(forKey: "url")
+        defaults?.removeObject(forKey: "token")
+        WidgetCenter.shared.reloadAllTimelines()
+        call.resolve()
     }
 }

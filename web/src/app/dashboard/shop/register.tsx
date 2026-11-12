@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Camera, CheckCircle2, Minus, Plus, Printer, ScanBarcode, Search, ShoppingBag, Trash2, UserRound, X } from "lucide-react";
+import { haptics } from "@/lib/haptics";
+import { isNativeApp } from "@/lib/native";
+import { nativeScan } from "@/lib/scan";
 import { Modal } from "@/components/dialog";
 import { showToast } from "@/components/toaster";
 import { Alert, Button, buttonClass, inputClass } from "@/components/ui";
@@ -140,7 +143,21 @@ export function Register({ products, lbpRate }: { products: RegisterProduct[]; l
               className={`${inputClass} pl-10`}
             />
           </div>
-          <button type="button" onClick={() => setScanning(true)} className={buttonClass("secondary", "shrink-0")} aria-label="Scan with the camera" title="Scan with the camera">
+          <button
+            type="button"
+            onClick={async () => {
+              // In the app: the phone's native scanner (fast, and works on iPhone too).
+              if (isNativeApp()) {
+                const code = await nativeScan();
+                if (code) {
+                  haptics.success();
+                  scanned(code);
+                }
+                return;
+              }
+              setScanning(true);
+            }}
+            className={buttonClass("secondary", "shrink-0")} aria-label="Scan with the camera" title="Scan with the camera">
             <Camera className="size-4" />
           </button>
         </div>

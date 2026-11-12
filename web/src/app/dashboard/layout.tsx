@@ -10,9 +10,12 @@ import { SupportBanner } from "@/components/support-banner";
 import { DemoChrome } from "@/components/demo-chrome";
 import { unreadCount } from "@/lib/chat";
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 import { signOut } from "../(auth)/actions";
+import { PendingMigrations } from "@/components/pending-migrations";
 import { navFor } from "./nav-items";
 import { InstallPrompt } from "@/components/install-prompt";
+import { PushKeeper } from "@/components/push-keeper";
 import { NotificationBell } from "@/components/notification-bell";
 import { loadNotifications } from "@/lib/notifications";
 import { NavLinks, NavSkeleton, Sidebar } from "./sidebar";
@@ -51,6 +54,9 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
       <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">
         <Suspense fallback={null}>
           <DemoChrome area="owner" />
+          <Suspense fallback={null}>
+            <PendingMigrations />
+          </Suspense>
         </Suspense>
         <Suspense fallback={null}>
           <SupportBanner />
@@ -60,6 +66,7 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
         </Suspense>
       </main>
       <InstallPrompt />
+      <PushKeeper />
     </div>
   );
 }
@@ -132,7 +139,7 @@ async function AccountCard() {
         {initials(name)}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-medium">{name}</span>
+        <Link href="/account" className="block truncate text-sm font-medium hover:underline">{name}</Link>
         <span className="block text-xs text-muted">{ROLE_LABELS[membership.role]}</span>
       </span>
       <form action={signOut}>

@@ -19,7 +19,8 @@ export type NavIcon =
   | "shop"
   | "screens"
   | "reception"
-  | "challenges";
+  | "challenges"
+  | "announce";
 
 export type NavItem = { href: string; label: string; icon: NavIcon; badge?: number };
 
@@ -32,6 +33,7 @@ const NAV: (NavItem & { roles?: GymRole[]; feature?: string })[] = [
   { href: "/dashboard/members", label: "Members", icon: "members" },
   { href: "/dashboard/schedule", label: "Schedule", icon: "schedule" },
   { href: "/dashboard/messages", label: "Messages", icon: "messages" },
+  { href: "/dashboard/announce", label: "Announce", icon: "announce", roles: MANAGER_ROLES },
   { href: "/dashboard/challenges", label: "Challenges", icon: "challenges", roles: MANAGER_ROLES, feature: "challenges" },
   { href: "/dashboard/programs", label: "Programs", icon: "programs", roles: COACH_ROLES },
   { href: "/dashboard/machines", label: "Equipment", icon: "machines", roles: ["owner", "manager", "front_desk", "trainer"] },

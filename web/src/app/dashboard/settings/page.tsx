@@ -13,7 +13,7 @@ import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { rotateStickerLink, saveGymLocation, setTapSimulator } from "./actions";
 import { GymLocation } from "./gym-location";
 import { MapPin } from "lucide-react";
-import { CopyLink, PortalPagesForm, SettingsForm } from "./settings-form";
+import { CopyLink, PortalPagesForm, ProgramSharingForm, SettingsForm } from "./settings-form";
 import { WhatsAppPanel } from "./whatsapp-panel";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -38,7 +38,7 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
   const supabase = await createClient();
   const [{ data: token }, { data: gym }] = await Promise.all([
     supabase.rpc("get_checkin_token", { p_gym_id: membership.gymId }),
-    supabase.from("gyms").select("tap_simulator, portal_hidden, unpaid_grace_days, renewal_reminder_days, door_lat, door_lng, door_radius_m, address").eq("id", membership.gymId).single(),
+    supabase.from("gyms").select("tap_simulator, program_sharing, portal_hidden, unpaid_grace_days, renewal_reminder_days, door_lat, door_lng, door_radius_m, address").eq("id", membership.gymId).single(),
   ]);
 
   const url = `${await requestOrigin()}/c/${token}`;
@@ -100,6 +100,18 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
           <p className="text-sm text-muted">Choose what members see in their app. Pages you switch off disappear from their menu.</p>
         </div>
         <PortalPagesForm hidden={gym?.portal_hidden ?? []} />
+      </Card>
+      )}</TabPanel>
+
+      <TabPanel id="app" tabs={TABS}>{(
+      <Card className="space-y-4 p-5">
+        <div>
+          <h2 className="font-semibold">Sharing programs</h2>
+          <p className="text-sm text-muted">
+            Members can share a program with a friend: a QR code, AirDrop or a link. Friends from your gym add a copy; anyone else sees your gym&apos;s name.
+          </p>
+        </div>
+        <ProgramSharingForm initial={(gym?.program_sharing ?? "own") as "off" | "own" | "all"} />
       </Card>
       )}</TabPanel>
 

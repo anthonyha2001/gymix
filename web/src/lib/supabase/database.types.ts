@@ -737,6 +737,18 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"gym_announcements": {
+                  Row: {
+                    "audience": string,"body": string | null,"created_at": string,"created_by": string | null,"gym_id": string,"id": string,"sent_to": number,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "audience": string,"body"?: string | null,"created_at"?: string,"created_by"?: string | null,"gym_id": string,"id"?: string,"sent_to"?: number,"title": string
+                  }
+                  Update: {
+                    "audience"?: string,"body"?: string | null,"created_at"?: string,"created_by"?: string | null,"gym_id"?: string,"id"?: string,"sent_to"?: number,"title"?: string
+                  }
+                  Relationships: []
                 },"gym_feature_overrides": {
                   Row: {
                     "enabled": boolean,"feature_key": string,"gym_id": string
@@ -861,14 +873,14 @@ isOneToOne: true
                   ]
                 },"gyms": {
                   Row: {
-                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"door_lat": number | null,"door_lng": number | null,"address": string | null,"door_radius_m": number | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string
+                    "avg_visit_minutes": number,"capacity": number | null,"checkin_token": string,"created_at": string,"created_by": string | null,"demo_expires_at": string | null,"door_lat": number | null,"door_lng": number | null,"address": string | null,"door_radius_m": number | null,"equipment": (string)[],"id": string,"is_lab": boolean,"kiosk_card_terminal": boolean,"kiosk_omt_name": string | null,"kiosk_whish_number": string | null,"lbp_rate": number,"name": string,"next_invoice_number": number,"next_sale_number": number,"paid_until": string | null,"portal_hidden": (string)[],"program_price_usd": number,"renewal_reminder_days": number,"slug": string,"suspended_at": string | null,"suspended_reason": string | null,"tap_simulator": boolean,"timezone": string,"trial_ends_at": string,"unpaid_grace_days": number,"whatsapp_sender": string,"program_sharing": string,"winback_days": number | null,"daily_summary": boolean
                   }
                   ComputedFields: never
                   Insert: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name": string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug": string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string,"program_sharing"?: string,"winback_days"?: number | null,"daily_summary"?: boolean
                   }
                   Update: {
-                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string
+                    "avg_visit_minutes"?: number,"capacity"?: number | null,"checkin_token"?: string,"created_at"?: string,"created_by"?: string | null,"demo_expires_at"?: string | null,"door_lat"?: number | null,"door_lng"?: number | null,"address"?: string | null,"door_radius_m"?: number | null,"equipment"?: (string)[],"id"?: string,"is_lab"?: boolean,"kiosk_card_terminal"?: boolean,"kiosk_omt_name"?: string | null,"kiosk_whish_number"?: string | null,"lbp_rate"?: number,"name"?: string,"next_invoice_number"?: number,"next_sale_number"?: number,"paid_until"?: string | null,"portal_hidden"?: (string)[],"program_price_usd"?: number,"renewal_reminder_days"?: number,"slug"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"tap_simulator"?: boolean,"timezone"?: string,"trial_ends_at"?: string,"unpaid_grace_days"?: number,"whatsapp_sender"?: string,"program_sharing"?: string,"winback_days"?: number | null,"daily_summary"?: boolean
                   }
                   Relationships: [
                     
@@ -1219,14 +1231,14 @@ isOneToOne: false
                   ]
                 },"notifications": {
                   Row: {
-                    "body": string | null,"created_at": string,"dedupe_key": string | null,"gym_id": string,"id": string,"kind": string,"link": string | null,"read_at": string | null,"title": string,"user_id": string
+                    "body": string | null,"created_at": string,"dedupe_key": string | null,"gym_id": string,"id": string,"kind": string,"link": string | null,"read_at": string | null,"title": string,"user_id": string,"push_sent_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "body"?: string | null,"created_at"?: string,"dedupe_key"?: string | null,"gym_id": string,"id"?: string,"kind": string,"link"?: string | null,"read_at"?: string | null,"title": string,"user_id": string
+                    "body"?: string | null,"created_at"?: string,"dedupe_key"?: string | null,"gym_id": string,"id"?: string,"kind": string,"link"?: string | null,"read_at"?: string | null,"title": string,"user_id": string,"push_sent_at"?: string | null
                   }
                   Update: {
-                    "body"?: string | null,"created_at"?: string,"dedupe_key"?: string | null,"gym_id"?: string,"id"?: string,"kind"?: string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id"?: string
+                    "body"?: string | null,"created_at"?: string,"dedupe_key"?: string | null,"gym_id"?: string,"id"?: string,"kind"?: string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id"?: string,"push_sent_at"?: string | null
                   }
                   Relationships: [
                     {
@@ -1669,16 +1681,28 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"platform_secrets": {
+                },"push_subscriptions": {
                   Row: {
-                    "id": boolean,"updated_at": string,"whatsapp_app_secret": string,"whatsapp_phone_number_id": string,"whatsapp_templates": NonNullable<Json>,"whatsapp_token": string,"whatsapp_waba_id": string
+                    "auth": string | null,"created_at": string,"endpoint": string,"id": string,"kind": string,"last_ok_at": string | null,"p256dh": string | null,"platform": string | null,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "id"?: boolean,"updated_at"?: string,"whatsapp_app_secret"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_templates"?: NonNullable<Json>,"whatsapp_token"?: string,"whatsapp_waba_id"?: string
+                    "auth"?: string | null,"created_at"?: string,"endpoint": string,"id"?: string,"kind": string,"last_ok_at"?: string | null,"p256dh"?: string | null,"platform"?: string | null,"user_id": string
                   }
                   Update: {
-                    "id"?: boolean,"updated_at"?: string,"whatsapp_app_secret"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_templates"?: NonNullable<Json>,"whatsapp_token"?: string,"whatsapp_waba_id"?: string
+                    "auth"?: string | null,"created_at"?: string,"endpoint"?: string,"id"?: string,"kind"?: string,"last_ok_at"?: string | null,"p256dh"?: string | null,"platform"?: string | null,"user_id"?: string
+                  }
+                  Relationships: []
+                },"platform_secrets": {
+                  Row: {
+                    "id": boolean,"updated_at": string,"whatsapp_app_secret": string,"whatsapp_phone_number_id": string,"whatsapp_templates": NonNullable<Json>,"whatsapp_token": string,"whatsapp_waba_id": string,"vapid_public": string,"vapid_private": string,"push_dispatch_url": string,"push_dispatch_secret": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: boolean,"updated_at"?: string,"whatsapp_app_secret"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_templates"?: NonNullable<Json>,"whatsapp_token"?: string,"whatsapp_waba_id"?: string,"vapid_public"?: string,"vapid_private"?: string,"push_dispatch_url"?: string,"push_dispatch_secret"?: string
+                  }
+                  Update: {
+                    "id"?: boolean,"updated_at"?: string,"whatsapp_app_secret"?: string,"whatsapp_phone_number_id"?: string,"whatsapp_templates"?: NonNullable<Json>,"whatsapp_token"?: string,"whatsapp_waba_id"?: string,"vapid_public"?: string,"vapid_private"?: string,"push_dispatch_url"?: string,"push_dispatch_secret"?: string
                   }
                   Relationships: [
                     
@@ -2497,6 +2521,45 @@ isOneToOne: false
 "distance_m":
 { Args: { "p_lat1": number,"p_lat2": number,"p_lng1": number,"p_lng2": number }; Returns: number
                            },
+"account_deletion_blocker":
+{ Args: Record<PropertyKey, never>; Returns: string | null
+                           },
+"delete_my_account_data":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"my_widget_token":
+{ Args: { "p_new"?: boolean }; Returns: string
+                           },
+"widget_data":
+{ Args: { "p_token": string }; Returns: Json
+                           },
+"share_program":
+{ Args: { "p_program_id": string }; Returns: string
+                           },
+"shared_program":
+{ Args: { "p_token": string }; Returns: Json
+                           },
+"copy_shared_program":
+{ Args: { "p_token": string }; Returns: string
+                           },
+"send_winbacks":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"send_daily_summaries":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"announcement_reach":
+{ Args: { "p_audience": string,"p_gym_id": string }; Returns: number
+                           },
+"send_announcement":
+{ Args: { "p_audience": string,"p_body"?: string,"p_gym_id": string,"p_title": string }; Returns: number
+                           },
+"notify_me_test":
+{ Args: { "p_gym_id": string }; Returns: undefined
+                           },
+"save_push_subscription":
+{ Args: { "p_auth"?: string,"p_endpoint": string,"p_kind": string,"p_p256dh"?: string,"p_platform"?: string }; Returns: undefined
+                           },
 "machine_sticker_tapped":
 { Args: { "p_machine_id": string }; Returns: undefined
                            },
@@ -2605,6 +2668,11 @@ isOneToOne: false
                            },
 "admin_prune_events":
 { Args: { "p_keep_days": number }; Returns: number
+                           },
+"admin_crash_platforms":
+{ Args: { "p_days"?: number }; Returns: {
+              "crashes": number,"people": number,"platform": string,"versions": string[] | null
+            }[]
                            },
 "admin_recent_events":
 { Args: { "p_kinds": (string)[],"p_limit"?: number }; Returns: {

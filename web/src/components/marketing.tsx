@@ -275,6 +275,8 @@ export function MarketingFooter() {
           <Link href="/pricing" className="hover:text-ink">Pricing</Link>
           <Link href="/login" className="hover:text-ink">Log in</Link>
           <Link href="/signup" className="hover:text-ink">Start free trial</Link>
+          <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+          <Link href="/terms" className="hover:text-ink">Terms</Link>
         </nav>
       </div>
     </footer>

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { createContext, use, useRef, useState, type ReactNode } from "react";
 import {
   Trophy,
+  Megaphone,
   Activity,
   CalendarDays,
   ClipboardList,
@@ -46,6 +47,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   screens: Monitor,
   reception: ConciergeBell,
   challenges: Trophy,
+  announce: Megaphone,
 };
 
 // Lets nav links (rendered in a server slot) close the mobile drawer.

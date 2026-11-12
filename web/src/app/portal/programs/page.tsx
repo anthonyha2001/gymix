@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { ChevronRight, Play, Plus, UserRoundPlus , Pencil } from "lucide-react";
+import { ShareProgramButton } from "@/components/share-program";
 import { Dialog } from "@/components/dialog";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { ExerciseItem } from "@/components/program-card";
@@ -171,6 +172,9 @@ async function ProgramModal({ programId, memberId }: { programId: string; member
   const supabase = await createClient();
   const program = await loadProgram(supabase, programId);
   if (!program || program.memberId !== memberId) return null;
+  // The gym decides whether members may share (their own, or trainer programs too).
+  const { data: gym } = await supabase.from("gyms").select("program_sharing").eq("id", program.gymId).single();
+  const canShare = gym?.program_sharing === "all" || (gym?.program_sharing === "own" && program.kind === "self");
   const stats = await loadExerciseStats(
     supabase,
     memberId,
@@ -186,12 +190,17 @@ async function ProgramModal({ programId, memberId }: { programId: string; member
     >
       <div className="space-y-5">
         {program.notes && <p className="rounded-lg bg-canvas p-3 text-sm">{program.notes}</p>}
-        {program.kind === "self" && (
+        {(program.kind === "self" || canShare) && (
           <div className="flex gap-2">
-            <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace aria-label="Edit program" title="Edit program" className={buttonClass("secondary", "h-10 w-10 shrink-0 px-0!")}>
-              <Pencil className="size-4" />
-            </HoverLink>
-            <DeleteProgramButton programId={program.id} name={program.name} />
+            {canShare && <ShareProgramButton programId={program.id} name={program.name} />}
+            {program.kind === "self" && (
+              <>
+                <HoverLink href={`${BASE}?edit=${program.id}`} scroll={false} replace aria-label="Edit program" title="Edit program" className={buttonClass("secondary", "h-10 w-10 shrink-0 px-0!")}>
+                  <Pencil className="size-4" />
+                </HoverLink>
+                <DeleteProgramButton programId={program.id} name={program.name} />
+              </>
+            )}
           </div>
         )}
         {program.days.length === 0 && <p className="text-sm text-muted">No training days yet.</p>}

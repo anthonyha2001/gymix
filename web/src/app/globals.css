@@ -802,3 +802,140 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
   .nfc-target.is-waiting .nfc-ring { animation: none; opacity: 0.5; }
   .nfc-target.is-written > span:last-child, .nfc-check { animation: none; }
 }
+
+/* ------------------------------------------------------- account deletion */
+.delete-step { animation: gx-step-in 320ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@keyframes gx-step-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: none; }
+}
+.letter-on { animation: gx-letter 260ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes gx-letter {
+  0% { transform: scale(0.8) rotate(-8deg); }
+  100% { transform: scale(1.05); }
+}
+.shake-x { animation: gx-shake-x 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@keyframes gx-shake-x {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(3px); }
+  30%, 50%, 70% { transform: translateX(-5px); }
+  40%, 60% { transform: translateX(5px); }
+}
+.delete-done { animation: gx-bounce 560ms cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 0 0 8px rgb(200 241 53 / 0.15), 0 20px 50px -10px rgb(13 17 23 / 0.5); }
+
+/* Goodbye: the Gymix mark gently fades away in rising rings. */
+.bye-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 9999px;
+  border: 1.5px solid rgb(200 241 53 / 0.5);
+  transform: translate(-50%, -50%);
+  animation: gx-bye 3.6s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
+  opacity: 0;
+}
+.bye-ring:nth-child(2) { animation-delay: 1.2s; }
+.bye-ring:nth-child(3) { animation-delay: 2.4s; }
+@keyframes gx-bye {
+  0% { width: 6rem; height: 6rem; opacity: 0.8; }
+  100% { width: 22rem; height: 22rem; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .delete-step, .letter-on, .shake-x, .delete-done, .bye-ring { animation: none; }
+}
+
+/* ------------------------------------------------------------ legal pages */
+.legal-section { opacity: 0; transform: translateY(14px); transition: opacity 500ms ease, transform 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+.legal-section.is-in { opacity: 1; transform: none; }
+.legal-body ul { list-style: none; display: grid; gap: 0.5rem; }
+.legal-body ul > li { position: relative; padding-left: 1.25rem; }
+.legal-body ul > li::before { content: ""; position: absolute; left: 0.2rem; top: 0.6em; width: 0.4rem; height: 0.4rem; border-radius: 9999px; background: #c8f135; box-shadow: 0 0 0 3px rgb(200 241 53 / 0.2); }
+.legal-body b { color: var(--color-ink, #0d1117); font-weight: 600; }
+.legal-body a { text-decoration: underline; text-underline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .legal-section { opacity: 1; transform: none; transition: none; } }
+
+/* ------------------------------------------------------------------- push */
+.bell-swing { transform-origin: 50% 10%; animation: gx-bell 1.6s ease-in-out infinite; }
+@keyframes gx-bell {
+  0%, 55%, 100% { transform: rotate(0); }
+  10% { transform: rotate(16deg); }
+  20% { transform: rotate(-14deg); }
+  30% { transform: rotate(10deg); }
+  40% { transform: rotate(-6deg); }
+  48% { transform: rotate(2deg); }
+}
+/* The sample notification drops in from the top, rests, and slides away. */
+.push-demo { height: 4.25rem; -webkit-mask-image: linear-gradient(#000 80%, transparent); mask-image: linear-gradient(#000 80%, transparent); }
+.push-demo-banner { animation: gx-push-demo 4.8s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+@keyframes gx-push-demo {
+  0% { transform: translateY(-120%) scale(0.96); opacity: 0; }
+  12%, 72% { transform: none; opacity: 1; }
+  84%, 100% { transform: translateY(-120%) scale(0.96); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bell-swing, .push-demo-banner { animation: none; }
+}
+
+/* -------------------------------------------------------- front-desk mode */
+.desk { background: radial-gradient(80% 60% at 85% -10%, rgb(200 241 53 / 0.10), transparent 60%), radial-gradient(70% 50% at 0% 110%, rgb(255 255 255 / 0.05), transparent 60%), #0b0f15; }
+/* The whole screen washes lime (yes) or red (no) for a moment. */
+.desk-flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 1; }
+.desk-flash-yes { background: radial-gradient(60% 60% at 75% 45%, rgb(200 241 53 / 0.35), transparent 70%); animation: gx-desk-flash 1.2s ease-out; }
+.desk-flash-no { background: radial-gradient(60% 60% at 75% 45%, rgb(239 68 68 / 0.35), transparent 70%); animation: gx-desk-flash 1.2s ease-out; }
+@keyframes gx-desk-flash { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+/* Viewfinder corners breathe; they snap in while a code is being read. */
+.desk-target > i { position: absolute; width: 22%; height: 22%; border-color: #c8f135; border-style: solid; border-width: 0; filter: drop-shadow(0 0 8px rgb(200 241 53 / 0.6)); transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1); animation: gx-corner 2.4s ease-in-out infinite; }
+.desk-target > i:nth-child(1) { top: 0; left: 0; border-top-width: 4px; border-left-width: 4px; border-top-left-radius: 1.25rem; }
+.desk-target > i:nth-child(2) { top: 0; right: 0; border-top-width: 4px; border-right-width: 4px; border-top-right-radius: 1.25rem; }
+.desk-target > i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 4px; border-left-width: 4px; border-bottom-left-radius: 1.25rem; }
+.desk-target > i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 4px; border-right-width: 4px; border-bottom-right-radius: 1.25rem; }
+@keyframes gx-corner { 0%, 100% { scale: 1; } 50% { scale: 0.92; } }
+.desk-target.is-reading > i { animation: none; scale: 0.8; }
+/* Ready: two soft rings breathe out of the mark. */
+.desk-ready > i { position: absolute; inset: 0; border-radius: 2rem; border: 1.5px solid rgb(200 241 53 / 0.45); animation: gx-ready 2.8s ease-out infinite; }
+.desk-ready > i:nth-child(2) { animation-delay: 1.4s; }
+@keyframes gx-ready { 0% { transform: scale(0.75); opacity: 0.9; } 100% { transform: scale(1.5); opacity: 0; } }
+/* The answer: the ring pops, the words rise one after the other, the timer runs down. */
+.desk-answer-ring { animation: gx-bounce 560ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.desk-answer.is-yes .desk-answer-ring { box-shadow: 0 0 0 10px rgb(200 241 53 / 0.08), 0 0 60px rgb(200 241 53 / 0.35); }
+.desk-answer.is-no .desk-answer-ring { animation: gx-shake-x 480ms cubic-bezier(0.36, 0.07, 0.19, 0.97); box-shadow: 0 0 0 10px rgb(239 68 68 / 0.08), 0 0 60px rgb(239 68 68 / 0.3); }
+.desk-answer-title, .desk-answer-name, .desk-answer-details, .desk-owes { animation: gx-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.desk-answer-name { animation-delay: 70ms; }
+.desk-answer-details { animation-delay: 140ms; }
+.desk-owes { animation: gx-rise 420ms 200ms cubic-bezier(0.22, 1, 0.36, 1) backwards, gx-owe 1.4s 700ms ease-in-out infinite; }
+@keyframes gx-owe { 0%, 100% { box-shadow: 0 0 0 0 rgb(239 68 68 / 0.5); } 50% { box-shadow: 0 0 0 8px rgb(239 68 68 / 0); } }
+.desk-timer > span { transform-origin: left; animation-name: gx-timer; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes gx-timer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+.desk-stat { animation: gx-bounce 480ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.desk-ticker > li { animation: gx-ticker 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@keyframes gx-ticker { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+.desk-hits { animation: gx-rise 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .desk-flash, .desk-target > i, .desk-ready > i, .desk-answer-ring, .desk-answer-title, .desk-answer-name, .desk-answer-details, .desk-owes, .desk-stat, .desk-ticker > li, .desk-hits { animation: none; }
+}
+
+/* -------------------------------------------------------------- rest timer */
+.rest-enter { animation: gx-rest-in 360ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes gx-rest-in { from { transform: translateY(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+.rest-beat { animation: gx-beat 1s ease-in-out infinite; }
+@keyframes gx-beat { 0%, 100% { transform: scale(1); } 20% { transform: scale(1.35); } 40% { transform: scale(1); } }
+.rest-pill.is-over { background: radial-gradient(60% 120% at 20% 50%, rgb(200 241 53 / 0.18), transparent 70%); }
+.rest-go { animation: gx-rise 360ms cubic-bezier(0.22, 1, 0.36, 1); }
+@media (prefers-reduced-motion: reduce) { .rest-enter, .rest-beat, .rest-go { animation: none; } }
+
+/* -------------------------------------------------------- program sharing */
+.share-qr-glow { position: absolute; inset: -12%; border-radius: 2.5rem; background: conic-gradient(from var(--gx-edge), rgb(200 241 53 / 0), rgb(200 241 53 / 0.55), rgb(200 241 53 / 0)); filter: blur(22px); animation: gx-edge 5s linear infinite; }
+.share-qr > div { animation: gx-bounce 520ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.share-qr-code { animation: gx-qr-in 700ms 120ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@keyframes gx-qr-in { from { clip-path: inset(0 0 100% 0); opacity: 0.2; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+.add-pressed { animation: gx-bounce 420ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+@media (prefers-reduced-motion: reduce) { .share-qr-glow, .share-qr > div, .share-qr-code, .add-pressed { animation: none; } }
+
+/* ---------------------------------------------------------- announcements */
+.announce-banner { animation: gx-push-demo-in 520ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.announce-banner.is-sent { animation: gx-sent 900ms cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes gx-push-demo-in { from { transform: translateY(-24px) scale(0.96); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes gx-sent { 0% { transform: none; } 30% { transform: scale(1.04); box-shadow: 0 0 0 4px rgb(200 241 53 / 0.5); } 100% { transform: none; box-shadow: 0 0 0 0 rgb(200 241 53 / 0); } }
+@media (prefers-reduced-motion: reduce) { .announce-banner { animation: none; } }

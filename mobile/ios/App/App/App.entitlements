@@ -7,6 +7,11 @@
 	<string>development</string>
 	<!-- Gymix links (door stickers, invites) open the app. Needs the paid Apple
 	     account and the apple-app-site-association file on the website. -->
+	<!-- Shared with the home-screen widget (its token and last numbers). -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.gymix.app</string>
+	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:gymix-seven.vercel.app</string>

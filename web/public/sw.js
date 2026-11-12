@@ -158,3 +158,53 @@ self.addEventListener("message", (event) => {
     );
   }
 });
+
+// ------------------------------------------------------------------- push
+// A notification from Gymix (see lib/push/server.ts). Shown even when the app
+// is closed; tapping it opens (or focuses) the app on the right page.
+self.addEventListener("push", (event) => {
+  let p = {};
+  try {
+    p = event.data ? event.data.json() : {};
+  } catch {
+    p = { title: "Gymix", body: event.data ? event.data.text() : "" };
+  }
+  const title = p.title || "Gymix";
+  event.waitUntil(
+    Promise.all([
+      self.registration.showNotification(title, {
+        body: p.body || "",
+        icon: "/icons/192",
+        badge: "/icons/badge",
+        tag: p.id || undefined,
+        renotify: Boolean(p.id),
+        vibrate: [40, 60, 40],
+        timestamp: Date.now(),
+        data: { link: p.link || "/", id: p.id },
+      }),
+      // The red count on the home-screen icon, where the phone supports it.
+      self.navigator && "setAppBadge" in self.navigator && p.badge ? self.navigator.setAppBadge(p.badge).catch(() => {}) : null,
+      // Open copies of the app refresh their bell.
+      self.clients.matchAll({ type: "window" }).then((list) => list.forEach((c) => c.postMessage({ type: "push", id: p.id }))),
+    ]),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const link = new URL((event.notification.data && event.notification.data.link) || "/", self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      const open = list.find((c) => new URL(c.url).origin === self.location.origin);
+      if (open) return open.focus().then((c) => (c && "navigate" in c ? c.navigate(link) : null));
+      return self.clients.openWindow(link);
+    }),
+  );
+});
+
+// The browser replaced this phone's subscription: save the new one.
+self.addEventListener("pushsubscriptionchange", (event) => {
+  event.waitUntil(
+    self.clients.matchAll({ type: "window" }).then((list) => list.forEach((c) => c.postMessage({ type: "push-resubscribe" }))),
+  );
+});

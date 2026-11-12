@@ -53,3 +53,22 @@ iPhone testing needs a Mac (or a cloud Mac) and the Apple Developer account.
 5. Version: bump `versionCode`/`versionName` (android/app/build.gradle) and `MARKETING_VERSION` /
    `CURRENT_PROJECT_VERSION` (Xcode) for every store upload.
 6. Store pages: privacy policy URL, data safety form, screenshots, and the in-app "Delete my account".
+
+## Push notifications, rest timer, scanner and widget (added 13 Nov 2026)
+
+- **Web push (installed web app)** works with no setup: keys are made on first use and kept in the database.
+  The database calls `/api/push/dispatch` through `pg_net`; enable the **pg_net** extension in Supabase
+  (Database → Extensions) if the migration couldn't.
+- **Android push:** create a Firebase project, add the Android app `com.gymix.app`, put `google-services.json`
+  in `android/app/`, and set `FIREBASE_SERVICE_ACCOUNT` (the service account JSON, one line) in Vercel.
+  The app only asks for push once that variable is set.
+- **iPhone push:** in the Apple account create an APNs key, then set `APNS_KEY` (the .p8 contents),
+  `APNS_KEY_ID`, `APPLE_TEAM_ID` (and `APNS_PRODUCTION=1` for the App Store build) in Vercel.
+- **Sound:** set `GYMIX_PUSH_SOUND` to the file name once chosen (Android `res/raw/<name>`, iOS `<name>.caf`).
+- **Rest timer** uses `@capacitor/local-notifications` (lock screen), **scanning** uses `@capacitor-mlkit/barcode-scanning`.
+  Run `npm install` and `npx cap sync` after pulling.
+- **Home-screen widget**
+  - Android: built in (`GymixWidget.java`, `WidgetPlugin.java`), nothing to do.
+  - iPhone, once in Xcode: File → New → Target → Widget Extension named `GymixWidget` (no Live Activity,
+    no configuration intent). Replace its Swift file with `ios/GymixWidget/GymixWidget.swift`, then add the
+    App Group `group.com.gymix.app` to both the App and GymixWidget targets (Signing & Capabilities).

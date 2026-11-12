@@ -12,6 +12,7 @@ import { bookClass, cancelBooking, requestPtSession, subscribeToCourse, updatePt
 import { ActionButton } from "../../dashboard/members/action-button";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
 import { ScheduleCalendar } from "@/components/schedule-calendar";
+import { AddToCalendar } from "@/components/add-to-calendar";
 import { addMinutes, calendarWindow, classSessions, localDateTime, type CalEvent } from "@/lib/calendar";
 
 export const metadata: Metadata = { title: "Schedule" };
@@ -30,6 +31,7 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
   const tab = activeTab((await searchParams).tab, TABS);
   const { viewer, membership } = await requirePortalPage("schedule");
   const tz = membership.timezone;
+  const gymName = membership.gymName;
   const today = todayIn(tz);
   const days = nextDays(today, 7);
   // The calendar loads last week to eight weeks ahead in one go.
@@ -180,6 +182,9 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
                     {booking ? (
                       <span className="flex shrink-0 flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-2">
                         <Badge tone={BOOKING_STATUS[booking.status].tone}>{BOOKING_STATUS[booking.status].label}</Badge>
+                        {booking.status === "booked" && (
+                          <AddToCalendar id={booking.id} title={`${c.name} at ${gymName}`} start={`${date}T${hhmm(c.start_time)}`} minutes={c.duration_min} timeZone={tz} location={c.location} />
+                        )}
                         {(booking.status === "booked" || booking.status === "waitlist") && (
                           <ActionButton action={cancelBooking.bind(null, booking.id)} label="Cancel" variant="ghost" className="h-8 px-3" confirm="Cancel your spot?" />
                         )}
@@ -266,6 +271,9 @@ async function MemberSchedule({ searchParams }: { searchParams: PageProps<"/port
                   </span>
                 </span>
                 <span className="flex items-center gap-2">
+                  {s.status === "confirmed" && (
+                    <AddToCalendar id={s.id} title={`Training with ${coachName.get(s.trainer_id) ?? "your trainer"}`} start={s.starts_at} minutes={s.duration_min} timeZone={tz} location={gymName} />
+                  )}
                   <Badge tone={PT_STATUS[s.status].tone}>{PT_STATUS[s.status].label}</Badge>
                   {(s.status === "requested" || s.status === "confirmed") && (
                     <ActionButton action={updatePtSession.bind(null, s.id, "cancel")} label="Cancel" variant="ghost" className="h-8 px-3" confirm="Cancel this session?" />

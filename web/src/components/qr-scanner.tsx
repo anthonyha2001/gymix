@@ -4,6 +4,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ScanLine } from "lucide-react";
 import { Modal } from "@/components/dialog";
+import { showToast } from "@/components/toaster";
+import { haptics } from "@/lib/haptics";
+import { isNativeApp } from "@/lib/native";
+import { nativeScan } from "@/lib/scan";
 
 // Paths a Gymix QR code can point to: a machine (/m/<id>) or the entrance (/c/<token>).
 const GYMIX_PATH = /^\/(m|c)\/[A-Za-z0-9-]+\/?$/;
@@ -31,11 +35,24 @@ declare global {
 // at the QR code on a machine or at the entrance.
 export function QrScanButton() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={async () => {
+          // In the app: the phone's own fast scanner, full screen.
+          if (isNativeApp()) {
+            const text = await nativeScan();
+            const path = text ? gymixPathFrom(text) : null;
+            if (path) {
+              haptics.success();
+              router.push(path);
+            } else if (text) showToast("That isn't a Gymix code. Scan the code on a machine or at the entrance.", "error");
+            return;
+          }
+          setOpen(true);
+        }}
         aria-label="Scan a QR code"
         title="Scan a machine or check-in QR code"
         className="grid size-9 place-items-center rounded-lg text-muted hover:bg-canvas hover:text-ink"

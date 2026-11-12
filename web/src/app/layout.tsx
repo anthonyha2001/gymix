@@ -3,6 +3,7 @@ import { Fraunces, Geist } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/toaster";
 import { NativeBridge } from "@/components/native-bridge";
+import { CrashReporter } from "@/components/crash-reporter";
 import { Splash } from "@/components/splash";
 
 const geistSans = Geist({
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <Toaster />
         <NativeBridge />
+        <CrashReporter />
       </body>
     </html>
   );

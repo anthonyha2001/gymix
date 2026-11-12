@@ -1,4 +1,5 @@
 import { logEvent, requestMeta } from "@/lib/telemetry";
+import { getViewer } from "@/lib/session";
 
 // Browser errors reported by the app's error pages (server errors are already
 // recorded by instrumentation.ts). Same-site only, small payloads only.
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
 
   const raw = await request.text();
   if (raw.length > 8000) return new Response(null, { status: 413 });
-  let body: { message?: unknown; stack?: unknown; path?: unknown };
+  let body: { message?: unknown; stack?: unknown; path?: unknown; platform?: unknown; app_version?: unknown; kind?: unknown };
   try {
     body = JSON.parse(raw);
   } catch {
@@ -26,7 +27,15 @@ export async function POST(request: Request) {
     path,
     ...requestMeta(request.headers),
     message,
-    detail: { source: "browser", stack },
+    // Who hit it, so the crash list can say how many people are affected.
+    user_id: (await getViewer().catch(() => null))?.id ?? null,
+    detail: {
+      source: "browser",
+      stack,
+      platform: ["ios-app", "android-app", "pwa", "browser"].includes(String(body.platform)) ? body.platform : "browser",
+      app_version: typeof body.app_version === "string" ? body.app_version.slice(0, 20) : null,
+      kind: ["boundary", "uncaught", "promise"].includes(String(body.kind)) ? body.kind : "boundary",
+    },
   });
   return new Response(null, { status: 204 });
 }

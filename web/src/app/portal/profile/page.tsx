@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import QRCode from "qrcode";
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { PushCard } from "@/components/push-card";
+import { ChevronRight, LogOut } from "lucide-react";
 import { Card, SectionTitle, Skeleton } from "@/components/ui";
 import { mediaUrl } from "@/lib/exercises";
 import { requireMember } from "@/lib/session";
@@ -64,6 +66,9 @@ async function Profile() {
 
       <Card className="p-5">
         <h2 className="font-semibold">Notifications</h2>
+        <div className="mt-3">
+          <PushCard />
+        </div>
         <NotificationPrefsForm initial={prefs} />
       </Card>
 
@@ -87,6 +92,13 @@ async function Profile() {
         <SectionTitle>Login and security</SectionTitle>
         <div className="space-y-5 border-t border-line p-5">
           <PasswordForm />
+          <Link href="/account" className="group flex items-center justify-between gap-3 border-t border-line pt-5 text-sm">
+            <span>
+              <span className="block font-medium">Your account and data</span>
+              <span className="text-muted">Privacy, download your data, delete your account</span>
+            </span>
+            <ChevronRight className="size-5 text-muted transition-transform group-hover:translate-x-1" />
+          </Link>
           <form action={signOut} className="border-t border-line pt-5">
             <button className="inline-flex items-center gap-2 text-sm font-medium text-danger hover:underline">
               <LogOut className="size-4" /> Log out

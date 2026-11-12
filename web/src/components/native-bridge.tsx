@@ -20,6 +20,10 @@ export function NativeBridge() {
 
     (async () => {
       const { App } = await import("@capacitor/app");
+      // The app's version, for crash reports.
+      App.getInfo()
+        .then((i) => ((window as unknown as { __gymixAppVersion?: string }).__gymixAppVersion = `${i.version} (${i.build})`))
+        .catch(() => {});
       const opened = await App.addListener("appUrlOpen", ({ url }) => {
         try {
           const u = new URL(url);

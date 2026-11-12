@@ -54,6 +54,17 @@ export async function setPortalPages(_prev: ActionState, formData: FormData): Pr
   return { success: "Saved. Members see the new set of pages right away." };
 }
 
+// Whether members can share programs with friends (QR code, AirDrop, link).
+export async function setProgramSharing(mode: "off" | "own" | "all"): Promise<ActionState> {
+  const { membership } = await requireStaff(["owner"]);
+  if (!["off", "own", "all"].includes(mode)) return { error: "Pick an option." };
+  const supabase = await createClient();
+  const { error } = await supabase.from("gyms").update({ program_sharing: mode }).eq("id", membership.gymId);
+  if (error) return { error: errorMessage(error) };
+  refresh();
+  return { success: "Saved." };
+}
+
 // Where the gym is (Settings → Gym → Location): for the Gymix map, door
 // stickers' "phone must be at the gym" and the live count.
 export async function saveGymLocation(_prev: ActionState, formData: FormData): Promise<ActionState> {

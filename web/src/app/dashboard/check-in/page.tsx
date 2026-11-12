@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Nfc } from "lucide-react";
+import { ChevronRight, Nfc, Tablet } from "lucide-react";
 import { AutoRefresh } from "@/components/auto-refresh";
 import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
 import { formatTime } from "@/lib/format";
@@ -22,6 +22,19 @@ export default function CheckInPage() {
           title="Check-in"
           description="Members tap their phone on the Gymix sticker at the entrance. Check anyone else in here."
         />
+        <Link
+          href="/desk"
+          className="group flex items-center gap-4 overflow-hidden rounded-2xl bg-ink p-4 text-white transition hover:shadow-lg"
+        >
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand text-ink transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
+            <Tablet className="size-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold">Front-desk tablet mode</span>
+            <span className="block text-sm text-white/60">Full screen on the reception tablet: scan member codes with the camera or a barcode reader.</span>
+          </span>
+          <ChevronRight className="size-5 shrink-0 text-brand transition-transform group-hover:translate-x-1" />
+        </Link>
         <Suspense fallback={<Skeleton className="h-14" />}>
           <Station />
         </Suspense>

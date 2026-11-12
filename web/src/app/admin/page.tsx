@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { AlertTriangle, ShieldCheck } from "lucide-react";
+import { AlertTriangle, AppWindow, Globe, ShieldCheck, Smartphone, TabletSmartphone } from "lucide-react";
 import { Badge, Card, EmptyState, Logo, PageHeader, Skeleton } from "@/components/ui";
 import { Dialog } from "@/components/dialog";
 import { PageTabs, activeTab } from "@/components/page-tabs";
@@ -12,6 +12,7 @@ import { platformSettings } from "@/lib/subscription";
 import { requirePlatformAdmin } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "../(auth)/actions";
+import { PendingMigrations } from "@/components/pending-migrations";
 import { extendTrial, openGymAsSupport, recordSubscriptionPayment, setGymSuspended, syncGymixTemplates } from "./actions";
 import { ActionButton } from "../dashboard/members/action-button";
 import { TEMPLATE_LIST } from "@/lib/whatsapp-templates";
@@ -58,6 +59,9 @@ const RANGES = [7, 30, 90] as const;
 export default function AdminPage({ searchParams }: PageProps<"/admin">) {
   return (
     <div className="flex flex-1 flex-col">
+      <Suspense fallback={null}>
+        <PendingMigrations />
+      </Suspense>
       <header className="border-b border-line bg-ink text-white">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
           <span className="flex items-center gap-3">
@@ -579,8 +583,22 @@ async function Logins({ days }: { days: number }) {
 
 // ---------------------------------------------------------------- errors
 
+const CRASH_PLATFORMS = [
+  { id: "ios-app", label: "iPhone app", icon: Smartphone },
+  { id: "android-app", label: "Android app", icon: TabletSmartphone },
+  { id: "pwa", label: "Installed web app", icon: AppWindow },
+  { id: "browser", label: "Browser", icon: Globe },
+] as const;
+
+async function crashPlatforms(days: number) {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("admin_crash_platforms", { p_days: days });
+  return data ?? [];
+}
+
 async function Errors({ days }: { days: number }) {
-  const [m, recent] = await Promise.all([monitoring(days), recentEvents(["error"], 50)]);
+  const [m, recent, platforms] = await Promise.all([monitoring(days), recentEvents(["error"], 50), crashPlatforms(days)]);
+  const crashTotal = platforms.reduce((n, p) => n + Number(p.crashes), 0);
   const { totals: t, previous: p } = m;
   const server = m.error_groups.filter((e) => e.source === "server").reduce((n, e) => n + e.occurrences, 0);
   const browser = m.error_groups.filter((e) => e.source === "browser").reduce((n, e) => n + e.occurrences, 0);
@@ -594,6 +612,33 @@ async function Errors({ days }: { days: number }) {
         <StatTile label="Server errors" value={compact(server)} hint="Pages, actions, routes" />
         <StatTile label="Browser errors" value={compact(browser)} hint="Crashes on people's phones" />
       </div>
+
+      <Card className="p-5">
+        <div className="mb-4 flex items-baseline justify-between gap-3">
+          <h2 className="font-semibold">Where crashes happen</h2>
+          <span className="text-xs text-muted">On people&apos;s phones and computers · last {days} days</span>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {CRASH_PLATFORMS.map((p) => {
+            const row = platforms.find((r) => r.platform === p.id);
+            const n = Number(row?.crashes ?? 0);
+            const share = crashTotal ? n / crashTotal : 0;
+            return (
+              <div key={p.id} className="rounded-2xl border border-line p-4">
+                <div className="flex items-center gap-2 text-sm text-muted">
+                  <p.icon className="size-4" /> {p.label}
+                </div>
+                <p className="mt-2 text-2xl font-bold tabular-nums">{n}</p>
+                <p className="text-xs text-muted">{row ? `${row.people} ${Number(row.people) === 1 ? "person" : "people"} hit` : "No crashes"}</p>
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-canvas">
+                  <div className={`h-full rounded-full ${n ? "bg-danger" : ""}`} style={{ width: `${share * 100}%` }} />
+                </div>
+                {row?.versions?.length ? <p className="mt-2 truncate text-xs text-muted">Versions: {row.versions.join(", ")}</p> : null}
+              </div>
+            );
+          })}
+        </div>
+      </Card>
 
       <Card className="p-5">
         <h2 className="mb-4 font-semibold">Errors per day</h2>
@@ -644,7 +689,7 @@ async function Errors({ days }: { days: number }) {
         ) : (
           <ul className="divide-y divide-line border-t border-line">
             {recent.map((e) => {
-              const d = (e.detail ?? {}) as { source?: string; digest?: string; route?: string; route_type?: string; stack?: string };
+              const d = (e.detail ?? {}) as { source?: string; digest?: string; route?: string; route_type?: string; stack?: string; platform?: string; app_version?: string | null };
               return (
                 <li key={e.id}>
                   <details className="group px-5 py-3 [&_summary::-webkit-details-marker]:hidden">
@@ -653,6 +698,8 @@ async function Errors({ days }: { days: number }) {
                         <p className="break-words font-medium">{e.message}</p>
                         <p className="text-xs text-muted">
                           {d.source ?? "server"}
+                          {d.platform ? ` · ${CRASH_PLATFORMS.find((p) => p.id === d.platform)?.label ?? d.platform}` : ""}
+                          {d.app_version ? ` ${d.app_version}` : ""}
                           {d.route_type ? ` · ${d.route_type}` : ""} · <code>{e.method} {e.path}</code>
                           {e.user_email ? ` · ${e.user_email}` : ""}
                         </p>

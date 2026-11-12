@@ -1,11 +1,13 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { Check, Copy } from "lucide-react";
 import { Alert, Button, Field, buttonClass, inputClass } from "@/components/ui";
 import { formatLBP } from "@/lib/format";
 import { PORTAL_PAGES } from "@/lib/portal-pages";
-import { saveGymSettings, setPortalPages } from "./actions";
+import { saveGymSettings, setPortalPages, setProgramSharing } from "./actions";
+import { ChoiceChips } from "@/components/form-controls";
+import { showToast } from "@/components/toaster";
 
 export function SettingsForm({ name, lbpRate, graceDays, reminderDays }: { name: string; lbpRate: number; graceDays: number; reminderDays: number }) {
   const [state, action, pending] = useActionState(saveGymSettings, {});
@@ -87,5 +89,36 @@ export function PortalPagesForm({ hidden }: { hidden: string[] }) {
         </Button>
       </div>
     </form>
+  );
+}
+
+// Settings → Member app: whether members may share programs.
+export function ProgramSharingForm({ initial }: { initial: "off" | "own" | "all" }) {
+  const [mode, setMode] = useState(initial);
+  const [pending, startTransition] = useTransition();
+  return (
+    <ChoiceChips
+      name="program_sharing"
+      label="Sharing programs"
+      size="lg"
+      columns={3}
+      value={mode}
+      onChange={(v) => {
+        const next = v as "off" | "own" | "all";
+        setMode(next);
+        startTransition(async () => {
+          const r = await setProgramSharing(next);
+          if (r.error) {
+            setMode(mode);
+            showToast(r.error, "error");
+          } else showToast("Sharing setting saved");
+        });
+      }}
+      options={[
+        { value: "own", label: "Their own programs", hint: "Programs members built themselves" },
+        { value: "all", label: "Trainer programs too", hint: "Including programs from your trainers" },
+        { value: "off", label: "Off", hint: pending ? "Saving…" : "Members can't share programs" },
+      ]}
+    />
   );
 }

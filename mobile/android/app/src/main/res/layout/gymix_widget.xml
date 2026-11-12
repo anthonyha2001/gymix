@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Gymix home-screen widget: dark card, lime numbers. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:background="@drawable/widget_logo_bg"
+            android:padding="3dp"
+            android:src="@mipmap/ic_launcher_foreground"
+            android:contentDescription="@null" />
+        <TextView
+            android:id="@+id/widget_gym"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Gymix"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="● LIVE"
+            android:textColor="#C8F135"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_inside"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="–"
+        android:textColor="#C8F135"
+        android:textSize="38sp"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/widget_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-4dp"
+        android:text="Open Gymix to connect"
+        android:textColor="#99FFFFFF"
+        android:textSize="11sp" />
+
+    <LinearLayout
+        android:id="@+id/widget_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/widget_strip"
+        android:orientation="horizontal"
+        android:padding="8dp">
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DAYS LEFT" android:textColor="#73FFFFFF" android:textSize="8sp" android:textStyle="bold" />
+            <TextView android:id="@+id/widget_days" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="–" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="VISITS" android:textColor="#73FFFFFF" android:textSize="8sp" android:textStyle="bold" />
+            <TextView android:id="@+id/widget_visits" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.4" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TODAY" android:textColor="#73FFFFFF" android:textSize="8sp" android:textStyle="bold" />
+            <TextView android:id="@+id/widget_today" android:layout_width="wrap_content" android:layout_height="wrap_content" android:ellipsize="end" android:maxLines="1" android:text="Rest day" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
