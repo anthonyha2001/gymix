@@ -1,0 +1,3 @@
+node_modules/
+# Built by `npm run sync` from www-src/ (the website address is filled in).
+www/

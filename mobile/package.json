@@ -1,0 +1,32 @@
+{
+  "name": "gymix-mobile",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Gymix for iPhone and Android: the Gymix web app in a native shell (Capacitor).",
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/prepare-www.mjs && cap sync",
+    "assets": "node scripts/make-assets.mjs && capacitor-assets generate --iconBackgroundColor \"#c8f135\" --iconBackgroundColorDark \"#c8f135\" --splashBackgroundColor \"#0d1117\" --splashBackgroundColorDark \"#0d1117\" --android --ios",
+    "android": "cap open android",
+    "ios": "cap open ios",
+    "prepare": "node scripts/prepare-www.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.6.0",
+    "@capacitor/keyboard": "^8.0.6",
+    "@capacitor/network": "^8.0.1",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/push-notifications": "^8.1.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.0",
+    "typescript": "^7.0.2"
+  }
+}

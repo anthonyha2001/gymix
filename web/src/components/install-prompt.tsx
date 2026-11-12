@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Download, Share, SquarePlus, X } from "lucide-react";
 import { Button } from "@/components/ui";
+import { isNativeApp } from "@/lib/native";
 
 type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
 
@@ -29,7 +30,8 @@ export function InstallPrompt() {
   useEffect(() => {
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
     const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as { standalone?: boolean }).standalone;
-    if (standalone || recentlyDismissed()) return;
+    // Already installed, or inside the Gymix iPhone / Android app.
+    if (standalone || isNativeApp() || recentlyDismissed()) return;
 
     const onPrompt = (e: Event) => {
       e.preventDefault();

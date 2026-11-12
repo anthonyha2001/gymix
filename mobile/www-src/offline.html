@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Gymix</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; background: #0d1117; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px 24px; text-align: center; position: relative; overflow: hidden; }
+  .mark { width: 88px; height: 88px; border-radius: 24px; background: #c8f135; display: grid; place-items: center; position: relative; z-index: 1; box-shadow: 0 0 60px rgb(200 241 53 / 0.35); }
+  .mark svg { width: 60px; height: 60px; }
+  .waves { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+  .waves i { position: absolute; left: -44px; top: -100px; width: 88px; height: 88px; border-radius: 9999px; border: 2px solid rgb(200 241 53 / 0.5); opacity: 0; animation: wave 2.6s cubic-bezier(0.2, 0.7, 0.3, 1) infinite; }
+  .waves i:nth-child(2) { animation-delay: 0.85s; }
+  .waves i:nth-child(3) { animation-delay: 1.7s; }
+  @keyframes wave { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(5); opacity: 0; } }
+  h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; margin-top: 10px; }
+  p { color: rgb(255 255 255 / 0.65); font-size: 15px; line-height: 1.5; max-width: 300px; }
+  button { margin-top: 12px; height: 48px; padding: 0 28px; border: 0; border-radius: 9999px; background: #c8f135; color: #0d1117; font-size: 16px; font-weight: 600; }
+  button:active { transform: scale(0.96); }
+  small { color: rgb(255 255 255 / 0.4); font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { .waves { display: none; } }
+</style>
+</head>
+<body>
+<main>
+  <span class="waves" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span class="mark" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+  </span>
+  <h1>You're offline</h1>
+  <p>Gymix needs the internet to open the first time. Connect to Wi-Fi or mobile data and try again.</p>
+  <button id="retry" type="button">Try again</button>
+  <small id="auto">Reconnecting automatically when you're back online</small>
+</main>
+<script>
+  var APP_URL = "__GYMIX_APP_URL__";
+  function go() { location.replace(APP_URL + "/start"); }
+  document.getElementById("retry").addEventListener("click", go);
+  window.addEventListener("online", go);
+  // Some WebViews don't fire "online": check every few seconds.
+  setInterval(function () {
+    fetch(APP_URL + "/manifest.webmanifest", { cache: "no-store", mode: "no-cors" }).then(go, function () {});
+  }, 4000);
+</script>
+</body>
+</html>
