@@ -326,3 +326,30 @@ export function TapWaves() {
   }, []);
   return <canvas ref={ref} aria-hidden className="pointer-events-none absolute inset-0 h-full w-full" />;
 }
+
+// ---------------------------------------------------------------- scroll aura
+// Large, heavily blurred shapes that drift gently with the scroll. "dark" sits
+// inside the hero; "light" is a fixed layer behind the light sections.
+export function ScrollAura({ tone }: { tone: "dark" | "light" }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      el.style.setProperty("--sy", String(window.scrollY));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
+  }, []);
+  return (
+    <div ref={ref} aria-hidden className={`lx-aura-${tone} pointer-events-none ${tone === "light" ? "fixed" : "absolute"} inset-0 overflow-hidden`}>
+      <span className="lx-blob lx-blob-a" />
+      <span className="lx-blob lx-blob-b" />
+      <span className="lx-blob lx-blob-c" />
+    </div>
+  );
+}

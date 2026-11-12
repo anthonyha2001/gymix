@@ -1041,3 +1041,14 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 .support-sheet { animation: gx-support-in 380ms cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes gx-support-in { from { transform: translateX(100%); } to { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .room-msg, .support-sheet { animation: none; } }
+/* Landing: the scroll aura (replaces the particles and the ring pattern). */
+.lx-paper { background: #fff; position: relative; isolation: isolate; }
+.lx-aura-light { z-index: -1; }
+.lx-blob { position: absolute; border-radius: 50%; filter: blur(90px); will-change: transform; }
+.lx-aura-dark .lx-blob-a { width: 760px; height: 760px; left: -12%; top: -30%; background: radial-gradient(circle, rgb(110 140 20 / 0.45), transparent 65%); transform: translate3d(0, calc(var(--sy, 0) * 0.18px), 0); }
+.lx-aura-dark .lx-blob-b { width: 900px; height: 900px; right: -20%; top: 10%; background: radial-gradient(circle, rgb(38 46 58 / 0.9), transparent 65%); transform: translate3d(calc(var(--sy, 0) * -0.08px), calc(var(--sy, 0) * -0.12px), 0); }
+.lx-aura-dark .lx-blob-c { width: 420px; height: 420px; left: 45%; bottom: -25%; background: radial-gradient(circle, rgb(200 241 53 / 0.18), transparent 65%); transform: translate3d(calc(var(--sy, 0) * 0.1px), calc(var(--sy, 0) * -0.25px), 0); }
+.lx-aura-light .lx-blob-a { width: 820px; height: 820px; right: -18%; top: 5%; background: radial-gradient(circle, rgb(200 241 53 / 0.22), transparent 65%); transform: translate3d(0, calc(var(--sy, 0) * -0.06px), 0); }
+.lx-aura-light .lx-blob-b { width: 760px; height: 760px; left: -20%; top: 45%; background: radial-gradient(circle, rgb(214 210 196 / 0.5), transparent 65%); transform: translate3d(calc(var(--sy, 0) * 0.03px), calc(var(--sy, 0) * -0.1px), 0); }
+.lx-aura-light .lx-blob-c { width: 520px; height: 520px; left: 35%; top: 80%; background: radial-gradient(circle, rgb(169 209 15 / 0.14), transparent 65%); transform: translate3d(calc(var(--sy, 0) * -0.04px), calc(var(--sy, 0) * -0.14px), 0); }
+@media (max-width: 767px) { .lx-blob { filter: blur(60px); } .lx-aura-dark .lx-blob-b { width: 600px; height: 600px; } }

@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { FaqList, MarketingFooter, MarketingNav, PricingCard } from "@/components/marketing";
-import { Reveal, TapWaves } from "@/components/landing-interactive";
+import { Reveal, ScrollAura } from "@/components/landing-interactive";
 import { Bento, ChallengeShowcase, DeskShowcase, DoorShowcase, NotifyShowcase } from "@/components/landing-showcase";
 import { formatPrice } from "@/lib/pricing";
 import { getPricing } from "@/lib/pricing-server";
@@ -93,11 +93,12 @@ export default async function Home() {
 
   return (
     <div className="lx-paper flex flex-1 flex-col text-ink">
+      <ScrollAura tone="light" />
       <MarketingNav />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-ink text-white">
-        <TapWaves />
+        <ScrollAura tone="dark" />
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 pt-16 pb-20 sm:pt-24 lg:grid-cols-12 lg:gap-10 lg:pb-28">
           <div className="lg:col-span-5">
             <Reveal>
