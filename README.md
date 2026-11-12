@@ -176,6 +176,21 @@ while nothing is paid on it), deliveries (`pos_receive_stock`, optionally updati
 Barcode scanners work anywhere on the Register (they type the code and Enter); phones can scan with the camera where
 the browser supports it. Tests: `supabase/tests/pos_test.sql`.
 
+## Offline mode
+
+Members keep using the app with weak or no signal (`web/public/sw.js`, `web/src/lib/outbox.ts`).
+
+- **Pages**: `/portal` and `/dashboard` pages are live first; after 4 s without an answer (or offline) the copy
+  saved on the phone shows, and the live page replaces it in the background. The member's main pages are saved in
+  the background every 6 h (`warm`, with their scripts; marked `X-Gymix-Warm` so they aren't counted as visits).
+  No saved copy: `/offline`. App files (`/_next/static`, icons) are kept on the phone.
+- **Workouts offline**: logging or removing a set and finishing a workout go into an IndexedDB outbox (the same set
+  logged twice keeps the latest), shown with a "waiting to sync" mark, and `<OutboxSync>` sends them to
+  `/api/sync` when the phone is back online (oldest first, as the member; records found then are announced).
+  Changes that can never save (workout deleted) are dropped and reported. Starting a workout needs a connection.
+- **Privacy**: the login page tells the service worker to forget saved pages (`forget-pages`); queued changes stay
+  and only sync for their own account (row-level security).
+
 ## Monthly challenges
 
 Dashboard → **Challenges** (owners and managers, feature `challenges`, on for everyone) and the member app's

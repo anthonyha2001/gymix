@@ -9,6 +9,7 @@ import { kickAccess } from "@/lib/access/server";
 import { GOALS, EXPERIENCE, type ExperienceLevel, type ProgramGoal } from "@/lib/exercises";
 import { errorMessage, text, type ActionState } from "@/lib/action-result";
 import { hoursAgoIso } from "@/lib/format";
+import { deleteSet, finishSession, saveSet } from "@/lib/workout-sets";
 
 async function myMember() {
   const { viewer, membership } = await requireMember();
@@ -209,64 +210,21 @@ export async function logSet(
   weightKg: number,
   reps: number,
 ): Promise<SetResult> {
-  const { supabase, memberId, membership } = await myMember();
+  const { supabase, memberId } = await myMember();
   if (!memberId) return { ok: false, pr: false, error: "Not linked to a membership." };
-  if (!Number.isFinite(weightKg) || weightKg < 0 || weightKg > 1000) return { ok: false, pr: false, error: "Check the weight." };
-  if (!Number.isInteger(reps) || reps < 0 || reps > 500) return { ok: false, pr: false, error: "Check the reps." };
-
-  // Best weight before this workout, to spot a new personal record.
-  const { data: prev } = await supabase
-    .from("set_logs")
-    .select("weight_kg")
-    .eq("member_id", memberId)
-    .eq("exercise_id", exerciseId)
-    .neq("session_id", sessionId)
-    .gt("reps", 0)
-    .order("weight_kg", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  // Update the set if it's already logged, else insert it. (Not an upsert: that
-  // would also rewrite the key columns, which members may not update.)
-  const { data: updated, error: updateError } = await supabase
-    .from("set_logs")
-    .update({ weight_kg: weightKg, reps })
-    .eq("session_id", sessionId)
-    .eq("exercise_id", exerciseId)
-    .eq("set_number", setNumber)
-    .select("id");
-  const { error } =
-    updateError || updated?.length
-      ? { error: updateError }
-      : await supabase.from("set_logs").insert({
-          session_id: sessionId,
-          member_id: memberId,
-          exercise_id: exerciseId,
-          set_number: setNumber,
-          weight_kg: weightKg,
-          reps,
-        });
-  if (error) return { ok: false, pr: false, error: errorMessage(error, "Couldn't save the set.") };
-  const pr = prev !== null && reps > 0 && weightKg > Number(prev.weight_kg);
-  if (pr) {
-    const { data: ex } = await supabase.from("exercises").select("name").eq("id", exerciseId).maybeSingle();
-    await supabase.rpc("note_personal_record", { p_gym_id: membership.gymId, p_exercise: ex?.name ?? "Exercise", p_weight: weightKg });
-  }
-  return { ok: true, pr };
+  const r = await saveSet(supabase, { sessionId, exerciseId, setNumber, weightKg, reps });
+  return { ok: r.ok, pr: r.pr, error: r.error };
 }
 
 export async function removeSet(sessionId: string, exerciseId: string, setNumber: number) {
   const { supabase } = await myMember();
-  await supabase.from("set_logs").delete().eq("session_id", sessionId).eq("exercise_id", exerciseId).eq("set_number", setNumber);
+  await deleteSet(supabase, sessionId, exerciseId, setNumber);
 }
 
 export async function finishWorkout(sessionId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
   const { supabase } = await myMember();
-  const { error } = await supabase
-    .from("workout_sessions")
-    .update({ finished_at: new Date().toISOString(), notes: text(formData, "notes") || null })
-    .eq("id", sessionId);
-  if (error) return { error: errorMessage(error, "Couldn't finish the workout.") };
+  const r = await finishSession(supabase, sessionId, text(formData, "notes") || null);
+  if (!r.ok) return { error: r.error };
   redirect(`/portal/progress?tab=workouts&done=${sessionId}`);
 }
 

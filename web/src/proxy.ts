@@ -24,6 +24,8 @@ function requestType(request: NextRequest): RequestType | null {
   const h = request.headers;
   const { pathname } = request.nextUrl;
   if (UNTRACKED.some((p) => pathname === p || pathname.startsWith(p))) return null;
+  // The app saving pages in the background for offline use (sw.js), not a visit.
+  if (h.get("x-gymix-warm") === "1") return null;
   if (h.has("next-router-prefetch") || h.get("purpose") === "prefetch" || h.get("sec-purpose")?.includes("prefetch")) {
     return null;
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState, useTransition } from "react";
-import { Check, Plus, Timer, Trophy, X } from "lucide-react";
+import { Check, CloudUpload, Plus, Timer, Trophy, X } from "lucide-react";
 import { Confetti } from "@/components/confetti";
 import { Dialog } from "@/components/dialog";
 import { ExercisePicker } from "@/components/exercise-picker";
@@ -12,6 +12,8 @@ import { Alert, Button, Card, buttonClass, inputClass } from "@/components/ui";
 import { formatKg } from "@/lib/exercises";
 import { setsLabel } from "@/lib/program-shared";
 import { addWorkoutExercise, discardWorkout, finishWorkout, logSet, removeSet, removeWorkoutExercise } from "../../actions";
+import { isOfflineError, OUTBOX_EVENT, pendingFor, queue } from "@/lib/outbox";
+import type { ActionState } from "@/lib/action-result";
 
 export type LoggerExercise = {
   key: string;
@@ -36,7 +38,7 @@ export function WorkoutLogger({
   sessionId,
   exercises,
   initialLogged,
-  finished,
+  finished: finishedOnServer,
 }: {
   sessionId: string;
   exercises: LoggerExercise[];
@@ -46,7 +48,63 @@ export function WorkoutLogger({
   const [logged, setLogged] = useState<Logged>(initialLogged);
   const [restEndsAt, setRestEndsAt] = useState<number | null>(null);
   const [pr, setPr] = useState<string | null>(null);
-  const [finishState, finish, finishing] = useActionState(finishWorkout.bind(null, sessionId), {});
+  // Sets saved on the phone, waiting for a connection ("exerciseId:set").
+  const [waiting, setWaiting] = useState<Set<string>>(new Set());
+  const [finishedOffline, setFinishedOffline] = useState(false);
+
+  // What's waiting in the offline outbox for this workout: shown as logged
+  // (with a cloud mark) even when this page came from the phone's copy.
+  useEffect(() => {
+    let alive = true;
+    let first = true;
+    const load = async () => {
+      const ops = await pendingFor(sessionId);
+      if (!alive) return;
+      setWaiting(new Set(ops.flatMap((op) => (op.kind === "set" ? [`${op.exerciseId}:${op.setNumber}`] : []))));
+      if (ops.some((op) => op.kind === "finish")) setFinishedOffline(true);
+      if (first) {
+        first = false;
+        setLogged((cur) => {
+          const next: Logged = { ...cur };
+          for (const op of ops) {
+            if (op.kind === "set") next[op.exerciseId] = { ...next[op.exerciseId], [op.setNumber]: { weight: op.weightKg, reps: op.reps } };
+            if (op.kind === "remove_set" && next[op.exerciseId]) {
+              const sets = { ...next[op.exerciseId] };
+              delete sets[op.setNumber];
+              next[op.exerciseId] = sets;
+            }
+          }
+          return next;
+        });
+      }
+    };
+    load();
+    window.addEventListener(OUTBOX_EVENT, load);
+    return () => {
+      alive = false;
+      window.removeEventListener(OUTBOX_EVENT, load);
+    };
+  }, [sessionId]);
+
+  // Finish: online as before; offline it's saved on the phone and finishes
+  // the workout as soon as the connection is back.
+  const [finishState, finish, finishing] = useActionState(async (prev: ActionState, formData: FormData): Promise<ActionState> => {
+    const saveOffline = async () => {
+      const notes = String(formData.get("notes") ?? "").trim();
+      await queue({ kind: "finish", sessionId, notes: notes || null, finishedAt: new Date().toISOString() });
+      setFinishedOffline(true);
+      setRestEndsAt(null);
+      return { success: "Workout saved on your phone. It's sent as soon as you're back online." };
+    };
+    if (typeof navigator !== "undefined" && navigator.onLine === false) return saveOffline();
+    try {
+      return await finishWorkout(sessionId, prev, formData);
+    } catch (e) {
+      if (isOfflineError(e)) return saveOffline();
+      throw e;
+    }
+  }, {});
+  const finished = finishedOnServer || finishedOffline;
   const [confirmDialog, confirm] = useConfirm();
 
   const totalSets = Object.values(logged).reduce((n, sets) => n + Object.keys(sets).length, 0);
@@ -57,6 +115,16 @@ export function WorkoutLogger({
         <div key={pr} role="status" className="pr-banner relative flex items-center gap-3 rounded-xl bg-brand p-4 font-semibold">
           <Confetti />
           <Trophy className="wiggle size-6" /> New personal record: {pr}!
+        </div>
+      )}
+
+      {finishedOffline && (
+        <div role="status" className="page-enter flex items-center gap-3 rounded-xl bg-ink p-4 text-white">
+          <CloudUpload className="size-6 shrink-0 text-brand" />
+          <span className="text-sm">
+            <b className="block">Workout finished on your phone</b>
+            It&apos;s sent to the gym as soon as you&apos;re back online.
+          </span>
         </div>
       )}
 
@@ -73,6 +141,7 @@ export function WorkoutLogger({
           sessionId={sessionId}
           exercise={ex}
           logged={logged[ex.exerciseId] ?? {}}
+          waiting={waiting}
           disabled={finished}
           onLogged={(setNumber, value, isPr) => {
             setLogged((cur) => ({ ...cur, [ex.exerciseId]: { ...cur[ex.exerciseId], [setNumber]: value } }));
@@ -146,6 +215,7 @@ function ExerciseBlock({
   sessionId,
   exercise,
   logged,
+  waiting,
   disabled,
   onLogged,
   onRemoved,
@@ -153,6 +223,7 @@ function ExerciseBlock({
   sessionId: string;
   exercise: LoggerExercise;
   logged: Record<number, { weight: number; reps: number }>;
+  waiting: Set<string>;
   disabled: boolean;
   onLogged: (setNumber: number, value: { weight: number; reps: number }, pr: boolean) => void;
   onRemoved: (setNumber: number) => void;
@@ -213,6 +284,7 @@ function ExerciseBlock({
             exercise={exercise}
             setNumber={n}
             logged={logged[n]}
+            queued={waiting.has(`${exercise.exerciseId}:${n}`)}
             disabled={disabled}
             onLogged={onLogged}
             onRemoved={onRemoved}
@@ -237,6 +309,7 @@ function SetRow({
   exercise,
   setNumber,
   logged,
+  queued,
   disabled,
   onLogged,
   onRemoved,
@@ -245,6 +318,7 @@ function SetRow({
   exercise: LoggerExercise;
   setNumber: number;
   logged?: { weight: number; reps: number };
+  queued: boolean;
   disabled: boolean;
   onLogged: (setNumber: number, value: { weight: number; reps: number }, pr: boolean) => void;
   onRemoved: (setNumber: number) => void;
@@ -262,14 +336,40 @@ function SetRow({
   function toggle() {
     setError(null);
     startTransition(async () => {
+      const offline = typeof navigator !== "undefined" && navigator.onLine === false;
       if (done) {
-        await removeSet(sessionId, exercise.exerciseId, setNumber);
+        const removeOffline = () => queue({ kind: "remove_set", sessionId, exerciseId: exercise.exerciseId, setNumber });
+        if (offline) await removeOffline();
+        else {
+          try {
+            await removeSet(sessionId, exercise.exerciseId, setNumber);
+          } catch (e) {
+            if (!isOfflineError(e)) throw e;
+            await removeOffline();
+          }
+        }
         onRemoved(setNumber);
         return;
       }
       const w = Number(weight.replace(",", ".") || "0");
       const r = Number(reps);
-      const res = await logSet(sessionId, exercise.exerciseId, setNumber, w, r);
+      if (!Number.isFinite(w) || w < 0 || w > 1000) return setError("Check the weight.");
+      if (!Number.isInteger(r) || r < 0 || r > 500) return setError("Check the reps.");
+      // No connection: saved on the phone, sent later (a record shows then).
+      const saveOffline = async () => {
+        await queue({ kind: "set", sessionId, exerciseId: exercise.exerciseId, setNumber, weightKg: w, reps: r });
+        return { ok: true, pr: false };
+      };
+      let res: { ok: boolean; pr: boolean; error?: string };
+      if (offline) res = await saveOffline();
+      else {
+        try {
+          res = await logSet(sessionId, exercise.exerciseId, setNumber, w, r);
+        } catch (e) {
+          if (!isOfflineError(e)) throw e;
+          res = await saveOffline();
+        }
+      }
       if (!res.ok) setError(res.error ?? "Couldn't save.");
       else {
         setJustDone(true);
@@ -311,6 +411,11 @@ function SetRow({
           <Check className="size-5" />
         </button>
       </div>
+      {queued && done && (
+        <p className="mt-1 flex items-center justify-end gap-1 text-[11px] text-muted">
+          <CloudUpload className="size-3" /> Saved on your phone, waiting to sync
+        </p>
+      )}
       {error && <p className="mt-1 text-xs text-danger">{error}</p>}
     </div>
   );

@@ -9,6 +9,7 @@ import { signOut } from "../(auth)/actions";
 import { accountStatus, hiddenPortalPages } from "@/lib/portal";
 import { PortalNav } from "./portal-nav";
 import { InstallPrompt } from "@/components/install-prompt";
+import { OutboxSync } from "@/components/outbox-sync";
 import { ShakeQuickStart } from "@/components/shake-quick-start";
 import { DropCatch } from "@/components/drop-catch";
 import { SupportBanner } from "@/components/support-banner";
@@ -58,6 +59,7 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
         <QuickStart />
       </Suspense>
       <InstallPrompt />
+      <OutboxSync />
       <Suspense>
         <Drop />
       </Suspense>

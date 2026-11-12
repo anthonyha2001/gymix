@@ -79,8 +79,10 @@ export function ChallengeDeck({ cards, onDecide }: { cards: MemberChallenge[]; o
             className="absolute inset-0 transition-transform duration-300 ease-out"
             style={{ transform: `translateY(${(i + 1) * 12 - (i === 0 ? progress * 12 : 0)}px) scale(${1 - (i + 1) * 0.05 + (i === 0 ? progress * 0.05 : 0)})`, zIndex: 2 - i }}
           >
-            <div className="h-full opacity-70">
+            {/* Solid and dimmed (not see-through), so cards never show through each other. */}
+            <div className="relative h-full overflow-hidden rounded-[1.75rem]">
               <ChallengeCardFace challenge={c} />
+              <span className="absolute inset-0 rounded-[1.75rem] bg-ink/55" />
             </div>
           </div>
         ))}

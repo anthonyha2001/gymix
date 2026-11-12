@@ -257,26 +257,42 @@ dialog[open]:not(.sheet)::backdrop { animation: sheet-fade 200ms ease-out; }
   .drop-card { animation: none; opacity: 1; }
 }
 
-/* NFC check-in: rings spreading out from the middle of the screen. */
+/* NFC check-in: lime waves rolling down from the top edge, where the phone's
+   NFC reader is, as if the tap's signal pours into the screen. */
 @keyframes gx-tap-wave {
-  from { transform: translate(-50%, -50%) scale(0.3); opacity: 0.55; }
-  to { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+  from { width: 3rem; height: 3rem; opacity: 0.95; }
+  to { width: 260vh; height: 260vh; opacity: 0; }
+}
+.tap-waves::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 9rem;
+  background: radial-gradient(ellipse 70% 100% at 50% 0%, rgb(200 241 53 / 0.45), transparent 70%);
+  animation: gx-reader-glow 1.6s ease-in-out infinite;
+  pointer-events: none;
 }
 .tap-waves > i {
   position: absolute;
   left: 50%;
-  top: 50%;
-  width: 10rem;
-  height: 10rem;
+  top: 0;
+  width: 3rem;
+  height: 3rem;
+  transform: translate(-50%, -50%);
   border-radius: 9999px;
-  border: 2px solid rgb(255 255 255 / 0.6);
-  background: rgb(255 255 255 / 0.06);
+  border: 3px solid rgb(200 241 53 / 0.95);
+  background: radial-gradient(circle, transparent 62%, rgb(200 241 53 / 0.12));
+  box-shadow: 0 0 22px rgb(200 241 53 / 0.45), inset 0 0 22px rgb(200 241 53 / 0.2);
   opacity: 0;
   pointer-events: none;
-  animation: gx-tap-wave 1.8s cubic-bezier(0.22, 1, 0.36, 1) 2;
+  animation: gx-tap-wave 2.2s cubic-bezier(0.25, 0.6, 0.35, 1) 2;
 }
-.tap-waves > i:nth-child(2) { animation-delay: 0.3s; }
-.tap-waves > i:nth-child(3) { animation-delay: 0.6s; }
+.tap-waves > i:nth-child(2) { animation-delay: 0.45s; }
+.tap-waves > i:nth-child(3) { animation-delay: 0.9s; }
+@keyframes gx-reader-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
 .tap-waves-loop > i { animation-iteration-count: infinite; }
 @media (prefers-reduced-motion: reduce) {
   .tap-waves { display: none; }
@@ -598,33 +614,43 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
    From the NFC tap to the open door on one screen: lime rings ripple out of
    the middle like the tap's radio wave (faster, brighter heartbeat while the
    door opens), then one ring floods the screen; a refusal shakes. */
-.door-waves { position: absolute; inset: 0; pointer-events: none; }
+.door-waves { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+/* The reader: a lime glow along the top edge, beating with the waves. */
+.door-waves::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 10rem;
+  background: radial-gradient(ellipse 75% 100% at 50% 0%, rgb(200 241 53 / 0.5), transparent 70%);
+  animation: gx-reader-glow 0.9s ease-in-out infinite;
+}
 .door-waves > i {
   position: absolute;
   left: 50%;
-  top: 50%;
-  width: 6rem;
-  height: 6rem;
-  margin: -3rem 0 0 -3rem;
+  top: 0;
+  width: 3rem;
+  height: 3rem;
+  transform: translate(-50%, -50%);
   border-radius: 9999px;
-  border: 2px solid rgb(200 241 53 / 0.85);
-  background: radial-gradient(circle, rgb(200 241 53 / 0.18), transparent 70%);
+  border: 3px solid rgb(200 241 53 / 0.95);
+  background: radial-gradient(circle, transparent 62%, rgb(200 241 53 / 0.12));
+  box-shadow: 0 0 22px rgb(200 241 53 / 0.45), inset 0 0 22px rgb(200 241 53 / 0.2);
   opacity: 0;
-  animation: gx-door-wave 1.8s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+  animation: gx-door-wave 2.4s cubic-bezier(0.25, 0.6, 0.35, 1) infinite;
 }
-.door-waves > i:nth-child(2) { animation-delay: 0.45s; }
-.door-waves > i:nth-child(3) { animation-delay: 0.9s; }
-.door-waves > i:nth-child(4) { animation-delay: 1.35s; }
+.door-waves > i:nth-child(2) { animation-delay: 0.6s; }
+.door-waves > i:nth-child(3) { animation-delay: 1.2s; }
+.door-waves > i:nth-child(4) { animation-delay: 1.8s; }
 @keyframes gx-door-wave {
-  0% { transform: scale(0.9); opacity: 0.95; }
-  100% { transform: scale(7); opacity: 0; }
+  0% { width: 3rem; height: 3rem; opacity: 1; }
+  100% { width: 260vh; height: 260vh; opacity: 0; }
 }
 /* Open: the rings stop being born. */
 .door-waves-done > i { animation-iteration-count: 1; }
 .door-flood {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 0;
   width: 6rem;
   height: 6rem;
   margin: -3rem 0 0 -3rem;
@@ -635,7 +661,7 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 }
 @keyframes gx-door-flood {
   0% { transform: scale(1); opacity: 0.9; }
-  100% { transform: scale(18); opacity: 0; }
+  100% { transform: scale(40); opacity: 0; }
 }
 /* The middle beats with the waves. */
 .door-core { animation: gx-door-core 900ms ease-in-out infinite; box-shadow: 0 0 40px rgb(200 241 53 / 0.45); }

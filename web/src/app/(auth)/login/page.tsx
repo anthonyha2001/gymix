@@ -3,12 +3,14 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Alert, Card, Skeleton } from "@/components/ui";
 import { LoginForm } from "../auth-forms";
+import { ForgetOfflinePages } from "@/components/forget-offline-pages";
 
 export const metadata: Metadata = { title: "Log in" };
 
 export default function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <Card className="p-6 space-y-5">
+      <ForgetOfflinePages />
       <div>
         <h1 className="text-xl font-semibold">Welcome back</h1>
         <p className="text-sm text-muted">Log in to your gym.</p>
@@ -23,7 +25,7 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
 async function LoginBody({ searchParams }: { searchParams: PageProps<"/login">["searchParams"] }) {
   const { error, next, email } = await searchParams;
   const nextPath = typeof next === "string" ? next : undefined;
-  const isTap = nextPath?.startsWith("/c/");
+  const isTap = nextPath?.startsWith("/c/") || nextPath?.startsWith("/d/");
   const isInvite = nextPath?.startsWith("/join/");
 
   return (
