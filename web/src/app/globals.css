@@ -32,18 +32,6 @@ body {
   --bottom-bar: calc(4.25rem + max(env(safe-area-inset-bottom), 0.5rem));
 }
 
-/* Two-frame exercise animation: the second photo blinks over the first. */
-.ex-anim > img:nth-child(2) {
-  animation: ex-swap 1.6s steps(1, end) infinite;
-}
-@keyframes ex-swap {
-  0% { opacity: 0; }
-  50% { opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ex-anim > img:nth-child(2) { animation: none; opacity: 0; }
-}
-
 /* Bottom sheets slide up; their backdrop fades in. */
 dialog.sheet[open] {
   animation: sheet-up 320ms cubic-bezier(0.22, 1, 0.36, 1);

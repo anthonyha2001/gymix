@@ -11,18 +11,9 @@ export type Exercise = Pick<
 export type ProgramGoal = Database["public"]["Enums"]["program_goal"];
 export type ExperienceLevel = Database["public"]["Enums"]["experience_level"];
 
-// Exercise photos are stored as paths so the library can be re-hosted (or
-// replaced with a licensed one) by changing this base URL only.
-const IMAGE_BASE =
-  process.env.NEXT_PUBLIC_EXERCISE_IMAGE_BASE ?? "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
-
 // Gymix motion exercises store "motion:<id>" instead of photo paths.
 export const MOTION_PREFIX = "motion:";
 export const isMotionPath = (path: string | null | undefined) => !!path?.startsWith(MOTION_PREFIX);
-
-export function exerciseImageUrl(path: string) {
-  return IMAGE_BASE + path;
-}
 
 // Public URL of a file in the gym-media storage bucket (e.g. a machine photo).
 export function mediaUrl(path: string) {

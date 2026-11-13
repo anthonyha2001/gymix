@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Dumbbell, Lock } from "lucide-react";
 import { Logo, Skeleton } from "@/components/ui";
-import { exerciseImageUrl, isMotionPath, musclesLabel } from "@/lib/exercises";
+import { isMotionPath, musclesLabel } from "@/lib/exercises";
 import { ExerciseAnimation } from "@/components/exercise-media";
 import { createClient } from "@/lib/supabase/server";
 import { AddSharedProgram } from "./add-button";
@@ -78,9 +78,6 @@ async function Program({ params }: { params: PageProps<"/p/[token]">["params"] }
                   <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-canvas">
                     {isMotionPath(e.image) ? (
                       <ExerciseAnimation paths={[e.image!]} name={e.name} className="size-full rounded-none" />
-                    ) : e.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={exerciseImageUrl(e.image)} alt="" className="size-full object-cover" />
                     ) : (
                       <Dumbbell className="size-5 text-muted" />
                     )}

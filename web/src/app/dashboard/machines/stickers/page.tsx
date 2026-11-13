@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { PageHeader, Skeleton } from "@/components/ui";
 import { qrFor } from "@/components/qr-tools";
-import { exerciseImageUrl, isMotionPath, mediaUrl } from "@/lib/exercises";
+import { mediaUrl } from "@/lib/exercises";
 import { requestOrigin } from "@/lib/origin";
 import { MANAGER_ROLES } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
@@ -36,17 +36,16 @@ async function Stickers() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("gym_machines")
-    .select("id, name, photo_path, sticker_at, sticker_tapped_at, machine_exercises(exercises(image_paths))")
+    .select("id, name, photo_path, sticker_at, sticker_tapped_at")
     .eq("gym_id", membership.gymId)
     .order("name");
 
   const origin = await requestOrigin();
   const machines: StickerMachine[] = (data ?? []).map((m) => {
-    const firstImage = m.machine_exercises.map((me) => me.exercises?.image_paths?.[0]).find((p) => p && !isMotionPath(p));
     return {
       id: m.id,
       name: m.name,
-      thumb: m.photo_path ? mediaUrl(m.photo_path) : firstImage ? exerciseImageUrl(firstImage) : null,
+      thumb: m.photo_path ? mediaUrl(m.photo_path) : null,
       url: machineStickerUrl(origin, m.id),
       stickerAt: m.sticker_at,
       tappedAt: m.sticker_tapped_at,
