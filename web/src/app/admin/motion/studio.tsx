@@ -30,7 +30,12 @@ function load(): Draft[] {
     const raw = localStorage.getItem(STORE);
     if (raw) {
       const list = JSON.parse(raw) as Draft[];
-      if (Array.isArray(list) && list.length && list.every((d) => PATTERN[d.pattern])) return list;
+      if (Array.isArray(list) && list.length && list.every((d) => PATTERN[d.pattern])) {
+        // Exercises added to the seed library since this browser saved its copy.
+        const names = new Set(list.map((d) => d.name.toLowerCase()));
+        const ids = new Set(list.map((d) => d.id));
+        return [...list, ...seedLibrary().filter((d) => !ids.has(d.id) && !names.has(d.name.toLowerCase()))];
+      }
     }
   } catch {}
   return seedLibrary();
@@ -71,8 +76,8 @@ function boundsOf(d: Draft): { target: V3; radius: number } {
   }
   const lo = { x: Math.min(...pts.map((p) => p.x)), y: 0, z: Math.min(...pts.map((p) => p.z)) };
   const hi = { x: Math.max(...pts.map((p) => p.x)), y: Math.max(...pts.map((p) => p.y)), z: Math.max(...pts.map((p) => p.z)) };
-  const target = { x: (lo.x + hi.x) / 2, y: hi.y * 0.47, z: (lo.z + hi.z) / 2 };
-  const radius = Math.max(0.75, Math.hypot(hi.x - lo.x, hi.y - lo.y, hi.z - lo.z) / 2);
+  const target = { x: (lo.x + hi.x) / 2, y: hi.y * (hi.y > 2 ? 0.5 : 0.47), z: (lo.z + hi.z) / 2 };
+  const radius = Math.max(0.75, Math.hypot(hi.x - lo.x, hi.y - lo.y, hi.z - lo.z) / 2, hi.y * 0.62);
   return { target, radius };
 }
 
@@ -469,12 +474,20 @@ function Stage({
 // ==================================================================== library
 function Library({ drafts, sel, onSelect, onNew }: { drafts: Draft[]; sel: string | null; onSelect: (id: string) => void; onNew: () => void }) {
   const [q, setQ] = useState("");
-  const shown = drafts.filter((d) => !q || d.name.toLowerCase().includes(q.toLowerCase()) || PATTERN[d.pattern].name.toLowerCase().includes(q.toLowerCase()));
+  const [muscle, setMuscle] = useState<Muscle | null>(null);
+  const needle = q.trim().toLowerCase();
+  const shown = drafts.filter(
+    (d) =>
+      (!muscle || d.primary.includes(muscle)) &&
+      (!needle || d.name.toLowerCase().includes(needle) || PATTERN[d.pattern].name.toLowerCase().includes(needle) || TOOL_LABEL[d.tool].toLowerCase().includes(needle)),
+  );
   return (
     <section className="room-panel flex max-h-[48rem] flex-col overflow-hidden rounded-3xl bg-white/[0.03] ring-1 ring-white/[0.07]">
       <div className="space-y-3 p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-[13px] font-semibold tracking-wide text-white/80">Library · {drafts.length}</h2>
+          <h2 className="text-[13px] font-semibold tracking-wide text-white/80">
+            Library · {shown.length === drafts.length ? drafts.length : `${shown.length} of ${drafts.length}`}
+          </h2>
           <button type="button" onClick={onNew} className="flex h-8 items-center gap-1.5 rounded-xl bg-brand px-3 text-xs font-semibold text-ink transition active:scale-95">
             <Plus className="size-3.5" /> New
           </button>
@@ -483,6 +496,22 @@ function Library({ drafts, sel, onSelect, onNew }: { drafts: Draft[]; sel: strin
           <Search className="size-4 text-white/40" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search exercises" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/30" />
         </label>
+        <div className="flex flex-wrap gap-1.5">
+          {MUSCLES.map((m) => {
+            const on = muscle === m.id;
+            return (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => setMuscle(on ? null : m.id)}
+                aria-pressed={on}
+                className={`h-6 rounded-full px-2.5 text-[11px] font-medium transition active:scale-95 ${on ? "bg-brand text-ink" : "bg-white/[0.04] text-white/55 ring-1 ring-white/[0.07] hover:text-white"}`}
+              >
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
       <ul className="room-rows room-scroll flex-1 space-y-1 overflow-y-auto px-2 pb-3">
         {shown.map((d) => (

@@ -187,6 +187,14 @@ function platform(k: Kit) {
   k.box([2.42, 0.036, 0.025], [0, -0.013, -1.2], m.frame, 0.004);
 }
 
+// A rubber floor mat with a lime edge line.
+function mat(k: Kit) {
+  k.floor(2.8, 3, -0.25);
+  const m = k.m;
+  k.box([0.64, 0.012, 2.2], [0, 0.006, -0.25], m.rubber, 0.004);
+  for (const s of [-1, 1]) k.box([0.004, 0.0125, 2.14], [s * 0.3, 0.006, -0.25], m.lime, 0.001);
+}
+
 function dumbbellRack(k: Kit) {
   k.floor(3, 2.4, -0.3);
   const m = k.m;
@@ -359,7 +367,7 @@ function cableTower(k: Kit, p: Pattern) {
   };
 }
 
-function legExtension(k: Kit) {
+function legExtension(k: Kit, behind = false) {
   k.floor(2.6, 2.4, 0);
   const m = k.m;
   k.box([0.7, 0.05, 0.9], [0.12, 0.03, -0.05], m.frame, 0.01);
@@ -426,9 +434,9 @@ function legExtension(k: Kit) {
     const restAngle = Math.atan2(restD.z, -restD.y);
     // The roller sits slightly forward of the shin.
     lever.children.forEach((c) => {
-      if (c !== cam && c !== camRing && c !== arm) c.position.z = 0.075;
+      if (c !== cam && c !== camRing && c !== arm) c.position.z = behind ? -0.075 : 0.075;
     });
-    const travel = Math.max(0, (angle - restAngle) * 0.16);
+    const travel = Math.abs(angle - restAngle) * 0.16;
     stack.moving.position.y = Math.min(0.7, travel);
     const camEdge = new THREE.Vector3(0.36, knee.y + 0.06, knee.z);
     c1(camEdge, new THREE.Vector3(sx, 1.36, -0.05));
@@ -448,9 +456,13 @@ export function buildMachine(p: Pattern, mats: Mats): Machine {
       break;
     case "deadlift":
     case "row":
+    case "hinge":
+    case "goodmorning":
       platform(k);
       break;
     case "bench":
+    case "flye":
+    case "skullcrusher":
       bench(k);
       break;
     case "pulldown":
@@ -464,6 +476,14 @@ export function buildMachine(p: Pattern, mats: Mats): Machine {
       break;
     case "legext":
       update = legExtension(k);
+      break;
+    case "legcurl":
+      update = legExtension(k, true);
+      break;
+    case "pushup":
+    case "crunch":
+    case "bridge":
+      mat(k);
       break;
     default:
       dumbbellRack(k);
