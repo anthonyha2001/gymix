@@ -1,7 +1,8 @@
 // Every Gymix feature, for the public /features page. Keep it in step with the app:
 // when something ships, add it here.
 
-export type FeatureGroup = { id: string; title: string; intro: string; items: { name: string; text: string }[] };
+// `soon`: built but still being tested in the lab; shown as coming soon.
+export type FeatureGroup = { id: string; title: string; intro: string; soon?: boolean; items: { name: string; text: string }[] };
 
 export const FEATURE_GROUPS: FeatureGroup[] = [
   {
@@ -59,6 +60,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     id: "doors",
     title: "Doors & access control",
     intro: "Turnstiles and door readers that always agree with your memberships.",
+    soon: true,
     items: [
       { name: "ZKTeco and Hikvision", text: "Works with the fingerprint, face and card readers gyms already use." },
       { name: "Always in step", text: "Every sale, payment, freeze or expiry updates every door automatically." },

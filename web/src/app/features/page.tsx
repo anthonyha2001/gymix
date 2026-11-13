@@ -55,6 +55,11 @@ export default function FeaturesPage() {
             <Reveal className="mb-8 max-w-2xl">
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                 {g.title} <span className="ml-1 align-middle text-sm font-semibold text-muted">{g.items.length}</span>
+                {g.soon && (
+                  <span className="ml-3 inline-block rounded-full bg-brand px-3 py-1 align-middle text-xs font-bold tracking-wide text-ink uppercase">
+                    Coming soon
+                  </span>
+                )}
               </h2>
               <p className="mt-2 text-ink/60">{g.intro}</p>
             </Reveal>
