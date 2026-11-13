@@ -1235,3 +1235,8 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 /* The gym card: a dark plate with a slow lime glow. */
 .owner-gym::before { content: ""; position: absolute; inset: -40% -20% auto auto; width: 140px; height: 140px; border-radius: 9999px; background: radial-gradient(circle, rgb(200 241 53 / 0.22), transparent 70%); }
 @media (prefers-reduced-motion: reduce) { .owner-tile { transition: none; } }
+/* An empty state alone in a card (no title above it) gets room to breathe. */
+.owner main .rounded-xl.border > p.pb-5:first-child { padding-top: 2.5rem; padding-bottom: 2.5rem; text-align: center; }
+/* Share bars grow in from the left. */
+.owner-share { transform-origin: left; animation: gx-room-grow 900ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@media (prefers-reduced-motion: reduce) { .owner-share { animation: none; } }

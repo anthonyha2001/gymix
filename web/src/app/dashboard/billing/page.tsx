@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { HoverLink } from "@/components/hover-link";
 import { Suspense } from "react";
 import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
+import { Banknote, CircleCheck, CircleDollarSign, HandCoins, ReceiptText } from "lucide-react";
+import { StatCard } from "@/components/stat-card";
 import {
   INVOICE_STATUS,
   PAYMENT_METHOD_LABELS,
@@ -88,46 +90,64 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
     byMethod.set(p.method, row);
   }
 
+  const monthTotal = [...byMethod.values()].reduce((n, r) => n + r.usd, 0);
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card className="p-5">
-          <p className="text-sm text-muted">Collected this month</p>
-          <p className="mt-2 text-3xl font-semibold tabular-nums">{formatUSD(stats?.collected_month)}</p>
-        </Card>
-        <Card className="p-5">
-          <p className="text-sm text-muted">Owed by members</p>
-          <p className={`mt-2 text-3xl font-semibold tabular-nums ${Number(stats?.outstanding) > 0 ? "text-danger" : ""}`}>
-            {formatUSD(stats?.outstanding)}
-          </p>
-        </Card>
+        <StatCard label="Collected this month" value={formatUSD(stats?.collected_month)} icon={CircleDollarSign} href="/dashboard/billing?tab=payments" />
+        <StatCard
+          label="Owed by members"
+          value={formatUSD(stats?.outstanding)}
+          icon={HandCoins}
+          alert={Number(stats?.outstanding) > 0}
+          href={Number(stats?.outstanding) > 0 ? "/dashboard/billing?tab=owing" : undefined}
+          hint={Number(stats?.outstanding) > 0 ? undefined : "Everyone is paid up"}
+        />
       </div>
 
       {byMethod.size > 0 && (
         <Card>
           <SectionTitle>This month by payment method</SectionTitle>
-          <ul className="grid gap-px border-t border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-            {[...byMethod.entries()].map(([method, row]) => (
-              <li key={method} className="bg-surface px-5 py-3">
-                <p className="text-xs text-muted">
-                  {PAYMENT_METHOD_LABELS[method]} · {row.count} payment{row.count === 1 ? "" : "s"}
-                </p>
-                <p className="font-semibold tabular-nums">{formatUSD(row.usd)}</p>
-                {row.lbp > 0 && <p className="text-xs text-muted">{formatLBP(row.lbp)} received</p>}
-              </li>
-            ))}
+          <ul className="space-y-1 border-t border-line p-3">
+            {[...byMethod.entries()]
+              .sort((a, b) => b[1].usd - a[1].usd)
+              .map(([method, row]) => {
+                const share = monthTotal ? (row.usd / monthTotal) * 100 : 0;
+                return (
+                  <li key={method} className="relative overflow-hidden rounded-xl px-4 py-3" title={`${Math.round(share)}% of this month`}>
+                    <span aria-hidden className="owner-share absolute inset-y-0 left-0 rounded-xl bg-brand/15" style={{ width: `${Math.max(share, 2)}%` }} />
+                    <div className="relative flex items-center gap-3">
+                      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-surface text-ink shadow-[0_0_0_1px_rgb(13_17_23/0.06)]">
+                        <Banknote className="size-4" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-medium">{PAYMENT_METHOD_LABELS[method]}</span>
+                        <span className="block text-xs text-muted">
+                          {row.count} payment{row.count === 1 ? "" : "s"}
+                          {row.lbp > 0 ? ` · ${formatLBP(row.lbp)} received` : ""}
+                        </span>
+                      </span>
+                      <span className="text-right">
+                        <span className="block font-semibold tabular-nums">{formatUSD(row.usd)}</span>
+                        <span className="block text-xs text-muted tabular-nums">{Math.round(share)}%</span>
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
           </ul>
         </Card>
       )}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="inline-flex flex-wrap gap-1 rounded-2xl bg-line/70 p-1">
         {TABS.map((t) => (
           <HoverLink
             key={t.value}
             href={`/dashboard/billing?tab=${t.value}`}
               scroll={false}
-            className={`rounded-full border px-3 py-1 text-sm ${
-              tab === t.value ? "border-ink bg-ink text-white" : "border-line bg-surface text-muted hover:text-ink"
+            className={`rounded-xl px-4 py-2 text-sm transition-colors duration-200 ${
+              tab === t.value ? "bg-surface font-semibold text-ink shadow-[0_1px_2px_rgba(13,17,23,0.08),0_2px_8px_rgba(13,17,23,0.06)]" : "font-medium text-muted hover:text-ink"
             }`}
           >
             {t.label}
@@ -137,7 +157,15 @@ async function BillingContent({ searchParams }: { searchParams: PageProps<"/dash
       {tab !== "payments" && (
       <Card className="overflow-hidden">
         {!invoices?.length ? (
-          <EmptyState>{tab === "owing" ? "Nobody owes anything." : "No invoices here yet."}</EmptyState>
+          <div className="flex flex-col items-center px-6 py-12 text-center">
+            <span className={`grid size-12 place-items-center rounded-2xl ${tab === "owing" ? "bg-brand/90 text-ink" : "bg-canvas text-muted"}`}>
+              {tab === "owing" ? <CircleCheck className="size-6" /> : <ReceiptText className="size-6" />}
+            </span>
+            <p className="mt-3 font-semibold">{tab === "owing" ? "Nobody owes anything" : "No invoices here yet"}</p>
+            <p className="mt-1 max-w-xs text-sm text-muted">
+              {tab === "owing" ? "Every invoice is paid. Unpaid ones show up here." : "Invoices appear here when you sell a membership."}
+            </p>
+          </div>
         ) : (
           <div className="overflow-x-auto border-t border-line">
             <table className="w-full text-sm">

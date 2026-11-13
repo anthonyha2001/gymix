@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { CountUp } from "@/components/count-up";
+import { StatCard } from "@/components/stat-card";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowUpRight, CalendarClock, CheckCircle2, Circle, CircleDollarSign, HandCoins, ScanLine, UsersRound, type LucideIcon } from "lucide-react";
+import { CalendarClock, CheckCircle2, Circle, CircleDollarSign, HandCoins, ScanLine, UsersRound, type LucideIcon } from "lucide-react";
 import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
 import { addDays, daysBetween, formatDate, formatTime, formatUSD, todayIn } from "@/lib/format";
 import { BILLING_ROLES } from "@/lib/roles";
@@ -105,29 +105,9 @@ async function Overview() {
   return (
     <div className="space-y-6">
       <div className={`grid gap-4 sm:grid-cols-2 ${canBill ? "lg:grid-cols-5" : "lg:grid-cols-3"}`}>
-        {tiles.map((t) => {
-          const body = (
-            <Card className="owner-tile group relative h-full overflow-hidden p-5">
-              <div className="flex items-start justify-between">
-                <span className={`grid size-10 place-items-center rounded-xl ${t.alert ? "bg-danger/10 text-danger" : "bg-brand/90 text-ink"}`}>
-                  <t.icon className="size-5" />
-                </span>
-                {t.href && <ArrowUpRight className="size-4 text-muted opacity-0 transition duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />}
-              </div>
-              <p className={`mt-4 text-[1.75rem] leading-none font-bold tracking-tight tabular-nums ${t.alert ? "text-danger" : ""}`}>
-                <CountUp value={t.value} />
-              </p>
-              <p className="mt-1.5 text-[13px] text-muted">{t.label}</p>
-            </Card>
-          );
-          return t.href ? (
-            <Link key={t.label} href={t.href}>
-              {body}
-            </Link>
-          ) : (
-            <div key={t.label}>{body}</div>
-          );
-        })}
+        {tiles.map((t) => (
+          <StatCard key={t.label} label={t.label} value={t.value} icon={t.icon} href={t.href} alert={t.alert} />
+        ))}
       </div>
 
       {!setupDone && setup.length > 0 && (
