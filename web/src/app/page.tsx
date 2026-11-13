@@ -211,6 +211,7 @@ export default async function Home() {
       <NotifyShowcase />
       <DeskShowcase />
       <Bento />
+      <AllFeatures />
 
       {/* Facts */}
       <section id="how" className="scroll-mt-20 px-5 py-32 sm:py-44">
