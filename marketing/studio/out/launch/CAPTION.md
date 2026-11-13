@@ -9,7 +9,7 @@ Memberships and payments in dollars or lira, at your own rate. Members check in 
 door. Unpaid? Frozen automatically, no awkward conversation. And an app your members actually open: today's
 workout, classes, progress.
 
-$19.99 a month for the whole gym. Unlimited members. 14 days free, no card.
+$29.99 a month for the whole gym. Unlimited members. 14 days free, no card.
 
 Don't take our word for it: run a full sample gym yourself, no sign-up. Link in bio.
 
@@ -18,7 +18,7 @@ Don't take our word for it: run a full sample gym yourself, no sign-up. Link in 
 ## Alt text
 Dark launch visual. Headline: "Your gym, running itself." Below it, a laptop shows the Gymix owner dashboard
 (active members, check-ins today, money collected and owed, memberships ending this week, latest check-ins) and a
-phone shows the member app with today's workout. A lime bar at the bottom reads "$19.99 a month for the whole
+phone shows the member app with today's workout. A lime bar at the bottom reads "$29.99 a month for the whole
 gym · Live demo · link in bio".
 
 ## Notes

@@ -95,9 +95,9 @@ several branches, move it to the "Later" list (brief 3: no multi-branch view).
 
 ### Fix 5: A4 one-pager
 **Price line** (header, `GX-5-1.svg` text at y=340, and the "Exact text" list):
-> $19.99 a month for the whole gym. 14 days free.
+> $29.99 a month for the whole gym. 14 days free.
 
-(Brief 1 and 2.4: per gym, not per member. Owners read "$19.99" as per member unless told.)
+(Brief 1 and 2.4: per gym, not per member. Owners read "$29.99" as per member unless told.)
 
 **"Get paid" line overflows.** At 17 px the 90-character line is about 790 px wide; the card leaves about 630 px.
 Split it into two lines. Replace the single `<text x="106" y="473" ...>` in `GX-5-1.svg` with:
@@ -223,7 +223,7 @@ Replace the "Channel order" paragraph with:
 ### Fix 14: Message 5 (Body Garage), English
 > Hi! [FOUNDER_NAME] from Gymix. Body Garage sells monthly and longer memberships [DETAIL]. Gymix tracks every
 > expiry for you, and when someone hasn't paid, they're frozen at the door automatically. Dollars or lira at your
-> rate. $19.99 a month for the whole gym, 14 days free, no card. Try a sample gym, no sign-up: [WEBSITE]/demo. Or
+> rate. $29.99 a month for the whole gym, 14 days free, no card. Try a sample gym, no sign-up: [WEBSITE]/demo. Or
 > 2 minutes at the gym this week?
 
 Use the first sentence only if a **current** post shows memberships; otherwise delete it and start at "Gymix tracks".

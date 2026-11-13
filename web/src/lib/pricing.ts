@@ -3,7 +3,7 @@
 // reads them with getPricing() from "@/lib/pricing-server"; these are only the
 // fallbacks used when the database can't be reached.
 export type Pricing = { priceUsd: number; trialDays: number; graceDays: number };
-export const DEFAULT_PRICING: Pricing = { priceUsd: 19.99, trialDays: 14, graceDays: 3 };
+export const DEFAULT_PRICING: Pricing = { priceUsd: 29.99, trialDays: 14, graceDays: 3 };
 
 // "$10" or "$9.99".
 export function formatPrice(usd: number) {

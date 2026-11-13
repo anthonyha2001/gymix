@@ -9,7 +9,7 @@ Detective Bob took the case. Three handwritings, three lira rates, 40 unread cha
 
 Swipe to solve it. Then try the real thing: a full sample gym, no sign-up. Link in bio.
 
-Gymix · $19.99 a month for the whole gym · 14 days free, no card.
+Gymix · $29.99 a month for the whole gym · 14 days free, no card.
 
 #Gymix #DetectiveBob #GymOwner #Lebanon #Beirut #GymLife #GymManagement #FitnessBusiness
 

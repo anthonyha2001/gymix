@@ -112,7 +112,7 @@ Drafts checked: GX-2 (copywriter), GX-3 (video), GX-4 (social), GX-8 (localizer)
 | 72 | Ep. 3 · Arabizi hook + on-screen | PASS | |
 | 73 | Ep. 3 · Arabizi caption | PASS | Already uses the safe "yla7e2o la asabi3" |
 
-**Checks from the card, all confirmed across the pack after the fixes:** no automatic WhatsApp claims; no shop/POS, screens, occupancy, kiosk or door access, in copy or on screen; $19.99/month per gym, 14 days, no card, wherever a price appears; `[WEBSITE]/demo` on every piece; Abou Bkra and the Wasta Member tease a situation, with actor permission noted; Ep. 3 payment at the desk; comment replies honest (English-only app, no turnstiles today, no customer numbers); every dialect line marked NEEDS NATIVE CHECK. Voice: nothing bland, cringe or mean; the picks are smart and specific.
+**Checks from the card, all confirmed across the pack after the fixes:** no automatic WhatsApp claims; no shop/POS, screens, occupancy, kiosk or door access, in copy or on screen; $29.99/month per gym, 14 days, no card, wherever a price appears; `[WEBSITE]/demo` on every piece; Abou Bkra and the Wasta Member tease a situation, with actor permission noted; Ep. 3 payment at the desk; comment replies honest (English-only app, no turnstiles today, no customer numbers); every dialect line marked NEEDS NATIVE CHECK. Voice: nothing bland, cringe or mean; the picks are smart and specific.
 
 ---
 
@@ -122,7 +122,7 @@ Drafts checked: GX-2 (copywriter), GX-3 (video), GX-4 (social), GX-8 (localizer)
 > Don't take our word for it. Run a sample gym inside the real Gymix, right now. Check a member in. Watch Tarek get
 > refused at check-in because his membership expired, and Gymix says why. Sell a membership. Then switch to the
 > member's phone and see what your members would see. No sign-up, no email, nothing to install. Click anything, you
-> can't break it. When you're ready: $19.99 a month for the whole gym, 14 days free, no card.
+> can't break it. When you're ready: $29.99 a month for the whole gym, 14 days free, no card.
 >
 > Run a gym for a day: [WEBSITE]/demo
 
@@ -134,7 +134,7 @@ Drafts checked: GX-2 (copywriter), GX-3 (video), GX-4 (social), GX-8 (localizer)
 > Switch to the member's phone. Click everything. It's not your gym (yet), so go ahead and break it. Nothing is sent
 > to anyone and it disappears after 24 hours.
 >
-> $19.99 a month for the whole gym when you're ready. 14 days free, no card.
+> $29.99 a month for the whole gym when you're ready. 14 days free, no card.
 > 👉 [WEBSITE]/demo
 
 (94 words without the link. One emoji.)
@@ -143,7 +143,7 @@ Drafts checked: GX-2 (copywriter), GX-3 (video), GX-4 (social), GX-8 (localizer)
 > Abou Bkra has one payment plan: tomorrow. No interest, no deadline, running since October.
 >
 > The auto-freeze has one answer: today. If a member still owes money a set number of days after the invoice
-> (3 by default, you choose), the account freezes and check-in is refused at the door. $19.99 a month for the whole
+> (3 by default, you choose), the account freezes and check-in is refused at the door. $29.99 a month for the whole
 > gym. Less than one member's monthly fee.
 >
 > Bkra bedfa3? Tayyeb. W bkra btfout.
@@ -164,7 +164,7 @@ NEEDS NATIVE CHECK: "Abou Bkra", "Bkra bedfa3? Tayyeb. W bkra btfout."
 >
 > Unpaid? Frozen. Paid? Welcome back, habibi. 💚
 >
-> $19.99 a month for the whole gym. See it on a sample gym, no sign-up: [WEBSITE]/demo
+> $29.99 a month for the whole gym. See it on a sample gym, no sign-up: [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: "Abou Bkra", "Bkra, he paid", "habibi".
 
@@ -219,7 +219,7 @@ Shop item in every staff-side shot.
 | 9-12 | Search **"Tarek Mansour"** → check-in → **refused with the reason** ("Membership expired on <date>"). Zoom 110-120%. | "Expired? Gymix says no." |
 | 12-15 | Open a member's profile (e.g. Fadi Germanos) → **"Renew / sell"** → pick a plan → confirm. Fast cuts. | "Sell a membership. Done." |
 | 15-18 | Press **"Member app"**: Karim Aoun's phone view (home, today's workout, membership card). | "Now see your member's phone." |
-| 18-20 | End card, lime on ink: logo + `[WEBSITE]/demo`. | "$19.99 a month. The whole gym." → "**Run a gym for a day.** `[WEBSITE]/demo`" |
+| 18-20 | End card, lime on ink: logo + `[WEBSITE]/demo`. | "$29.99 a month. The whole gym." → "**Run a gym for a day.** `[WEBSITE]/demo`" |
 
 Voice-over and edit notes: unchanged from GX-3.
 
@@ -232,7 +232,7 @@ Film the phone screens in the founder's **trial gym with the test member** (sect
 | 0-3 | Member taps his phone on the sticker → red screen: "Account frozen: unpaid balance of $X ... Please see the front desk." | Real phone at a door with the trial gym's own sticker (the screen in the shot is real) | "The door said no. You didn't." |
 | 3-8 | The front desk person smiles and shrugs; the member shrugs back. | Real footage, people who agreed in writing | "No more awkward conversations." |
 | 8-12 | He pays **at the desk** (cash across the desk); the desk records the payment on the laptop (staff side, no Shop item visible). He taps again → green "Checked in". | Real footage + the trial gym | "Paid at the desk. Tap again." → "Checked in. Welcome back." |
-| 12-15 | Logo card, lime on ink. | Designed card | "**Gymix. $19.99/month. 14 days free.**" + `[WEBSITE]/demo` |
+| 12-15 | Logo card, lime on ink. | Designed card | "**Gymix. $29.99/month. 14 days free.**" + `[WEBSITE]/demo` |
 
 Fallback only if the trial-gym route fails: demo Karim screens ("Membership is frozen", then green after unfreezing),
 cut onto the phone with a hard cut. The "Unpaid? Frozen." text stays a brand overlay and must never look like app text.
@@ -343,7 +343,7 @@ the poll.** Reply personally, one by one, only to people who reply to the story 
 > phone el member. Kabbes 3a kel shi. Mano gym-ak (lessa), fa yalla kassro. Ma byetba3at shi la 7ada, w kello
 > byenma7a ba3d 24 se3a.
 >
-> $19.99 bel chahr la kel el gym, wa2t ma tkoun jehez. 14 yom free, bala card.
+> $29.99 bel chahr la kel el gym, wa2t ma tkoun jehez. 14 yom free, bala card.
 > 👉 [WEBSITE]/demo
 
 New phrase for the native list: "byirfod el check-in taba3o w bi2oul lesh".
@@ -357,7 +357,7 @@ New phrase for the native list: "byirfod el check-in taba3o w bi2oul lesh".
 > check-in. Vends un abonnement. Passe sur le téléphone du membre. Clique partout. Ce n'est pas ta salle (pas
 > encore), alors vas-y, casse tout. Rien n'est envoyé à personne et tout disparaît après 24 heures.
 >
-> $19.99 par mois pour toute la salle, quand tu es prêt. 14 jours gratuits, sans carte bancaire.
+> $29.99 par mois pour toute la salle, quand tu es prêt. 14 jours gratuits, sans carte bancaire.
 > 👉 [WEBSITE]/demo
 
 ### #68 · Ep. 1 · Arabizi caption (NEEDS NATIVE CHECK)

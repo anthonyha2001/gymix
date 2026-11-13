@@ -50,7 +50,7 @@ All copy follows the recipe (truth, twist, fact, nudge), English, no emojis. Hea
 
 ### A1 · Abou Bkra (video, owners) · Pillar 1 · hook from the bank
 - **Creative:** Abou Bkra Ep. 1 "Bkra" (GX-3 shot list), 15 s.
-- **Primary text:** "Bkra bedfa3? Tayyeb. W bkra btfout." Every gym has an Abou Bkra. In Gymix, a member who still owes after the set number of days is frozen automatically, and check-in is refused at the door. $19.99 a month for the whole gym. Try it on a sample gym, no sign-up.
+- **Primary text:** "Bkra bedfa3? Tayyeb. W bkra btfout." Every gym has an Abou Bkra. In Gymix, a member who still owes after the set number of days is frozen automatically, and check-in is refused at the door. $29.99 a month for the whole gym. Try it on a sample gym, no sign-up.
   *Dialect line NEEDS NATIVE CHECK.*
 - **Headline:** Unpaid? Frozen.
 - **CTA:** Learn more → `[WEBSITE]/demo`
@@ -58,15 +58,15 @@ All copy follows the recipe (truth, twist, fact, nudge), English, no emojis. Hea
 
 ### A2 · Run a gym for a day (video, owners) · Pillar 2 and 5 · from brief 9.6 "live demo" ad
 - **Creative:** Reel 7 "Run a gym for a day" (GX-3), 20 s.
-- **Primary text:** Don't take our word for it. Run a sample gym in Gymix right now: check members in, sell memberships, see who owes. No sign-up, nothing to install. $19.99/month when you're ready.
+- **Primary text:** Don't take our word for it. Run a sample gym in Gymix right now: check members in, sell memberships, see who owes. No sign-up, nothing to install. $29.99/month when you're ready.
 - **Headline:** Run a gym for a day.
 - **CTA:** Learn more → `[WEBSITE]/demo`
 
 ### A3 · The price line (static, owners) · Pillar 5
-- **Creative:** one static: ink background, lime accent, large "$19.99" (designer, GX-5 style). No competitor named.
-- **Primary text:** $19.99 a month for the whole gym. Not per member. Not per trainer. Not "call us for a quote". Per gym. Khalas. Unlimited members and staff, every feature included, 14 days free, no card. Or just try the sample gym first.
+- **Creative:** one static: ink background, lime accent, large "$29.99" (designer, GX-5 style). No competitor named.
+- **Primary text:** $29.99 a month for the whole gym. Not per member. Not per trainer. Not "call us for a quote". Per gym. Khalas. Unlimited members and staff, every feature included, 14 days free, no card. Or just try the sample gym first.
   *"Khalas" NEEDS NATIVE CHECK (single word, standard usage, but keep on the checklist).*
-- **Headline:** $19.99 for the whole gym.
+- **Headline:** $29.99 for the whole gym.
 - **CTA:** Learn more → `[WEBSITE]/demo`
 - Checked against 2.4: price, unlimited, trial and no card are all exact. The line "Less than one member's monthly fee" from the brief can be added only if the founder confirms that true for the typical gym (it depends on the gym's fees). `[TO CONFIRM]` Left out here by default.
 
@@ -99,7 +99,7 @@ Both videos are screen or shot footage that GX-3 already specifies. Each needs 9
 - **Captions:** burned-in English subtitles on both versions. If an Arabizi caption is added, NEEDS NATIVE CHECK.
 
 ### Abou Bkra Ep. 1 "Bkra" (15 s, becomes A1)
-- **9:16 (native):** use as shot. First 2 seconds must show Abou Bkra at the desk saying "bkra bedfa3, wallah" with the line as a caption. The red "frozen" screen at around 8 to 10 s is the payoff; keep it centred. End card: "Gymix. $19.99/month. 14 days free." then `[WEBSITE]/demo`.
+- **9:16 (native):** use as shot. First 2 seconds must show Abou Bkra at the desk saying "bkra bedfa3, wallah" with the line as a caption. The red "frozen" screen at around 8 to 10 s is the payoff; keep it centred. End card: "Gymix. $29.99/month. 14 days free." then `[WEBSITE]/demo`.
 - **1:1:** crop to the desk and the phone tap. Make sure the phone and the red screen are both inside the crop; if not, reframe the shot at the edit stage (shoot a little wide so both crops work). End card the same.
 - **Safe zones:** same as above. Played by friends or staff with permission, never a real member shamed.
 

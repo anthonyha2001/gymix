@@ -73,7 +73,7 @@ Title: "3 ways to stop chasing fees" (Pillar 1, Persona A). Only brief facts, no
 2. Tip 1: Decide the rule once (for example "3 days after the invoice") and write it where everyone can see it. Gymix: owner chooses the number of days (3 by default).
 3. Tip 2: Let the door enforce it, not the person. Gymix: check-in is refused automatically for unpaid members and they are sent to the front desk; the next check-in after paying unfreezes it.
 4. Tip 3: Know who owes today, not at month end. Gymix: the overview shows money collected this month and money members owe.
-5. CTA slide: "Run a gym for a day. No sign-up." `[WEBSITE]/demo`. Small line: "$19.99 a month for the whole gym. 14 days free, no card."
+5. CTA slide: "Run a gym for a day. No sign-up." `[WEBSITE]/demo`. Small line: "$29.99 a month for the whole gym. 14 days free, no card."
 Avoid: any WhatsApp reminder or receipt wording.
 
 ## 5. Launch-day story sequence (Wed 11 Nov, 3 frames)
@@ -104,8 +104,8 @@ Founder notes: pin the three frames as a Highlight called "Demo". Reply to every
 Voice: warm, light, one line of tease at most, then the fact and the link. Lebanese lines NEED NATIVE CHECK. Keep replies short for DMs; the English version is the master. Never reply to a comment in a way that mentions automatic WhatsApp messages, turnstile support or customers.
 
 **1. "How much?"**
-- EN: "$19.99 a month for the whole gym. Not per member, not per trainer: unlimited members and staff, everything included. 14 days free, no card. Try it first with no sign-up: [WEBSITE]/demo"
-- Arabizi (NEEDS NATIVE CHECK): "$19.99 bel chahr la kel el gym. Mish per member wala per trainer: members w staff bala 7dud. 14 yom free, bala card. Jarreb awwal bala ma tsajjel: [WEBSITE]/demo"
+- EN: "$29.99 a month for the whole gym. Not per member, not per trainer: unlimited members and staff, everything included. 14 days free, no card. Try it first with no sign-up: [WEBSITE]/demo"
+- Arabizi (NEEDS NATIVE CHECK): "$29.99 bel chahr la kel el gym. Mish per member wala per trainer: members w staff bala 7dud. 14 yom free, bala card. Jarreb awwal bala ma tsajjel: [WEBSITE]/demo"
 
 **2. "Is it in Arabic?"**
 - EN: "Honest answer: the app is in English today. It's simple and visual, and most members and staff use it easily. Our posts are in Lebanese because that's how we talk. See for yourself: [WEBSITE]/demo" 

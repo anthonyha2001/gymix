@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { CheckCircle2, Loader2, XCircle } from "lucide-react";
-import { buttonClass } from "@/components/ui";
+import { Loader2, XCircle } from "lucide-react";
+import { LogoMark } from "@/components/logo-mark";
 import { formatDate } from "@/lib/format";
 import { selfCheckIn, simulatedCheckIn, type TapResult } from "./actions";
 
@@ -30,8 +30,8 @@ export function TapCheckIn({ token, simulated = false }: { token?: string; simul
   if (!result) {
     return (
       <Screen tone="neutral">
-        <Loader2 className="size-16 animate-spin" />
-        <p className="text-2xl font-semibold">Checking you in…</p>
+        <Loader2 className="mx-auto size-8 animate-spin text-brand" />
+        <p className="mt-3 text-lg font-bold">Checking you in…</p>
       </Screen>
     );
   }
@@ -39,10 +39,10 @@ export function TapCheckIn({ token, simulated = false }: { token?: string; simul
   if (!result.ok) {
     return (
       <Screen tone="bad">
-        <XCircle className="size-20" />
-        <p className="text-2xl font-semibold">Couldn&apos;t check you in</p>
-        <p className="max-w-xs text-base opacity-90">{result.error}</p>
-        <Link href="/portal" className={buttonClass("secondary", "mt-4")}>
+        <Tile tone="bad" />
+        <p className="mt-3 text-[11px] font-bold tracking-[0.2em] text-[#ff8a7a] uppercase">Couldn&apos;t check you in</p>
+        <p className="mt-2 text-sm text-white/60">{result.error}</p>
+        <Link href="/portal" className="mt-5 inline-flex h-11 items-center justify-center rounded-xl bg-white/10 px-6 text-sm font-semibold text-white ring-1 ring-white/15">
           Go to my portal
         </Link>
       </Screen>
@@ -52,11 +52,11 @@ export function TapCheckIn({ token, simulated = false }: { token?: string; simul
   if (!result.allowed) {
     return (
       <Screen tone="bad">
-        <XCircle className="size-20" />
-        <p className="text-3xl font-bold">Not allowed in</p>
-        <p className="text-lg font-medium">{result.fullName}</p>
-        <p className="max-w-xs text-base opacity-90">{result.reason}. Please see the front desk.</p>
-        <Link href="/portal" className={buttonClass("secondary", "mt-4")}>
+        <Tile tone="bad" />
+        <p className="mt-3 text-[11px] font-bold tracking-[0.2em] text-[#ff8a7a] uppercase">Not allowed in</p>
+        <p className="mt-1 text-2xl font-black">{result.fullName}</p>
+        <p className="mt-2 text-sm text-white/60">{result.reason}. Please see the front desk.</p>
+        <Link href="/portal" className="mt-5 inline-flex h-11 items-center justify-center rounded-xl bg-white/10 px-6 text-sm font-semibold text-white ring-1 ring-white/15">
           Go to my portal
         </Link>
       </Screen>
@@ -64,44 +64,53 @@ export function TapCheckIn({ token, simulated = false }: { token?: string; simul
   }
 
   const firstName = result.fullName?.split(" ")[0] ?? "";
+  const details = [
+    result.planName,
+    result.endsOn && `until ${formatDate(result.endsOn)}`,
+    result.visitsLeft !== null && `${result.visitsLeft} visits left`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
   return (
     <Screen tone="good">
-      <CheckCircle2 className="size-20" />
-      <p className="text-sm font-medium uppercase tracking-widest opacity-80">{result.alreadyIn ? "Already checked in" : "Checked in"}</p>
-      <p className="text-4xl font-bold">Welcome back{firstName ? `, ${firstName}` : ""}</p>
-      <p className="text-base opacity-90">
-        {[
-          result.planName,
-          result.endsOn && `until ${formatDate(result.endsOn)}`,
-          result.visitsLeft !== null && `${result.visitsLeft} visits left`,
-        ]
-          .filter(Boolean)
-          .join(" · ")}
-      </p>
-      <Link href="/portal/train" className={buttonClass("secondary", "mt-6 h-12 px-8 text-base")}>
+      <Tile tone="good" />
+      <p className="mt-3 text-[11px] font-bold tracking-[0.2em] text-brand uppercase">{result.alreadyIn ? "Already checked in" : "Checked in"}</p>
+      <p className="mt-1 text-2xl font-black">Welcome{firstName ? `, ${firstName}` : " back"}</p>
+      {details && <p className="mt-1 text-sm text-white/50">{details}</p>}
+      <Link href="/portal/train" className="mt-5 inline-flex h-12 w-full items-center justify-center rounded-xl bg-brand text-base font-bold text-ink">
         Start training
       </Link>
-      <p className="text-xs opacity-75">Opening your training screen…</p>
+      <p className="mt-2 text-xs text-white/40">Opening your training screen…</p>
     </Screen>
   );
 }
 
+function Tile({ tone }: { tone: "good" | "bad" }) {
+  return tone === "good" ? (
+    <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-brand text-ink">
+      <LogoMark className="size-9" />
+    </span>
+  ) : (
+    <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-danger text-white">
+      <XCircle className="size-8" />
+    </span>
+  );
+}
+
+// Dark screen, the reader's glow and waves from the top edge, and the answer in
+// a glass card near the bottom (the same look as the door on the landing page).
 export function Screen({ tone, children }: { tone: "good" | "bad" | "neutral"; children: React.ReactNode }) {
-  const styles = {
-    good: "bg-success text-white",
-    bad: "bg-danger text-white",
-    neutral: "bg-ink text-white",
-  }[tone];
   return (
-    <main role="status" className={`relative flex flex-1 flex-col items-center justify-center gap-3 overflow-hidden px-6 py-16 text-center ${styles}`}>
-      {/* Waves spreading from the middle, like the tap that opened this page. They keep
-          going while checking, and burst again when the answer appears. */}
-      <span key={tone} aria-hidden className={`tap-waves ${tone === "neutral" ? "tap-waves-loop" : ""}`}>
+    <main role="status" className={`tap-screen tap-${tone} relative flex flex-1 flex-col justify-end overflow-hidden bg-gradient-to-b from-[#121821] to-[#07090d] px-5 pt-16 pb-[calc(2.5rem+env(safe-area-inset-bottom))] text-center text-white`}>
+      <span key={tone} aria-hidden className={`door-waves ${tone === "neutral" ? "" : "door-waves-done"}`}>
+        <i />
         <i />
         <i />
         <i />
       </span>
-      <div className="relative flex flex-col items-center gap-3">{children}</div>
+      <div key={`c${tone}`} className="tap-card relative mx-auto w-full max-w-sm rounded-3xl bg-white/[0.08] p-6 ring-1 ring-white/10 backdrop-blur-xl">
+        {children}
+      </div>
     </main>
   );
 }

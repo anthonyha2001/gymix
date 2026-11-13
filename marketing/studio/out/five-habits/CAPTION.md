@@ -9,7 +9,7 @@ Save this. Five habits we keep seeing in gyms that never have to chase a payment
 2. They set the lira rate once.
 3. Their members check themselves in.
 4. They know who owes what, right now.
-5. They spend $19.99 a month on all of it.
+5. They spend $29.99 a month on all of it.
 
 Swipe to the end for the plot twist. 👀
 
@@ -26,4 +26,4 @@ to try the live demo.
 ## Notes
 - The screens on slide 7 are real captures of the live demo (sample gym "Atlas Fitness", sample data).
 - Every habit is a real Gymix feature: automatic freeze of unpaid members, USD + LBP at the gym's rate,
-  tap-to-check-in sticker, who owes what on one screen, $19.99 a month for the whole gym.
+  tap-to-check-in sticker, who owes what on one screen, $29.99 a month for the whole gym.

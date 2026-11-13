@@ -56,7 +56,7 @@ I checked the app code (`web/src/app/c/[token]/tap-check-in.tsx`). When a tap is
 | 0-3 | Member taps phone on the door sticker. Cut to the **red** phone screen: "Not allowed in ... Please see the front desk." | Real phone footage at a door (tap) + screen capture of the red screen (demo, see section 0) | "Unpaid? Frozen." |
 | 3-8 | Front desk person smiles and shrugs, member shrugs back. | Real footage, staff who agreed | "No more awkward conversations." |
 | 8-12 | Member pays (hands cash across the desk, or points at a phone; keep it generic). Taps again. **Green**: "Checked in. Welcome back." | Real footage of the people; green screen from the demo (Karim, after you unfreeze him) | "Paid? Welcome back, habibi." |
-| 12-15 | Logo card: lime on ink. | Designed card | "Gymix. $19.99/month. 14 days free." |
+| 12-15 | Logo card: lime on ink. | Designed card | "Gymix. $29.99/month. 14 days free." |
 
 **Real phone footage vs demo:**
 - **Real phone footage at a door with a sticker:** the tap itself (phone to sticker, 0-1 s), the front desk smile/shrug (3-8), the cash handover (8-10), the second tap. You can do this with any friend and your own NFC sticker, no gym needed. Don't use a real gym's name or logo.

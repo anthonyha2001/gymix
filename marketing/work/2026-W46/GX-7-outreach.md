@@ -37,7 +37,7 @@ pre-visit DM below; otherwise just walk in and ask "is the owner around? when is
 | Time | Gym | Why first | Show them | Backup if closed or owner out |
 |---|---|---|---|---|
 | 10:30 | **Phocus Gym**, Sioufi | Independent neighbourhood gym, probably cash and a notebook | "Unpaid? Frozen.", dollars and lira | **Namat Beirut**, Achrafieh (reformer, mat, yoga, aerial) |
-| 11:15 | **Grizzly Gym**, Sioufi | Same street zone, independent | "Unpaid? Frozen.", tap check-in, $19.99 | **Body Garage**, Sassine (about 10 min away; old source, check it is open) |
+| 11:15 | **Grizzly Gym**, Sioufi | Same street zone, independent | "Unpaid? Frozen.", tap check-in, $29.99 | **Body Garage**, Sassine (about 10 min away; old source, check it is open) |
 | 12:00 | **Barefoot Pilates Studio**, Sioufi | Sells class packs: bookings and course payments are the pain (Persona B) | Member app (Karim's phone), classes | Namat Beirut |
 
 Route: Phocus → Grizzly → Barefoot on foot. If two are closed, drive to Namat and Body Garage. Done by 13:00.
@@ -79,7 +79,7 @@ evenings, ask when to come back.
    membership and days left, classes. "Your members open a link, no App Store. They can add it to the home screen."
    Switch back.
 6. **The ask (15s).** "I'll set it up with you now: 30 minutes, your plans, your first members, the sticker at the
-   door. 14 days free, no card. $19.99 a month for the whole gym after that, no contract."
+   door. 14 days free, no card. $29.99 a month for the whole gym after that, no contract."
 
 **Don't open:** the **shop** page (even if the guide makes it glow, skip it) and any chat or message log showing
 automatic WhatsApp messages. If they ask about a turnstile or a gate: "Today it's the $1 sticker and a QR code, no
@@ -108,12 +108,12 @@ just walk in. After the visit, the post-visit message (section 3) replaces the f
 reached out.
 > Hi! [FOUNDER_NAME] from Gymix. Phocus looks like a proper Sioufi neighbourhood gym [DETAIL]. We built a system for
 > gyms like yours: members tap their phone at the door, anyone who hasn't paid is frozen automatically, and you take
-> dollars or lira at your own rate. $19.99 a month for the whole gym. Try a sample gym, no sign-up:
+> dollars or lira at your own rate. $29.99 a month for the whole gym. Try a sample gym, no sign-up:
 > [WEBSITE]/demo. Or can I show you in 2 minutes this week?
 
 > Marhaba! Ana [FOUNDER_NAME] men Gymix. Phocus gym 7ayy 7a2i2i bi Sioufi [DETAIL]. 3amalna system la gyms metlak:
 > el members bya3mlo tap bel phone 3al bab, li ma dafa3 bya3mol freeze la7alo, w btekhod dollar aw lira 3al sa3er
-> li badak ye. $19.99 bel chahr la kel el gym. Jarreb gym demo bala ma tsajjel: [WEBSITE]/demo. Aw b2arjik bi 2
+> li badak ye. $29.99 bel chahr la kel el gym. Jarreb gym demo bala ma tsajjel: [WEBSITE]/demo. Aw b2arjik bi 2
 > minutes hal jem3a?
 > **NEEDS NATIVE CHECK**
 
@@ -121,24 +121,24 @@ reached out.
 **Send only if:** same as Phocus.
 > Hi! [FOUNDER_NAME] from Gymix. A grizzly at the door is great security. For the members who "forgot" to pay, we
 > built something quieter: they tap their phone to check in, and if they haven't paid, Gymix freezes them
-> automatically. Dollars or lira at your rate, $19.99 a month for the whole gym. Run a sample gym, no sign-up:
+> automatically. Dollars or lira at your rate, $29.99 a month for the whole gym. Run a sample gym, no sign-up:
 > [WEBSITE]/demo. Or 2 minutes at the desk this week?
 
 > Marhaba! [FOUNDER_NAME] men Gymix. Grizzly 3al bab a7la security. Bas lal members li "nesyo" yedfa3o, fi shi
 > ahda: bya3mlo tap bel phone, w iza ma dafa3o, Gymix bya3mellon freeze la7alo. Dollar aw lira 3al sa3er tab3ak,
-> $19.99 bel chahr la kel el gym. Jarreb gym demo bala tsjil: [WEBSITE]/demo. Aw 2 minutes 3al desk hal jem3a?
+> $29.99 bel chahr la kel el gym. Jarreb gym demo bala tsjil: [WEBSITE]/demo. Aw 2 minutes 3al desk hal jem3a?
 > **NEEDS NATIVE CHECK**
 
 ### 3 · Barefoot Pilates Studio, Sioufi (visit Thu)
 **Send only if:** same as Phocus.
 > Hi! [FOUNDER_NAME] from Gymix. Saw Barefoot on Beirut.com's list of Pilates studios [DETAIL]. If your class
 > bookings live in your DMs, Gymix puts them in one calendar with waitlists and monthly courses, plus an app your
-> members open from a link, no store. $19.99 a month for the whole studio, 14 days free. Try a sample gym, no
+> members open from a link, no store. $29.99 a month for the whole studio, 14 days free. Try a sample gym, no
 > sign-up: [WEBSITE]/demo. Or 2 minutes between classes this week?
 
 > Marhaba! [FOUNDER_NAME] men Gymix. Shefna Barefoot 3a list el Pilates studios 3a Beirut.com [DETAIL]. Iza el
 > bookings kellon bel DMs, Gymix bi 7ottellik yehon bi calendar wa7ad ma3 waitlists w monthly courses, w app lal
-> members men link, bala store. $19.99 bel chahr la kel el studio, 14 yom free. Jarrbi: [WEBSITE]/demo. Aw 2
+> members men link, bala store. $29.99 bel chahr la kel el studio, 14 yom free. Jarrbi: [WEBSITE]/demo. Aw 2
 > minutes bayn class w class?
 > **NEEDS NATIVE CHECK**
 
@@ -147,12 +147,12 @@ reached out.
 met them.
 > Hi! [FOUNDER_NAME] from Gymix. Reformer, mat, yoga and aerial under one roof is a lot of schedules to keep in your
 > head [DETAIL]. Gymix gives you one class calendar with bookings, waitlists and monthly courses, and your members
-> get an app from a link, no download. $19.99 a month for the whole studio. Try a sample gym, no sign-up:
+> get an app from a link, no download. $29.99 a month for the whole studio. Try a sample gym, no sign-up:
 > [WEBSITE]/demo. Can I show you in 2 minutes this week?
 
 > Marhaba! [FOUNDER_NAME] men Gymix. Reformer, mat, yoga w aerial ta7t sa2f wa7ad, ya3ne schedules ktir bel ras
 > [DETAIL]. Gymix bya3tik calendar wa7ad lal classes ma3 bookings, waitlists w monthly courses, w el members byekhdo
-> app men link, bala download. $19.99 bel chahr la kel el studio. Jarrbi: [WEBSITE]/demo. Fiyye farjik bi 2 minutes?
+> app men link, bala download. $29.99 bel chahr la kel el studio. Jarrbi: [WEBSITE]/demo. Fiyye farjik bi 2 minutes?
 > **NEEDS NATIVE CHECK**
 
 ### 5 · Body Garage, Sassine (backup visit Thu)
@@ -160,11 +160,11 @@ met them.
 met them. (GX-1's source is an old deals guide.)
 > Hi! [FOUNDER_NAME] from Gymix. I saw Body Garage has sold monthly and 3-month memberships [DETAIL]. Gymix tracks
 > every expiry for you, and when someone hasn't paid, they're frozen at the door automatically. Dollars or lira at
-> your rate. $19.99 a month for the whole gym, 14 days free, no card. Try a sample gym, no sign-up:
+> your rate. $29.99 a month for the whole gym, 14 days free, no card. Try a sample gym, no sign-up:
 > [WEBSITE]/demo. Or 2 minutes at the gym this week?
 
 > Marhaba! [FOUNDER_NAME] men Gymix. Shefet Body Garage bibi3 eshtirakat chahr w 3 cheher [DETAIL]. Gymix byotba3
-> kel expiry 3anak, w li ma dafa3 bya3mol freeze 3al bab la7alo. Dollar aw lira 3al sa3er tab3ak. $19.99 bel chahr
+> kel expiry 3anak, w li ma dafa3 bya3mol freeze 3al bab la7alo. Dollar aw lira 3al sa3er tab3ak. $29.99 bel chahr
 > la kel el gym, 14 yom free, bala card. Jarreb: [WEBSITE]/demo. Aw 2 minutes bel gym hal jem3a?
 > **NEEDS NATIVE CHECK**
 
@@ -173,12 +173,12 @@ met them. (GX-1's source is an old deals guide.)
 gym's own; DM it), or the owner reached out.
 > Hi! [FOUNDER_NAME] from Gymix. MMA, BJJ, boxing, gymnastics and Zumba, for kids and adults: that's a lot of
 > monthly payments to keep track of [DETAIL]. Gymix tracks who owes what, freezes unpaid members at the door
-> automatically, and runs your classes and monthly courses. Dollars or lira at your rate, $19.99 a month for the
+> automatically, and runs your classes and monthly courses. Dollars or lira at your rate, $29.99 a month for the
 > whole gym. Try a sample gym, no sign-up: [WEBSITE]/demo. Or 2 minutes this week?
 
 > Marhaba! [FOUNDER_NAME] men Gymix. MMA, BJJ, boxing, gymnastics w Zumba, lal wlad w lal kbar: ya3ne payments
 > ktir kel chahr [DETAIL]. Gymix byotba3 min 3aleh masari, bya3mol freeze lal ma dafa3 3al bab la7alo, w byrattib
-> el classes w el monthly courses. Dollar aw lira 3al sa3er tab3ak, $19.99 bel chahr. Jarreb: [WEBSITE]/demo. Aw 2
+> el classes w el monthly courses. Dollar aw lira 3al sa3er tab3ak, $29.99 bel chahr. Jarreb: [WEBSITE]/demo. Aw 2
 > minutes hal jem3a?
 > **NEEDS NATIVE CHECK**
 
@@ -187,12 +187,12 @@ gym's own; DM it), or the owner reached out.
 the owner reached out, or you met them.
 > Hi! [FOUNDER_NAME] from Gymix. Conditioning and MMA skills in a clinic-style gym: you know every member by name
 > [DETAIL]. Gymix makes sure you also know who paid. Members tap their phone at the door, unpaid ones are frozen
-> automatically, and you take dollars or lira at your rate. $19.99 a month for the whole gym. Try a sample gym,
+> automatically, and you take dollars or lira at your rate. $29.99 a month for the whole gym. Try a sample gym,
 > no sign-up: [WEBSITE]/demo. Or 2 minutes this week?
 
 > Marhaba! [FOUNDER_NAME] men Gymix. Conditioning w MMA skills bi gym metl clinic: bta3ref kel member bi esmo
 > [DETAIL]. Gymix bi khallik ta3ref kamen min dafa3. El members bya3mlo tap bel phone 3al bab, li ma dafa3 bya3mol
-> freeze la7alo, w btekhod dollar aw lira 3al sa3er tab3ak. $19.99 bel chahr. Jarreb: [WEBSITE]/demo. Aw 2 minutes?
+> freeze la7alo, w btekhod dollar aw lira 3al sa3er tab3ak. $29.99 bel chahr. Jarreb: [WEBSITE]/demo. Aw 2 minutes?
 > **NEEDS NATIVE CHECK**
 
 ### 8 · M-J-J Sport, Zalka (backup visit Fri)
@@ -200,12 +200,12 @@ the owner reached out, or you met them.
 or the owner reached out, or you met them.
 > Hi! [FOUNDER_NAME] from Gymix. Boxing, MMA and fitness in Zalka since 2004: that's a lot of notebooks [DETAIL].
 > Gymix replaces them with one system: members tap their phone to check in, anyone unpaid is frozen automatically,
-> and you take dollars or lira at your own rate. $19.99 a month for the whole gym, 14 days free. Try a sample gym,
+> and you take dollars or lira at your own rate. $29.99 a month for the whole gym, 14 days free. Try a sample gym,
 > no sign-up: [WEBSITE]/demo. Or 2 minutes this week?
 
 > Marhaba! [FOUNDER_NAME] men Gymix. Boxing, MMA w fitness bi Zalka men 2004: ya3ne daftar wara daftar [DETAIL].
 > Gymix byekhod ma7allon: el members bya3mlo tap bel phone, li ma dafa3 bya3mol freeze la7alo, w btekhod dollar aw
-> lira 3al sa3er tab3ak. $19.99 bel chahr la kel el gym, 14 yom free. Jarreb: [WEBSITE]/demo. Aw 2 minutes?
+> lira 3al sa3er tab3ak. $29.99 bel chahr la kel el gym, 14 yom free. Jarreb: [WEBSITE]/demo. Aw 2 minutes?
 > **NEEDS NATIVE CHECK**
 
 ### 9 · Fitness Town, Zalka (visit Fri)
@@ -213,12 +213,12 @@ or the owner reached out, or you met them.
 reached out.
 > Hi! [FOUNDER_NAME] from Gymix. Open 6 am to 9 pm on weekdays: that's 15 hours of "I'll pay you tomorrow" at the
 > desk [DETAIL]. Gymix handles it: members tap their phone to check in, anyone unpaid is frozen automatically, and
-> the next check-in after paying lets them back in. Dollars or lira at your rate, $19.99 a month for the whole gym.
+> the next check-in after paying lets them back in. Dollars or lira at your rate, $29.99 a month for the whole gym.
 > Try a sample gym, no sign-up: [WEBSITE]/demo.
 
 > Marhaba! [FOUNDER_NAME] men Gymix. Men 6 el sob7 la 9 el masa: ya3ne 15 se3a "bkra bedfa3" 3al desk [DETAIL].
 > Gymix byrayye7ak: el members bya3mlo tap bel phone, li ma dafa3 bya3mol freeze la7alo, w awwal ma yedfa3 byfout.
-> Dollar aw lira 3al sa3er tab3ak, $19.99 bel chahr la kel el gym. Jarreb gym demo bala tsjil: [WEBSITE]/demo.
+> Dollar aw lira 3al sa3er tab3ak, $29.99 bel chahr la kel el gym. Jarreb gym demo bala tsjil: [WEBSITE]/demo.
 > **NEEDS NATIVE CHECK**
 
 ### 10 · Fitnessaddict.leb, Antelias (backup visit Fri)
@@ -226,12 +226,12 @@ reached out.
 or the owner reached out, or you met them.
 > Hi! [FOUNDER_NAME] from Gymix. Fitness addicts never skip a day. Their payments sometimes do [DETAIL]. Gymix
 > freezes unpaid accounts automatically, checks members in with a tap of their phone, and takes dollars or lira at
-> your rate. $19.99 a month for the whole gym, 14 days free, no card. Try a sample gym, no sign-up:
+> your rate. $29.99 a month for the whole gym, 14 days free, no card. Try a sample gym, no sign-up:
 > [WEBSITE]/demo. Or can I show you in 2 minutes this week?
 
 > Marhaba! [FOUNDER_NAME] men Gymix. El fitness addicts ma bifawwto yom. El payments ahyanan ee [DETAIL]. Gymix
 > bya3mol freeze la7alo lal ma dafa3, el members bifouto b tap bel phone, w btekhod dollar aw lira 3al sa3er
-> tab3ak. $19.99 bel chahr, 14 yom free, bala card. Jarreb: [WEBSITE]/demo. Aw 2 minutes hal jem3a?
+> tab3ak. $29.99 bel chahr, 14 yom free, bala card. Jarreb: [WEBSITE]/demo. Aw 2 minutes hal jem3a?
 > **NEEDS NATIVE CHECK**
 
 ### Extra (not in the top 10): Superhero Gym at The Smallville, Badaro
@@ -241,7 +241,7 @@ something cold this week, this is the one. Email to `superherogym@thesmallville.
 > **Subject:** Memberships at Superhero Gym, in dollars and lira
 >
 > Hi, this is [FOUNDER_NAME] from Gymix. I saw Superhero Gym sells gym-only memberships to non-guests. Gymix runs
-> those for $19.99 a month for the whole gym: members tap their phone to check in, unpaid accounts freeze
+> those for $29.99 a month for the whole gym: members tap their phone to check in, unpaid accounts freeze
 > automatically, and the desk takes dollars or lira at your rate. You can try a sample gym right now, no sign-up:
 > [WEBSITE]/demo. Who would be the right person to show it to in 2 minutes?
 >
@@ -262,11 +262,11 @@ Each is sent by hand, only to someone who got a first message (or whom you met).
 > **NEEDS NATIVE CHECK**
 
 ### Day 6 (no reply): the price + set-up-together angle, last one
-> Last one, promised. I'm not going to chase you: chasing is Gymix's job. $19.99 a month for the whole gym, 14
+> Last one, promised. I'm not going to chase you: chasing is Gymix's job. $29.99 a month for the whole gym, 14
 > days free, no card, and I'll come set it up with you in 30 minutes. If now's not the time, no problem at all.
 > [WEBSITE]/demo
 
-> Akher wa7de, wa3ed. Mesh rah la77e2ak: hayda shoghl Gymix. $19.99 bel chahr la kel el gym, 14 yom free, bala
+> Akher wa7de, wa3ed. Mesh rah la77e2ak: hayda shoghl Gymix. $29.99 bel chahr la kel el gym, 14 yom free, bala
 > card, w bije rakkbo ma3ak bi 30 d2i2a. Iza mesh wa2to halla2, ma fi chi abadan. [WEBSITE]/demo
 > **NEEDS NATIVE CHECK**
 
@@ -299,7 +299,7 @@ Arabizi version (for WhatsApp):
 |---|---|
 | "My members won't download an app." | "They don't download anything. They open a link, one tap and they're in, and they can add it to the home screen. No App Store, no password." `[TO CONFIRM: until WhatsApp is approved, how the link reaches members, e.g. staff copy the invite link and share it]` |
 | "Too complicated for my staff." | "Setup is about 10 minutes and each role only sees what it needs: the front desk sees members, payments and check-ins. If anyone gets stuck, our support can open your dashboard and fix it with you." |
-| "I don't have money for another bill." | "$19.99 a month for the whole gym, not per member. If the freeze collects one unpaid month from one member, it has paid for itself. 14 days free, no card, no contract." |
+| "I don't have money for another bill." | "$29.99 a month for the whole gym, not per member. If the freeze collects one unpaid month from one member, it has paid for itself. 14 days free, no card, no contract." |
 | "The notebook works fine." | "It works until someone forgets to pay for three months. Keep the notebook for 14 days and run Gymix next to it. Then decide." |
 | "Is it in Arabic?" | "Honestly, the app is in English today. It's simple and visual, and most staff and members use it easily." `[TO CONFIRM: is Arabic planned? Only then add "Arabic is coming"]` |
 | "I have three branches." | "Today each gym is its own account. There's no combined view of all branches, so I won't promise one." `[TO CONFIRM with founder: what to offer chains, if anything]` |

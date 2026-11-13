@@ -73,7 +73,7 @@ Deliver: for each of the 5 pieces (Reel 7, Reel 1, Abou Bkra Ep. 1 "Bkra", Ep. 2
 - 3 caption variants (safe, cheeky, bold), each **under 120 words**, recipe truth, twist, fact, nudge, at most one emoji, and your pick with a one-line reason.
 - The on-screen text lines (each under 8 words) and the first-2-second hook.
 - CTA: `[WEBSITE]/demo` on every piece (cold audience). Abou Bkra lines can point to "Abou Bkra is in the demo too. Go freeze him." Only if the demo really shows an unpaid member: it does (members owing money, Tarek refused at check-in, brief 2.5).
-- **Don't mention automatic WhatsApp reminders or receipts.** Facts to lean on: auto-freeze after a set number of days, check-in refused at the door, the next check-in after paying unfreezes it, $19.99 a month for the whole gym, 14 days free, no card.
+- **Don't mention automatic WhatsApp reminders or receipts.** Facts to lean on: auto-freeze after a set number of days, check-in refused at the door, the next check-in after paying unfreezes it, $29.99 a month for the whole gym, 14 days free, no card.
 - Ep. 3: he pays **at the front desk** (cash, Whish or OMT, recorded by the desk), then taps green. Not "pays in the app" (brief 3).
 - Any Lebanese words inside English captions are marked NEEDS NATIVE CHECK.
 - 5-8 hashtags per piece (Lebanon + fitness + gym business), no invented brand tags beyond #Gymix.
@@ -154,7 +154,7 @@ Input: GX-2 output (use the copywriter's **picked** variant of each piece), brie
 Deliver:
 - **Arabizi** version of all 5 captions and on-screen lines (Reel 7, Reel 1, Abou Bkra Ep. 1-3). Adapt, don't translate: if a pun dies, swap in a Lebanese one and say so.
 - **French** version of Reel 7 and Reel 1 only.
-- Facts, numbers ($19.99, 14 days, no card) and the CTA `[WEBSITE]/demo` identical in every language. Product names stay in English.
+- Facts, numbers ($29.99, 14 days, no card) and the CTA `[WEBSITE]/demo` identical in every language. Product names stay in English.
 - Every output marked **NEEDS NATIVE CHECK**, with a list of the phrases you're least sure about.
 Output: marketing/work/2026-W46/GX-8-localizer.md
 
@@ -165,7 +165,7 @@ Persona: A, B, C, E   Pillar: all   Channel: Instagram, TikTok, Facebook
 Input: GX-2, GX-3, GX-4 and GX-8 outputs; the whole brief, especially 2.5, 3, 7.2 and the "Never tease" list.
 Deliver: PASS or FIX for every caption variant, on-screen line, shot list, calendar row, story and comment reply, quoting the exact line for each problem and giving the corrected version. Check in particular:
 - No automatic WhatsApp claims; no shop/POS, screens, occupancy, kiosk or door access (including **the demo's shop page in any shot**).
-- Price $19.99/month per gym, 14 days, no card; CTA `[WEBSITE]/demo` present.
+- Price $29.99/month per gym, 14 days, no card; CTA `[WEBSITE]/demo` present.
 - Abou Bkra and the Wasta Member tease a situation, never a person; no body, region, religion or crisis jokes; actor permission noted.
 - Ep. 3 payment happens at the desk, not in the app.
 - Comment replies are honest about the English-only app, no turnstiles today, no customer numbers.

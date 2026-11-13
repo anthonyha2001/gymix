@@ -1052,3 +1052,9 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 .lx-aura-light .lx-blob-b { width: 760px; height: 760px; left: -20%; top: 45%; background: radial-gradient(circle, rgb(214 210 196 / 0.5), transparent 65%); transform: translate3d(calc(var(--sy, 0) * 0.03px), calc(var(--sy, 0) * -0.1px), 0); }
 .lx-aura-light .lx-blob-c { width: 520px; height: 520px; left: 35%; top: 80%; background: radial-gradient(circle, rgb(169 209 15 / 0.14), transparent 65%); transform: translate3d(calc(var(--sy, 0) * -0.04px), calc(var(--sy, 0) * -0.14px), 0); }
 @media (max-width: 767px) { .lx-blob { filter: blur(60px); } .lx-aura-dark .lx-blob-b { width: 600px; height: 600px; } }
+/* The tap check-in screen: the card rises in; a refused tap turns the glow red. */
+@keyframes gx-tap-card { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: none; } }
+.tap-card { animation: gx-tap-card 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.tap-bad .door-waves::before { background: radial-gradient(ellipse 75% 100% at 50% 0%, rgb(192 54 44 / 0.55), transparent 70%); }
+.tap-bad .door-waves > i { border-color: rgb(255 120 100 / 0.9); box-shadow: 0 0 22px rgb(192 54 44 / 0.5); }
+@media (prefers-reduced-motion: reduce) { .tap-card { animation: none; } }

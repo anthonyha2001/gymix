@@ -8,7 +8,7 @@ Week 2026-W46 · gymix-copywriter · Channel: Instagram Reels (repost on TikTok 
   occupancy, kiosk, door access).
 - Facts used, exactly as in the brief: an unpaid account **freezes automatically a set number of days after an
   invoice (3 by default, the owner chooses)**; **check-in is refused at the door**; **the next check-in after paying
-  unfreezes it**; the front desk takes **cash, card, Whish or OMT**; **$19.99 a month for the whole gym**; **14 days
+  unfreezes it**; the front desk takes **cash, card, Whish or OMT**; **$29.99 a month for the whole gym**; **14 days
   free, no card**; the demo is a private sample gym, **no sign-up**, deleted after 24 hours.
 - Abou Bkra and the Wasta Member are fictional types played by a friend who agreed. We tease the situation, never
   a person.
@@ -40,7 +40,7 @@ of the demo.
 4. Expired? Gymix says no. *(over Tarek being refused)*
 5. Sell a membership. Done.
 6. Now see your member's phone.
-7. $19.99 a month. The whole gym.
+7. $29.99 a month. The whole gym.
 8. End card: **Run a gym for a day.** `[WEBSITE]/demo`
 
 ### Captions
@@ -48,7 +48,7 @@ of the demo.
 > Don't take our word for it. Run a sample gym inside the real Gymix, right now. Check a member in. Watch Tarek get
 > refused at the door because his membership expired, and Gymix tells him why. Sell a membership. Then switch to the
 > member's phone and see what your members would see. No sign-up, no email, nothing to install. Click anything, you
-> can't break it. When you're ready: $19.99 a month for the whole gym, 14 days free, no card.
+> can't break it. When you're ready: $29.99 a month for the whole gym, 14 days free, no card.
 >
 > Run a gym for a day: [WEBSITE]/demo
 
@@ -62,7 +62,7 @@ NEEDS NATIVE CHECK: none.
 > Switch to the member's phone. Click everything. It's not your gym (yet), so go ahead and break it. Nothing is sent
 > to anyone and it disappears after 24 hours.
 >
-> $19.99 a month for the whole gym when you're ready.
+> $29.99 a month for the whole gym when you're ready.
 > 👉 [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: none.
@@ -71,7 +71,7 @@ NEEDS NATIVE CHECK: none.
 > Your coffee is still hot. Good, that's enough time to run a whole gym. Press one button and you're the owner of
 > Atlas Fitness. Check a member in. Refuse the expired one (Gymix does the refusing, you keep smiling). Sell a
 > membership. Jump to the member's phone to see their app. Then decide if el daftar still deserves its job. No
-> sign-up, nothing sent to anyone, gone in 24 hours. $19.99 a month for the whole gym, 14 days free, no card.
+> sign-up, nothing sent to anyone, gone in 24 hours. $29.99 a month for the whole gym, 14 days free, no card.
 >
 > [WEBSITE]/demo
 
@@ -102,7 +102,7 @@ the nice ones. That's the real relief.
 2. No more awkward conversations. *(front desk smiles, shrugs)*
 3. Paid at the desk. Tap again. *(he pays, taps)*
 4. Checked in. Welcome back. *(over the green screen, overlay only)*
-5. End card: **Gymix. $19.99/month. 14 days free.** `[WEBSITE]/demo`
+5. End card: **Gymix. $29.99/month. 14 days free.** `[WEBSITE]/demo`
 
 ### Captions
 **Safe**
@@ -111,7 +111,7 @@ the nice ones. That's the real relief.
 > automatically and check-in is refused at the door. They pay at the front desk, cash, card, Whish or OMT, and the
 > next check-in unfreezes it. No speech, no chasing.
 >
-> $19.99 a month for the whole gym. 14 days free, no card.
+> $29.99 a month for the whole gym. 14 days free, no card.
 > See it on a sample gym, no sign-up: [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: "ma3leh".
@@ -123,7 +123,7 @@ NEEDS NATIVE CHECK: "ma3leh".
 > Pay at the front desk, tap again, you're in. Your front desk stops being the bad guy and goes back to saying
 > good morning.
 >
-> Unpaid? Frozen. $19.99 a month for the whole gym, 14 days free, no card.
+> Unpaid? Frozen. $29.99 a month for the whole gym, 14 days free, no card.
 > Try it on a sample gym, no sign-up: [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: none.
@@ -135,7 +135,7 @@ NEEDS NATIVE CHECK: none.
 > choose). The member taps, check-in is refused, and they're sent to the front desk. They pay, cash, card, Whish or
 > OMT, and the next tap lets them in. You never said a word.
 >
-> $19.99 a month for the whole gym. 14 days free, no card.
+> $29.99 a month for the whole gym. 14 days free, no card.
 > 🔒 [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: none.
@@ -202,7 +202,7 @@ NEEDS NATIVE CHECK: "Abou Bkra", "ma3leh", "Bkra bedfa3? Tayyeb. W bkra btfout."
 > Abou Bkra has one payment plan: tomorrow. No interest, no deadline, running since October.
 >
 > The auto-freeze has one answer: today. If a member still owes money a set number of days after the invoice
-> (3 by default, you choose), the account freezes and check-in is refused at the door. $19.99 a month for the whole
+> (3 by default, you choose), the account freezes and check-in is refused at the door. $29.99 a month for the whole
 > gym. Less than one Abou Bkra owes you.
 >
 > Bkra bedfa3? Tayyeb. W bkra btfout.
@@ -256,7 +256,7 @@ NEEDS NATIVE CHECK: lines 3, 5.
 >
 > El freeze ma bya3ref wasta.
 >
-> $19.99 a month for the whole gym. Try it on a sample gym, no sign-up: [WEBSITE]/demo
+> $29.99 a month for the whole gym. Try it on a sample gym, no sign-up: [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: "Abou Bkra", "Ana men jama3it el owner", "El freeze ma bya3ref wasta" (the freeze doesn't know
 anyone).
@@ -283,7 +283,7 @@ NEEDS NATIVE CHECK: "El freeze ma bya3ref wasta", "Abou Bkra".
 >
 > El freeze ma bya3ref wasta.
 >
-> $19.99 a month for the whole gym, 14 days free, no card.
+> $29.99 a month for the whole gym, 14 days free, no card.
 > See it on a sample gym: [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: "El freeze ma bya3ref wasta".
@@ -333,7 +333,7 @@ NEEDS NATIVE CHECK: lines 1, 4.
 >
 > Unpaid? Frozen. Paid? Welcome back, habibi.
 >
-> $19.99 a month for the whole gym, 14 days free, no card.
+> $29.99 a month for the whole gym, 14 days free, no card.
 > Try it on a sample gym, no sign-up: [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: "wasta", "Abou Bkra", "habibi".
@@ -347,7 +347,7 @@ NEEDS NATIVE CHECK: "wasta", "Abou Bkra", "habibi".
 >
 > Unpaid? Frozen. Paid? Welcome back, habibi. 💚
 >
-> $19.99 a month for the whole gym. See it on a sample gym, no sign-up: [WEBSITE]/demo
+> $29.99 a month for the whole gym. See it on a sample gym, no sign-up: [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: "Abou Bkra", "Bkra, he paid", "habibi".
 
@@ -362,7 +362,7 @@ Gymix WhatsApp messages. If it reads ambiguous, swap for "chase him for weeks".)
 >
 > Unpaid? Frozen. Paid? Welcome back, habibi.
 >
-> $19.99 a month for the whole gym, 14 days free, no card.
+> $29.99 a month for the whole gym, 14 days free, no card.
 > [WEBSITE]/demo
 
 NEEDS NATIVE CHECK: "Abou Bkra", "bkra", "habibi".

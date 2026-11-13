@@ -29,7 +29,7 @@ These details are not set yet. Use the placeholder in drafts and never make up a
 ## 1. Gymix in one sentence
 
 **Gymix is the all-in-one system for running a gym in Lebanon: memberships, payments in dollars and lira,
-tap-your-phone check-in, trainer programs and a member app, for $19.99 a month for the whole gym.**
+tap-your-phone check-in, trainer programs and a member app, for $29.99 a month for the whole gym.**
 
 ### Short versions (use as they are)
 
@@ -37,7 +37,7 @@ tap-your-phone check-in, trainer programs and a member app, for $19.99 a month f
 - **Tagline (from the website):** *Run your gym. Keep them coming back.*
 - **Category line:** The operating system for gyms in Lebanon.
 - **One-liner for owners:** Replace the notebook, the spreadsheet and the WhatsApp groups with one system.
-- **Price line:** $19.99 a month for the whole gym. Less than one member's monthly fee.
+- **Price line:** $29.99 a month for the whole gym. Less than one member's monthly fee.
 - **Close:** Your gym, running itself.
 
 ---
@@ -152,7 +152,7 @@ Everything in this section is built and live for every gym today. You may claim 
 
 ### 2.4 Pricing (exact)
 
-- **$19.99 a month per gym.** Not per member, not per staff member. **Unlimited members and staff, every feature
+- **$29.99 a month per gym.** Not per member, not per staff member. **Unlimited members and staff, every feature
   included.** One plan only.
 - **14-day free trial. No card needed.**
 - **No setup fee. No contract.** Stop whenever you like. The data is never deleted.
@@ -271,7 +271,7 @@ If you're not sure whether a feature exists, write `[TO CONFIRM: does Gymix do X
 - **Wants:** collect money, see the numbers, save time, look professional.
 - **Fears:** "it's complicated", "my staff won't use it", "my members won't download an app", "another monthly
   bill", "it's expensive foreign software".
-- **What gets him:** *Unpaid? Frozen.* + *$19.99 a month* + *10-minute setup* + *dollars and lira*.
+- **What gets him:** *Unpaid? Frozen.* + *$29.99 a month* + *10-minute setup* + *dollars and lira*.
 
 ### Persona B: The boutique studio founder ("Maya", 27-40)
 - Pilates, CrossFit, boxing or dance studio. Brand-conscious, lives on Instagram.
@@ -303,7 +303,7 @@ If you're not sure whether a feature exists, write `[TO CONFIRM: does Gymix do X
 ### 6.1 Positioning statement
 For **gym owners in Lebanon** who run their gym on notebooks, Excel and WhatsApp, **Gymix** is the **gym
 operating system** that **collects your money, checks members in with a tap and gives every member an app**,
-in dollars and lira, for **$19.99 a month**. Unlike foreign gym software priced per member and paid by card, Gymix is
+in dollars and lira, for **$29.99 a month**. Unlike foreign gym software priced per member and paid by card, Gymix is
 **built for how Lebanese gyms really work**.
 
 ### 6.2 Message pillars (every piece of content supports at least one)
@@ -317,13 +317,13 @@ in dollars and lira, for **$19.99 a month**. Unlike foreign gym software priced 
    programs from their trainer, classes and progress. *Keep them coming back.*
 4. **Built for Lebanon.** USD + LBP with your own rate, Whish/OMT, WhatsApp, fast servers, local support that
    can open your dashboard and help.
-5. **Ridiculously fair price.** $19.99/month for the whole gym. Unlimited members. No card, no contract, 14 days free.
+5. **Ridiculously fair price.** $29.99/month for the whole gym. Unlimited members. No card, no contract, 14 days free.
 
 ### 6.3 Key phrases to reuse
 - "Replace the notebook, the spreadsheet and the WhatsApp groups."
 - "Unpaid? Frozen."
 - "A $1 sticker is all the hardware."
-- "$19.99 a month. Less than one member's fee."
+- "$29.99 a month. Less than one member's fee."
 - "No card needed. Set up in ten minutes."
 - "Your members tap their phone and walk in."
 - "An app your members actually open."
@@ -336,7 +336,7 @@ in dollars and lira, for **$19.99 a month**. Unlike foreign gym software priced 
 |---|---|
 | "My members won't download an app." | They don't download anything. You send them a link on WhatsApp; one tap and they're in. They can add it to their home screen. |
 | "It's too complicated for my staff." | Setup takes 10 minutes. Each role only sees what it needs; the front desk sees members, payments and check-ins. And our support can open your dashboard and help you directly. |
-| "I don't have money for software." | $19.99 a month for the whole gym. If the auto-freeze collects even one unpaid month from one member, it has paid for itself. |
+| "I don't have money for software." | $29.99 a month for the whole gym. If the auto-freeze collects even one unpaid month from one member, it has paid for itself. |
 | "What about the lira?" | Prices in dollars, take lira at your own rate, change the rate whenever you want. |
 | "I don't have a card to pay you." | You don't need one. Pay by Whish, OMT or bank transfer. |
 | "What do I need to buy for check-in?" | Nothing except NFC stickers at about $1 each. Members without NFC scan a QR code. |
@@ -428,8 +428,8 @@ All are fictional types, never real people, never named after a real member or g
 - "Streaks, PRs, confetti. Your members will come back just to not lose the streak. We don't judge."
 
 **Price**
-- "$19.99 a month for the whole gym. Less than one member's monthly fee. Way less than one member's excuses."
-- "$19.99. Not per member. Not per trainer. Not 'call us for a quote'. Per gym. Khalas."
+- "$29.99 a month for the whole gym. Less than one member's monthly fee. Way less than one member's excuses."
+- "$29.99. Not per member. Not per trainer. Not 'call us for a quote'. Per gym. Khalas."
 
 **The live demo**
 - "Run a gym for a day. No sign-up, no salesman, no 'n7ki ba3den'."
@@ -476,11 +476,11 @@ Lebanon is multilingual. Match the language to the channel and audience:
 
 Example of the right tone in Lebanese dialect (Arabizi):
 > "Kel chahr, el masari 3am tdi3 men el gym? Detective Bob la2a el moshkle: ma fi system. Ma3 Gymix, li ma dafa3
-> bya3mol freeze la7alo, w el freeze ma bya3ref wasta. $19.99 bel chahr la kel el gym. Jarreb 3a gym demo, bala ma
+> bya3mol freeze la7alo, w el freeze ma bya3ref wasta. $29.99 bel chahr la kel el gym. Jarreb 3a gym demo, bala ma
 > tsajjel."
 
 (Translation: "Every month, money keeps disappearing from the gym? Detective Bob found the problem: there's no
-system. With Gymix, whoever didn't pay freezes automatically, and the freeze doesn't know any wasta. $19.99 a month
+system. With Gymix, whoever didn't pay freezes automatically, and the freeze doesn't know any wasta. $29.99 a month
 for the whole gym. Try it on a demo gym, no sign-up.")
 
 The AI should get a Lebanese speaker to check dialect copy before it's published.
@@ -569,7 +569,7 @@ The AI should get a Lebanese speaker to check dialect copy before it's published
 - Trials started per week, by channel.
 - **Activation rate:** trials that complete the 4 setup steps.
 - Trial → paid conversion.
-- Paying gyms; monthly recurring revenue ($19.99 × paying gyms, unless the price changes).
+- Paying gyms; monthly recurring revenue ($29.99 × paying gyms, unless the price changes).
 - Churn (gyms that stop paying).
 - Members added and check-ins per gym (shows real use).
 - Referrals per paying gym.
@@ -585,10 +585,10 @@ Adapt these, but keep the facts exactly as they are.
 - **Headline:** Run your gym. **Keep them coming back.**
 - **Subhead:** Gymix is the all-in-one system for your gym: memberships, payments in dollars and lira,
   tap-to-check-in, programs from your trainers and an app your members actually open.
-- **CTA:** Start your 14-day free trial · $19.99 a month, all in
+- **CTA:** Start your 14-day free trial · $29.99 a month, all in
 - **Second link:** Try the live demo, no sign-up
 - **Under the CTA:** No card needed. Set up in ten minutes.
-- **Proof strip:** $19.99 a month for the whole gym · USD + LBP with your own lira rate · $1 NFC sticker is all the
+- **Proof strip:** $29.99 a month for the whole gym · USD + LBP with your own lira rate · $1 NFC sticker is all the
   hardware · 10 min to set up your gym
 
 ### 9.2 The 3 steps (already live)
@@ -600,7 +600,7 @@ Adapt these, but keep the facts exactly as they are.
 
 ### 9.3 One-pager (print / PDF)
 **Title:** Your gym, running itself.
-**Sub:** The all-in-one gym system built for Lebanon. $19.99 a month. 14 days free.
+**Sub:** The all-in-one gym system built for Lebanon. $29.99 a month. 14 days free.
 - **Get paid:** unpaid members freeze automatically, WhatsApp renewal reminders, receipts, dollars and lira.
 - **Tap to check in:** a $1 sticker at the door. No hardware.
 - **A member app:** programs, classes and progress. No store download.
@@ -611,12 +611,12 @@ Adapt these, but keep the facts exactly as they are.
 **English:**
 > Hi [Name], this is [FOUNDER_NAME] from Gymix. We built a gym system for Lebanese gyms: members tap their phone
 > at the door to check in, anyone who hasn't paid gets frozen automatically, and you take dollars or lira at your
-> own rate. It's $19.99 a month for the whole gym and the first 14 days are free. You can try it right now with a
+> own rate. It's $29.99 a month for the whole gym and the first 14 days are free. You can try it right now with a
 > sample gym, no sign-up: [WEBSITE]/demo. Or I can show you in 2 minutes when you're at the gym this week?
 
 **Lebanese (Arabizi):**
 > Marhaba [Name], ana [FOUNDER_NAME] men Gymix. 3amalna system lal gyms bi Lebnen: el members bya3mlo tap bel
-> phone 3al bab, w li ma dafa3 bya3mol freeze la7alo, w btekhod dollar aw lira 3al sa3er li badak ye. $19.99 bel
+> phone 3al bab, w li ma dafa3 bya3mol freeze la7alo, w btekhod dollar aw lira 3al sa3er li badak ye. $29.99 bel
 > chahr la kel el gym, w awwal 14 yom free. Fik tjarrbo halla2 ma3 gym demo, bala ma tsajjel: [WEBSITE]/demo. Aw
 > fik a3tik demo 2 minutes hal jem3a?
 
@@ -626,7 +626,7 @@ Adapt these, but keep the facts exactly as they are.
 - 0-3s: a member taps his phone on the door sticker. A red screen: "Account frozen: unpaid".
 - 3-8s: the front desk smiles, shrugs. Text: "No more awkward conversations."
 - 8-12s: he pays. Taps again. Green: "Checked in. Welcome back."
-- 12-15s: the logo. "Gymix. $19.99/month. 14 days free."
+- 12-15s: the logo. "Gymix. $29.99/month. 14 days free."
 
 **Reel 2: "A $1 sticker vs a $2,000 turnstile" (20s)**
 - Show the price of a turnstile (generic, no brand), then a $1 NFC sticker. Tap. Checked in.
@@ -667,7 +667,7 @@ notebook, three lira rates and 40 unread chats; the culprit is "no system"; Gymi
 
 **Meta ad (owners), English**
 - Primary text: Still chasing members for payments? Gymix freezes unpaid accounts automatically, checks members in
-  with a tap, and handles dollars and lira at your rate. $19.99/month for the whole gym.
+  with a tap, and handles dollars and lira at your rate. $29.99/month for the whole gym.
 - Headline: Run your gym. Get paid.
 - CTA: Send WhatsApp message / Sign up
 
@@ -678,12 +678,12 @@ notebook, three lira rates and 40 unread chats; the culprit is "no system"; Gymi
 
 **Meta ad (live demo), English**
 - Primary text: Don't take our word for it. Run a sample gym in Gymix right now: check members in, sell
-  memberships, see who owes. No sign-up, nothing to install. $19.99/month when you're ready.
+  memberships, see who owes. No sign-up, nothing to install. $29.99/month when you're ready.
 - Headline: Run a gym for a day.
 - CTA: Learn more → `[WEBSITE]/demo`
 
 **Google search ads**
-- Headlines: Gym Management Software Lebanon | $19.99/Month, All Features | USD & LBP Payments | 14-Day Free Trial
+- Headlines: Gym Management Software Lebanon | $29.99/Month, All Features | USD & LBP Payments | 14-Day Free Trial
 - Descriptions: Memberships, tap check-in, member app, WhatsApp reminders. Built for Lebanese gyms. No card needed.
 
 ### 9.7 Email to a lead after a demo
@@ -782,7 +782,7 @@ notebook, three lira rates and 40 unread chats; the culprit is "no system"; Gymi
 |---|---|
 | **Product** | Gymix, the all-in-one gym system (staff dashboard + member app) |
 | **For** | Gyms and studios in Lebanon |
-| **Price** | $19.99/month per gym, unlimited members and staff, everything included |
+| **Price** | $29.99/month per gym, unlimited members and staff, everything included |
 | **Live demo** | `[WEBSITE]/demo`: a private sample gym with a guide, no sign-up, deleted after 24 hours |
 | **Trial** | 14 days free, no card |
 | **Pay Gymix by** | Whish, OMT, bank transfer |
@@ -790,7 +790,7 @@ notebook, three lira rates and 40 unread chats; the culprit is "no system"; Gymi
 | **Hardware** | NFC stickers (about $1 each) or QR, nothing else |
 | **Member app** | Web app installed from a link, iPhone + Android, no store |
 | **Currencies** | USD prices, lira payments at the gym's own rate |
-| **Top 3 selling points** | Unpaid? Frozen. · Tap to check in · $19.99 for the whole gym |
+| **Top 3 selling points** | Unpaid? Frozen. · Tap to check in · $29.99 for the whole gym |
 | **Language of the app** | English (marketing can be in Arabic, Lebanese, French, English) |
 | **Tagline** | Run your gym. Keep them coming back. |
 | **Colours** | Lime `#C8F135`, Ink `#0D1117`, Canvas `#F4F5F2` |

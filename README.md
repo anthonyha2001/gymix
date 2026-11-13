@@ -97,7 +97,7 @@ are kept only for login and sign-up events. Visitors are counted with an anonymo
 
 ## Selling Gymix (subscriptions)
 
-Each gym pays $19.99 a month after a 14-day free trial by default; a super admin changes the price, trial and grace
+Each gym pays $29.99 a month after a 14-day free trial by default; a super admin changes the price, trial and grace
 period in `/admin` (Revenue & pricing), stored in `platform_settings`. There is no card processor:
 gyms pay by Whish, OMT or bank transfer and a super admin records it in `/admin` ("Record payment"), which
 extends the gym's paid-until date. Also in `/admin`: extend a trial, and the payment instructions and WhatsApp

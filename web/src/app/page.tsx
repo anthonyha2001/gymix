@@ -5,6 +5,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { FaqList, MarketingFooter, MarketingNav, PricingCard } from "@/components/marketing";
 import { Reveal, ScrollAura } from "@/components/landing-interactive";
 import { Bento, ChallengeShowcase, DeskShowcase, DoorShowcase, NotifyShowcase } from "@/components/landing-showcase";
+import { AllFeatures } from "@/components/landing-features";
 import { formatPrice } from "@/lib/pricing";
 import { getPricing } from "@/lib/pricing-server";
 

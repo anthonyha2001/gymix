@@ -10,10 +10,10 @@ Week 2026-W46 · gymix-localizer · Channel: Instagram Reels / TikTok (also Face
 - Source: the **picked** hook, on-screen lines and caption of each piece in GX-2 (picks table). Nothing else.
 - Facts kept exactly as in GX-2 and the brief: an unpaid account freezes automatically a set number of days after an
   invoice (3 by default, the owner chooses); check-in is refused at the door; the next check-in after paying
-  unfreezes it; cash, card, Whish or OMT at the front desk; $19.99 a month for the whole gym; 14 days free, no card;
+  unfreezes it; cash, card, Whish or OMT at the front desk; $29.99 a month for the whole gym; 14 days free, no card;
   the demo: one button, no sign-up, Atlas Fitness, 25 members, Tarek expired, nothing sent, gone after 24 hours.
   Each piece carries **the same facts as its English pick**, no more, no less.
-- CTA `[WEBSITE]/demo` on every piece, written as-is. Prices written `$19.99` in every language (also in French) so
+- CTA `[WEBSITE]/demo` on every piece, written as-is. Prices written `$29.99` in every language (also in French) so
   the number is identical everywhere.
 - Kept in English: Gymix, check-in, tap, member, membership, invoice, front desk, freeze/auto-freeze, Whish, OMT,
   card, demo, owner, Atlas Fitness. That's how a Beirut front desk actually talks, and the brief asks for it.
@@ -38,7 +38,7 @@ Week 2026-W46 · gymix-localizer · Channel: Instagram Reels / TikTok (also Face
 4. Expired? Gymix bi2ello la2. *(over Tarek being refused)*
 5. Bi3 membership. Khalas. *(Sell a membership. Done.)*
 6. Halla2 shouf shou bichouf el member. *(Now see what your member sees.)*
-7. $19.99 bel chahr. La kel el gym.
+7. $29.99 bel chahr. La kel el gym.
 8. End card: **Dir gym la yom.** `[WEBSITE]/demo` *(Run a gym for a day.)*
 
 **Caption**
@@ -49,7 +49,7 @@ Week 2026-W46 · gymix-localizer · Channel: Instagram Reels / TikTok (also Face
 > el member. Kabbes 3a kel shi. Mano gym-ak (lessa), fa yalla kassro. Ma byetba3at shi la 7ada, w kello byenma7a
 > ba3d 24 se3a.
 >
-> $19.99 bel chahr la kel el gym, wa2t ma tkoun jehez.
+> $29.99 bel chahr la kel el gym, wa2t ma tkoun jehez.
 > 👉 [WEBSITE]/demo
 
 **Pun notes**
@@ -70,7 +70,7 @@ Week 2026-W46 · gymix-localizer · Channel: Instagram Reels / TikTok (also Face
 4. Expiré ? Gymix dit non. *(over Tarek being refused)*
 5. Vends un abonnement. C'est fait.
 6. Maintenant, vois le téléphone du membre.
-7. $19.99 par mois. Toute la salle.
+7. $29.99 par mois. Toute la salle.
 8. End card: **Gère une salle le temps d'une journée.** `[WEBSITE]/demo`
 
 **Caption**
@@ -82,7 +82,7 @@ Week 2026-W46 · gymix-localizer · Channel: Instagram Reels / TikTok (also Face
 > check-in. Vends un abonnement. Passe sur le téléphone du membre. Clique partout. Ce n'est pas ta salle (pas
 > encore), alors vas-y, casse tout. Rien n'est envoyé à personne et tout disparaît après 24 heures.
 >
-> $19.99 par mois pour toute la salle, quand tu es prêt.
+> $29.99 par mois pour toute la salle, quand tu es prêt.
 > 👉 [WEBSITE]/demo
 
 **Pun notes:** the joke survives as is in French ("fais-moi confiance" is the universal salesman line). No swap.
@@ -104,7 +104,7 @@ Week 2026-W46 · gymix-localizer · Channel: Instagram Reels / TikTok (also Face
 2. Ma 3ad fi 7arj 3al bab. *(No more awkwardness at the door; front desk smiles, shrugs)*
 3. Dafa3 3al desk. Tap kamen marra. *(Paid at the desk. Tap again.)*
 4. Checked in. Ahla w sahla. *(over the green screen, overlay only)*
-5. End card: **Gymix. $19.99 bel chahr. 14 yom free.** `[WEBSITE]/demo`
+5. End card: **Gymix. $29.99 bel chahr. 14 yom free.** `[WEBSITE]/demo`
 
 **Caption**
 > Ma 7ada bi7ebb ykoun huwwe li wa2ef 3al bab w bi2oul "ya3ne... w hal chahr?" Fa khalli el bab yes2al.
@@ -113,7 +113,7 @@ Week 2026-W46 · gymix-localizer · Channel: Instagram Reels / TikTok (also Face
 > bt2arrer). El member bya3mol tap, el check-in byenrafad, w byeb3ato 3al front desk. Byedfa3, cash, card, Whish aw
 > OMT, w el tap el jeye bifawwto. W enta ma 2elt wala kelme.
 >
-> $19.99 bel chahr la kel el gym. 14 yom free, bala card.
+> $29.99 bel chahr la kel el gym. 14 yom free, bala card.
 > 🔒 [WEBSITE]/demo
 
 **Pun notes:** "Let the door ask" → "khalli el bab yes2al" works literally. "You didn't" became "enta ma 2elt shi"
@@ -131,7 +131,7 @@ Same meaning.
 2. Fini les conversations gênantes.
 3. Payé à l'accueil. Nouveau tap.
 4. Check-in validé. Bon retour. *(over the green screen, overlay only)*
-5. End card: **Gymix. $19.99/mois. 14 jours gratuits.** `[WEBSITE]/demo`
+5. End card: **Gymix. $29.99/mois. 14 jours gratuits.** `[WEBSITE]/demo`
 
 **Caption**
 > Personne n'a envie d'être celui qui, à l'entrée, demande « alors... pour ce mois-ci ? ». Alors laisse la porte
@@ -141,7 +141,7 @@ Same meaning.
 > c'est toi qui choisis). Le membre fait un tap, le check-in est refusé et il est envoyé à l'accueil. Il paie, en
 > cash, par carte, Whish ou OMT, et le tap suivant le laisse entrer. Tu n'as rien eu à dire.
 >
-> $19.99 par mois pour toute la salle. 14 jours gratuits, sans carte bancaire.
+> $29.99 par mois pour toute la salle. 14 jours gratuits, sans carte bancaire.
 > 🔒 [WEBSITE]/demo
 
 **Pun notes:** "Pas toi" keeps the bad-cop/good-cop flip in three words. "No card" written "sans carte bancaire" so
@@ -205,7 +205,7 @@ which is the joke). "It's therapeutic" → **"btrayye7 el a3sab"** (it calms the
 >
 > El freeze ma bya3ref wasta.
 >
-> $19.99 bel chahr la kel el gym, 14 yom free, bala card.
+> $29.99 bel chahr la kel el gym, 14 yom free, bala card.
 > Shouf 3a gym demo: [WEBSITE]/demo
 
 **Pun notes:** "A different sport" → **"hayda sport tene"**. Kept "sport" in English on purpose (Lebanese say it), but
@@ -239,7 +239,7 @@ translated. "Whoever you know" → "min ma kent ta3ref", so the word "wasta" sta
 >
 > Ma dafa3t? Freeze. Dafa3t? Welcome back, habibi. 💚
 >
-> $19.99 bel chahr la kel el gym. Shouf 3a gym demo, bala ma tsajjel: [WEBSITE]/demo
+> $29.99 bel chahr la kel el gym. Shouf 3a gym demo, bala ma tsajjel: [WEBSITE]/demo
 
 **Notes**
 - "Chase him on WhatsApp" → **"yla7e2o la asabi3"** (chase him for weeks). This is GX-2's own suggested swap for the
@@ -255,11 +255,11 @@ translated. "Whoever you know" → "min ma kent ta3ref", so the word "wasta" sta
 
 | Piece | Facts in the English pick | Arabizi | French |
 |---|---|---|---|
-| Reel 7 | 1 button, no sign-up, Atlas Fitness, 25 members, dollars and lira, Tarek expired and refused with the reason, sell a membership, member's phone, nothing sent, 24 hours, $19.99/month whole gym, `[WEBSITE]/demo` | all present | all present |
-| Reel 1 | freeze after a set number of days (3 by default, you choose), refused at the door, sent to the front desk, cash/card/Whish/OMT, next tap lets them in, $19.99/month whole gym, 14 days free, no card, `[WEBSITE]/demo` | all present | all present |
+| Reel 7 | 1 button, no sign-up, Atlas Fitness, 25 members, dollars and lira, Tarek expired and refused with the reason, sell a membership, member's phone, nothing sent, 24 hours, $29.99/month whole gym, `[WEBSITE]/demo` | all present | all present |
+| Reel 1 | freeze after a set number of days (3 by default, you choose), refused at the door, sent to the front desk, cash/card/Whish/OMT, next tap lets them in, $29.99/month whole gym, 14 days free, no card, `[WEBSITE]/demo` | all present | all present |
 | Ep. 1 | since October, set number of days after the invoice (3 by default, your choice), auto-freeze, door refuses, Abou Bkra in the demo, `[WEBSITE]/demo` | all present | n/a |
-| Ep. 2 | freeze after a set number of days (3 by default, you choose), tap refused, desk points to payment, $19.99/month whole gym, 14 days free, no card, sample gym, `[WEBSITE]/demo` | all present | n/a |
-| Ep. 3 | paid at the front desk, desk records it in Gymix, next tap unfreezes, $19.99/month whole gym, sample gym, no sign-up, `[WEBSITE]/demo` | all present | n/a |
+| Ep. 2 | freeze after a set number of days (3 by default, you choose), tap refused, desk points to payment, $29.99/month whole gym, 14 days free, no card, sample gym, `[WEBSITE]/demo` | all present | n/a |
+| Ep. 3 | paid at the front desk, desk records it in Gymix, next tap unfreezes, $29.99/month whole gym, sample gym, no sign-up, `[WEBSITE]/demo` | all present | n/a |
 
 ---
 
@@ -292,7 +292,7 @@ translated. "Whoever you know" → "min ma kent ta3ref", so the word "wasta" sta
 16. **French "salle" vs "gym"**: Lebanese French speakers often say "le gym". "Salle" is correct French; check which
     sounds more local. Also "dollars et livres" for dollars and lira (or "dollars et LL").
 17. **French "Nouveau tap."** (Reel 1, line 3): clear, or "Il refait un tap."?
-18. **Written prices**: kept `$19.99` in French too so the number is identical everywhere; a French proofreader may
+18. **Written prices**: kept `$29.99` in French too so the number is identical everywhere; a French proofreader may
     want "19,99 $". Founder's call.
 
 ---

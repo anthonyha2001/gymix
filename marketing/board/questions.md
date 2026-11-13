@@ -16,7 +16,7 @@ knows. Move answered questions to the bottom.
 - Which print shop in Beirut/Metn prints the visit kit (one-pager, QR card)? — from the week 1 plan.
 - Is an ink-outlined logo OK on lime backgrounds (Abou Bkra covers)? — Guardian, GX-10.
 - Hashtags: is #AbouBkra OK next to #Gymix? (#Wasta was dropped by the Guardian.) — GX-2/GX-9.
-- French: "tu" or "vous", "salle" or "gym", and "$19.99" or "19,99 $"? Which language leads each caption? — GX-8.
+- French: "tu" or "vous", "salle" or "gym", and "$29.99" or "19,99 $"? Which language leads each caption? — GX-8.
 - Who will do the native check of Arabizi and French each week? — every week.
 - Who plays Abou Bkra (written OK needed)? — GX-3.
 - 9 leads are outside Beirut/Metn or unconfirmed, 6 may be chains: keep, drop or check? — GX-10.

@@ -14,7 +14,7 @@ Facebook Reel and as a Story ad).
 | 14–17.2 s | 04 "Unpaid? Frozen automatically. No speeches. No awkward talks." (the real "Not allowed in" screen) |
 | 17.2–20.8 s | 05 Member app: "An app your members actually open." (real home and progress screens) |
 | 20.8–23.6 s | 06 And more: classes and bookings, trainer programs, team roles, chat, who owes what |
-| 23.6–26.2 s | "$19.99 a month. The whole gym. Unlimited members · 14 days free · no card" |
+| 23.6–26.2 s | "$29.99 a month. The whole gym. Unlimited members · 14 days free · no card" |
 | 26.2–30.5 s | Logo, "Your gym, running itself.", "Try the live demo", "No sign-up · built for gyms in Lebanon" |
 
 All screens are real captures of the live demo (sample gym, sample names). All text stays inside Instagram's safe
@@ -25,7 +25,7 @@ zone (nothing important in the top 14% or bottom 20%).
 > Gym owners in Lebanon: run your whole gym from one app. Memberships, payments in dollars or lira, tap-to-check-in,
 > and unpaid members frozen automatically, so you never chase anyone again. Plus an app your members actually open.
 >
-> $19.99 a month for the whole gym. Try a full sample gym right now, no sign-up.
+> $29.99 a month for the whole gym. Try a full sample gym right now, no sign-up.
 
 **Headline:** Run a gym for a day. Try the demo.
 **Button:** Learn more → `[WEBSITE]/demo`

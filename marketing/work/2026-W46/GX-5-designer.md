@@ -15,7 +15,7 @@ Logo: the exact `icon.svg` paths (lime rounded square, ink "G", two tap waves) p
 - Logo + "Gymix" (top left)
 - Title: **Your gym,** / **running itself.** (second line in lime)
 - Sub: The all-in-one gym system built for Lebanon.
-- Price line: $19.99 a month. 14 days free.
+- Price line: $29.99 a month. 14 days free.
 - Row 1 **Get paid:** Unpaid members freeze automatically. See who owes what. Dollars and lira at your own rate.
   (Per the plan, "WhatsApp renewal reminders" and "receipts" are removed.)
 - Row 2 **Tap to check in:** A $1 sticker at the door. No hardware.
@@ -86,7 +86,7 @@ All within 8 words, no emojis, no faces, no numbers. Ep. 2 "Wasta" suggestion (s
 - Costs: none stated here, none invented.
 
 ## Guardrail check
-No WhatsApp reminders/receipts claim, no door access, shop, screens, occupancy, kiosk, no AI, no customer counts, no invented numbers or testimonials, no competitor names. "$1 sticker" and "$19.99 a month, 14 days free" are from brief 9.1/9.3. "See who owes what" is per the task card.
+No WhatsApp reminders/receipts claim, no door access, shop, screens, occupancy, kiosk, no AI, no customer counts, no invented numbers or testimonials, no competitor names. "$1 sticker" and "$29.99 a month, 14 days free" are from brief 9.1/9.3. "See who owes what" is per the task card.
 
 ## Handoff
 For: gymix-guardian (check), then the founder (fills placeholders, orders print, builds in Canva)
