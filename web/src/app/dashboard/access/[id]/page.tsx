@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, DoorOpen, Nfc } from "lucide-react";
+import { NfcWriteButton } from "@/components/nfc-write";
 import { SlideToOpen } from "@/components/slide-to-open";
 import { RowMenu } from "@/components/row-menu";
 import { Alert, Badge, Card, EmptyState, SectionTitle, Skeleton } from "@/components/ui";
@@ -173,10 +174,11 @@ async function DeviceContent({ params, searchParams }: Pick<PageProps<"/dashboar
           <Nfc className="size-4" /> Open by tapping a phone
         </h2>
         <p className="mt-1 mb-4 text-sm text-muted">
-          Write this link on an NFC sticker (any NFC writer app, &quot;URL&quot; record) and stick it next to this door. Members tap it with their phone: Gymix
+          Open this page in the Gymix app, tap Write door sticker and hold the phone on a blank NFC sticker, then stick it next to this door. Members tap it with their phone: Gymix
           checks them in and, if their membership allows this door, opens it within about 3 seconds.
           {device.direction === "out" ? " On an exit door it opens for any member, without a check-in." : ""}
         </p>
+        <NfcWriteButton url={`${origin}/d/${device.tap_token}`} label="Write door sticker" className="mb-3" />
         <CopyField label="NFC sticker link" value={`${origin}/d/${device.tap_token}`} secret />
         <p className="mt-2 text-xs text-muted">
           The link only works for signed-in members of this gym. Every opening is logged below.

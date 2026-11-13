@@ -2,6 +2,7 @@ import UIKit
 import Capacitor
 import WebKit
 import WidgetKit
+import CoreNFC
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -36,6 +37,7 @@ final class GymixViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         super.capacitorDidLoad()
         bridge?.registerPluginInstance(GymixWidgetPlugin())
+        bridge?.registerPluginInstance(GymixNfcPlugin())
         guard let webView = webView else { return }
         let proxy = GymixUIDelegate(original: webView.uiDelegate)
         uiProxy = proxy
@@ -114,5 +116,134 @@ public class GymixWidgetPlugin: CAPPlugin, CAPBridgedPlugin {
         defaults?.removeObject(forKey: "token")
         WidgetCenter.shared.reloadAllTimelines()
         call.resolve()
+    }
+}
+
+// "GymixNfc" in JavaScript (web/src/lib/nfc.ts): writes a link onto a blank NFC
+// sticker, so staff never need another app. iPhone 7 and newer. Needs the
+// "NFC Tag Reading" capability (App.entitlements) and NFCReaderUsageDescription.
+// Rejections carry a code the website turns into a message: cancelled,
+// unavailable, disabled, locked, failed.
+@objc(GymixNfcPlugin)
+public class GymixNfcPlugin: CAPPlugin, CAPBridgedPlugin, NFCNDEFReaderSessionDelegate {
+    public let identifier = "GymixNfcPlugin"
+    public let jsName = "GymixNfc"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "isAvailable", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "writeUrl", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "cancel", returnType: CAPPluginReturnPromise),
+    ]
+
+    private var session: NFCNDEFReaderSession?
+    private var pending: CAPPluginCall?
+    private var message: NFCNDEFMessage?
+
+    @objc func isAvailable(_ call: CAPPluginCall) {
+        call.resolve(["available": NFCNDEFReaderSession.readingAvailable, "enabled": NFCNDEFReaderSession.readingAvailable])
+    }
+
+    @objc func writeUrl(_ call: CAPPluginCall) {
+        guard NFCNDEFReaderSession.readingAvailable else {
+            call.reject("This iPhone can't write NFC stickers", "unavailable")
+            return
+        }
+        guard let text = call.getString("url"), let url = URL(string: text),
+              let record = NFCNDEFPayload.wellKnownTypeURIPayload(url: url) else {
+            call.reject("A valid url is required", "failed")
+            return
+        }
+        DispatchQueue.main.async {
+            self.session?.invalidate()
+            self.session = nil
+            self.finish(code: "cancelled", text: "Replaced by a new write")
+            self.message = NFCNDEFMessage(records: [record])
+            self.pending = call
+            let session = NFCNDEFReaderSession(delegate: self, queue: nil, invalidateAfterFirstRead: false)
+            session.alertMessage = "Hold the top of your iPhone on the sticker."
+            self.session = session
+            session.begin()
+        }
+    }
+
+    @objc func cancel(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            self.session?.invalidate()
+            self.session = nil
+            self.finish(code: "cancelled", text: "Cancelled")
+            call.resolve()
+        }
+    }
+
+    // Resolves (code nil) or rejects the waiting write, once.
+    private func finish(code: String?, text: String?) {
+        guard let call = pending else { return }
+        pending = nil
+        message = nil
+        if let code = code { call.reject(text ?? code, code) } else { call.resolve() }
+    }
+
+    public func readerSession(_ session: NFCNDEFReaderSession, didDetectNDEFs messages: [NFCNDEFMessage]) {}
+
+    public func readerSession(_ session: NFCNDEFReaderSession, didDetect tags: [NFCNDEFTag]) {
+        guard let message = message else { return }
+        if tags.count > 1 {
+            session.alertMessage = "More than one sticker. Hold just one."
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) { session.restartPolling() }
+            return
+        }
+        let tag = tags[0]
+        session.connect(to: tag) { error in
+            if error != nil {
+                session.alertMessage = "Couldn't reach the sticker. Hold still and try again."
+                session.restartPolling()
+                return
+            }
+            tag.queryNDEFStatus { status, capacity, error in
+                if error != nil {
+                    DispatchQueue.main.async { self.finish(code: "failed", text: "Couldn't read the sticker") }
+                    session.invalidate(errorMessage: "Couldn't read the sticker. Try again.")
+                    return
+                }
+                switch status {
+                case .notSupported:
+                    DispatchQueue.main.async { self.finish(code: "failed", text: "This sticker can't hold a link") }
+                    session.invalidate(errorMessage: "This sticker can't hold a link.")
+                case .readOnly:
+                    DispatchQueue.main.async { self.finish(code: "locked", text: "This sticker is locked") }
+                    session.invalidate(errorMessage: "This sticker is locked.")
+                case .readWrite:
+                    if capacity < message.length {
+                        DispatchQueue.main.async { self.finish(code: "failed", text: "The link doesn't fit on this sticker") }
+                        session.invalidate(errorMessage: "The link doesn't fit on this sticker.")
+                        return
+                    }
+                    tag.writeNDEF(message) { error in
+                        if error != nil {
+                            DispatchQueue.main.async { self.finish(code: "failed", text: "Couldn't write the sticker") }
+                            session.invalidate(errorMessage: "Couldn't write. Try again.")
+                        } else {
+                            DispatchQueue.main.async { self.finish(code: nil, text: nil) }
+                            session.alertMessage = "Sticker written."
+                            session.invalidate()
+                        }
+                    }
+                @unknown default:
+                    DispatchQueue.main.async { self.finish(code: "failed", text: "Couldn't write the sticker") }
+                    session.invalidate(errorMessage: "Couldn't write. Try again.")
+                }
+            }
+        }
+    }
+
+    // Closing the sheet (Cancel, timeout, or after writing) ends the session.
+    public func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
+        DispatchQueue.main.async {
+            // A session that was already replaced or cancelled has nothing left to report.
+            guard self.session === session else { return }
+            self.session = nil
+            let code = (error as? NFCReaderError)?.code
+            let cancelled = code == .readerSessionInvalidationErrorUserCanceled || code == .readerSessionInvalidationErrorSessionTimeout
+            self.finish(code: cancelled ? "cancelled" : "failed", text: error.localizedDescription)
+        }
     }
 }

@@ -132,8 +132,8 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
                 electronics shops).
               </li>
               <li>
-                On any phone, install the free app <strong>NFC Tools</strong> → <em>Write</em> → <em>Add a record</em> →{" "}
-                <em>URL</em>, paste the link below, then hold the phone on the sticker.
+                Open this page in the <strong>Gymix app</strong> on your phone (iPhone or Android), tap{" "}
+                <em>Write the check-in sticker</em> and hold the top of the phone on the sticker. Nothing else to install.
               </li>
               <li>Stick it at the entrance with a small sign: &ldquo;Tap your phone here to check in&rdquo;.</li>
               <li>

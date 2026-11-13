@@ -8,6 +8,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         // Gymix's own small plugins (the home-screen widget's connection).
         registerPlugin(WidgetPlugin.class);
+        registerPlugin(NfcPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

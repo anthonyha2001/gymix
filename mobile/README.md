@@ -72,3 +72,17 @@ iPhone testing needs a Mac (or a cloud Mac) and the Apple Developer account.
   - iPhone, once in Xcode: File → New → Target → Widget Extension named `GymixWidget` (no Live Activity,
     no configuration intent). Replace its Swift file with `ios/GymixWidget/GymixWidget.swift`, then add the
     App Group `group.com.gymix.app` to both the App and GymixWidget targets (Signing & Capabilities).
+
+## Writing NFC stickers in the app (added 13 Nov 2026)
+
+Staff write check-in, door and machine stickers straight from Gymix, on iPhone and Android, with no other app.
+The website (`web/src/lib/nfc.ts`) calls the `GymixNfc` plugin when it runs in the app, and falls back to Web NFC in
+Chrome on Android. Safari can't write NFC, so on iPhone the page asks to open it in the app.
+
+- **Android**: `NfcPlugin.java` (reader mode, writes or formats the tag), registered in `MainActivity`; the
+  `android.permission.NFC` permission is in the manifest.
+- **iPhone** (7 and newer): `GymixNfcPlugin` in `SceneDelegate.swift` (Core NFC), `NFCReaderUsageDescription` in
+  `Info.plist`, and the `com.apple.developer.nfc.readersession.formats` entitlement (`TAG`). In the Apple Developer
+  portal, tick **NFC Tag Reading** on the App ID `com.gymix.app`, then regenerate the provisioning profile; in Xcode,
+  Signing & Capabilities should then show "Near Field Communication Tag Reading".
+- Needs a new app build (store update): older builds don't have the plugin and behave like a browser.

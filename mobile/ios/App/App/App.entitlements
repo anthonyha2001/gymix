@@ -16,5 +16,10 @@
 	<array>
 		<string>applinks:gymix-seven.vercel.app</string>
 	</array>
+	<!-- Writing NFC stickers from the app (GymixNfc). Needs "NFC Tag Reading" on the App ID. -->
+	<key>com.apple.developer.nfc.readersession.formats</key>
+	<array>
+		<string>TAG</string>
+	</array>
 </dict>
 </plist>

@@ -3,19 +3,11 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { CheckCircle2, Loader2, Nfc } from "lucide-react";
 import { buttonClass } from "@/components/ui";
+import { haptics } from "@/lib/haptics";
+import { NfcWriteError, nfcSupport, nfcUnsupportedHint, writeNfcUrl, type NfcSupport } from "@/lib/nfc";
 
-// Web NFC (Chrome on Android). Not in TypeScript's DOM types yet.
-type NdefWriter = { write: (msg: { records: { recordType: "url"; data: string }[] }, opts?: { signal?: AbortSignal }) => Promise<void> };
-declare global {
-  interface Window {
-    NDEFReader?: new () => NdefWriter;
-  }
-}
-
-const canWrite = () => typeof window !== "undefined" && "NDEFReader" in window;
-
-// Writes a link onto a blank NFC sticker held against the phone, so no other
-// app is needed. Only Chrome on Android allows this; elsewhere it explains why.
+// Writes a link onto a blank NFC sticker held against the phone, straight from
+// Gymix: in the Gymix app (iPhone and Android) or Chrome on Android.
 export function NfcWriteButton({
   url,
   label = "Write to sticker",
@@ -28,20 +20,15 @@ export function NfcWriteButton({
   // Called once the sticker holds the link (e.g. to mark the machine done).
   onWritten?: () => unknown;
 }) {
-  const supported = useSyncExternalStore(() => () => {}, canWrite, () => false);
+  const support = useSyncExternalStore(() => () => {}, nfcSupport, () => "none" as NfcSupport);
   const [state, setState] = useState<"idle" | "waiting" | "done" | "error">("idle");
   const [error, setError] = useState("");
   const abort = useRef<AbortController | null>(null);
 
   useEffect(() => () => abort.current?.abort(), []);
 
-  if (!supported) {
-    return (
-      <p className={`text-xs text-muted ${className}`}>
-        To write stickers straight from Gymix, open this page in Chrome on an Android phone. On iPhone, use the free NFC Tools app
-        with the link.
-      </p>
-    );
+  if (support === "none") {
+    return <p className={`text-xs text-muted ${className}`}>{nfcUnsupportedHint()}</p>;
   }
 
   async function write() {
@@ -55,22 +42,18 @@ export function NfcWriteButton({
     setState("waiting");
     setError("");
     try {
-      const Reader = window.NDEFReader!;
-      await new Reader().write({ records: [{ recordType: "url", data: url }] }, { signal: ctl.signal });
-      navigator.vibrate?.(80);
+      await writeNfcUrl(url, ctl.signal);
+      haptics.success();
       setState("done");
       onWritten?.();
       setTimeout(() => setState((s) => (s === "done" ? "idle" : s)), 4000);
     } catch (e) {
-      if (ctl.signal.aborted) return;
-      const name = e instanceof DOMException ? e.name : "";
-      setError(
-        name === "NotAllowedError"
-          ? "NFC permission was refused. Allow it for this site and try again."
-          : name === "NotSupportedError"
-            ? "Turn on NFC in your phone's settings and try again."
-            : "Couldn't write the sticker. Hold the phone still on it and try again.",
-      );
+      if (ctl.signal.aborted || (e instanceof NfcWriteError && e.kind === "cancelled")) {
+        setState("idle");
+        return;
+      }
+      haptics.error();
+      setError(e instanceof Error ? e.message : "Couldn't write the sticker. Try again.");
       setState("error");
     }
   }

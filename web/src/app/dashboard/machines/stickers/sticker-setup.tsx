@@ -7,6 +7,7 @@ import { buttonClass } from "@/components/ui";
 import { showToast } from "@/components/toaster";
 import { haptics } from "@/lib/haptics";
 import { setStickerDone } from "../actions";
+import { NfcWriteError, nfcSupport, writeNfcUrl } from "@/lib/nfc";
 
 export type StickerMachine = {
   id: string;
@@ -17,18 +18,17 @@ export type StickerMachine = {
   tappedAt: string | null;
 };
 
-type Env = "android" | "ios" | "other";
+type Env = "write" | "ios" | "other";
 
-// Web NFC writing exists only in Chrome on Android. iPhones need an app
-// (NFC Tools) to write; computers can't write at all, so they hand off to
+// Stickers are written in the Gymix app (iPhone and Android) or Chrome on
+// Android. Safari can't write NFC, and computers can't at all, so they hand off to
 // the phone with a QR code.
 function detect(): Env {
-  if ("NDEFReader" in window) return "android";
+  if (nfcSupport() !== "none") return "write";
   if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) return "ios";
   return "other";
 }
 
-type NdefWriter = { write: (msg: { records: { recordType: "url"; data: string }[] }, opts?: { signal?: AbortSignal }) => Promise<void> };
 
 const ago = (iso: string) => {
   const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
@@ -82,7 +82,7 @@ export function StickerSetup({ machines, pageUrl, pageQr }: { machines: StickerM
     <div className="space-y-6">
       <Progress ready={ready} total={machines.length} />
 
-      {env === "android" && (
+      {env === "write" && (
         <div ref={writerRef}>
           {current ? (
             <Writer
@@ -121,7 +121,7 @@ export function StickerSetup({ machines, pageUrl, pageQr }: { machines: StickerM
               key={m.id}
               machine={m}
               isDone={done[m.id]}
-              active={env === "android" && current?.id === m.id}
+              active={env === "write" && current?.id === m.id}
               env={env}
               onWrite={() => {
                 setChosen(m.id);
@@ -191,22 +191,20 @@ function Writer({
     setPhase("waiting");
     setError("");
     try {
-      const Reader = (window as unknown as { NDEFReader: new () => NdefWriter }).NDEFReader;
-      await new Reader().write({ records: [{ recordType: "url", data: machine.url }] }, { signal: ctl.signal });
+      await writeNfcUrl(machine.url, ctl.signal);
       haptics.success();
       setPhase("written");
       // Let the tick show, then move on to the next machine.
       setTimeout(onWritten, 1100);
     } catch (e) {
       if (ctl.signal.aborted) return;
+      if (e instanceof NfcWriteError && e.kind === "cancelled") {
+        setPhase("idle");
+        return;
+      }
       haptics.error();
-      const name = e instanceof DOMException ? e.name : "";
       setError(
-        name === "NotAllowedError"
-          ? "NFC permission was refused. Allow it for this site in Chrome, then try again."
-          : name === "NotSupportedError"
-            ? "Turn on NFC in your phone's settings, then try again."
-            : "Couldn't write. Hold the phone still, flat on the sticker, and try again.",
+        e instanceof Error ? e.message : "Couldn't write. Hold the phone still, flat on the sticker, and try again.",
       );
       setPhase("error");
     }
@@ -302,13 +300,13 @@ function AllDone({ total, onRestart }: { total: number; onRestart?: () => void }
   );
 }
 
-// iPhone: Safari can't write NFC, so the free NFC Tools app does the writing.
+// iPhone in Safari: Apple only lets apps write NFC, so this page has to be
+// opened in the Gymix app, which writes each sticker itself.
 function IphoneGuide() {
   const steps = [
-    "Tap Copy link on a machine below.",
-    "Open the free NFC Tools app → Write → Add a record → URL / URI.",
-    "Paste the link, tap OK, then Write and hold the top of the iPhone on the sticker.",
-    "Come back here and tap Done on that machine.",
+    "Open the Gymix app on this iPhone and log in.",
+    "Go to Equipment → Set up stickers.",
+    "Tap Write sticker and hold the top of the iPhone on a blank sticker.",
   ];
   return (
     <div className="rounded-3xl border border-line bg-surface p-6">
@@ -317,11 +315,11 @@ function IphoneGuide() {
           <Smartphone className="size-6" />
         </span>
         <div>
-          <h2 className="font-semibold">Writing stickers on iPhone</h2>
-          <p className="text-sm text-muted">iPhones only let apps write stickers, so this takes the free NFC Tools app. An Android phone with Chrome writes them straight from this page.</p>
+          <h2 className="font-semibold">Write stickers in the Gymix app</h2>
+          <p className="text-sm text-muted">Apple lets apps write NFC stickers, but not Safari. In the Gymix app it&apos;s one tap per machine, nothing else to install.</p>
         </div>
       </div>
-      <ol className="mt-5 grid gap-3 sm:grid-cols-2">
+      <ol className="mt-5 grid gap-3 sm:grid-cols-3">
         {steps.map((s, i) => (
           <li key={s} className="flex gap-3 rounded-2xl bg-canvas p-4 text-sm">
             <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-brand">{i + 1}</span>
@@ -344,13 +342,13 @@ function HandOff({ pageUrl, pageQr }: { pageUrl: string; pageQr: string }) {
           <li className="flex gap-2">
             <Check className="mt-0.5 size-4 shrink-0 text-success" />
             <span>
-              <b>Android (Chrome):</b> writes each sticker straight from Gymix, one machine after the other.
+              <b>Gymix app, iPhone or Android:</b> writes each sticker with one tap, one machine after the other.
             </span>
           </li>
           <li className="flex gap-2">
             <Check className="mt-0.5 size-4 shrink-0 text-success" />
             <span>
-              <b>iPhone:</b> guides you through the free NFC Tools app.
+              <b>Chrome on Android:</b> writes them straight from the website too.
             </span>
           </li>
           <li className="flex gap-2">
@@ -398,12 +396,12 @@ function Row({
         <Status isDone={isDone} tappedAt={m.tappedAt} />
       </span>
       <span className="flex flex-wrap gap-1.5">
-        {env === "android" && (
+        {env === "write" && (
           <button type="button" onClick={onWrite} className={buttonClass(isDone ? "ghost" : "secondary", "h-9 px-3")}>
             <Nfc className="size-4" /> {isDone ? "Rewrite" : "Write"}
           </button>
         )}
-        {env !== "android" && (
+        {env !== "write" && (
           <button
             type="button"
             onClick={async () => {
@@ -423,7 +421,7 @@ function Row({
             <span className="sr-only">Undo</span>
           </button>
         ) : (
-          env !== "android" && (
+          env !== "write" && (
             <button type="button" onClick={() => onMark(true)} className={buttonClass("primary", "h-9 px-3")}>
               <Check className="size-4" /> Done
             </button>

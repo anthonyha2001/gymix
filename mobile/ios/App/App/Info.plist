@@ -71,6 +71,8 @@
 		<string>gymix-seven.vercel.app</string>
 		<string>localhost</string>
 	</array>
+	<key>NFCReaderUsageDescription</key>
+	<string>Gymix writes your gym's check-in, door and machine links onto NFC stickers.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Gymix uses the camera to scan QR codes at the gym and to take progress photos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
