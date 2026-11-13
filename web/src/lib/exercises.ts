@@ -16,6 +16,10 @@ export type ExperienceLevel = Database["public"]["Enums"]["experience_level"];
 const IMAGE_BASE =
   process.env.NEXT_PUBLIC_EXERCISE_IMAGE_BASE ?? "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
 
+// Gymix motion exercises store "motion:<id>" instead of photo paths.
+export const MOTION_PREFIX = "motion:";
+export const isMotionPath = (path: string | null | undefined) => !!path?.startsWith(MOTION_PREFIX);
+
 export function exerciseImageUrl(path: string) {
   return IMAGE_BASE + path;
 }

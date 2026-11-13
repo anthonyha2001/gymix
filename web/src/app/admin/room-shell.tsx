@@ -59,7 +59,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { href: "/admin/app", label: "App & errors", icon: AppWindow },
       { href: "/admin/logins", label: "Sign-ins", icon: KeyRound },
       { href: "/admin/lab", label: "Lab", icon: FlaskConical },
-      { href: "/admin/motion", label: "Motion lab", icon: PersonStanding, tag: "Test" },
+      { href: "/admin/motion", label: "Motion lab", icon: PersonStanding },
       { href: "/admin/settings", label: "Settings", icon: Settings2 },
     ],
   },

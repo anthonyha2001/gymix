@@ -19,7 +19,7 @@ export function ExerciseHowTo({
 }) {
   return (
     <div className="space-y-4">
-      <ExerciseAnimation paths={imagePaths} name={name} className="aspect-[4/3] w-full" />
+      <ExerciseAnimation paths={imagePaths} name={name} className="aspect-[4/3] w-full" live />
       <p className="text-sm text-muted">Works: {musclesLabel(primaryMuscles) || "—"}</p>
       {stats && (
         <div className="grid grid-cols-2 gap-2 text-sm">

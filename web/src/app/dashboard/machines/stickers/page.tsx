@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { PageHeader, Skeleton } from "@/components/ui";
 import { qrFor } from "@/components/qr-tools";
-import { exerciseImageUrl, mediaUrl } from "@/lib/exercises";
+import { exerciseImageUrl, isMotionPath, mediaUrl } from "@/lib/exercises";
 import { requestOrigin } from "@/lib/origin";
 import { MANAGER_ROLES } from "@/lib/roles";
 import { requireStaff } from "@/lib/session";
@@ -42,7 +42,7 @@ async function Stickers() {
 
   const origin = await requestOrigin();
   const machines: StickerMachine[] = (data ?? []).map((m) => {
-    const firstImage = m.machine_exercises.map((me) => me.exercises?.image_paths?.[0]).find(Boolean);
+    const firstImage = m.machine_exercises.map((me) => me.exercises?.image_paths?.[0]).find((p) => p && !isMotionPath(p));
     return {
       id: m.id,
       name: m.name,
