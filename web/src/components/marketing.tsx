@@ -31,7 +31,7 @@ export function MarketingNav() {
           <Logo className="text-lg" />
         </Link>
         <nav aria-label="Site" className="hidden items-center gap-1 text-sm text-white/70 md:flex">
-          <Link href="/#features" className="rounded-lg px-3 py-2 hover:text-white">Features</Link>
+          <Link href="/features" className="rounded-lg px-3 py-2 hover:text-white">Features</Link>
           <Link href="/demo" className="rounded-lg px-3 py-2 hover:text-white">Live demo</Link>
           <Link href="/#how" className="rounded-lg px-3 py-2 hover:text-white">How it works</Link>
           <Link href="/pricing" className="rounded-lg px-3 py-2 hover:text-white">Pricing</Link>
@@ -272,6 +272,7 @@ export function MarketingFooter() {
           <span>The operating system for gyms in Lebanon.</span>
         </span>
         <nav aria-label="Footer" className="flex gap-4">
+          <Link href="/features" className="hover:text-ink">Features</Link>
           <Link href="/pricing" className="hover:text-ink">Pricing</Link>
           <Link href="/login" className="hover:text-ink">Log in</Link>
           <Link href="/request" className="hover:text-ink">Request access</Link>

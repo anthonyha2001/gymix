@@ -1,4 +1,7 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/landing-interactive";
+import { FEATURE_COUNT } from "@/lib/feature-catalog";
 
 // Every Gymix feature, grouped, for the landing page.
 const GROUPS: { title: string; items: string[] }[] = [
@@ -97,6 +100,11 @@ export function AllFeatures() {
               </ul>
             </Reveal>
           ))}
+        </div>
+        <div className="mt-14 text-center">
+          <Link href="/features" className="inline-flex h-12 items-center gap-2 rounded-xl bg-ink px-6 font-semibold text-white hover:bg-ink/90">
+            See all {FEATURE_COUNT} features <ArrowRight className="size-4" />
+          </Link>
         </div>
       </div>
     </section>
