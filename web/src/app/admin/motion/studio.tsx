@@ -356,6 +356,7 @@ function Stage({
         const mod = await import("@/lib/motion/render3d");
         if (dead) return;
         scene = new mod.MotionScene(c);
+        void scene.useAthlete("/motion/athlete.glb");
       } catch {
         ctx = c.getContext("2d");
       }
@@ -962,6 +963,7 @@ async function exportVideo(draft: Draft, yaw: number, pitch: number, zoom: numbe
     const mod = await import("@/lib/motion/render3d");
     scene = new mod.MotionScene(gl, { preserve: true });
     scene.resize(S, S, 1);
+    await scene.useAthlete("/motion/athlete.glb");
     scene.look({ primary: draft.primary, secondary: draft.secondary, tool: draft.tool, pattern: p, rest: frameAtU(draft, 0).skel });
   } catch {
     scene = null;

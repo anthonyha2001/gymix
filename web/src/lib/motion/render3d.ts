@@ -6,6 +6,7 @@ import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { MUSCLE_INDEX, headGeometry, limbGeometry, limbSpecs, torsoGeometry, type TorsoRest } from "./body3d";
 import { buildMachine, machineMaterials, type Machine } from "./machines3d";
+import type { Athlete } from "./athlete3d";
 import { MUSCLES, type Muscle, type Pattern, type Tool } from "./patterns";
 import type { Skeleton, V3 } from "./skeleton";
 
@@ -83,6 +84,8 @@ export class MotionScene {
   private rig: Machine | null = null;
   private rest: Skeleton | null = null;
   private mm = machineMaterials();
+  private athlete: Athlete | null = null;
+  private look_: Look | null = null;
   private propKey = "";
   private machineKey = "";
   private mats: Record<string, THREE.Material>;
@@ -227,7 +230,35 @@ export class MotionScene {
     this.camera.lookAt(t);
   }
 
+  // Swap the sculpted body for a rigged model (if the file exists). Resolves
+  // false when there is no model, so the sculpted body stays.
+  async useAthlete(url: string) {
+    try {
+      const head = await fetch(url, { method: "HEAD" });
+      if (!head.ok) return false;
+      const { loadAthlete } = await import("./athlete3d");
+      const a = await loadAthlete(url, { legLength: 0.87 });
+      a.root.traverse((o) => {
+        if (o instanceof THREE.Mesh) {
+          o.castShadow = true;
+          o.receiveShadow = true;
+        }
+      });
+      this.athlete = a;
+      this.scene.add(a.root);
+      for (const p of Object.values(this.parts)) p.mesh.visible = false;
+      this.torsoMesh.visible = false;
+      if (this.look_) a.levels(this.look_.primary, this.look_.secondary);
+      return true;
+    } catch (e) {
+      console.warn("Athlete model not used:", e);
+      return false;
+    }
+  }
+
   look(l: Look) {
+    this.look_ = l;
+    this.athlete?.levels(l.primary, l.secondary);
     const levels = this.mat.uniforms.uLevels.value;
     levels.fill(0);
     for (const m of l.secondary) levels[MUSCLE_INDEX[m]] = 0.26;
@@ -331,7 +362,15 @@ export class MotionScene {
   }
 
   // Pose the athlete and the equipment for one moment.
-  frame(sk: Skeleton, time: number) {
+  frame(input: Skeleton, time: number) {
+    let sk = input;
+    if (this.athlete) {
+      const tool = this.look_?.tool ?? "none";
+      const g = this.athlete.pose(input, tool === "none" ? "open" : "bar");
+      this.athlete.pulse(time);
+      // Equipment follows the model's real hands.
+      sk = { ...input, grip: { L: { x: g.gripL.x, y: g.gripL.y, z: g.gripL.z }, R: { x: g.gripR.x, y: g.gripR.y, z: g.gripR.z } } };
+    }
     const X = new THREE.Vector3();
     const Y = new THREE.Vector3();
     const Z = new THREE.Vector3();

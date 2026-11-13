@@ -21,3 +21,7 @@ Thumbs.db
 marketing/studio/out/**
 !marketing/studio/out/**/
 !marketing/studio/out/**/*.md
+
+# Trial 3D models (licensed for non-commercial use only): local, never committed
+web/public/motion/*.glb
+web/src/app/zz-preview/
