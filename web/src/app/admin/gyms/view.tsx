@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { ArrowDownRight, ArrowUpRight, Building2, FlaskConical, Inbox, Loader2, Search, X } from "lucide-react";
 import { formatDate } from "@/lib/format";
-import { openGymAsSupport } from "../actions";
+import { Dialog } from "@/components/dialog";
+import { extendTrial, openGymAsSupport, recordSubscriptionPayment, setGymSuspended } from "../actions";
+import { ExtendTrialForm, RecordPaymentForm, SuspendForm } from "../forms";
 import { Panel, ScoreRing, Segmented, Stat, ago, fmt } from "../room-ui";
 
 const RoomMap = dynamic(() => import("../room-map").then((m) => m.RoomMap), { ssr: false, loading: () => <div className="h-80 animate-pulse rounded-3xl bg-white/[0.03]" /> });
@@ -37,7 +39,7 @@ type Filter = "all" | "risk" | "watch" | "healthy" | "lab";
 const band = (s: number) => (s >= 70 ? "healthy" : s >= 40 ? "watch" : "risk");
 const toneOf = (s: number) => (s >= 70 ? "good" : s >= 40 ? "warn" : "bad") as "good" | "warn" | "bad";
 
-export function GymsView({ rows, selected }: { rows: HealthRow[]; selected: string | null }) {
+export function GymsView({ rows, selected, price }: { rows: HealthRow[]; selected: string | null; price: number }) {
   const router = useRouter();
   const [filter, setFilter] = useState<Filter>("all");
   const [q, setQ] = useState("");
@@ -144,7 +146,7 @@ export function GymsView({ rows, selected }: { rows: HealthRow[]; selected: stri
         </Panel>
 
         <div className="space-y-4">
-          {current ? <Detail g={current} onClose={() => router.push("/admin/gyms", { scroll: false })} /> : null}
+          {current ? <Detail key={current.gym_id} g={current} price={price} onClose={() => router.push("/admin/gyms", { scroll: false })} /> : null}
           <RoomMap points={points} className={current ? "h-72" : "h-[34rem]"} zoom={6} />
           <p className="flex items-center justify-center gap-4 text-xs text-white/45">
             <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-emerald-400" /> Healthy</span>
@@ -157,7 +159,7 @@ export function GymsView({ rows, selected }: { rows: HealthRow[]; selected: stri
   );
 }
 
-function Detail({ g, onClose }: { g: HealthRow; onClose: () => void }) {
+function Detail({ g, price, onClose }: { g: HealthRow; price: number; onClose: () => void }) {
   const [pending, start] = useTransition();
   const [as, setAs] = useState<string | null>(null);
   const enter = (role: "owner" | "manager" | "front_desk") => {
@@ -173,7 +175,7 @@ function Detail({ g, onClose }: { g: HealthRow; onClose: () => void }) {
     ["Open tickets", String(g.open_tickets)],
   ];
   return (
-    <section className="room-pop rounded-3xl bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-5 ring-1 ring-white/10">
+    <section className="room-ink room-pop rounded-3xl bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-5 ring-1 ring-white/10">
       <div className="flex items-start gap-4">
         <ScoreRing score={g.score} size={56} />
         <div className="min-w-0 flex-1">
@@ -201,14 +203,27 @@ function Detail({ g, onClose }: { g: HealthRow; onClose: () => void }) {
           </button>
         ))}
       </div>
-      <div className="mt-3 flex justify-between text-xs">
-        <Link href={`/admin/support?view=all`} className="text-white/50 hover:text-white">
-          Support tickets
-        </Link>
-        <Link href={`/admin/reports?tab=gyms`} className="text-white/50 hover:text-white">
-          Payments and suspension
-        </Link>
+      <p className="mt-4 mb-2 text-[11px] font-semibold tracking-[0.14em] text-white/40 uppercase">Subscription</p>
+      <div className="grid grid-cols-3 gap-2">
+        <Dialog label="Payment" title={`Payment from ${g.name}`} description={`$${price} a month. Extends from today or the current end, whichever is later.`} triggerClassName="h-10 w-full px-2 text-xs">
+          <RecordPaymentForm action={recordSubscriptionPayment.bind(null, g.gym_id)} price={price} />
+        </Dialog>
+        <Dialog label="Trial" title={`Extend ${g.name}'s trial`} variant="secondary" triggerClassName="h-10 w-full px-2 text-xs">
+          <ExtendTrialForm action={extendTrial.bind(null, g.gym_id)} />
+        </Dialog>
+        {g.suspended ? (
+          <Dialog label="Reopen" title={`Reopen ${g.name}`} variant="secondary" triggerClassName="h-10 w-full px-2 text-xs">
+            <SuspendForm action={setGymSuspended.bind(null, g.gym_id, false)} suspend={false} />
+          </Dialog>
+        ) : (
+          <Dialog label="Suspend" title={`Suspend ${g.name}`} description="Locks their staff dashboard straight away. Members keep using the app. Nothing is deleted." variant="danger" triggerClassName="h-10 w-full px-2 text-xs">
+            <SuspendForm action={setGymSuspended.bind(null, g.gym_id, true)} suspend />
+          </Dialog>
+        )}
       </div>
+      <Link href="/admin/support?view=all" className="mt-3 inline-block text-xs text-white/50 transition hover:text-white">
+        Support tickets
+      </Link>
     </section>
   );
 }

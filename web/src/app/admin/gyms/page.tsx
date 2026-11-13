@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui";
+import { getPricing } from "@/lib/pricing-server";
 import { createClient } from "@/lib/supabase/server";
 import { GymsView, type HealthRow } from "./view";
 
@@ -18,6 +19,6 @@ export default function GymsPage({ searchParams }: PageProps<"/admin/gyms">) {
 async function Gyms({ searchParams }: { searchParams: PageProps<"/admin/gyms">["searchParams"] }) {
   const q = await searchParams;
   const supabase = await createClient();
-  const { data } = await supabase.rpc("admin_gym_health");
-  return <GymsView rows={(data ?? []) as HealthRow[]} selected={typeof q.gym === "string" ? q.gym : null} />;
+  const [{ data }, pricing] = await Promise.all([supabase.rpc("admin_gym_health"), getPricing()]);
+  return <GymsView rows={(data ?? []) as HealthRow[]} selected={typeof q.gym === "string" ? q.gym : null} price={pricing.priceUsd} />;
 }

@@ -22,7 +22,7 @@ export const ago = (iso: string | null) => {
 // ----------------------------------------------------------------- panels
 export function Panel({ title, action, children, className = "", pad = true }: { title?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; pad?: boolean }) {
   return (
-    <section className={`room-panel relative overflow-hidden rounded-3xl bg-white/[0.03] ring-1 ring-white/[0.07] ${className}`}>
+    <section className={`room-panel relative overflow-hidden rounded-3xl bg-white/[0.03] ring-1 ring-white/[0.07] transition-[box-shadow] duration-300 hover:ring-white/[0.11] ${className}`}>
       {(title || action) && (
         <header className="flex items-center justify-between gap-3 px-5 pt-5">
           {title && <h2 className="text-[13px] font-semibold tracking-wide text-white/80">{title}</h2>}
@@ -60,18 +60,24 @@ export function Num({ value, format = fmt, className = "" }: { value: number; fo
   return <span className={`tabular-nums ${className}`}>{format(shown)}</span>;
 }
 
-// A headline number. `delta` is the change vs the previous period (status
-// colours, with an arrow so it never relies on colour alone).
-export function Stat({ label, value, format, hint, delta, upIsGood = true, live = false }: { label: string; value: number; format?: (n: number) => string; hint?: ReactNode; delta?: number | null; upIsGood?: boolean; live?: boolean }) {
+const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
+const pct = (n: number) => `${Math.round(n)}%`;
+const FORMATS = { usd, pct, count: fmt } as const;
+
+// A headline number. `format` is a function on the client, or a name ("usd",
+// "pct") when a server page renders it. `delta` is the change vs the previous
+// period (status colours, with an arrow so it never relies on colour alone).
+export function Stat({ label, value, format, hint, delta, upIsGood = true, live = false }: { label: string; value: number; format?: ((n: number) => string) | keyof typeof FORMATS; hint?: ReactNode; delta?: number | null; upIsGood?: boolean; live?: boolean }) {
+  const f = typeof format === "string" ? FORMATS[format] : format;
   const good = delta == null || delta === 0 ? null : delta > 0 === upIsGood;
   return (
-    <div className="room-stat rounded-3xl bg-white/[0.03] p-5 ring-1 ring-white/[0.07]">
+    <div className="room-stat room-lift rounded-3xl bg-white/[0.03] p-5 ring-1 ring-white/[0.07]">
       <p className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] text-white/45 uppercase">
         {live && <span className="room-live size-1.5 rounded-full bg-brand" />}
         {label}
       </p>
       <p className="mt-2 text-[2rem] leading-none font-black tracking-tight text-white">
-        <Num value={value} format={format} />
+        <Num value={value} format={f} />
       </p>
       <div className="mt-2 flex min-h-5 items-center gap-2 text-xs text-white/45">
         {delta != null && (
@@ -379,14 +385,30 @@ export function ScoreRing({ score, size = 44 }: { score: number; size?: number }
 
 // ------------------------------------------------------------------- chips
 export function Segmented<T extends string | number>({ value, options, onChange }: { value: T; options: { value: T; label: string }[]; onChange: (v: T) => void }) {
+  const box = useRef<HTMLDivElement>(null);
+  const [pill, setPill] = useState<{ left: number; width: number } | null>(null);
+  const i = options.findIndex((o) => o.value === value);
+  useEffect(() => {
+    const el = box.current?.children[i + 1] as HTMLElement | undefined;
+    if (!el) return;
+    const place = () => setPill({ left: el.offsetLeft, width: el.offsetWidth });
+    const t = setTimeout(place, 0);
+    const ro = new ResizeObserver(place);
+    ro.observe(el);
+    return () => {
+      clearTimeout(t);
+      ro.disconnect();
+    };
+  }, [i]);
   return (
-    <div className="inline-flex rounded-xl bg-white/[0.04] p-1 ring-1 ring-white/[0.07]">
+    <div ref={box} className="relative inline-flex rounded-xl bg-white/[0.04] p-1 ring-1 ring-white/[0.07]">
+      <span aria-hidden className="absolute top-1 bottom-1 rounded-lg bg-white shadow transition-[left,width] duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)]" style={pill ? { left: pill.left, width: pill.width } : { opacity: 0 }} />
       {options.map((o) => (
         <button
           key={String(o.value)}
           type="button"
           onClick={() => onChange(o.value)}
-          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${o.value === value ? "bg-white text-ink shadow" : "text-white/55 hover:text-white"}`}
+          className={`relative rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors duration-200 ${o.value === value ? "text-ink" : "text-white/55 hover:text-white"}`}
         >
           {o.label}
         </button>

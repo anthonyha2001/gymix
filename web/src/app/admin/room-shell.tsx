@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import {
@@ -9,15 +9,18 @@ import {
   ArrowRight,
   BarChart3,
   Building2,
+  CircleDollarSign,
   Command,
-  FileBarChart,
+  FlaskConical,
   Inbox,
+  KeyRound,
   LayoutDashboard,
   Loader2,
   LogOut,
   Megaphone,
   Menu,
   Search,
+  Settings2,
   UserPlus,
   X,
 } from "lucide-react";
@@ -25,16 +28,41 @@ import { LogoMark } from "@/components/logo-mark";
 import { openGymAsSupport } from "./actions";
 import { liveNow } from "./room-actions";
 
-const NAV = [
-  { href: "/admin", label: "Live", icon: Activity, exact: true },
-  { href: "/admin/clients", label: "Clients", icon: UserPlus, count: "requests" as const },
-  { href: "/admin/support", label: "Support", icon: Inbox, count: "tickets" as const },
-  { href: "/admin/gyms", label: "Gyms", icon: Building2 },
-  { href: "/admin/visitors", label: "Visitors", icon: BarChart3 },
-  { href: "/admin/marketing", label: "Marketing", icon: Megaphone },
-  { href: "/admin/app", label: "App & errors", icon: AppWindow },
-  { href: "/admin/reports", label: "Reports", icon: FileBarChart },
+type NavItem = { href: string; label: string; icon: typeof Activity; exact?: boolean; count?: "requests" | "tickets" };
+const GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: "Now",
+    items: [
+      { href: "/admin", label: "Live", icon: Activity, exact: true },
+      { href: "/admin/clients", label: "Clients", icon: UserPlus, count: "requests" },
+      { href: "/admin/support", label: "Support", icon: Inbox, count: "tickets" },
+    ],
+  },
+  {
+    label: "Business",
+    items: [
+      { href: "/admin/gyms", label: "Gyms", icon: Building2 },
+      { href: "/admin/revenue", label: "Revenue", icon: CircleDollarSign },
+    ],
+  },
+  {
+    label: "Growth",
+    items: [
+      { href: "/admin/visitors", label: "Visitors", icon: BarChart3 },
+      { href: "/admin/marketing", label: "Marketing", icon: Megaphone },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { href: "/admin/app", label: "App & errors", icon: AppWindow },
+      { href: "/admin/logins", label: "Sign-ins", icon: KeyRound },
+      { href: "/admin/lab", label: "Lab", icon: FlaskConical },
+      { href: "/admin/settings", label: "Settings", icon: Settings2 },
+    ],
+  },
 ];
+const NAV = GROUPS.flatMap((g) => g.items);
 
 type Counts = { requests: number; tickets: number };
 type GymLite = { id: string; name: string; lab: boolean };
@@ -91,26 +119,34 @@ export function RoomShell({
           <Command className="size-3" />K
         </kbd>
       </button>
-      <ul className="flex-1 space-y-0.5 px-3">
-        {NAV.map((n) => {
-          const active = n.exact ? path === n.href : path.startsWith(n.href);
-          const c = n.count ? counts[n.count] : 0;
-          return (
-            <li key={n.href}>
-              <Link
-                href={n.href}
-                onClick={() => setOpen(false)}
-                className={`group relative flex h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition ${active ? "bg-white/[0.08] text-white" : "text-white/55 hover:bg-white/[0.04] hover:text-white"}`}
-              >
-                {active && <span className="room-nav-mark absolute top-2 bottom-2 -left-3 w-1 rounded-r-full bg-brand" />}
-                <n.icon className={`size-[18px] transition ${active ? "text-brand" : "group-hover:scale-110"}`} />
-                <span className="flex-1">{n.label}</span>
-                {c > 0 && <span className="room-badge grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[11px] font-bold text-ink tabular-nums">{c}</span>}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      <div className="room-scroll flex-1 space-y-5 overflow-y-auto px-3 pb-4">
+        {GROUPS.map((g, gi) => (
+          <div key={g.label}>
+            <p className="px-3 pb-1.5 text-[10px] font-semibold tracking-[0.2em] text-white/25 uppercase">{g.label}</p>
+            <ul className="space-y-0.5">
+              {g.items.map((n, i) => {
+                const active = n.exact ? path === n.href : path.startsWith(n.href);
+                const c = n.count ? counts[n.count] : 0;
+                return (
+                  <li key={n.href} className="room-nav-in" style={{ animationDelay: `${(gi * 3 + i) * 35}ms` }}>
+                    <Link
+                      href={n.href}
+                      onClick={() => setOpen(false)}
+                      className={`group relative flex h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-[background-color,color,transform] duration-200 active:scale-[0.98] ${active ? "room-nav-active text-white" : "text-white/55 hover:bg-white/[0.04] hover:text-white"}`}
+                    >
+                      {active && <span className="room-nav-mark absolute top-2 bottom-2 -left-3 w-1 rounded-r-full bg-brand shadow-[0_0_12px_rgb(200_241_53/0.8)]" />}
+                      <n.icon className={`size-[18px] transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${active ? "text-brand" : "group-hover:-translate-y-px group-hover:scale-110"}`} />
+                      <span className="flex-1 transition-transform duration-200 group-hover:translate-x-0.5">{n.label}</span>
+                      <NavPending />
+                      {c > 0 && <span className="room-badge grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[11px] font-bold text-ink tabular-nums">{c}</span>}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
       <div className="border-t border-white/[0.06] p-3">
         <Link href={me.hasGym ? "/dashboard" : "/onboarding"} className="flex h-10 items-center gap-3 rounded-xl px-3 text-sm text-white/55 transition hover:bg-white/[0.04] hover:text-white">
           <LayoutDashboard className="size-[18px]" /> {me.hasGym ? "My gym" : "Create a gym"}
@@ -130,7 +166,7 @@ export function RoomShell({
 
   return (
     <>
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/[0.06] bg-[#0a0d12] lg:block">{rail}</aside>
+      <aside className="room-rail sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/[0.06] bg-[#0a0d12] lg:block">{rail}</aside>
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button aria-label="Close menu" className="room-fade absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
@@ -139,21 +175,43 @@ export function RoomShell({
       )}
       <div className="flex min-w-0 flex-1 flex-col">
         {banner}
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-white/[0.06] bg-[#07090d]/80 px-4 backdrop-blur-xl sm:px-6">
+        <header className="room-top sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-white/[0.06] bg-[#07090d]/75 px-4 backdrop-blur-xl sm:px-6">
           <button type="button" aria-label="Menu" onClick={() => setOpen(true)} className="grid size-9 place-items-center rounded-lg text-white/70 hover:bg-white/10 lg:hidden">
             <Menu className="size-5" />
           </button>
           <LivePill />
+          <Crumb path={path} />
           <span className="flex-1" />
           <button type="button" onClick={() => setPalette(true)} className="flex h-9 items-center gap-2 rounded-lg px-3 text-sm text-white/50 ring-1 ring-white/[0.08] transition hover:text-white lg:hidden">
             <Search className="size-4" />
           </button>
           <Clock />
         </header>
-        <main className="room-main mx-auto w-full max-w-[96rem] flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <main className="room-main mx-auto w-full max-w-[96rem] flex-1 px-4 py-6 sm:px-6 lg:px-8">
+          {children}
+        </main>
       </div>
       {palette && <Palette gyms={gyms} onClose={() => setPalette(false)} />}
     </>
+  );
+}
+
+// A soft spinner on the link being opened, until the screen arrives.
+function NavPending() {
+  const { pending } = useLinkStatus();
+  return <span aria-hidden className={`size-3.5 rounded-full border-2 border-brand/30 border-t-brand transition-opacity duration-200 ${pending ? "animate-spin opacity-100" : "opacity-0"}`} />;
+}
+
+// The current screen's name beside the live pill.
+function Crumb({ path }: { path: string }) {
+  const n = [...NAV].sort((a, b) => b.href.length - a.href.length).find((x) => (x.exact ? path === x.href : path.startsWith(x.href)));
+  if (!n) return null;
+  return (
+    <span key={n.href} className="room-crumb hidden items-center gap-2 text-sm text-white/45 sm:flex">
+      <span className="text-white/15">/</span>
+      <n.icon className="size-4 text-white/35" />
+      <span className="font-medium text-white/80">{n.label}</span>
+    </span>
   );
 }
 

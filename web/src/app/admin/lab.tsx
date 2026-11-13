@@ -1,5 +1,5 @@
 import { FlaskConical } from "lucide-react";
-import { Badge, Card } from "@/components/ui";
+import { Badge } from "@/components/ui";
 import { Dialog } from "@/components/dialog";
 import { ROLE_LABELS, type GymRole } from "@/lib/roles";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -30,7 +30,7 @@ export async function Lab() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="p-5">
+        <section className="room-panel overflow-hidden rounded-3xl bg-white/[0.03] ring-1 ring-white/[0.07] p-5">
           <h2 className="flex items-center gap-2 font-semibold">
             <FlaskConical className="size-4" /> Your lab
           </h2>
@@ -59,22 +59,22 @@ export async function Lab() {
               </form>
             </>
           )}
-        </Card>
-        <Card className="p-5">
+        </section>
+        <section className="room-panel overflow-hidden rounded-3xl bg-white/[0.03] ring-1 ring-white/[0.07] p-5">
           <h2 className="font-semibold">Open any gym as a role</h2>
           <p className="mt-1 mb-4 text-sm text-muted">See a real gym exactly as one of its people does. Changes are real. Member view is lab only.</p>
           <OpenAsForm action={openGymAs} gyms={gymOptions} roles={ROLES.filter((r) => r !== "member").map((r) => ({ id: r, label: ROLE_LABELS[r] }))} />
-        </Card>
+        </section>
       </div>
 
-      <Card>
+      <section className="room-panel overflow-hidden rounded-3xl bg-white/[0.03] ring-1 ring-white/[0.07]">
         <div className="border-b border-line p-5">
           <h2 className="font-semibold">Features</h2>
           <p className="mt-1 text-sm text-muted">
             New features start as &quot;Lab only&quot;. When they work, switch them to Everyone. Exceptions turn a feature on early, or off, for one gym.
           </p>
         </div>
-        <ul className="divide-y divide-line">
+        <ul className="room-rows divide-y divide-line">
           {(features ?? []).map((f) => {
             const exceptions = (overrides ?? []).filter((o) => o.feature_key === f.key);
             const tone = ROLLOUT[f.rollout as keyof typeof ROLLOUT] ?? ROLLOUT.off;
@@ -107,7 +107,7 @@ export async function Lab() {
             );
           })}
         </ul>
-      </Card>
+      </section>
     </div>
   );
 }

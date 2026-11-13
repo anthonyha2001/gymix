@@ -1058,3 +1058,71 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 .tap-bad .door-waves::before { background: radial-gradient(ellipse 75% 100% at 50% 0%, rgb(192 54 44 / 0.55), transparent 70%); }
 .tap-bad .door-waves > i { border-color: rgb(255 120 100 / 0.9); box-shadow: 0 0 22px rgb(192 54 44 / 0.5); }
 @media (prefers-reduced-motion: reduce) { .tap-card { animation: none; } }
+
+/* Control room, round 2 ------------------------------------------------- */
+/* Light-theme forms and dialogs reused inside the room read as dark here:
+   the design tokens are remapped, lime surfaces keep dark ink. */
+.room-ink {
+  --color-canvas: #0d1219;
+  --color-surface: #131922;
+  --color-line: rgb(255 255 255 / 0.09);
+  --color-ink: #eef1f4;
+  --color-muted: rgb(255 255 255 / 0.5);
+  --color-danger: #fb7185;
+  --color-danger-soft: rgb(251 113 133 / 0.12);
+  --color-success: #6ee7b7;
+  --color-success-soft: rgb(110 231 183 / 0.12);
+}
+.room-ink .bg-brand, .room-ink .bg-brand * { --color-ink: #0d1117; }
+.room-ink .bg-ink { background-color: #c8f135; color: #0d1117; --color-ink: #0d1117; }
+.room-ink .bg-ink:hover { background-color: #d4f65a; }
+.room-ink .bg-amber-50 { background-color: rgb(251 191 36 / 0.12); }
+.room-ink .text-amber-800 { color: #fcd34d; }
+.room-ink .bg-sky-50 { background-color: rgb(56 189 248 / 0.12); }
+.room-ink .text-sky-800 { color: #7dd3fc; }
+.room-ink input, .room-ink textarea, .room-ink select { color-scheme: dark; }
+.room-ink dialog { box-shadow: 0 30px 80px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(255 255 255 / 0.08); }
+.room-ink dialog::backdrop { background: rgb(0 0 0 / 0.6); backdrop-filter: blur(4px); }
+
+/* Ambient light behind the screens, and a hairline glow under the top bar. */
+.room-main { position: relative; isolation: isolate; }
+.room-main::before {
+  content: ""; position: fixed; inset: 0 0 auto auto; width: 60vw; height: 60vh; pointer-events: none; z-index: -1;
+  background: radial-gradient(closest-side, rgb(200 241 53 / 0.05), transparent);
+  transform: translate(15%, -35%);
+  animation: gx-room-ambient 14s ease-in-out infinite alternate;
+}
+@keyframes gx-room-ambient { to { transform: translate(5%, -20%) scale(1.15); } }
+.room-top::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(200 241 53 / 0.35), transparent);
+  background-size: 50% 100%; background-repeat: no-repeat;
+  animation: gx-room-scan 6s ease-in-out infinite;
+}
+@keyframes gx-room-scan { from { background-position: -50% 0; } to { background-position: 150% 0; } }
+
+/* Rail */
+.room-nav-in { animation: gx-room-nav 460ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@keyframes gx-room-nav { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+.room-nav-active { background: linear-gradient(90deg, rgb(200 241 53 / 0.1), rgb(255 255 255 / 0.04) 70%); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.05); }
+.room-scroll { scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.08) transparent; }
+.room-crumb { animation: gx-room-in 360ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+
+/* Screens */
+.room-head > * { animation: gx-room-in 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.room-head > *:nth-child(2) { animation-delay: 60ms; }
+.room-head > *:nth-child(3) { animation-delay: 120ms; }
+.room-lift { transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 300ms ease, background-color 300ms ease; }
+.room-lift:hover { transform: translateY(-2px); background-color: rgb(255 255 255 / 0.045); box-shadow: 0 18px 40px -20px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(200 241 53 / 0.12); }
+.room-rows > * { animation: gx-room-feed 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.room-rows > *:nth-child(2) { animation-delay: 30ms; }
+.room-rows > *:nth-child(3) { animation-delay: 60ms; }
+.room-rows > *:nth-child(4) { animation-delay: 90ms; }
+.room-rows > *:nth-child(5) { animation-delay: 120ms; }
+.room-rows > *:nth-child(6) { animation-delay: 150ms; }
+.room-rows > *:nth-child(n + 7) { animation-delay: 180ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .room-main::before, .room-top::after, .room-nav-in, .room-crumb, .room-head > *, .room-rows > * { animation: none; }
+  .room-lift:hover { transform: none; }
+}
