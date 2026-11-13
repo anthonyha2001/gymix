@@ -93,6 +93,7 @@ export function Sidebar({ gym, nav, account, bell }: { gym: ReactNode; nav: Reac
       {open && <div aria-hidden className="fixed inset-0 z-40 bg-ink/40 md:hidden" onClick={close} />}
 
       <aside
+        data-owner-rail
         onKeyDown={(e) => e.key === "Escape" && close()}
         className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-line bg-surface transition-transform duration-200 md:sticky md:top-0 md:z-auto md:h-screen md:w-64 md:shrink-0 md:translate-x-0 ${
           open ? "translate-x-0 shadow-xl" : "-translate-x-full"
@@ -160,12 +161,12 @@ export function NavLinks({ items }: { items: NavItem[] }) {
   const activeHref = items.find(({ href }) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href)))?.href;
 
   useLayoutEffect(() => {
-    const el = list.current?.querySelector('[aria-current="page"]')?.closest("li");
+    const el = list.current?.querySelector<HTMLElement>('[aria-current="page"]');
     if (!el) {
       setPill(null);
       return;
     }
-    const place = () => setPill({ top: el.offsetTop, height: el.offsetHeight });
+    const place = () => setPill({ top: (el.parentElement?.offsetTop ?? 0) + el.offsetTop, height: el.offsetHeight });
     place();
     const ro = new ResizeObserver(place);
     ro.observe(el);
@@ -185,11 +186,13 @@ export function NavLinks({ items }: { items: NavItem[] }) {
           style={{ top: pill.top, height: pill.height }}
         />
       )}
-      {items.map(({ href, label, icon, badge }, i) => {
+      {items.map(({ href, label, icon, badge, group }, i) => {
         const Icon = ICONS[icon];
         const active = href === activeHref;
+        const heading = group && group !== items[i - 1]?.group;
         return (
-          <li key={href} className="owner-nav-in relative" style={{ animationDelay: `${i * 28}ms` }}>
+          <li key={href} className={`owner-nav-in relative ${heading && i > 0 ? "!mt-5" : ""}`} style={{ animationDelay: `${i * 28}ms` }}>
+            {heading && <p className="mb-1.5 px-3 text-[10px] font-semibold tracking-[0.18em] text-muted/70 uppercase">{group}</p>}
             <Link
               href={href}
               prefetch

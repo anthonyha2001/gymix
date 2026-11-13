@@ -78,13 +78,15 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
 async function GymCard() {
   const { membership } = await requireStaff();
   return (
-    <div className="owner-gym group flex items-center gap-3 rounded-lg bg-canvas px-3 py-2.5">
-      <span className="owner-gym-mark relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-md bg-ink text-sm font-semibold text-brand">
+    <div className="owner-gym group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-ink px-3 py-3 text-white">
+      <span className="owner-gym-mark relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-brand text-sm font-bold text-ink">
         {initials(membership.gymName)}
       </span>
-      <span className="min-w-0">
+      <span className="relative min-w-0">
         <span className="block truncate text-sm font-semibold">{membership.gymName}</span>
-        <span className="block text-xs text-muted">Your gym</span>
+        <span className="flex items-center gap-1.5 text-xs text-white/55">
+          <span className="size-1.5 rounded-full bg-brand" /> {ROLE_LABELS[membership.role]}
+        </span>
       </span>
     </div>
   );
@@ -141,16 +143,16 @@ async function Doors() {
 }
 
 async function AccountCard() {
-  const { viewer, membership } = await requireStaff();
+  const { viewer } = await requireStaff();
   const name = viewer.fullName || viewer.email;
   return (
     <div className="flex items-center gap-3">
-      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand text-sm font-semibold">
+      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-brand-strong text-sm font-semibold text-ink ring-2 ring-surface shadow-[0_0_0_1px_rgb(13_17_23/0.08)]">
         {initials(name)}
       </span>
       <span className="min-w-0 flex-1">
         <Link href="/account" className="block truncate text-sm font-medium hover:underline">{name}</Link>
-        <span className="block text-xs text-muted">{ROLE_LABELS[membership.role]}</span>
+        <span className="block truncate text-xs text-muted">{viewer.email}</span>
       </span>
       <form action={signOut}>
         <button

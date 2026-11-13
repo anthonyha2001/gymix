@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CountUp } from "@/components/count-up";
 import Link from "next/link";
 import { Suspense } from "react";
-import { CheckCircle2, Circle } from "lucide-react";
+import { ArrowUpRight, CalendarClock, CheckCircle2, Circle, CircleDollarSign, HandCoins, ScanLine, UsersRound, type LucideIcon } from "lucide-react";
 import { Badge, Card, EmptyState, PageHeader, SectionTitle, Skeleton } from "@/components/ui";
 import { addDays, daysBetween, formatDate, formatTime, formatUSD, todayIn } from "@/lib/format";
 import { BILLING_ROLES } from "@/lib/roles";
@@ -14,7 +14,9 @@ export const metadata: Metadata = { title: "Overview" };
 export default function DashboardPage() {
   return (
     <div className="max-w-6xl space-y-6">
-      <PageHeader title="Overview" description="Your gym today." />
+      <Suspense fallback={<PageHeader title="Overview" description="Your gym today." />}>
+        <Greeting />
+      </Suspense>
       <Suspense
         fallback={
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -27,6 +29,26 @@ export default function DashboardPage() {
         <Overview />
       </Suspense>
     </div>
+  );
+}
+
+// "Good evening, Anthony" over today's date in the gym's timezone.
+async function Greeting() {
+  const { viewer, membership } = await requireStaff();
+  const now = new Date();
+  const hour = Number(now.toLocaleString("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: membership.timezone }));
+  const part = hour < 5 ? "Good evening" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const first = (viewer.fullName || "").split(" ")[0];
+  const date = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: membership.timezone });
+  return (
+    <header className="owner-hero">
+      <p className="text-[11px] font-semibold tracking-[0.2em] text-brand-strong uppercase">{date}</p>
+      <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">
+        {part}
+        {first ? `, ${first}` : ""}
+      </h1>
+      <p className="mt-1 text-sm text-muted">Here is {membership.gymName} today.</p>
+    </header>
   );
 }
 
@@ -60,14 +82,14 @@ async function Overview() {
       supabase.from("gym_exercises").select("id", { count: "exact", head: true }).eq("gym_id", membership.gymId),
     ]);
 
-  const tiles = [
-    { label: "Active members", value: String(stats?.active_members ?? 0), href: "/dashboard/members?status=active" },
-    { label: "Check-ins today", value: String(stats?.checkins_today ?? 0), href: canBill ? "/dashboard/check-in" : undefined },
-    { label: "Expiring in 7 days", value: String(stats?.expiring_soon ?? 0) },
+  const tiles: { label: string; value: string; icon: LucideIcon; href?: string; alert?: boolean }[] = [
+    { label: "Active members", value: String(stats?.active_members ?? 0), icon: UsersRound, href: "/dashboard/members?status=active" },
+    { label: "Check-ins today", value: String(stats?.checkins_today ?? 0), icon: ScanLine, href: canBill ? "/dashboard/check-in" : undefined },
+    { label: "Ending in 7 days", value: String(stats?.expiring_soon ?? 0), icon: CalendarClock },
     ...(canBill
       ? [
-          { label: "Collected this month", value: formatUSD(stats?.collected_month), href: "/dashboard/billing?tab=all" },
-          { label: "Owed by members", value: formatUSD(stats?.outstanding), href: "/dashboard/billing", alert: Number(stats?.outstanding) > 0 },
+          { label: "Collected this month", value: formatUSD(stats?.collected_month), icon: CircleDollarSign, href: "/dashboard/billing?tab=all" },
+          { label: "Owed by members", value: formatUSD(stats?.outstanding), icon: HandCoins, href: "/dashboard/billing", alert: Number(stats?.outstanding) > 0 },
         ]
       : []),
   ];
@@ -85,9 +107,17 @@ async function Overview() {
       <div className={`grid gap-4 sm:grid-cols-2 ${canBill ? "lg:grid-cols-5" : "lg:grid-cols-3"}`}>
         {tiles.map((t) => {
           const body = (
-            <Card className={`h-full p-5 ${t.href ? "transition duration-200 hover:-translate-y-0.5 hover:border-ink/30 hover:shadow-md" : ""}`}>
-              <p className="text-sm text-muted">{t.label}</p>
-              <p className={`mt-2 text-3xl font-semibold tabular-nums ${"alert" in t && t.alert ? "text-danger" : ""}`}><CountUp value={t.value} /></p>
+            <Card className="owner-tile group relative h-full overflow-hidden p-5">
+              <div className="flex items-start justify-between">
+                <span className={`grid size-10 place-items-center rounded-xl ${t.alert ? "bg-danger/10 text-danger" : "bg-brand/90 text-ink"}`}>
+                  <t.icon className="size-5" />
+                </span>
+                {t.href && <ArrowUpRight className="size-4 text-muted opacity-0 transition duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />}
+              </div>
+              <p className={`mt-4 text-[1.75rem] leading-none font-bold tracking-tight tabular-nums ${t.alert ? "text-danger" : ""}`}>
+                <CountUp value={t.value} />
+              </p>
+              <p className="mt-1.5 text-[13px] text-muted">{t.label}</p>
             </Card>
           );
           return t.href ? (
