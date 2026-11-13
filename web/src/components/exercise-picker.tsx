@@ -7,6 +7,7 @@ import { inputClass, inputWidth } from "@/components/ui";
 import { EQUIPMENT, MUSCLES, capitalize, musclesLabel, type Exercise } from "@/lib/exercises";
 import { searchCatalog, searchGymExercises } from "@/app/exercise-actions";
 import { SearchSelect } from "@/components/search-select";
+import { ExercisePreview, type PreviewExercise } from "@/components/exercise-preview";
 
 // Searchable grid of exercises with their animations.
 // "catalog" = the whole library (adding machines); "gym" = what this gym has (programs).
@@ -29,6 +30,22 @@ export function ExercisePicker({
   const [results, setResults] = useState<Exercise[] | null>(null);
   const [pending, startTransition] = useTransition();
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // A click picks; a double-click opens the preview instead, so the pick waits
+  // a moment to see whether a second click follows.
+  const clickTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [preview, setPreview] = useState<PreviewExercise | null>(null);
+
+  function handleClick(e: React.MouseEvent, ex: Exercise) {
+    clearTimeout(clickTimer.current);
+    if (e.detail === 0) return onPick(ex); // keyboard
+    if (e.detail > 1) return;
+    clickTimer.current = setTimeout(() => onPick(ex), 250);
+  }
+
+  function handleDoubleClick(ex: Exercise) {
+    clearTimeout(clickTimer.current);
+    setPreview({ id: ex.id, name: ex.name, imagePaths: ex.image_paths, primaryMuscles: ex.primary_muscles });
+  }
 
   function run(next: { q?: string; muscle?: string; equipment?: string }) {
     const params = { q, muscle, equipment, ...next };
@@ -121,7 +138,9 @@ export function ExercisePicker({
             <button
               key={ex.id}
               type="button"
-              onClick={() => onPick(ex)}
+              onClick={(e) => handleClick(e, ex)}
+              onDoubleClick={() => handleDoubleClick(ex)}
+              title="Double-click to see it"
               className={`flex items-center gap-3 rounded-lg border p-2 text-left transition-colors ${
                 picked ? "border-ink bg-canvas" : "border-line hover:border-ink/40"
               }`}
@@ -143,6 +162,7 @@ export function ExercisePicker({
           );
         })}
       </div>
+      <ExercisePreview exercise={preview} onClose={() => setPreview(null)} />
     </div>
   );
 }

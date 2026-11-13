@@ -10,7 +10,9 @@ export function ExerciseHowTo({
   primaryMuscles,
   instructions,
   stats,
+  loading = false,
 }: {
+  loading?: boolean;
   name: string;
   imagePaths: string[];
   primaryMuscles: string[];
@@ -33,7 +35,9 @@ export function ExerciseHowTo({
           </div>
         </div>
       )}
-      {instructions.length > 0 ? (
+      {loading ? (
+        <p className="text-sm text-muted">Loading the steps…</p>
+      ) : instructions.length > 0 ? (
         <ol className="list-decimal space-y-2 pl-5 text-sm">
           {instructions.map((step, i) => (
             <li key={i}>{step}</li>

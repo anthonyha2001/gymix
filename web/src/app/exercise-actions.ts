@@ -33,6 +33,14 @@ export async function searchGymExercises(q: string, muscle = ""): Promise<Exerci
   return (data ?? []) as Exercise[];
 }
 
+// How-to steps for one exercise (the double-click preview popup).
+export async function exerciseInstructions(exerciseId: string): Promise<string[]> {
+  await requireGymUser();
+  const supabase = await createClient();
+  const { data } = await supabase.from("exercises").select("instructions").eq("id", exerciseId).maybeSingle();
+  return data?.instructions ?? [];
+}
+
 // Same-muscle exercises this gym has — for swapping. Closest matches first:
 // same equipment (a machine for a machine), then same muscles, then same level.
 export async function exerciseAlternatives(exerciseId: string): Promise<Exercise[]> {

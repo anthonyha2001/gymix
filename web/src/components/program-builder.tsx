@@ -6,6 +6,7 @@ import { useConfirm } from "@/components/confirm";
 import { Modal } from "@/components/dialog";
 import { ExerciseAnimation } from "@/components/exercise-media";
 import { ExercisePicker } from "@/components/exercise-picker";
+import { ExercisePreview } from "@/components/exercise-preview";
 import { showToast } from "@/components/toaster";
 import { Alert, Button, buttonClass, inputClass } from "@/components/ui";
 import { musclesLabel, type Exercise } from "@/lib/exercises";
@@ -550,6 +551,7 @@ function ExerciseRow({
   onRemove: () => void;
 }) {
   const [showNote, setShowNote] = useState(Boolean(item.notes));
+  const [previewing, setPreviewing] = useState(false);
   const chip = (on: boolean) =>
     `rounded-lg border px-2.5 py-1 text-xs font-medium transition ${on ? "border-ink bg-ink text-white" : "border-line bg-surface text-muted hover:text-ink"}`;
 
@@ -557,16 +559,23 @@ function ExerciseRow({
     <li className="space-y-3 p-4">
       <div className="flex items-start gap-3">
         <span className="mt-1 grid size-6 shrink-0 place-items-center rounded-full bg-canvas text-xs font-bold">{index + 1}</span>
-        <ExerciseAnimation paths={item.exercise.imagePaths} name={item.exercise.name} className="size-14 shrink-0" />
-        <div className="min-w-0 flex-1">
-          <p className="font-semibold leading-tight">{item.exercise.name}</p>
-          <p className="text-xs text-muted">{musclesLabel(item.exercise.primaryMuscles)}</p>
-          {item.swappedFromName && (
-            <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-800">
-              <Repeat className="size-3" /> Member swapped from {item.swappedFromName}
-            </p>
-          )}
+        <div
+          onDoubleClick={() => setPreviewing(true)}
+          title="Double-click to see it"
+          className="flex min-w-0 flex-1 cursor-pointer select-none items-start gap-3"
+        >
+          <ExerciseAnimation paths={item.exercise.imagePaths} name={item.exercise.name} className="size-14 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold leading-tight">{item.exercise.name}</p>
+            <p className="text-xs text-muted">{musclesLabel(item.exercise.primaryMuscles)}</p>
+            {item.swappedFromName && (
+              <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-800">
+                <Repeat className="size-3" /> Member swapped from {item.swappedFromName}
+              </p>
+            )}
+          </div>
         </div>
+        <ExercisePreview exercise={previewing ? item.exercise : null} onClose={() => setPreviewing(false)} />
         <div className="flex shrink-0 flex-wrap justify-end gap-0.5">
           <IconButton label="Move up" disabled={first} onClick={() => onMove(-1)}>
             <ArrowUp className="size-4" />
