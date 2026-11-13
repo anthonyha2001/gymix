@@ -89,6 +89,19 @@ class Kit {
     g.position.set(...c);
     return this.add(g, parent);
   }
+  // A rod of radius r between two moving points (lever arms, pads).
+  link(r: number, mat: THREE.Material, seg = 16) {
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 1, seg), mat);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    this.group.add(mesh);
+    return (a: THREE.Vector3, b: THREE.Vector3) => {
+      const d = b.clone().sub(a);
+      mesh.position.copy(a).addScaledVector(d, 0.5);
+      mesh.scale.set(1, Math.max(0.001, d.length()), 1);
+      mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+    };
+  }
   // A thin cable stretched between moving points.
   cable() {
     const mesh = new THREE.Mesh(new THREE.CylinderGeometry(0.0042, 0.0042, 1, 8), this.m.cable);
@@ -231,7 +244,7 @@ function dumbbellRack(k: Kit) {
   }
 }
 
-function bench(k: Kit) {
+function bench(k: Kit, uprights = true) {
   k.floor(2.6, 2.6, -0.3);
   const m = k.m;
   // Upholstered pad with lime piping.
@@ -242,6 +255,7 @@ function bench(k: Kit) {
   k.box([0.07, 0.3, 0.07], [0, 0.17, 0.08], m.frame, 0.008);
   k.box([0.5, 0.05, 0.07], [0, 0.03, 0.08], m.frame, 0.01);
   for (const s of [-1, 1]) k.box([0.06, 0.04, 0.075], [s * 0.26, 0.02, 0.08], m.rubber, 0.01);
+  if (!uprights) return;
   // Integrated uprights with J-hooks and plate horns.
   k.box([1.24, 0.06, 0.08], [0, 0.03, -0.62], m.frame, 0.01);
   k.box([0.08, 0.06, 0.5], [0, 0.03, -0.62 + 0.25], m.frame, 0.008);
@@ -444,6 +458,369 @@ function legExtension(k: Kit, behind = false) {
   };
 }
 
+// ------------------------------------------------------------ stations
+const rad = (d: number) => (d * Math.PI) / 180;
+const ankleMid = (s: Skeleton) => vec(s.ankle.L).add(vec(s.ankle.R)).multiplyScalar(0.5);
+
+// A pad lying along the torso: a backrest (out < 0) or a chest pad (out > 0).
+function torsoPad(k: Kit, p: Pattern, along: number, out: number, size: V) {
+  const s0 = p.keys[0].pose;
+  const a = rad(s0.trunk ?? 0);
+  const py = s0.pelvisY ?? 0.55;
+  const pz = s0.pelvisZ ?? 0;
+  const c: V = [0, py + Math.cos(a) * along - Math.sin(a) * out, pz + Math.sin(a) * along + Math.cos(a) * out];
+  const pad = k.box(size, c, k.m.pad, 0.03);
+  pad.rotation.x = a;
+  return pad;
+}
+
+// A machine seat on its post, with a base plate.
+function seat(k: Kit, z = 0.04) {
+  const m = k.m;
+  k.box([0.38, 0.075, 0.44], [0, 0.42, z], m.pad, 0.03);
+  for (const s of [-1, 1]) k.box([0.004, 0.006, 0.4], [s * 0.19, 0.42, z], m.lime, 0.001);
+  k.box([0.1, 0.36, 0.26], [0, 0.2, z], m.frame, 0.012);
+  k.box([0.7, 0.05, 0.9], [0, 0.03, z - 0.1], m.frame, 0.01);
+}
+
+// A selectorised stack in its own frame, centred at (x, z).
+function stackTower(k: Kit, x: number, z: number, h = 1.7) {
+  const m = k.m;
+  for (const s of [-1, 1]) k.box([0.07, h, 0.07], [x + s * 0.24, h / 2 + 0.02, z], m.frame, 0.01);
+  k.box([0.56, 0.07, 0.1], [x, h + 0.02, z], m.frame, 0.01);
+  k.box([0.6, 0.05, 0.36], [x, 0.03, z], m.frame, 0.01);
+  k.box([0.004, h - 0.3, 0.012], [x + 0.2, h / 2, z - 0.04], m.lime, 0.001);
+  return k.stack([x, 0.06, z], h - 0.25, 14);
+}
+
+// Plate-loaded or selectorised lever machines: chest press, shoulder press, chest-supported row.
+function leverStation(k: Kit, p: Pattern, kind: "chest" | "shoulder" | "row") {
+  const m = k.m;
+  k.floor(2.6, 2.6, 0);
+  seat(k);
+  if (kind === "row") torsoPad(k, p, 0.4, 0.17, [0.34, 0.36, 0.08]);
+  else torsoPad(k, p, 0.36, -0.15, [0.42, 0.68, 0.08]);
+  const fz = kind === "row" ? 0.86 : -0.58;
+  const stack = stackTower(k, 0, fz + (kind === "row" ? 0.16 : -0.16));
+  for (const s of [-1, 1]) {
+    k.box([0.08, 1.62, 0.08], [s * 0.46, 0.81, fz], m.frame, 0.01);
+    k.box([0.004, 1.3, 0.012], [s * 0.46, 0.8, fz + (kind === "row" ? -0.042 : 0.042)], m.lime, 0.001);
+  }
+  k.box([1.0, 0.08, 0.1], [0, 1.62, fz], m.frame, 0.01);
+  k.box([0.08, 0.05, Math.abs(fz) + 0.1], [0, 0.03, fz / 2], m.frame, 0.008);
+  const py = kind === "chest" ? 1.52 : kind === "shoulder" ? 0.72 : 1.42;
+  const pivots = [1, -1].map((s) => new THREE.Vector3(s * 0.46, py, fz + (kind === "row" ? -0.06 : 0.06)));
+  for (const pv of pivots) k.rod([pv.x - 0.05, pv.y, pv.z], [pv.x + 0.05, pv.y, pv.z], 0.04, m.steel);
+  const arms = pivots.map(() => k.link(0.022, m.frame));
+  const grips = pivots.map(() => k.link(0.017, m.rubber));
+  const outs = pivots.map(() => k.link(0.016, m.steel));
+  return (sk: Skeleton, rest: Skeleton) => {
+    (["L", "R"] as const).forEach((side, i) => {
+      const g = vec(sk.grip[side]);
+      const elbow = new THREE.Vector3(pivots[i].x, g.y, g.z);
+      outs[i](g, elbow);
+      arms[i](pivots[i], elbow);
+      grips[i](g.clone().add(new THREE.Vector3(0, -0.07, 0)), g.clone().add(new THREE.Vector3(0, 0.07, 0)));
+    });
+    stack.moving.position.y = Math.min(0.7, gripMid(sk).distanceTo(gripMid(rest)) * 0.6);
+  };
+}
+
+// 45° leg press: reclined seat, a sled on two rails, plate horns.
+function legPress(k: Kit, p: Pattern) {
+  const m = k.m;
+  k.floor(2.6, 3.2, 0.4);
+  k.box([0.4, 0.075, 0.42], [0, 0.4, 0.02], m.pad, 0.03);
+  torsoPad(k, p, 0.32, -0.15, [0.42, 0.72, 0.08]);
+  k.box([0.8, 0.06, 2.1], [0, 0.03, 0.45], m.frame, 0.012);
+  k.box([0.12, 0.34, 0.5], [0, 0.2, -0.05], m.frame, 0.012);
+  const dir = new THREE.Vector3(0, 0.69, 0.72).normalize();
+  for (const s of [-1, 1]) {
+    k.rod([s * 0.34, 0.5, 0.2], [s * 0.34, 1.62, 1.37], 0.03, m.chrome);
+    k.box([0.08, 1.6, 0.08], [s * 0.34, 0.8, 1.4], m.frame, 0.01);
+    k.box([0.08, 0.5, 0.08], [s * 0.34, 0.25, 0.2], m.frame, 0.01);
+    k.box([0.004, 1.4, 0.012], [s * 0.34 - s * 0.042, 0.78, 1.4], m.lime, 0.001);
+    // Side handles by the seat.
+    k.rod([s * 0.25, 0.42, 0.1], [s * 0.34, 0.42, 0.1], 0.012, m.steel);
+    k.rod([s * 0.34, 0.42, -0.02], [s * 0.34, 0.42, 0.22], 0.016, m.rubber);
+  }
+  const sled = new THREE.Group();
+  sled.rotation.x = Math.atan2(-dir.y, dir.z);
+  k.group.add(sled);
+  k.box([0.66, 0.62, 0.05], [0, 0, 0.03], m.steel, 0.02, sled);
+  k.box([0.6, 0.56, 0.012], [0, 0, 0.0], m.rubber, 0.004, sled);
+  for (const s of [-1, 1]) {
+    k.box([0.1, 0.5, 0.12], [s * 0.34, -0.05, 0.1], m.frame, 0.012, sled);
+    k.rod([s * 0.4, -0.05, 0.12], [s * 0.6, -0.05, 0.12], 0.025, m.chrome, 20, sled);
+    const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.04, 48), m.rubber);
+    plate.rotation.z = Math.PI / 2;
+    plate.position.set(s * 0.48, -0.05, 0.12);
+    plate.castShadow = true;
+    sled.add(plate);
+  }
+  return (sk: Skeleton) => {
+    sled.position.copy(ankleMid(sk).addScaledVector(dir, 0.1));
+  };
+}
+
+// Smith machine: two guide rods with a carriage that rides with the bar.
+function smith(k: Kit, withBench: boolean) {
+  const m = k.m;
+  if (withBench) bench(k, false);
+  else k.floor(2.8, 2.4, -0.1);
+  for (const s of [-1, 1]) {
+    for (const z of [-0.46, 0.34]) k.box([0.07, 2.3, 0.07], [s * 0.7, 1.15, z], m.frame, 0.01);
+    k.box([0.08, 0.06, 0.9], [s * 0.7, 2.3, -0.06], m.frame, 0.01);
+    k.box([0.08, 0.05, 0.9], [s * 0.7, 0.03, -0.06], m.frame, 0.01);
+    k.box([0.004, 2.0, 0.012], [s * 0.7 - s * 0.037, 1.15, 0.34], m.lime, 0.001);
+  }
+  k.box([1.48, 0.06, 0.08], [0, 2.3, -0.46], m.frame, 0.01);
+  const guides = new THREE.Group();
+  k.group.add(guides);
+  const cars: THREE.Object3D[] = [];
+  for (const s of [-1, 1]) {
+    k.rod([s * 0.6, 0.08, 0], [s * 0.6, 2.27, 0], 0.016, m.chrome, 20, guides);
+    k.box([0.14, 0.04, 0.04], [s * 0.66, 2.27, 0], m.frame, 0.006, guides);
+    k.box([0.14, 0.04, 0.04], [s * 0.66, 0.08, 0], m.frame, 0.006, guides);
+    cars.push(k.box([0.06, 0.12, 0.07], [s * 0.6, 1, 0], m.frame, 0.012, guides));
+  }
+  return (sk: Skeleton, rest: Skeleton) => {
+    guides.position.z = gripMid(rest).z;
+    const y = gripMid(sk).y;
+    for (const c of cars) c.position.y = y;
+  };
+}
+
+// Pec deck: the arm pads swing about pivots above the shoulders.
+function pecDeck(k: Kit, p: Pattern) {
+  const m = k.m;
+  k.floor(2.6, 2.4, 0);
+  seat(k);
+  torsoPad(k, p, 0.36, -0.15, [0.42, 0.7, 0.08]);
+  const stack = stackTower(k, 0, -0.62, 1.95);
+  k.box([0.08, 0.08, 0.5], [0, 1.95, -0.38], m.frame, 0.01);
+  const pads = [0, 1].map(() => k.link(0.045, m.pad, 24));
+  const tops = [0, 1].map(() => k.link(0.02, m.frame));
+  const drops = [0, 1].map(() => k.link(0.018, m.frame));
+  return (sk: Skeleton, rest: Skeleton) => {
+    (["L", "R"] as const).forEach((side, i) => {
+      const e = vec(sk.elbow[side]);
+      const w = vec(sk.wrist[side]);
+      const sh = vec(sk.shoulder[side]);
+      const pivot = new THREE.Vector3(sh.x * 0.7, sh.y + 0.32, sh.z - 0.04);
+      const over = new THREE.Vector3(w.x, pivot.y, w.z);
+      pads[i](e.clone().add(new THREE.Vector3(0, -0.03, 0)), w.clone().add(new THREE.Vector3(0, 0.04, 0)));
+      tops[i](pivot, over);
+      drops[i](over, w);
+    });
+    const spread = (a: Skeleton) => vec(a.wrist.L).distanceTo(vec(a.wrist.R));
+    stack.moving.position.y = Math.min(0.6, Math.abs(spread(sk) - spread(rest)) * 0.5);
+  };
+}
+
+// Hip abduction / adduction: thigh pads on the outside or the inside of the knees.
+function hipMachine(k: Kit, p: Pattern, inside: boolean) {
+  const m = k.m;
+  k.floor(2.6, 2.4, 0);
+  seat(k);
+  torsoPad(k, p, 0.36, -0.15, [0.42, 0.68, 0.08]);
+  const stack = stackTower(k, 0, -0.66, 1.5);
+  const pads = [0, 1].map(() => k.link(0.05, m.pad, 24));
+  const posts = [0, 1].map(() => k.link(0.02, m.frame));
+  return (sk: Skeleton, rest: Skeleton) => {
+    (["L", "R"] as const).forEach((side, i) => {
+      const s = side === "L" ? 1 : -1;
+      const hip = vec(sk.hip[side]);
+      const knee = vec(sk.knee[side]);
+      const d = knee.clone().sub(hip).normalize();
+      const n = new THREE.Vector3(s * d.z, 0, -s * d.x).normalize().multiplyScalar(inside ? -0.115 : 0.135);
+      const a = hip.clone().addScaledVector(d, 0.22).add(n);
+      const b = knee.clone().addScaledVector(d, 0.03).add(n);
+      pads[i](a, b);
+      posts[i](b, new THREE.Vector3(b.x, 0.42, b.z - 0.05));
+    });
+    const w = (a: Skeleton) => vec(a.knee.L).distanceTo(vec(a.knee.R));
+    stack.moving.position.y = Math.min(0.6, Math.abs(w(sk) - w(rest)) * 0.9);
+  };
+}
+
+// Seated calf raise: a knee pad that rises with the knees, a toe block.
+function seatedCalf(k: Kit) {
+  const m = k.m;
+  k.floor(2.4, 2.4, 0.2);
+  seat(k);
+  k.box([0.5, 0.05, 1.1], [0, 0.03, 0.3], m.frame, 0.01);
+  const pad = k.link(0.05, m.pad, 24);
+  const lever = k.link(0.025, m.frame);
+  const post = k.link(0.03, m.steel);
+  k.rod([0.32, 0.25, 0.85], [0.32, 0.5, 0.85], 0.04, m.frame);
+  for (const s of [-1, 1]) k.box([0.12, 0.16, 0.12], [s * 0.32, 0.1, 0.85], m.rubber, 0.02);
+  return (sk: Skeleton) => {
+    const kl = vec(sk.knee.L);
+    const kr = vec(sk.knee.R);
+    const y = Math.max(kl.y, kr.y) + 0.075;
+    const z = (kl.z + kr.z) / 2 + 0.03;
+    pad(new THREE.Vector3(-0.22, y, z), new THREE.Vector3(0.22, y, z));
+    lever(new THREE.Vector3(0.22, y, z), new THREE.Vector3(0.32, 0.5, 0.85));
+    post(new THREE.Vector3(0.32, 0.06, 0.85), new THREE.Vector3(0.32, 0.25, 0.85));
+  };
+}
+
+// A lever with a shin roller pivoting at the knee (lying leg curl).
+function shinLever(k: Kit, behind: boolean) {
+  const m = k.m;
+  const lever = new THREE.Group();
+  k.group.add(lever);
+  const arm = new THREE.Mesh(new RoundedBoxGeometry(0.04, 0.42, 0.05, 2, 0.01), m.frame);
+  arm.position.set(0.3, -0.21, 0);
+  arm.castShadow = true;
+  lever.add(arm);
+  const cam = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.04, 40), m.frame);
+  cam.rotation.z = Math.PI / 2;
+  cam.position.x = 0.3;
+  lever.add(cam);
+  const roller = new THREE.Group();
+  roller.position.set(0, -0.4, behind ? -0.075 : 0.075);
+  lever.add(roller);
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.6, 12), m.steel);
+  bar.rotation.z = Math.PI / 2;
+  roller.add(bar);
+  for (const s of [-1, 1]) {
+    const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.22, 28), m.pad);
+    roll.rotation.z = Math.PI / 2;
+    roll.position.x = s * 0.13;
+    roll.castShadow = true;
+    roller.add(roll);
+  }
+  return (sk: Skeleton) => {
+    const knee = vec(sk.knee.L).add(vec(sk.knee.R)).multiplyScalar(0.5);
+    const d = ankleMid(sk).sub(knee).normalize();
+    lever.position.copy(knee);
+    lever.rotation.x = -Math.atan2(d.z, -d.y);
+  };
+}
+
+function lyingCurl(k: Kit) {
+  const m = k.m;
+  k.floor(2.6, 2.8, 0);
+  k.box([0.4, 0.08, 1.15], [0, 0.44, 0.22], m.pad, 0.03);
+  for (const s of [-1, 1]) k.box([0.004, 0.006, 1.1], [s * 0.2, 0.44, 0.22], m.lime, 0.001);
+  k.box([0.12, 0.38, 0.12], [0, 0.2, 0.55], m.frame, 0.012);
+  k.box([0.12, 0.38, 0.12], [0, 0.2, -0.15], m.frame, 0.012);
+  k.box([0.6, 0.05, 1.5], [0, 0.03, 0.15], m.frame, 0.01);
+  for (const s of [-1, 1]) {
+    k.rod([s * 0.2, 0.3, 0.86], [s * 0.3, 0.3, 0.86], 0.012, m.steel);
+    k.rod([s * 0.3, 0.3, 0.78], [s * 0.3, 0.3, 0.96], 0.016, m.rubber);
+  }
+  const stack = stackTower(k, 0.75, -0.2, 1.4);
+  const move = shinLever(k, true);
+  return (sk: Skeleton, rest: Skeleton) => {
+    move(sk);
+    const ang = (a: Skeleton) => {
+      const d = vec(a.ankle.L).sub(vec(a.knee.L)).normalize();
+      return Math.atan2(d.y, -d.z);
+    };
+    stack.moving.position.y = Math.min(0.6, Math.abs(ang(sk) - ang(rest)) * 0.25);
+  };
+}
+
+// 45° back extension bench: hip pad, ankle roller and foot plate.
+function backExt(k: Kit) {
+  const m = k.m;
+  k.floor(2.6, 2.6, -0.2);
+  const pad = k.box([0.42, 0.08, 0.3], [0, 0.556, 0.03], m.pad, 0.03);
+  pad.rotation.x = -0.77;
+  k.rod([0, 0.06, -0.95], [0, 0.48, -0.02], 0.04, m.frame);
+  k.rod([0, 0.06, 0.25], [0, 0.48, 0.02], 0.035, m.frame);
+  k.box([0.6, 0.05, 1.4], [0, 0.03, -0.35], m.frame, 0.01);
+  const plate = k.box([0.4, 0.03, 0.3], [0, 0.045, -0.6], m.steel, 0.008);
+  plate.rotation.x = 0;
+  k.rod([-0.18, 0.2, -0.72], [0.18, 0.2, -0.72], 0.045, m.pad, 28);
+  k.rod([0, 0.06, -0.72], [0, 0.2, -0.72], 0.02, m.frame);
+  return () => {};
+}
+
+// Preacher bench: the arm pad sits under the upper arms.
+function preacher(k: Kit) {
+  const m = k.m;
+  k.floor(2.4, 2.4, 0.1);
+  seat(k);
+  const pad = k.box([0.5, 0.32, 0.07], [0, 0.95, 0.3], m.pad, 0.03);
+  const post = k.link(0.035, m.frame);
+  k.box([0.5, 0.05, 0.4], [0, 0.03, 0.42], m.frame, 0.01);
+  return (_sk: Skeleton, rest: Skeleton) => {
+    const sh = vec(rest.shoulder.L).add(vec(rest.shoulder.R)).multiplyScalar(0.5);
+    const el = vec(rest.elbow.L).add(vec(rest.elbow.R)).multiplyScalar(0.5);
+    const d = el.clone().sub(sh).normalize();
+    const n = new THREE.Vector3(0, -d.z, d.y);
+    if (n.y > 0) n.negate();
+    const c = sh.clone().lerp(el, 0.62).addScaledVector(n, 0.075);
+    pad.position.copy(c);
+    pad.rotation.x = Math.atan2(d.z, d.y) - Math.PI;
+    post(new THREE.Vector3(0, 0.06, c.z + 0.08), c.clone().addScaledVector(n, 0.04));
+  };
+}
+
+// Cable crossover: two towers with adjustable pulleys at the pattern's height.
+function crossover(k: Kit, p: Pattern, cross: boolean) {
+  const m = k.m;
+  k.floor(3.2, 2.6, 0);
+  const px = p.pulley!.x;
+  const py = p.pulley!.y;
+  const stacks = [1, -1].map((s) => {
+    const x = s * 1.05;
+    for (const dz of [-0.16, 0.16]) k.box([0.08, 2.3, 0.08], [x, 1.15, -0.08 + dz], m.frame, 0.01);
+    k.box([0.1, 0.08, 0.44], [x, 2.3, -0.08], m.frame, 0.01);
+    k.box([0.4, 0.05, 0.5], [x, 0.03, -0.08], m.frame, 0.01);
+    k.box([0.004, 2.0, 0.012], [x - s * 0.045, 1.15, 0.085], m.lime, 0.001);
+    const g = new THREE.Group();
+    g.position.set(x, 0, -0.08);
+    g.rotation.y = Math.PI / 2;
+    k.group.add(g);
+    const st = k.stack([0, 0.06, 0], 1.7, 14, g);
+    k.pulley([s * px, py, -0.02], "z");
+    k.pulley([x, 2.22, -0.08], "z");
+    return { st, x };
+  });
+  k.box([2.2, 0.07, 0.07], [0, 2.3, -0.24], m.frame, 0.01);
+  const toHand = [0, 1].map(() => k.cable());
+  const up = [0, 1].map(() => k.cable());
+  return (sk: Skeleton, rest: Skeleton) => {
+    (["L", "R"] as const).forEach((side, i) => {
+      const s = side === "L" ? 1 : -1;
+      const from = cross ? -s : s;
+      const pulley = new THREE.Vector3(from * px, py, -0.02);
+      const g = vec(sk.grip[side]);
+      toHand[i](pulley, g);
+      const t = stacks[from === 1 ? 0 : 1];
+      const travel = Math.max(0, g.distanceTo(pulley) - vec(rest.grip[side]).distanceTo(pulley));
+      t.st.moving.position.y = Math.min(0.8, travel);
+      up[i](new THREE.Vector3(t.x, t.st.top + t.st.moving.position.y, -0.08), new THREE.Vector3(t.x, 2.17, -0.08));
+    });
+  };
+}
+
+// Power tower: pull-up bar on top, dip bars at the front.
+function tower(k: Kit) {
+  const m = k.m;
+  k.floor(2.6, 2.6, 0);
+  for (const s of [-1, 1]) {
+    k.box([0.08, 2.46, 0.08], [s * 0.66, 1.23, -0.3], m.frame, 0.01);
+    k.box([0.1, 0.05, 0.9], [s * 0.66, 0.03, -0.1], m.frame, 0.01);
+    k.box([0.004, 2.1, 0.012], [s * 0.66 - s * 0.042, 1.2, -0.26], m.lime, 0.001);
+    k.box([0.06, 0.06, 0.4], [s * 0.6, 2.36, -0.12], m.frame, 0.008);
+    k.box([0.05, 0.1, 0.05], [s * 0.6, 2.32, 0.02], m.frame, 0.008);
+    // Dip bar on a bracket.
+    k.box([0.42, 0.05, 0.05], [s * 0.46, 1.2, -0.3], m.frame, 0.008);
+    k.rod([s * 0.27, 1.2, -0.3], [s * 0.27, 1.2, 0.45], 0.02, m.chrome);
+    k.rod([s * 0.27, 1.2, 0.0], [s * 0.27, 1.2, 0.2], 0.024, m.rubber);
+  }
+  k.box([1.4, 0.08, 0.08], [0, 2.42, -0.3], m.frame, 0.01);
+  k.rod([-0.72, 2.28, 0.02], [0.72, 2.28, 0.02], 0.016, m.chrome);
+  for (const s of [-1, 1]) k.rod([s * 0.42, 2.28, 0.02], [s * 0.56, 2.28, 0.02], 0.02, m.rubber);
+  return () => {};
+}
+
 export function buildMachine(p: Pattern, mats: Mats): Machine {
   const k = new Kit(mats);
   let update: Machine["update"] = () => {};
@@ -484,6 +861,66 @@ export function buildMachine(p: Pattern, mats: Mats): Machine {
     case "crunch":
     case "bridge":
       mat(k);
+      break;
+    case "legpress":
+      update = legPress(k, p);
+      break;
+    case "chestpress":
+      update = leverStation(k, p, "chest");
+      break;
+    case "shoulderpress":
+      update = leverStation(k, p, "shoulder");
+      break;
+    case "machinerow":
+      update = leverStation(k, p, "row");
+      break;
+    case "pecdeck":
+      update = pecDeck(k, p);
+      break;
+    case "hipabd":
+      update = hipMachine(k, p, false);
+      break;
+    case "hipadd":
+      update = hipMachine(k, p, true);
+      break;
+    case "seatedcalf":
+      update = seatedCalf(k);
+      break;
+    case "lyingcurl":
+      update = lyingCurl(k);
+      break;
+    case "backext":
+      update = backExt(k);
+      break;
+    case "preacher":
+      update = preacher(k);
+      break;
+    case "cablefly":
+    case "lowfly":
+      update = crossover(k, p, false);
+      break;
+    case "cablelateral":
+      update = crossover(k, p, true);
+      break;
+    case "facepull":
+    case "cablecurl":
+    case "straightarm":
+      update = cableTower(k, p);
+      break;
+    case "pullup":
+    case "dip":
+    case "kneeraise":
+      update = tower(k);
+      break;
+    case "smithsquat":
+    case "smithohp":
+    case "smithrdl":
+    case "smithrow":
+    case "smithsplit":
+      update = smith(k, false);
+      break;
+    case "smithbench":
+      update = smith(k, true);
       break;
     default:
       dumbbellRack(k);

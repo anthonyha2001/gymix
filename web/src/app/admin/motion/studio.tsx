@@ -472,13 +472,26 @@ function Stage({
 }
 
 // ==================================================================== library
+type Kind = "free" | "bodyweight" | "machine" | "cable" | "smith" | "tower";
+const KINDS: { id: Kind; label: string }[] = [
+  { id: "free", label: "Free weights" },
+  { id: "bodyweight", label: "Bodyweight" },
+  { id: "machine", label: "Machines" },
+  { id: "cable", label: "Cables" },
+  { id: "smith", label: "Smith" },
+  { id: "tower", label: "Pull-up tower" },
+];
+const kindOf = (d: Draft): Kind => PATTERN[d.pattern].equip ?? (d.tool === "none" ? "bodyweight" : "free");
+
 function Library({ drafts, sel, onSelect, onNew }: { drafts: Draft[]; sel: string | null; onSelect: (id: string) => void; onNew: () => void }) {
   const [q, setQ] = useState("");
   const [muscle, setMuscle] = useState<Muscle | null>(null);
+  const [kind, setKind] = useState<Kind | null>(null);
   const needle = q.trim().toLowerCase();
   const shown = drafts.filter(
     (d) =>
       (!muscle || d.primary.includes(muscle)) &&
+      (!kind || kindOf(d) === kind) &&
       (!needle || d.name.toLowerCase().includes(needle) || PATTERN[d.pattern].name.toLowerCase().includes(needle) || TOOL_LABEL[d.tool].toLowerCase().includes(needle)),
   );
   return (
@@ -496,6 +509,22 @@ function Library({ drafts, sel, onSelect, onNew }: { drafts: Draft[]; sel: strin
           <Search className="size-4 text-white/40" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search exercises" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/30" />
         </label>
+        <div className="flex flex-wrap gap-1.5">
+          {KINDS.map((k) => {
+            const on = kind === k.id;
+            return (
+              <button
+                key={k.id}
+                type="button"
+                onClick={() => setKind(on ? null : k.id)}
+                aria-pressed={on}
+                className={`h-6 rounded-lg px-2.5 text-[11px] font-semibold transition active:scale-95 ${on ? "bg-white text-ink" : "bg-white/[0.06] text-white/70 hover:text-white"}`}
+              >
+                {k.label}
+              </button>
+            );
+          })}
+        </div>
         <div className="flex flex-wrap gap-1.5">
           {MUSCLES.map((m) => {
             const on = muscle === m.id;
@@ -541,10 +570,23 @@ function Library({ drafts, sel, onSelect, onNew }: { drafts: Draft[]; sel: strin
 function Thumb({ draft, active, size = 52 }: { draft: Draft; active: boolean; size?: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const [hover, setHover] = useState(false);
+  const [seen, setSeen] = useState(false);
   const run = hover || active;
   useEffect(() => {
     const c = ref.current;
-    if (!c) return;
+    if (!c || seen) return;
+    const io = new IntersectionObserver((e) => {
+      if (e.some((x) => x.isIntersecting)) {
+        setSeen(true);
+        io.disconnect();
+      }
+    }, { rootMargin: "200px" });
+    io.observe(c);
+    return () => io.disconnect();
+  }, [seen]);
+  useEffect(() => {
+    const c = ref.current;
+    if (!c || (!seen && !run)) return;
     const ctx = c.getContext("2d")!;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const S = size;
@@ -567,7 +609,7 @@ function Thumb({ draft, active, size = 52 }: { draft: Draft; active: boolean; si
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [draft, run, size]);
+  }, [draft, run, size, seen]);
   return (
     <canvas
       ref={ref}

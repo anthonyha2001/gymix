@@ -72,6 +72,8 @@ export const POSE_DEFAULTS: Pose = {
   hipR: 0,
   kneeR: 0,
   hipAbd: 5,
+  // thighs swung out about the vertical (seated abduction)
+  hipOut: 0,
   footPitch: 0,
   // arm IK
   handL: 0.25,
@@ -204,7 +206,11 @@ export function solve(input: Pose, rig: Rig): Skeleton {
       const th = rad(k === "L" ? p.hipL : p.hipR);
       const sh = th - rad(k === "L" ? p.kneeL : p.kneeR);
       const ab = rad(p.hipAbd);
-      const swing = (d: V3) => v3(d.x * Math.cos(ab) - s * d.y * Math.sin(ab), d.y * Math.cos(ab) + s * d.x * Math.sin(ab), d.z);
+      const out = rad(p.hipOut) * s;
+      const swing = (d0: V3) => {
+        const d = v3(d0.x * Math.cos(ab) - s * d0.y * Math.sin(ab), d0.y * Math.cos(ab) + s * d0.x * Math.sin(ab), d0.z);
+        return v3(d.x * Math.cos(out) + d.z * Math.sin(out), d.y, -d.x * Math.sin(out) + d.z * Math.cos(out));
+      };
       knee = add(hip, mul(swing(v3(0, -Math.cos(th), Math.sin(th))), BODY.thigh));
       ankle = add(knee, mul(swing(v3(0, -Math.cos(sh), Math.sin(sh))), BODY.shin));
     }

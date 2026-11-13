@@ -19,7 +19,7 @@ export const MUSCLES: { id: Muscle; label: string }[] = [
   { id: "calves", label: "Calves" },
 ];
 
-export type Tool = "barbell" | "dumbbells" | "none" | "latbar" | "shortbar" | "vhandle" | "roller";
+export type Tool = "barbell" | "dumbbells" | "none" | "latbar" | "shortbar" | "vhandle" | "roller" | "handles";
 export const TOOL_LABEL: Record<Tool, string> = {
   barbell: "Barbell",
   dumbbells: "Dumbbells",
@@ -28,6 +28,7 @@ export const TOOL_LABEL: Record<Tool, string> = {
   shortbar: "Straight bar",
   vhandle: "V-handle",
   roller: "Leg roller",
+  handles: "Machine handles",
 };
 
 export type Box = { min: V3; max: V3; tone: "pad" | "frame" | "steel"; under?: boolean };
@@ -49,7 +50,11 @@ export type Pattern = {
   // Which adjustments make sense here.
   adjust: { stance: boolean; grip: boolean };
   camera: number;
+  // Where it is done: free weights (default), a machine, a cable station, the Smith machine or the power tower.
+  equip?: Equip;
 };
+
+export type Equip = "free" | "machine" | "cable" | "smith" | "tower";
 
 const box = (x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, tone: Box["tone"], under = false): Box => ({ min: v3(x0, y0, z0), max: v3(x1, y1, z1), tone, under });
 const STAND = { pelvisY: 0.92, pelvisZ: 0, trunk: 2, stance: 0.13 };
@@ -71,6 +76,13 @@ const LEGEXT: Box[] = [
   box(-0.2, 0.47, -0.37, 0.2, 1.08, -0.27, "pad", true),
   box(-0.3, 0, -0.45, 0.3, 0.04, 0.35, "frame", true),
 ];
+// Seated on a machine seat, feet on the floor.
+const SEATED = { pelvisY: 0.55, pelvisZ: 0, trunk: -12, hipL: 86, hipR: 86, kneeL: 92, kneeR: 92, hipAbd: 9 };
+// Hanging from the pull-up bar, knees soft.
+const HANG = { hipL: 12, hipR: 12, kneeL: 45, kneeR: 45, hipAbd: 4, footPitch: -30 };
+const SEAT: Box[] = [box(-0.19, 0.38, -0.18, 0.19, 0.46, 0.26, "pad", true), box(-0.05, 0, -0.05, 0.05, 0.38, 0.05, "frame", true)];
+const CROSSOVER: Box[] = [box(-1.15, 0, -0.2, -0.9, 2.3, 0.05, "frame"), box(0.9, 0, -0.2, 1.15, 2.3, 0.05, "frame")];
+const TOWER: Box[] = [box(-0.7, 0, -0.34, -0.62, 2.46, -0.26, "frame"), box(0.62, 0, -0.34, 0.7, 2.46, -0.26, "frame"), box(-0.7, 2.25, -0.01, 0.7, 2.31, 0.05, "steel")];
 // A floor mat for push-ups, crunches and bridges.
 const MAT: Box[] = [box(-0.32, 0, -1.35, 0.32, 0.012, 0.85, "pad", true)];
 
@@ -508,6 +520,379 @@ export const PATTERNS: Pattern[] = [
     adjust: { stance: true, grip: false },
     camera: 80,
   },
+  // ------------------------------------------------------------ machines
+  {
+    id: "legpress",
+    name: "Leg press",
+    equip: "machine",
+    rig: { legs: { mode: "planted", pole: v3(0.25, 1, -0.5) }, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { pelvisY: 0.5, pelvisZ: 0, trunk: -50, head: 22, stance: 0.15, footLY: 0.975, footRY: 0.975, footLZ: 0.58, footRZ: 0.58, footPitch: 134, shFlex: 12, shAbd: 22, elbow: 30 } },
+      { id: "end", at: 1, pose: { pelvisY: 0.5, pelvisZ: 0, trunk: -50, head: 22, stance: 0.15, footLY: 0.755, footRY: 0.755, footLZ: 0.35, footRZ: 0.35, footPitch: 134, shFlex: 12, shAbd: 22, elbow: 30 } },
+    ],
+    verbs: { toEnd: "Lower", toStart: "Press" },
+    tools: ["handles"],
+    machine: [box(-0.2, 0.36, -0.2, 0.2, 0.44, 0.24, "pad", true), box(-0.21, 0.42, -0.62, 0.21, 0.9, -0.2, "pad", true), box(-0.4, 0, -0.7, 0.4, 0.06, 1.4, "frame", true)],
+    muscles: { primary: ["quads", "glutes"], secondary: ["hamstrings", "calves"] },
+    tempo: { toEnd: 1.8, holdEnd: 0.3, toStart: 1.1, holdStart: 0.6 },
+    adjust: { stance: true, grip: false },
+    camera: 72,
+  },
+  {
+    id: "chestpress",
+    name: "Machine chest press",
+    equip: "machine",
+    rig: { legs: { mode: "angles" }, arms: { mode: "ik", pole: v3(1, -0.3, -0.7) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...SEATED, trunk: -10, handL: 0.3, handU: -0.14, handF: 0.14 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: -10, handL: 0.27, handU: -0.12, handF: 0.56 } },
+    ],
+    verbs: { toEnd: "Press", toStart: "Return" },
+    tools: ["handles"],
+    machine: [...SEAT, box(-0.21, 0.5, -0.32, 0.21, 1.15, -0.22, "pad", true), box(-0.46, 0, -0.62, 0.46, 1.7, -0.5, "frame")],
+    muscles: { primary: ["chest", "triceps"], secondary: ["shoulders"] },
+    tempo: { toEnd: 1, holdEnd: 0.4, toStart: 1.8, holdStart: 0.3 },
+    adjust: { stance: false, grip: true },
+    camera: 58,
+  },
+  {
+    id: "shoulderpress",
+    name: "Machine shoulder press",
+    equip: "machine",
+    rig: { legs: { mode: "angles" }, arms: { mode: "ik", pole: v3(0.6, -1, 0.3) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...SEATED, trunk: -10, handL: 0.3, handU: 0.02, handF: 0.08 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: -10, handL: 0.26, handU: 0.52, handF: 0.04 } },
+    ],
+    verbs: { toEnd: "Press", toStart: "Lower" },
+    tools: ["handles"],
+    machine: [...SEAT, box(-0.21, 0.5, -0.32, 0.21, 1.15, -0.22, "pad", true), box(-0.46, 0, -0.62, 0.46, 1.7, -0.5, "frame")],
+    muscles: { primary: ["shoulders", "triceps"], secondary: ["chest"] },
+    tempo: { toEnd: 1, holdEnd: 0.4, toStart: 1.8, holdStart: 0.3 },
+    adjust: { stance: false, grip: true },
+    camera: 58,
+  },
+  {
+    id: "machinerow",
+    name: "Chest-supported machine row",
+    equip: "machine",
+    rig: { legs: { mode: "angles" }, arms: { mode: "ik", pole: v3(0.3, -0.2, -1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...SEATED, trunk: 8, handL: 0.2, handU: -0.12, handF: 0.55 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: 8, handL: 0.24, handU: -0.2, handF: 0.06 } },
+    ],
+    verbs: { toEnd: "Row", toStart: "Reach" },
+    tools: ["handles"],
+    machine: [...SEAT, box(-0.17, 0.75, 0.2, 0.17, 1.15, 0.3, "pad"), box(-0.46, 0, 0.8, 0.46, 1.7, 0.92, "frame")],
+    muscles: { primary: ["back"], secondary: ["biceps", "shoulders"] },
+    tempo: { toEnd: 1, holdEnd: 0.5, toStart: 1.6, holdStart: 0.3 },
+    adjust: { stance: false, grip: true },
+    camera: 64,
+  },
+  {
+    id: "pecdeck",
+    name: "Pec deck",
+    equip: "machine",
+    rig: { legs: { mode: "angles" }, arms: { mode: "angles", hint: v3(0, 1, 0) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...SEATED, trunk: -10, shFlex: 12, shAbd: 88, elbow: 88 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: -10, shFlex: 78, shAbd: 88, elbow: 88 } },
+    ],
+    verbs: { toEnd: "Squeeze", toStart: "Open" },
+    tools: ["handles"],
+    machine: [...SEAT, box(-0.21, 0.5, -0.32, 0.21, 1.15, -0.22, "pad", true), box(-0.3, 0, -0.62, 0.3, 1.9, -0.5, "frame")],
+    muscles: { primary: ["chest"], secondary: ["shoulders"] },
+    tempo: { toEnd: 1, holdEnd: 0.6, toStart: 1.6, holdStart: 0.3 },
+    adjust: { stance: false, grip: false },
+    camera: 30,
+  },
+  {
+    id: "hipabd",
+    name: "Hip abduction machine",
+    equip: "machine",
+    rig: { legs: { mode: "angles" }, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...SEATED, trunk: -14, hipAbd: 4, hipOut: 2, shFlex: 14, shAbd: 26, elbow: 28 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: -14, hipAbd: 4, hipOut: 34, shFlex: 14, shAbd: 26, elbow: 28 } },
+    ],
+    verbs: { toEnd: "Open", toStart: "Close" },
+    tools: ["handles"],
+    machine: [...SEAT, box(-0.21, 0.5, -0.32, 0.21, 1.15, -0.22, "pad", true)],
+    muscles: { primary: ["glutes"], secondary: [] },
+    tempo: { toEnd: 1, holdEnd: 0.6, toStart: 1.5, holdStart: 0.3 },
+    adjust: { stance: false, grip: false },
+    camera: 20,
+  },
+  {
+    id: "hipadd",
+    name: "Hip adduction machine",
+    equip: "machine",
+    rig: { legs: { mode: "angles" }, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...SEATED, trunk: -14, hipAbd: 4, hipOut: 34, shFlex: 14, shAbd: 26, elbow: 28 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: -14, hipAbd: 4, hipOut: 3, shFlex: 14, shAbd: 26, elbow: 28 } },
+    ],
+    verbs: { toEnd: "Squeeze", toStart: "Open" },
+    tools: ["handles"],
+    machine: [...SEAT, box(-0.21, 0.5, -0.32, 0.21, 1.15, -0.22, "pad", true)],
+    muscles: { primary: ["quads"], secondary: ["glutes"] },
+    tempo: { toEnd: 1, holdEnd: 0.6, toStart: 1.5, holdStart: 0.3 },
+    adjust: { stance: false, grip: false },
+    camera: 20,
+  },
+  {
+    id: "seatedcalf",
+    name: "Seated calf raise",
+    equip: "machine",
+    rig: { legs: { mode: "planted", pole: v3(0.2, 1, 0.6) }, arms: { mode: "angles", hint: v3(0, 0, 1) }, tiptoe: ["L", "R"] },
+    keys: [
+      { id: "start", at: 0, pose: { pelvisY: 0.55, pelvisZ: 0, trunk: -4, stance: 0.13, footLZ: 0.46, footRZ: 0.46, shFlex: 22, shAbd: 14, elbow: 64 } },
+      { id: "end", at: 1, pose: { pelvisY: 0.55, pelvisZ: 0, trunk: -4, stance: 0.13, footLZ: 0.46, footRZ: 0.46, footLY: 0.07, footRY: 0.07, shFlex: 22, shAbd: 14, elbow: 64 } },
+    ],
+    verbs: { toEnd: "Rise", toStart: "Lower" },
+    tools: ["handles"],
+    machine: [...SEAT],
+    muscles: { primary: ["calves"], secondary: [] },
+    tempo: { toEnd: 0.8, holdEnd: 0.6, toStart: 1.4, holdStart: 0.3 },
+    adjust: { stance: true, grip: false },
+    camera: 72,
+  },
+  {
+    id: "lyingcurl",
+    name: "Lying leg curl",
+    equip: "machine",
+    rig: { legs: { mode: "angles" }, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { pelvisY: 0.58, pelvisZ: 0, trunk: 88, head: -18, hipL: -88, hipR: -88, kneeL: 2, kneeR: 2, hipAbd: 4, footPitch: -90, shFlex: 150, shAbd: 14, elbow: 40 } },
+      { id: "end", at: 1, pose: { pelvisY: 0.58, pelvisZ: 0, trunk: 88, head: -18, hipL: -88, hipR: -88, kneeL: 98, kneeR: 98, hipAbd: 4, footPitch: -180, shFlex: 150, shAbd: 14, elbow: 40 } },
+    ],
+    verbs: { toEnd: "Curl", toStart: "Lower" },
+    tools: ["roller"],
+    machine: [box(-0.2, 0.4, -0.35, 0.2, 0.48, 0.8, "pad", true), box(-0.3, 0, -0.5, 0.3, 0.05, 0.9, "frame", true)],
+    muscles: { primary: ["hamstrings"], secondary: ["calves"] },
+    tempo: { toEnd: 1, holdEnd: 0.5, toStart: 1.7, holdStart: 0.3 },
+    adjust: { stance: false, grip: false },
+    camera: 80,
+  },
+  {
+    id: "backext",
+    name: "Back extension",
+    equip: "machine",
+    rig: { legs: { mode: "planted", pole: v3(0.15, -0.7, 0.7) }, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { pelvisY: 0.72, pelvisZ: 0, trunk: 118, head: -8, stance: 0.1, footLZ: -0.6, footRZ: -0.6, footLY: 0.065, footRY: 0.065, shFlex: 40, shAbd: 10, elbow: 120 } },
+      { id: "end", at: 1, pose: { pelvisY: 0.72, pelvisZ: 0, trunk: 46, head: 6, stance: 0.1, footLZ: -0.6, footRZ: -0.6, footLY: 0.065, footRY: 0.065, shFlex: 40, shAbd: 10, elbow: 120 } },
+    ],
+    verbs: { toEnd: "Raise", toStart: "Lower" },
+    tools: ["none"],
+    machine: [box(-0.2, 0.45, -0.12, 0.2, 0.62, 0.14, "pad"), box(-0.08, 0, -0.85, 0.08, 0.5, 0.1, "frame", true)],
+    muscles: { primary: ["back", "glutes"], secondary: ["hamstrings"] },
+    tempo: { toEnd: 1.2, holdEnd: 0.6, toStart: 1.6, holdStart: 0.3 },
+    adjust: { stance: true, grip: false },
+    camera: 80,
+  },
+  {
+    id: "preacher",
+    name: "Preacher curl",
+    equip: "machine",
+    rig: { legs: { mode: "angles" }, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...SEATED, trunk: 14, shFlex: 42, shAbd: 8, elbow: 12 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: 14, shFlex: 42, shAbd: 8, elbow: 128 } },
+    ],
+    verbs: { toEnd: "Curl", toStart: "Lower" },
+    tools: ["shortbar", "dumbbells"],
+    machine: [...SEAT, box(-0.25, 0.85, 0.12, 0.25, 1.05, 0.4, "pad")],
+    muscles: { primary: ["biceps"], secondary: ["forearms"] },
+    tempo: { toEnd: 1, holdEnd: 0.4, toStart: 2, holdStart: 0.3 },
+    adjust: { stance: false, grip: false },
+    camera: 74,
+  },
+  // ------------------------------------------------------------ cables
+  {
+    id: "cablefly",
+    name: "Cable crossover",
+    equip: "cable",
+    rig: { legs: PLANTED, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...STAND, trunk: 16, stance: 0.14, footLZ: 0.14, footRZ: -0.14, shFlex: 12, shAbd: 80, elbow: 22 } },
+      { id: "end", at: 1, pose: { ...STAND, trunk: 16, stance: 0.14, footLZ: 0.14, footRZ: -0.14, shFlex: 62, shAbd: -8, elbow: 16 } },
+    ],
+    verbs: { toEnd: "Squeeze", toStart: "Open" },
+    tools: ["handles"],
+    machine: CROSSOVER,
+    pulley: v3(0.95, 1.9, -0.05),
+    muscles: { primary: ["chest"], secondary: ["shoulders"] },
+    tempo: { toEnd: 1, holdEnd: 0.5, toStart: 1.6, holdStart: 0.3 },
+    adjust: { stance: true, grip: false },
+    camera: 28,
+  },
+  {
+    id: "lowfly",
+    name: "Low-to-high cable fly",
+    equip: "cable",
+    rig: { legs: PLANTED, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...STAND, trunk: 4, stance: 0.14, footLZ: 0.12, footRZ: -0.12, shFlex: 8, shAbd: 50, elbow: 20 } },
+      { id: "end", at: 1, pose: { ...STAND, trunk: 4, stance: 0.14, footLZ: 0.12, footRZ: -0.12, shFlex: 100, shAbd: -6, elbow: 16 } },
+    ],
+    verbs: { toEnd: "Raise", toStart: "Lower" },
+    tools: ["handles"],
+    machine: CROSSOVER,
+    pulley: v3(0.95, 0.2, -0.05),
+    muscles: { primary: ["chest"], secondary: ["shoulders"] },
+    tempo: { toEnd: 1, holdEnd: 0.5, toStart: 1.6, holdStart: 0.3 },
+    adjust: { stance: true, grip: false },
+    camera: 28,
+  },
+  {
+    id: "cablelateral",
+    name: "Cable lateral raise",
+    equip: "cable",
+    rig: { legs: PLANTED, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...STAND, trunk: 4, shFlex: 10, shAbd: 4, elbow: 14 } },
+      { id: "end", at: 1, pose: { ...STAND, trunk: 4, shFlex: 14, shAbd: 84, elbow: 14 } },
+    ],
+    verbs: { toEnd: "Raise", toStart: "Lower" },
+    tools: ["handles"],
+    machine: CROSSOVER,
+    pulley: v3(0.95, 0.2, -0.05),
+    muscles: { primary: ["shoulders"], secondary: [] },
+    tempo: { toEnd: 1, holdEnd: 0.4, toStart: 1.6, holdStart: 0.3 },
+    adjust: { stance: true, grip: false },
+    camera: 18,
+  },
+  {
+    id: "facepull",
+    name: "Face pull",
+    equip: "cable",
+    rig: { legs: PLANTED, arms: { mode: "ik", pole: v3(1, 0.4, -0.3) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...STAND, trunk: -4, stance: 0.15, handL: 0.1, handU: -0.02, handF: 0.52 } },
+      { id: "end", at: 1, pose: { ...STAND, trunk: -4, stance: 0.15, handL: 0.27, handU: 0.1, handF: 0.1 } },
+    ],
+    verbs: { toEnd: "Pull", toStart: "Return" },
+    tools: ["handles"],
+    machine: [box(-0.28, 0, 0.78, 0.28, 2.3, 0.88, "frame")],
+    pulley: v3(0, 1.62, 0.75),
+    muscles: { primary: ["shoulders", "back"], secondary: ["biceps"] },
+    tempo: { toEnd: 1, holdEnd: 0.6, toStart: 1.5, holdStart: 0.3 },
+    adjust: { stance: true, grip: true },
+    camera: 40,
+  },
+  {
+    id: "cablecurl",
+    name: "Cable curl",
+    equip: "cable",
+    rig: { legs: PLANTED, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...STAND, shFlex: 4, shAbd: 6, elbow: 12 } },
+      { id: "end", at: 1, pose: { ...STAND, shFlex: 14, shAbd: 6, elbow: 138 } },
+    ],
+    verbs: { toEnd: "Curl", toStart: "Lower" },
+    tools: ["shortbar", "vhandle"],
+    machine: [box(-0.28, 0, 0.78, 0.28, 2.3, 0.88, "frame")],
+    pulley: v3(0, 0.14, 0.7),
+    muscles: { primary: ["biceps"], secondary: ["forearms"] },
+    tempo: { toEnd: 1, holdEnd: 0.5, toStart: 1.8, holdStart: 0.3 },
+    adjust: { stance: true, grip: false },
+    camera: 64,
+  },
+  {
+    id: "straightarm",
+    name: "Straight-arm pulldown",
+    equip: "cable",
+    rig: { legs: PLANTED, arms: { mode: "angles", hint: v3(0, 0, 1) } },
+    keys: [
+      { id: "start", at: 0, pose: { ...STAND, pelvisY: 0.9, pelvisZ: -0.06, trunk: 24, stance: 0.15, shFlex: 105, shAbd: 8, elbow: 12 } },
+      { id: "end", at: 1, pose: { ...STAND, pelvisY: 0.9, pelvisZ: -0.06, trunk: 24, stance: 0.15, shFlex: 8, shAbd: 8, elbow: 12 } },
+    ],
+    verbs: { toEnd: "Pull", toStart: "Return" },
+    tools: ["shortbar", "vhandle"],
+    machine: [box(-0.28, 0, 0.78, 0.28, 2.3, 0.88, "frame")],
+    pulley: v3(0, 2.05, 0.6),
+    muscles: { primary: ["back"], secondary: ["triceps", "core"] },
+    tempo: { toEnd: 1, holdEnd: 0.5, toStart: 1.6, holdStart: 0.3 },
+    adjust: { stance: true, grip: false },
+    camera: 70,
+  },
+  // ------------------------------------------------------------ power tower
+  {
+    id: "pullup",
+    name: "Pull-up",
+    equip: "tower",
+    rig: { legs: { mode: "angles" }, arms: { mode: "ik", pole: v3(1, -0.3, 0.2), frame: "world" } },
+    keys: [
+      { id: "start", at: 0, pose: { ...HANG, pelvisY: 1.24, pelvisZ: 0.03, trunk: -6, head: 6, handL: 0.34, handU: 2.28, handF: 0.02 } },
+      { id: "end", at: 1, pose: { ...HANG, pelvisY: 1.62, pelvisZ: 0.05, trunk: -14, head: 10, handL: 0.34, handU: 2.28, handF: 0.02 } },
+    ],
+    verbs: { toEnd: "Pull", toStart: "Lower" },
+    tools: ["handles"],
+    machine: TOWER,
+    muscles: { primary: ["back", "biceps"], secondary: ["shoulders", "forearms", "core"] },
+    tempo: { toEnd: 1, holdEnd: 0.4, toStart: 1.8, holdStart: 0.4 },
+    adjust: { stance: false, grip: true },
+    camera: 52,
+  },
+  {
+    id: "dip",
+    name: "Parallel-bar dip",
+    equip: "tower",
+    rig: { legs: { mode: "angles" }, arms: { mode: "ik", pole: v3(0.2, 0, -1), frame: "world" } },
+    keys: [
+      { id: "start", at: 0, pose: { pelvisY: 1.335, pelvisZ: 0.03, trunk: 8, hipL: 20, hipR: 20, kneeL: 70, kneeR: 70, hipAbd: 4, footPitch: -30, handL: 0.27, handU: 1.22, handF: 0.1 } },
+      { id: "end", at: 1, pose: { pelvisY: 1.07, pelvisZ: -0.04, trunk: 22, hipL: 20, hipR: 20, kneeL: 70, kneeR: 70, hipAbd: 4, footPitch: -30, handL: 0.27, handU: 1.22, handF: 0.1 } },
+    ],
+    verbs: { toEnd: "Lower", toStart: "Press" },
+    tools: ["handles"],
+    machine: TOWER,
+    muscles: { primary: ["chest", "triceps"], secondary: ["shoulders"] },
+    tempo: { toEnd: 1.6, holdEnd: 0.3, toStart: 1, holdStart: 0.4 },
+    adjust: { stance: false, grip: false },
+    camera: 62,
+  },
+  {
+    id: "kneeraise",
+    name: "Hanging knee raise",
+    equip: "tower",
+    rig: { legs: { mode: "angles" }, arms: { mode: "ik", pole: v3(1, -0.3, 0.2), frame: "world" } },
+    keys: [
+      { id: "start", at: 0, pose: { pelvisY: 1.24, pelvisZ: 0.03, trunk: -4, head: 4, hipL: 6, hipR: 6, kneeL: 12, kneeR: 12, hipAbd: 4, footPitch: -30, handL: 0.34, handU: 2.28, handF: 0.02 } },
+      { id: "end", at: 1, pose: { pelvisY: 1.24, pelvisZ: 0.03, trunk: 4, head: 4, hipL: 100, hipR: 100, kneeL: 95, kneeR: 95, hipAbd: 4, footPitch: -20, handL: 0.34, handU: 2.28, handF: 0.02 } },
+    ],
+    verbs: { toEnd: "Raise", toStart: "Lower" },
+    tools: ["handles"],
+    machine: TOWER,
+    muscles: { primary: ["core"], secondary: ["forearms"] },
+    tempo: { toEnd: 1, holdEnd: 0.5, toStart: 1.6, holdStart: 0.4 },
+    adjust: { stance: false, grip: true },
+    camera: 70,
+  },
 ];
+
+// Smith machine versions of the free-weight lifts: same motion, guided bar.
+const SMITH: Box[] = [box(-0.7, 0, -0.5, -0.62, 2.3, -0.42, "frame"), box(0.62, 0, -0.5, 0.7, 2.3, -0.42, "frame")];
+for (const [from, id, name] of [
+  ["squat", "smithsquat", "Smith machine squat"],
+  ["bench", "smithbench", "Smith machine bench press"],
+  ["ohp", "smithohp", "Smith machine overhead press"],
+  ["hinge", "smithrdl", "Smith machine Romanian deadlift"],
+  ["row", "smithrow", "Smith machine row"],
+  ["lunge", "smithsplit", "Smith machine split squat"],
+] as const) {
+  const base = PATTERNS.find((p) => p.id === from)!;
+  const split = from === "lunge";
+  PATTERNS.push({
+    ...base,
+    id,
+    name,
+    equip: "smith",
+    tools: ["barbell"],
+    // The split squat holds the Smith bar on the back like a squat.
+    ...(split ? { rig: { ...base.rig, arms: { mode: "ik" as const, pole: v3(0.5, -1, -0.4) } }, keys: base.keys.map((k) => ({ ...k, pose: { ...k.pose, handL: 0.38, handU: -0.02, handF: -0.07 } })) } : {}),
+    machine: [...base.machine.filter((b) => b.under), ...SMITH],
+  });
+}
 
 export const PATTERN = Object.fromEntries(PATTERNS.map((p) => [p.id, p])) as Record<string, Pattern>;
