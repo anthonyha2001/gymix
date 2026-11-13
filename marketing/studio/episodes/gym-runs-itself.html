@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gymix · Your gym, running itself (reel)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@500;700&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --lime2: #a9d10f; --ink: #0d1117; --canvas: #f4f5f2; --red: #e5484d; --green: #1f7a3f; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); font-family: Geist, Arial, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
+  #cam { position: absolute; inset: -60px; }
+  .layer { position: absolute; inset: 60px; visibility: hidden; }
+  .grid { position: absolute; inset: -200px; background-image: linear-gradient(rgb(255 255 255 / 0.04) 2px, transparent 2px), linear-gradient(90deg, rgb(255 255 255 / 0.04) 2px, transparent 2px); background-size: 90px 90px; }
+  #glow { position: absolute; left: 50%; top: 55%; width: 1700px; height: 1700px; margin: -850px 0 0 -850px; border-radius: 50%; background: radial-gradient(closest-side, rgb(200 241 53 / 0.18), transparent); }
+  .mono { font-family: "Geist Mono", monospace; }
+  .big { font-weight: 900; letter-spacing: -0.05em; line-height: 0.95; }
+  .lime { color: var(--lime); }
+  /* Scene caption: top safe zone */
+  .tag { position: absolute; left: 80px; top: 250px; font-family: "Geist Mono", monospace; font-size: 34px; font-weight: 700; letter-spacing: 0.2em; color: var(--lime); }
+  .head { position: absolute; left: 80px; right: 80px; top: 305px; font-size: 104px; font-weight: 900; letter-spacing: -0.05em; line-height: 0.98; }
+  /* Devices */
+  .phone { position: absolute; width: 560px; height: 1150px; left: 50%; margin-left: -280px; top: 600px; border-radius: 76px; background: #000; padding: 18px; box-shadow: 0 0 0 3px rgb(255 255 255 / 0.12), 0 60px 140px rgb(0 0 0 / 0.6), 0 0 120px rgb(200 241 53 / 0.12); }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 60px; overflow: hidden; background: var(--canvas); color: var(--ink); }
+  .screen.dark { background: #0b0f14; color: #fff; }
+  .notch { position: absolute; top: 18px; left: 50%; width: 150px; height: 40px; margin-left: -75px; border-radius: 30px; background: #000; z-index: 5; }
+  .laptop { position: absolute; left: 50%; top: 720px; width: 1000px; margin-left: -500px; }
+  .laptop .lid { border-radius: 30px 30px 0 0; background: #000; padding: 18px 18px 0; box-shadow: 0 0 0 3px rgb(255 255 255 / 0.12), 0 60px 140px rgb(0 0 0 / 0.6); }
+  .laptop .lid img { display: block; width: 100%; border-radius: 12px 12px 0 0; }
+  .laptop .base { height: 34px; margin: 0 -50px; border-radius: 0 0 30px 30px; background: linear-gradient(#cfd2cc, #8e918b); }
+  .card { background: #fff; color: var(--ink); border-radius: 36px; box-shadow: 0 30px 80px rgb(0 0 0 / 0.35); }
+  .row { display: flex; align-items: center; justify-content: space-between; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 50; }
+  .confetti { position: absolute; width: 18px; height: 30px; border-radius: 4px; }
+  .note { position: absolute; font-family: "Caveat", "Comic Sans MS", cursive; font-size: 54px; color: #1b2a4a; }
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="cam">
+  <div id="grid" class="grid"></div>
+  <div id="glow"></div>
+
+  <!-- 0. HOOK: the chaos, counted -->
+  <div id="sHook" class="layer">
+    <div id="hk0" class="mono" style="position:absolute; left:80px; top:330px; font-size:38px; font-weight:700; letter-spacing:0.2em; color:var(--lime)">GYM OWNERS IN LEBANON</div>
+    <div id="hkA" class="big" style="position:absolute; left:80px; top:450px; font-size:100px; white-space:nowrap"><span class="lime">40</span> WhatsApp chats.</div>
+    <div id="hkB" class="big" style="position:absolute; left:80px; top:610px; font-size:100px; white-space:nowrap"><span class="lime">3</span> notebooks.</div>
+    <div id="hkC" class="big" style="position:absolute; left:80px; top:770px; font-size:100px; white-space:nowrap"><span class="lime">1</span> calculator.</div>
+    <div id="hkD" class="big" style="position:absolute; left:80px; top:930px; font-size:100px; white-space:nowrap"><span style="color:var(--red)">0</span> idea who paid.</div>
+    <div id="hkPaper" style="position:absolute; left:140px; top:1170px; width:800px; height:470px; border-radius:18px; background:#fbf6e6; box-shadow: 0 40px 90px rgb(0 0 0 / 0.5); transform: rotate(-4deg); background-image: repeating-linear-gradient(transparent 0 66px, #c9d6ef 66px 68px);">
+      <div style="position:absolute; left:70px; top:0; bottom:0; width:3px; background:#e8a3a3"></div>
+      <div class="note" style="left:100px; top:20px">Rami - paid?? </div>
+      <div class="note" style="left:100px; top:88px">Lara - "bkra"</div>
+      <div class="note" style="left:100px; top:156px">Karim $40 or 3.5M LL?</div>
+      <div class="note" style="left:100px; top:224px">Nour - expired? ask</div>
+      <div class="note" style="left:100px; top:292px">rate today = ???</div>
+    </div>
+  </div>
+
+  <!-- 0b. THE TURN -->
+  <div id="sTurn" class="layer" style="background: var(--lime); color: var(--ink)">
+    <div id="tu1" class="big" style="position:absolute; left:80px; right:80px; top:640px; font-size:150px">Or one app</div>
+    <div id="tu2" class="big" style="position:absolute; left:80px; right:80px; top:810px; font-size:150px">that runs<br>the gym<br>for you.</div>
+  </div>
+
+  <!-- 1. TAP CHECK-IN -->
+  <div id="s1" class="layer">
+    <div class="tag">01 · CHECK-IN</div>
+    <div class="head">Tap the door.<br><span class="lime">You're in.</span></div>
+    <div id="s1sticker" style="position:absolute; left:50%; top:1180px; width:300px; height:300px; margin-left:-150px; border-radius:50%; background:var(--lime); display:grid; place-items:center; box-shadow: 0 0 80px rgb(200 241 53 / 0.5)">
+      <svg viewBox="0 0 100 100" width="200" height="200"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="s1waves"></div>
+    <div id="s1card" class="card" style="position:absolute; left:140px; right:140px; top:1200px; padding:50px; text-align:center">
+      <div id="s1icon" style="width:150px; height:150px; margin:0 auto; border-radius:50%; display:grid; place-items:center"></div>
+      <div id="s1name" style="margin-top:28px; font-size:64px; font-weight:800; letter-spacing:-0.03em"></div>
+      <div id="s1sub" style="margin-top:10px; font-size:38px; color:#5d6470"></div>
+    </div>
+    <div id="s1stamp" class="big" style="position:absolute; left:50%; top:1050px; margin-left:-330px; width:660px; text-align:center; font-size:150px; color:var(--red); border:14px solid var(--red); border-radius:30px; padding:10px 0 20px; transform: rotate(-10deg); opacity:0">FROZEN</div>
+  </div>
+
+  <!-- 2. DOLLARS OR LIRA -->
+  <div id="s2" class="layer">
+    <div class="tag">02 · PAYMENTS</div>
+    <div class="head">Dollars or lira.<br><span class="lime">Your rate.</span></div>
+    <div class="card" style="position:absolute; left:110px; right:110px; top:760px; padding:60px">
+      <div class="row" style="font-size:38px; color:#5d6470"><span>Invoice · Monthly</span><span class="mono">GX-4821</span></div>
+      <div class="big" style="margin-top:30px; font-size:150px">$40.00</div>
+      <div style="margin-top:40px; height:2px; background:#e2e4de"></div>
+      <div class="row" style="margin-top:40px; font-size:40px"><span style="color:#5d6470">Paid in lira at</span><span class="mono" style="font-weight:700">89,500</span></div>
+      <div id="s2lbp" class="big mono" style="margin-top:20px; font-size:96px; letter-spacing:-0.03em">LBP 0</div>
+      <div id="s2paid" style="margin-top:44px; display:inline-flex; align-items:center; gap:16px; padding:18px 34px; border-radius:999px; background:#e3f3e8; color:var(--green); font-size:42px; font-weight:800">✓ Paid · receipt sent</div>
+    </div>
+    <div id="s2chips" style="position:absolute; left:110px; right:110px; top:1640px; display:flex; flex-wrap:wrap; gap:16px"></div>
+  </div>
+
+  <!-- 3. WHATSAPP -->
+  <div id="s3" class="layer">
+    <div class="tag">03 · WHATSAPP</div>
+    <div class="head">Reminders<br><span class="lime">send themselves.</span></div>
+    <div class="phone" style="top:640px"><div class="screen" style="background:#efe7de"><div class="notch"></div>
+      <div style="height:170px; background:#1f2c34; color:#fff; display:flex; align-items:flex-end; padding:0 36px 26px; gap:20px">
+        <div style="width:70px; height:70px; border-radius:50%; background:var(--lime); display:grid; place-items:center; color:var(--ink); font-weight:900; font-size:38px">G</div>
+        <div><div style="font-size:34px; font-weight:700">Your gym</div><div style="font-size:24px; opacity:0.7">via Gymix</div></div>
+      </div>
+      <div id="s3msgs" style="position:absolute; left:26px; right:26px; top:200px; display:flex; flex-direction:column; gap:22px"></div>
+    </div></div>
+  </div>
+
+  <!-- 4. DASHBOARD -->
+  <div id="s4" class="layer">
+    <div class="tag">04 · YOUR DASHBOARD</div>
+    <div class="head">The whole gym.<br><span class="lime">One screen.</span></div>
+    <div id="s4lap" class="laptop"><div class="lid"><img src="../out/screens/overview-full.png"></div><div class="base"></div></div>
+    <div id="s4call" style="position:absolute; right:60px; top:1420px; padding:28px 40px; border-radius:30px; background:var(--red); color:#fff; font-size:46px; font-weight:800; box-shadow:0 30px 70px rgb(0 0 0 / 0.5)">Who owes what, live</div>
+  </div>
+
+  <!-- 5. MEMBER APP -->
+  <div id="s5" class="layer">
+    <div class="tag">05 · MEMBER APP</div>
+    <div class="head">Your own app.<br><span class="lime">No app store.</span></div>
+    <div id="s5ph" class="phone"><div class="screen"><img src="../out/screens/member-home.png" style="width:100%; display:block"></div></div>
+  </div>
+
+  <!-- 6. 3D EXERCISES -->
+  <div id="s6" class="layer">
+    <div class="tag">06 · TRAINING</div>
+    <div class="head"><span id="s6n" class="lime">0</span> exercises.<br>All in 3D.</div>
+    <div style="position:absolute; left:110px; right:110px; top:720px; height:900px; border-radius:50px; background: radial-gradient(circle at 50% 40%, #1d2630, #0b0f14); box-shadow: inset 0 0 0 3px rgb(255 255 255 / 0.08); overflow:hidden">
+      <svg id="s6fig" viewBox="0 0 860 900" width="860" height="900" style="position:absolute; inset:0"></svg>
+      <div class="mono" style="position:absolute; left:40px; bottom:36px; font-size:30px; color:rgb(255 255 255 / 0.55)">BARBELL BACK SQUAT · QUADS, GLUTES</div>
+    </div>
+  </div>
+
+  <!-- 7. WORKOUT + PR -->
+  <div id="s7" class="layer">
+    <div class="tag">07 · WORKOUTS</div>
+    <div class="head">Every set.<br><span class="lime">Every record.</span></div>
+    <div class="card" style="position:absolute; left:110px; right:110px; top:760px; padding:50px 54px">
+      <div style="font-size:52px; font-weight:800; letter-spacing:-0.02em">Bench press</div>
+      <div style="font-size:32px; color:#5d6470; margin-top:6px">Last time: 70 kg × 8</div>
+      <div id="s7sets" style="margin-top:34px; display:flex; flex-direction:column; gap:18px"></div>
+    </div>
+    <div id="s7pr" class="big" style="position:absolute; left:50%; top:1540px; margin-left:-330px; width:660px; padding:30px 0 38px; text-align:center; border-radius:40px; background:var(--lime); color:var(--ink); font-size:100px">NEW PR!</div>
+    <div id="s7conf"></div>
+  </div>
+
+  <!-- 8. CHALLENGES -->
+  <div id="s8" class="layer">
+    <div class="tag">08 · CHALLENGES</div>
+    <div class="head">Swipe to join.<br><span class="lime">Race to the top.</span></div>
+    <div id="s8board" class="card" style="position:absolute; left:110px; right:110px; top:760px; padding:44px 50px"></div>
+    <div id="s8card" style="position:absolute; left:170px; right:170px; top:820px; height:760px; border-radius:50px; background: linear-gradient(160deg, #1f2a10, #0d1117 70%); box-shadow: 0 0 0 4px var(--lime), 0 40px 100px rgb(0 0 0 / 0.6); padding:60px">
+      <div class="mono" style="font-size:30px; color:var(--lime); letter-spacing:0.18em">NOVEMBER CHALLENGE</div>
+      <div class="big" style="margin-top:30px; font-size:110px">Most<br>visits<br>wins.</div>
+      <div style="margin-top:40px; font-size:40px; color:rgb(255 255 255 / 0.7)">Prize: a free month</div>
+      <div id="s8joined" class="big" style="position:absolute; right:50px; top:520px; padding:10px 26px 16px; border:8px solid var(--lime); border-radius:20px; color:var(--lime); font-size:64px; transform:rotate(12deg); opacity:0">JOINED</div>
+    </div>
+  </div>
+
+  <!-- 9. CLASSES -->
+  <div id="s9" class="layer">
+    <div class="tag">09 · CLASSES</div>
+    <div class="head">Book it.<br><span class="lime">Waitlist it.</span></div>
+    <div id="s9list" style="position:absolute; left:110px; right:110px; top:760px; display:flex; flex-direction:column; gap:24px"></div>
+  </div>
+
+  <!-- 10. SHOP -->
+  <div id="s10" class="layer">
+    <div class="tag">10 · SHOP</div>
+    <div class="head">Scan. Sell.<br><span class="lime">Stock tracked.</span></div>
+    <div class="card" style="position:absolute; left:110px; right:110px; top:780px; padding:50px; overflow:hidden">
+      <div style="height:200px; border-radius:24px; background: repeating-linear-gradient(90deg, #0d1117 0 6px, transparent 6px 12px, #0d1117 12px 14px, transparent 14px 22px, #0d1117 22px 30px, transparent 30px 34px); position:relative">
+        <div id="s10beam" style="position:absolute; left:-10px; right:-10px; height:8px; background:var(--red); box-shadow: 0 0 30px var(--red)"></div>
+      </div>
+      <div id="s10lines" style="margin-top:40px; display:flex; flex-direction:column; gap:22px; font-size:44px"></div>
+      <div style="margin-top:34px; height:2px; background:#e2e4de"></div>
+      <div class="row" style="margin-top:30px"><span style="font-size:44px; font-weight:700">Total</span><span id="s10tot" class="big" style="font-size:90px">$0.00</span></div>
+    </div>
+  </div>
+
+  <!-- 11. TV SCREENS + LIVE -->
+  <div id="s11" class="layer">
+    <div class="tag">11 · SCREENS & LIVE</div>
+    <div class="head">Your TVs.<br><span class="lime">Live.</span></div>
+    <div style="position:absolute; left:60px; right:60px; top:720px; height:560px; border-radius:24px; background:#000; padding:16px; box-shadow: 0 0 0 3px rgb(255 255 255 / 0.12), 0 50px 120px rgb(0 0 0 / 0.6)">
+      <div style="height:100%; border-radius:12px; background:linear-gradient(135deg, #10161d, #0b0f14); padding:44px 54px; position:relative; overflow:hidden">
+        <div class="mono" style="font-size:26px; letter-spacing:0.2em; color:var(--lime)">TOP THIS MONTH</div>
+        <div id="s11rows" style="margin-top:24px; display:flex; flex-direction:column; gap:16px"></div>
+      </div>
+    </div>
+    <div style="position:absolute; left:110px; right:110px; top:1350px" class="card">
+      <div style="padding:40px 50px" class="row">
+        <div><div style="font-size:34px; color:#5d6470">Right now at the gym</div><div class="big" style="font-size:110px"><span id="s11n">0</span> <span style="font-size:56px">inside</span></div></div>
+        <div id="s11lvl" style="padding:18px 30px; border-radius:999px; background:#fff1d6; color:#9a5b00; font-size:40px; font-weight:800">Busy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. AND MORE -->
+  <div id="s12" class="layer">
+    <div class="mono" style="position:absolute; left:80px; top:300px; font-size:38px; font-weight:700; letter-spacing:0.2em; color:var(--lime)">AND THAT'S NOT ALL</div>
+    <div class="big" style="position:absolute; left:80px; top:370px; font-size:220px"><span id="s12n">0</span>+</div>
+    <div style="position:absolute; left:80px; top:600px; font-size:70px; font-weight:800">features. One app.</div>
+    <div id="s12feed" style="position:absolute; left:80px; right:80px; top:760px; height:1000px; overflow:hidden; -webkit-mask-image: linear-gradient(transparent, #000 15%, #000 80%, transparent)"></div>
+  </div>
+
+  <!-- 13. PRICE -->
+  <div id="sPrice" class="layer" style="background: var(--lime); color: var(--ink)">
+    <div id="p1" class="big" style="position:absolute; left:80px; top:470px; font-size:120px">All of it.</div>
+    <div id="p2" style="position:absolute; left:84px; top:650px; font-size:56px; font-weight:700">For</div>
+    <div id="p3" class="big" style="position:absolute; left:70px; top:740px; font-size:280px; letter-spacing:-0.07em">$29.99</div>
+    <div id="p4" class="big" style="position:absolute; left:80px; top:1060px; font-size:84px">a month.<br>Not per member.<br>Per gym.</div>
+  </div>
+
+  <!-- 14. OUTRO -->
+  <div id="sOut" class="layer" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 40px; text-align:center">
+    <div id="o1" style="width: 270px; height: 270px; border-radius: 22%; background: var(--lime); display:grid; place-items:center; box-shadow: 0 30px 100px rgb(200 241 53 / 0.45)">
+      <svg viewBox="0 0 100 100" width="244" height="244"><g transform="translate(3,-1.5)" fill="none" stroke="#0d1117" stroke-linejoin="round"><path id="op1" pathLength="1" d="M47.6 35.5 A27 23 0 1 0 69 58 H48" stroke-width="16"/><path id="op2" pathLength="1" d="M60.8 29.1 A13 13 0 0 1 71.9 40.2" stroke-width="8.5" stroke-linecap="round"/><path id="op3" pathLength="1" d="M62.3 18.2 A24 24 0 0 1 82.8 38.7" stroke-width="8.5" stroke-linecap="round"/></g></svg>
+    </div>
+    <div id="o2" class="big" style="font-size: 140px">Gymix</div>
+    <div id="o3" style="font-size: 50px; font-weight: 800; color: rgb(255 255 255 / 0.8)">Your gym, running itself.</div>
+    <div id="o3b" style="font-size: 40px; font-weight: 600; color: rgb(255 255 255 / 0.55)">14 days free · no card</div>
+    <div id="o4" style="margin-top: 16px; display:inline-flex; padding: 26px 46px; border-radius: 999px; background: var(--lime); color: var(--ink); font-size: 44px; font-weight: 800">Try a sample gym · link in bio</div>
+  </div>
+ </div>
+ <div id="flash"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const back = (x) => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const vis = (el, on) => (el.style.visibility = on ? "visible" : "hidden");
+const rise = (el, t, at, dur = 0.3, dist = 60) => { const p = eo(prog(t, at, at + dur)); el.style.opacity = p; el.style.transform = `translateY(${lerp(dist, 0, p)}px)`; };
+const pop = (el, t, at, dur = 0.35) => { const p = prog(t, at, at + dur); el.style.opacity = clamp(p * 4); el.style.transform = `scale(${lerp(0.5, 1, back(p))})`; };
+const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const money = (n) => "$" + n.toFixed(2);
+
+// 120 bpm: a beat is half a second, a bar two seconds; every scene is one bar.
+const B = 0.5, BAR = 2;
+const T_HOOK = 0, T_TURN = 2.5, T_S1 = 4;
+const SCENES = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11"];
+const S_LEN = { s1: 2 * BAR }; // check-in gets two bars (in, then refused)
+const S_AT = {}; let acc = T_S1;
+SCENES.forEach((s) => { S_AT[s] = acc; acc += S_LEN[s] ?? BAR; });
+const T_MORE = acc, T_PRICE = T_MORE + 2 * BAR, T_OUT = T_PRICE + 1.5 * BAR;
+window.DURATION = T_OUT + 4.5;
+const CUTS = [T_TURN, ...SCENES.map((s) => S_AT[s]), T_MORE, T_PRICE, T_OUT];
+
+// Static content built once.
+$("s2chips").innerHTML = ["Cash", "Whish", "OMT", "Card", "Bank transfer"].map((x) => `<span style="padding:16px 28px; border-radius:999px; background:rgb(255 255 255 / 0.08); font-size:36px; font-weight:700">${x}</span>`).join("");
+const MSGS = [
+  ["in", "Hi Lara, your Monthly membership ends on Friday. Renew at the front desk to keep training."],
+  ["in", "Hi Lara, Your gym received your payment of $40.00. Thank you!"],
+];
+$("s3msgs").innerHTML = MSGS.map(([, m], i) => `<div id="s3m${i}" style="align-self:flex-start; max-width:88%; padding:22px 26px 34px; border-radius:6px 26px 26px 26px; background:#fff; font-size:30px; line-height:1.3; position:relative; box-shadow:0 2px 2px rgb(0 0 0 / 0.08)">${m}<span id="s3t${i}" style="position:absolute; right:18px; bottom:6px; font-size:22px; color:#8a9399">07:00 ✓✓</span></div>`).join("");
+const SETS = [["1", "70 kg", "8"], ["2", "72.5 kg", "8"], ["3", "75 kg", "8"]];
+$("s7sets").innerHTML = SETS.map(([n, w, r], i) => `<div id="s7r${i}" class="row" style="padding:22px 28px; border-radius:22px; background:#f4f5f2; font-size:44px; font-weight:700"><span style="color:#5d6470">Set ${n}</span><span>${w}</span><span>× ${r}</span><span id="s7c${i}" style="width:64px; height:64px; border-radius:50%; display:grid; place-items:center; font-size:36px"></span></div>`).join("");
+let conf = ""; for (let i = 0; i < 46; i++) conf += `<div class="confetti" id="cf${i}" style="background:${["#c8f135", "#ffffff", "#a9d10f", "#5dd6ff", "#ff7aa8"][i % 5]}"></div>`;
+$("s7conf").innerHTML = conf;
+const BOARD = [["1", "Nour K.", "18 visits"], ["2", "Rami H.", "16 visits"], ["3", "You", "15 visits"], ["4", "Lara N.", "14 visits"]];
+$("s8board").innerHTML = `<div class="mono" style="font-size:28px; color:#5d6470; letter-spacing:0.15em">LEADERBOARD</div>` + BOARD.map(([n, who, v], i) => `<div class="row" style="margin-top:24px; padding:24px 30px; border-radius:24px; font-size:46px; font-weight:700; ${who === "You" ? "background:#0d1117; color:#c8f135" : "background:#f4f5f2"}"><span>${n}. ${who}</span><span>${v}</span></div>`).join("");
+const CLS = [["18:00", "Spinning", "12 / 14", false], ["19:00", "HIIT", "Full · 3 waiting", true], ["20:00", "Boxing", "8 / 12", false], ["Sat 10:00", "Yoga", "5 / 15", false]];
+$("s9list").innerHTML = CLS.map(([h, n, s, full], i) => `<div id="s9c${i}" class="card row" style="padding:40px 46px"><div><div class="mono" style="font-size:32px; color:#5d6470">${h}</div><div style="font-size:60px; font-weight:800; letter-spacing:-0.02em">${n}</div><div style="font-size:34px; color:${full ? "#c0362c" : "#5d6470"}">${s}</div></div><div id="s9b${i}" style="padding:22px 36px; border-radius:999px; font-size:38px; font-weight:800; background:${full ? "#f4f5f2" : "#0d1117"}; color:${full ? "#0d1117" : "#c8f135"}">${full ? "Join waitlist" : "Book"}</div></div>`).join("");
+const ITEMS = [["Protein bar", 2.5, 23], ["Water 1L", 1, 140], ["Whey 2 kg", 55, 6]];
+$("s10lines").innerHTML = ITEMS.map(([n, p, st], i) => `<div id="s10l${i}" class="row"><span style="font-weight:700">${n}</span><span style="color:#5d6470; font-size:34px">stock ${st} → ${st - 1}</span><span style="font-weight:800">${money(p)}</span></div>`).join("");
+const TOP = [["1", "Nour K.", "21"], ["2", "Rami H.", "19"], ["3", "Lara N.", "17"], ["4", "Karim A.", "16"]];
+$("s11rows").innerHTML = TOP.map(([n, w, v], i) => `<div id="s11r${i}" class="row" style="font-size:52px; font-weight:800"><span><span class="lime">${n}</span>&nbsp;&nbsp;${w}</span><span style="color:rgb(255 255 255 / 0.6)">${v} visits</span></div>`).join("");
+const MORE = ["Freeze & resume", "Visit packs", "Unpaid auto-freeze", "Self pause", "Personal invite links", "QR check-in", "Front-desk tablet mode", "Personal training", "Monthly courses", "Program builder", "Templates", "Exercise swaps", "Machine stickers", "Program sharing", "Rest timer", "Streaks & weekly goals", "Body measurements", "Progress charts", "Works offline", "Push notifications", "Private chat", "Announcements", "Nightly owner summary", "Win-back nudges", "Self-service kiosk", "Busy hours", "Team roles", "Trainers never see money", "Activity log", "Home-screen widget", "Profit reports", "Refunds & voids", "Download my data", "Live demo gym"];
+$("s12feed").innerHTML = MORE.map((m) => `<div style="height:100px; display:flex; align-items:center; gap:24px; font-size:56px; font-weight:800"><span style="color:var(--lime)">✓</span>${m}</div>`).join("");
+
+// A simple 3D-looking athlete doing a squat (side view, depth by shading).
+function athlete(t) {
+  const s = (1 - Math.cos(t * Math.PI * 2 / 1.6)) / 2; // 0 standing → 1 bottom
+  const hipY = lerp(430, 560, s), hipX = lerp(430, 380, s);
+  const knee = [lerp(440, 520, s), lerp(600, 610, s)];
+  const ankle = [450, 760];
+  const shoulder = [lerp(440, 470, s), lerp(250, 400, s)];
+  const head = [shoulder[0] - 5, shoulder[1] - 80];
+  const bar = [shoulder[0] - 10, shoulder[1] + 4];
+  const limb = (a, b, w, c) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+  const hip = [hipX, hipY];
+  const elbow = [shoulder[0] + 60, shoulder[1] + 40];
+  return `
+    <ellipse cx="450" cy="790" rx="${260}" ry="34" fill="rgb(0 0 0 / 0.5)"/>
+    <rect x="${bar[0] - 330}" y="${bar[1] - 10}" width="660" height="20" rx="10" fill="#9aa3ad"/>
+    <rect x="${bar[0] - 360}" y="${bar[1] - 80}" width="44" height="160" rx="12" fill="#2b333c" stroke="#c8f135" stroke-width="4"/>
+    <rect x="${bar[0] + 316}" y="${bar[1] - 80}" width="44" height="160" rx="12" fill="#2b333c" stroke="#c8f135" stroke-width="4"/>
+    ${limb(hip, knee, 74, "#c8f135")}${limb(knee, ankle, 60, "#a9d10f")}
+    ${limb([ankle[0] - 10, ankle[1] + 10], [ankle[0] + 70, ankle[1] + 14], 30, "#e6e8e3")}
+    ${limb(shoulder, hip, 96, "#d9dcd5")}
+    ${limb(shoulder, elbow, 40, "#c4c8c0")}${limb(elbow, [bar[0] + 30, bar[1]], 34, "#c4c8c0")}
+    <circle cx="${head[0]}" cy="${head[1]}" r="52" fill="#e6e8e3"/>
+    <circle cx="${hip[0]}" cy="${hip[1]}" r="16" fill="#0d1117" opacity="0.25"/>
+    <path d="M ${hip[0] + 40} ${hip[1] - 120} q 120 -10 150 60" stroke="rgb(200 241 53 / ${0.4 + s * 0.5})" stroke-width="6" fill="none" stroke-dasharray="14 14"/>`;
+}
+
+window.renderAt = function (t) {
+  const ph = (t % B) / B;
+  const pulse = t > T_TURN && t < T_OUT + BAR ? Math.exp(-ph * 6) : 0;
+  let sx = 0, sy = 0, fl = 0, z = 0;
+  CUTS.forEach((at, k) => { const dt = t - at; if (dt >= 0 && dt < 0.5) { const a = Math.exp(-dt * 10); sx += Math.sin(dt * 70 + k) * 22 * a; sy += Math.cos(dt * 61 + k) * 16 * a; z += a * 0.035; fl = Math.max(fl, Math.exp(-dt * 18) * 0.35); } });
+  $("cam").style.transform = `translate(${sx}px, ${sy}px) scale(${1 + pulse * 0.012 + z})`;
+  $("glow").style.opacity = 0.35 + pulse * 0.55;
+  $("grid").style.transform = `translateY(${(-t * 80) % 90}px)`;
+  $("flash").style.opacity = fl;
+
+  // HOOK
+  const hk = t < T_TURN; vis($("sHook"), hk);
+  if (hk) {
+    rise($("hk0"), t, 0, 0.2);
+    ["hkA", "hkB", "hkC", "hkD"].forEach((id, i) => { const at = 0.15 + i * 0.42; const p = prog(t, at, at + 0.16); $(id).style.opacity = p; $(id).style.transform = `scale(${lerp(1.4, 1, eo(p))})`; $(id).style.transformOrigin = "left center"; });
+    const pp = eo(prog(t, 1.2, 1.6)); $("hkPaper").style.opacity = pp; $("hkPaper").style.transform = `translateY(${lerp(300, 0, pp)}px) rotate(${lerp(-14, -4, pp) + Math.sin(t * 9) * 0.6}deg)`;
+  }
+  // TURN
+  const tu = t >= T_TURN && t < T_S1; vis($("sTurn"), tu);
+  if (tu) { const lt = t - T_TURN; $("sTurn").style.clipPath = `circle(${eo(prog(lt, 0, 0.3)) * 150}% at 50% 60%)`; rise($("tu1"), lt, 0.05, 0.25); rise($("tu2"), lt, 0.35, 0.3); }
+
+  // 1. check-in: tap → welcome, then a second tap → frozen
+  const on = (s) => { const a = S_AT[s], b = a + (S_LEN[s] ?? BAR); const v = t >= a && t < b; vis($(s), v); return v ? t - a : -1; };
+  let lt = on("s1");
+  if (lt >= 0) {
+    const second = lt >= BAR; const l = second ? lt - BAR : lt;
+    rise($("s1").querySelector(".head"), lt, 0, 0.3);
+    const stP = prog(l, 0.1, 0.5); $("s1sticker").style.opacity = 1 - prog(l, 0.75, 0.9); $("s1sticker").style.transform = `scale(${lerp(0.7, 1, back(stP))})`;
+    let w = ""; for (let i = 0; i < 4; i++) { const p = prog(l, 0.3 + i * 0.12, 1.0 + i * 0.12); if (p > 0 && p < 1) w += `<div style="position:absolute; left:50%; top:1330px; width:${300 + p * 700}px; height:${300 + p * 700}px; margin-left:${-(150 + p * 350)}px; margin-top:${-(150 + p * 350)}px; border-radius:50%; border:6px solid ${second ? "rgb(229 72 77 /" : "rgb(200 241 53 /"} ${(1 - p) * 0.8}); top:1330px"></div>`; }
+    $("s1waves").innerHTML = w;
+    const cp = prog(l, 0.8, 1.15); $("s1card").style.opacity = clamp(cp * 3); $("s1card").style.transform = `scale(${lerp(0.6, 1, back(cp))})`;
+    $("s1icon").style.background = second ? "#fde8e8" : "#e3f3e8";
+    $("s1icon").innerHTML = second ? `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#c0362c" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>` : `<svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="#1f7a3f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>`;
+    $("s1name").textContent = second ? "Membership unpaid" : "Welcome, Karim";
+    $("s1sub").textContent = second ? "Pay at the desk to get in" : "Checked in · 18:52";
+    $("s1").querySelector(".head").innerHTML = second ? `Didn't pay?<br><span style="color:var(--red)">The door knows.</span>` : `Tap the door.<br><span class="lime">You're in.</span>`;
+    const sp = prog(l, 1.15, 1.35); $("s1stamp").style.opacity = second ? clamp(sp * 3) : 0; $("s1stamp").style.transform = `rotate(-10deg) scale(${lerp(2.2, 1, eo(sp))})`;
+  }
+  // 2. lira
+  lt = on("s2");
+  if (lt >= 0) { rise($("s2").querySelector(".head"), lt, 0, 0.25); const n = Math.round(eo(prog(lt, 0.3, 1.1)) * 40 * 89500); $("s2lbp").textContent = "LBP " + n.toLocaleString("en-US"); pop($("s2paid"), lt, 1.15); [...$("s2chips").children].forEach((c, i) => rise(c, lt, 0.4 + i * 0.1, 0.25, 30)); }
+  // 3. whatsapp
+  lt = on("s3");
+  if (lt >= 0) { rise($("s3").querySelector(".head"), lt, 0, 0.25); [0, 1].forEach((i) => { pop($("s3m" + i), lt, 0.35 + i * 0.6, 0.3); $("s3m" + i).style.transformOrigin = "left top"; $("s3t" + i).style.color = lt > 0.75 + i * 0.6 ? "#34b7f1" : "#8a9399"; }); }
+  // 4. dashboard
+  lt = on("s4");
+  if (lt >= 0) { rise($("s4").querySelector(".head"), lt, 0, 0.25); const p = eo(prog(lt, 0, 0.5)); $("s4lap").style.transform = `perspective(1600px) rotateX(${lerp(28, 6, p)}deg) translateY(${lerp(200, 0, p)}px) scale(${lerp(0.9, 1.05, prog(lt, 0, 2))})`; pop($("s4call"), lt, 0.9); }
+  // 5. member app
+  lt = on("s5");
+  if (lt >= 0) { rise($("s5").querySelector(".head"), lt, 0, 0.25); const p = eo(prog(lt, 0, 0.45)); $("s5ph").style.transform = `translateY(${lerp(500, 0, p)}px) rotate(${lerp(8, 0, p)}deg)`; $("s5ph").querySelector("img").style.transform = `translateY(${-eio(prog(lt, 0.8, 1.9)) * 360}px)`; }
+  // 6. 3D exercises
+  lt = on("s6");
+  if (lt >= 0) { rise($("s6").querySelector(".head"), lt, 0, 0.25); $("s6n").textContent = Math.round(eo(prog(lt, 0, 0.9)) * 772); $("s6fig").innerHTML = athlete(lt); }
+  // 7. workout + PR
+  lt = on("s7");
+  if (lt >= 0) {
+    rise($("s7").querySelector(".head"), lt, 0, 0.25);
+    SETS.forEach((_, i) => { const at = 0.25 + i * 0.3; const done = lt > at; $("s7c" + i).style.background = done ? (i === 2 ? "#c8f135" : "#0d1117") : "#e2e4de"; $("s7c" + i).style.color = i === 2 ? "#0d1117" : "#fff"; $("s7c" + i).textContent = done ? "✓" : ""; $("s7c" + i).style.transform = `scale(${done ? lerp(1.5, 1, eo(prog(lt, at, at + 0.15))) : 1})`; });
+    pop($("s7pr"), lt, 1.0, 0.3);
+    for (let i = 0; i < 46; i++) { const el = $("cf" + i); const p = prog(lt, 1.0, 2.0); const a = rnd(i) * Math.PI * 2, v = 500 + rnd(i + 9) * 700; el.style.opacity = p > 0 && p < 1 ? 1 - p * 0.6 : 0; el.style.left = `${480 + Math.cos(a) * v * p}px`; el.style.top = `${1560 + Math.sin(a) * v * p * 0.8 + 900 * p * p}px`; el.style.transform = `rotate(${rnd(i + 3) * 720 * p}deg)`; }
+  }
+  // 8. challenges: card swipes right, leaderboard behind
+  lt = on("s8");
+  if (lt >= 0) { rise($("s8").querySelector(".head"), lt, 0, 0.25); const sw = eio(prog(lt, 0.9, 1.4)); $("s8card").style.transform = `translateX(${sw * 1100}px) rotate(${sw * 25}deg)`; $("s8joined").style.opacity = prog(lt, 0.45, 0.6); $("s8board").style.opacity = prog(lt, 1.0, 1.3); }
+  // 9. classes
+  lt = on("s9");
+  if (lt >= 0) { rise($("s9").querySelector(".head"), lt, 0, 0.25); CLS.forEach((_, i) => rise($("s9c" + i), lt, 0.15 + i * 0.12, 0.3, 80)); const booked = lt > 1.1; $("s9b0").textContent = booked ? "Booked ✓" : "Book"; $("s9b0").style.background = booked ? "#c8f135" : "#0d1117"; $("s9b0").style.color = booked ? "#0d1117" : "#c8f135"; }
+  // 10. shop
+  lt = on("s10");
+  if (lt >= 0) { rise($("s10").querySelector(".head"), lt, 0, 0.25); $("s10beam").style.top = `${(Math.sin(lt * 9) * 0.5 + 0.5) * 190}px`; let tot = 0; ITEMS.forEach(([, p], i) => { const at = 0.3 + i * 0.35; rise($("s10l" + i), lt, at, 0.2, 30); if (lt > at) tot += p; }); $("s10tot").textContent = money(tot); }
+  // 11. screens + live
+  lt = on("s11");
+  if (lt >= 0) { rise($("s11").querySelector(".head"), lt, 0, 0.25); TOP.forEach((_, i) => rise($("s11r" + i), lt, 0.2 + i * 0.12, 0.25, 40)); $("s11n").textContent = Math.round(eo(prog(lt, 0.4, 1.4)) * 42); }
+  // 12. and more
+  const mo = t >= T_MORE && t < T_PRICE; vis($("s12"), mo);
+  if (mo) { const l = t - T_MORE; $("s12n").textContent = Math.round(eo(prog(l, 0, 3.4)) * 140); $("s12feed").style.transform = ""; $("s12feed").scrollTop = 0; $("s12feed").firstElementChild.style.marginTop = `${-eio(prog(l, 0.1, 3.9)) * (MORE.length * 100 - 900)}px`; }
+  // 13. price
+  const pr = t >= T_PRICE && t < T_OUT; vis($("sPrice"), pr);
+  if (pr) { const l = t - T_PRICE; $("sPrice").style.clipPath = `circle(${eo(prog(l, 0, 0.3)) * 150}% at 50% 50%)`; rise($("p1"), l, 0.05); rise($("p2"), l, 0.35, 0.25, 30); const p = back(prog(l, 0.45, 0.8)); $("p3").style.opacity = prog(l, 0.45, 0.55); $("p3").style.transform = `scale(${lerp(0.6, 1, p)})`; $("p3").style.transformOrigin = "left center"; rise($("p4"), l, 0.95); }
+  // 14. outro
+  const ou = t >= T_OUT; vis($("sOut"), ou);
+  if (ou) { const l = t - T_OUT; const p = back(prog(l, 0, 0.45)); $("o1").style.transform = `scale(${lerp(0.3, 1, p)}) rotate(${lerp(-25, 0, eo(prog(l, 0, 0.5)))}deg)`; $("o1").style.opacity = prog(l, 0, 0.1); [["op1", 0.05, 0.6], ["op2", 0.5, 0.8], ["op3", 0.62, 0.95]].forEach(([id, a, b]) => { const el = $(id); el.style.strokeDasharray = "1 1"; el.style.strokeDashoffset = 1 - eio(prog(l, a, b)); }); rise($("o2"), l, 0.45); rise($("o3"), l, 0.8); rise($("o3b"), l, 1.0); rise($("o4"), l, 1.3); }
+};
+
+// Soundtrack: 120 bpm, D minor, a hit on every cut.
+const A = [];
+// hook: ticking glitch per line, then the turn
+[0.15, 0.57, 0.99, 1.41].forEach((at, i) => { A.push({ k: "thump", at, gain: 0.9 }); A.push({ k: i === 3 ? "buzz" : "pluck", at, note: [62, 65, 69, 50][i], gain: 0.8 }); });
+A.push({ k: "whoosh", at: 1.2, gain: 0.6 });
+A.push({ k: "riser", at: 1.5, dur: 1.0, gain: 0.7 });
+A.push({ k: "impact", at: T_TURN, gain: 1 });
+A.push({ k: "pad", at: T_TURN, dur: 1.5, notes: [62, 65, 69, 74], gain: 0.9 });
+const PROG = [[50, [62, 65, 69]], [46, [58, 62, 65]], [53, [60, 65, 69]], [48, [60, 64, 67]]];
+const bars = Math.round((T_PRICE - T_S1) / BAR);
+for (let b = 0; b < bars; b++) {
+  const s = T_S1 + b * BAR; const [root, ch] = PROG[b % 4];
+  for (let q = 0; q < 4; q++) A.push({ k: "kick", at: s + q * B, gain: 1 });
+  A.push({ k: "snare", at: s + B, gain: 0.75 }); A.push({ k: "snare", at: s + 3 * B, gain: 0.75 });
+  for (let e = 0; e < 8; e++) A.push({ k: "hat", at: s + e * B / 2 + B / 4, gain: e % 2 ? 0.6 : 0.38 });
+  for (let e = 0; e < 8; e++) A.push({ k: "bass", at: s + e * B / 2, dur: B / 2 - 0.03, note: root - 12 + (e === 3 || e === 7 ? 12 : 0), gain: 0.85 });
+  A.push({ k: "stab", at: s, notes: ch, gain: 0.7 });
+}
+SCENES.forEach((s, i) => { A.push({ k: "whoosh", at: S_AT[s] - 0.12, gain: 0.45 }); A.push({ k: "pluck", at: S_AT[s], note: [74, 77, 81, 79, 76][i % 5], gain: 0.7 }); });
+// effects tied to the picture
+A.push({ k: "bell", at: S_AT.s1 + 0.85, note: 86, gain: 0.8 });
+A.push({ k: "buzz", at: S_AT.s1 + BAR + 0.8, note: 45, gain: 0.8 }); A.push({ k: "stamp", at: S_AT.s1 + BAR + 1.15, gain: 1 });
+A.push({ k: "bell", at: S_AT.s2 + 1.15, note: 81, gain: 0.7 });
+A.push({ k: "pluck", at: S_AT.s3 + 0.35, note: 88, gain: 0.5 }); A.push({ k: "pluck", at: S_AT.s3 + 0.95, note: 88, gain: 0.5 });
+[0.25, 0.55, 0.85].forEach((d) => A.push({ k: "pluck", at: S_AT.s7 + d, note: 76 + d * 10, gain: 0.5 }));
+A.push({ k: "impact", at: S_AT.s7 + 1.0, gain: 0.8 }); A.push({ k: "bell", at: S_AT.s7 + 1.05, note: 88, gain: 0.9 });
+A.push({ k: "whoosh", at: S_AT.s8 + 0.9, gain: 0.8 });
+[0.3, 0.65, 1.0].forEach((d) => A.push({ k: "bell", at: S_AT.s10 + d, note: 93, gain: 0.45 }));
+for (let i = 0; i < 16; i++) A.push({ k: "pluck", at: T_MORE + i * 0.25, note: 74 + (i % 4) * 3, gain: 0.35 });
+A.push({ k: "riser", at: T_PRICE - BAR, dur: BAR, gain: 0.8 });
+A.push({ k: "impact", at: T_PRICE, gain: 1 }); A.push({ k: "bell", at: T_PRICE + 0.5, note: 86, gain: 1 }); A.push({ k: "bell", at: T_PRICE + 0.6, note: 93, gain: 0.8 });
+A.push({ k: "pad", at: T_PRICE, dur: 1.5 * BAR + 0.2, notes: [62, 66, 69, 74], gain: 1 });
+for (let q = 0; q < 6; q++) A.push({ k: "kick", at: T_PRICE + q * B, gain: 0.8 });
+A.push({ k: "impact", at: T_OUT, gain: 1 });
+[74, 81, 86].forEach((n, i) => A.push({ k: "bell", at: T_OUT + 0.05 + i * 0.22, note: n, gain: 1 - i * 0.15 }));
+A.push({ k: "pad", at: T_OUT, dur: 4.5, notes: [62, 66, 69, 74], gain: 1.1 });
+window.AUDIO = A;
+window.renderAt(0);
+</script>
+</body>
+</html>
