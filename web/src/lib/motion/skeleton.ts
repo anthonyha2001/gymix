@@ -92,6 +92,11 @@ export type Skeleton = {
   headFront: V3;
   U: V3;
   F: V3;
+  // Lower spine (pelvis) frame and head frame, for the 3D sculpt.
+  Up: V3;
+  Fp: V3;
+  Uh: V3;
+  Fh: V3;
   hip: { L: V3; R: V3 };
   knee: { L: V3; R: V3 };
   ankle: { L: V3; R: V3 };
@@ -151,7 +156,9 @@ export function solve(input: Pose, rig: Rig): Skeleton {
   const p = { ...POSE_DEFAULTS, ...input };
   const pelvis = v3(0, p.pelvisY, p.pelvisZ);
   const a1 = rad(p.trunk);
-  const mid = add(pelvis, mul(v3(0, Math.cos(a1), Math.sin(a1)), BODY.lowerSpine));
+  const Up = v3(0, Math.cos(a1), Math.sin(a1));
+  const Fp = v3(0, -Math.sin(a1), Math.cos(a1));
+  const mid = add(pelvis, mul(Up, BODY.lowerSpine));
   const a2 = rad(p.trunk + p.chest);
   const U = v3(0, Math.cos(a2), Math.sin(a2));
   const F = v3(0, -Math.sin(a2), Math.cos(a2));
@@ -243,7 +250,7 @@ export function solve(input: Pose, rig: Rig): Skeleton {
     out.grip[k] = grip;
   }
 
-  return { pelvis, mid, chest, neck, head, headFront, U, F, ...out };
+  return { pelvis, mid, chest, neck, head, headFront, U, F, Up, Fp, Uh, Fh, ...out };
 }
 
 // Blend two poses field by field.

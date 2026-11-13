@@ -20,7 +20,7 @@ import { MUSCLES, PATTERN, PATTERNS, TOOL_LABEL, type KeyId, type Muscle, type P
 import { frame, frameAtU, keyPose, newDraft, phaseAt, repLength, type Draft } from "@/lib/motion/motion";
 import { drawFrame, project, type Cam } from "@/lib/motion/render";
 import { seedLibrary } from "@/lib/motion/library";
-import { POSE_DEFAULTS, solve, type Pose } from "@/lib/motion/skeleton";
+import { POSE_DEFAULTS, solve, type Pose, type V3 } from "@/lib/motion/skeleton";
 import { Segmented } from "../room-ui";
 
 const STORE = "gx-motion-lab-v1";
@@ -56,6 +56,24 @@ function camFor(d: Draft, w: number, h: number, yaw: number, pitch: number, zoom
   const base: Cam = { yaw, pitch, scale, cx: w / 2, cy: h * 0.86 };
   const off = project({ x: 0, y: 0, z: f.z }, base);
   return { ...base, cx: base.cx - (off.x - w / 2) };
+}
+
+function boundsOf(d: Draft): { target: V3; radius: number } {
+  const pts: V3[] = [];
+  for (const u of [0, 0.5, 1]) {
+    const s = frameAtU(d, u).skel;
+    pts.push(s.head, s.pelvis, s.toe.L, s.toe.R, s.heel.L, s.heel.R, s.grip.L, s.grip.R, s.knee.L, s.knee.R, s.elbow.L, s.elbow.R, { x: s.head.x, y: s.head.y + 0.13, z: s.head.z });
+    // Plates reach above and beside the hands.
+    if (d.tool === "barbell") pts.push({ x: 0.8, y: s.grip.L.y + 0.24, z: s.grip.L.z }, { x: -0.8, y: s.grip.L.y + 0.24, z: s.grip.L.z });
+  }
+  for (const b of PATTERN[d.pattern].machine) {
+    pts.push(b.min, b.max);
+  }
+  const lo = { x: Math.min(...pts.map((p) => p.x)), y: 0, z: Math.min(...pts.map((p) => p.z)) };
+  const hi = { x: Math.max(...pts.map((p) => p.x)), y: Math.max(...pts.map((p) => p.y)), z: Math.max(...pts.map((p) => p.z)) };
+  const target = { x: (lo.x + hi.x) / 2, y: hi.y * 0.47, z: (lo.z + hi.z) / 2 };
+  const radius = Math.max(0.75, Math.hypot(hi.x - lo.x, hi.y - lo.y, hi.z - lo.z) / 2);
+  return { target, radius };
 }
 
 const PRESETS = [
@@ -272,34 +290,40 @@ function Stage({
     live.current = { draft, playing, speed, yaw, pitch, zoom };
   });
 
+  // The stage renders in 3D (three.js); if WebGL isn't available it falls back to the flat renderer.
   useEffect(() => {
     const c = canvas.current;
     const b = box.current;
     if (!c || !b) return;
-    const ctx = c.getContext("2d")!;
     let raf = 0;
+    let dead = false;
     let last = performance.now();
     let w = 0;
     let h = 0;
+    let dpr = 1;
+    let scene: import("@/lib/motion/render3d").MotionScene | null = null;
+    let ctx: CanvasRenderingContext2D | null = null;
+    let bounds: { key: string; target: V3; radius: number; rest?: import("@/lib/motion/skeleton").Skeleton } = { key: "", target: { x: 0, y: 0.9, z: 0 }, radius: 1.2 };
     const size = () => {
       const r = b.getBoundingClientRect();
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      dpr = Math.min(2, window.devicePixelRatio || 1);
       w = r.width;
       h = r.height;
-      c.width = Math.round(w * dpr);
-      c.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (scene) scene.resize(w, h, dpr);
+      else if (ctx) {
+        c.width = Math.round(w * dpr);
+        c.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
     };
-    size();
     const ro = new ResizeObserver(size);
-    ro.observe(b);
     const tick = (now: number) => {
+      if (dead) return;
       const L = live.current;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (L.playing && scrub.current === null) time.current += dt * L.speed;
       const p = PATTERN[L.draft.pattern];
-      const cam = camFor(L.draft, w, h, L.yaw, L.pitch, L.zoom);
       let skel;
       let label: string;
       if (scrub.current !== null) {
@@ -310,17 +334,41 @@ function Stage({
         skel = f.skel;
         label = f.label;
       }
-      drawFrame(ctx, skel, { cam, width: w, height: h, primary: L.draft.primary, secondary: L.draft.secondary, tool: L.draft.tool, pattern: p });
+      if (scene) {
+        const key = JSON.stringify([L.draft.pattern, L.draft.tweaks, L.draft.range, L.draft.stance, L.draft.grip, L.draft.lean]);
+        if (key !== bounds.key) bounds = { key, ...boundsOf(L.draft), rest: frameAtU(L.draft, 0).skel };
+        scene.look({ primary: L.draft.primary, secondary: L.draft.secondary, tool: L.draft.tool, pattern: p, rest: bounds.rest! });
+        scene.view(L.yaw, L.pitch, L.zoom, bounds.target, bounds.radius);
+        scene.frame(skel, now / 1000);
+        scene.render();
+      } else if (ctx) {
+        const cam = camFor(L.draft, w, h, L.yaw, L.pitch, L.zoom);
+        drawFrame(ctx, skel, { cam, width: w, height: h, primary: L.draft.primary, secondary: L.draft.secondary, tool: L.draft.tool, pattern: p });
+      }
       const total = repLength(L.draft.tempo) || 1;
       if (head.current) head.current.style.left = `${((((time.current % total) + total) % total) / total) * 100}%`;
       if (labelEl.current && labelEl.current.textContent !== label) labelEl.current.textContent = label;
       if (repEl.current) repEl.current.textContent = String(Math.floor(time.current / total) + 1);
       raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
+    (async () => {
+      try {
+        const mod = await import("@/lib/motion/render3d");
+        if (dead) return;
+        scene = new mod.MotionScene(c);
+      } catch {
+        ctx = c.getContext("2d");
+      }
+      if (dead) return;
+      size();
+      ro.observe(b);
+      raf = requestAnimationFrame(tick);
+    })();
     return () => {
+      dead = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
+      scene?.dispose();
     };
   }, [time, scrub]);
 
@@ -897,30 +945,43 @@ function PatternPicker({ onPick, onClose }: { onPick: (p: Pattern) => void; onCl
 
 // ==================================================================== export
 // Records two reps at 1080 × 1080 into a WebM, with the name and the Gymix mark.
-function exportVideo(draft: Draft, yaw: number, pitch: number, zoom: number, setProgress: (n: number | null) => void, toast: (s: string) => void) {
+async function exportVideo(draft: Draft, yaw: number, pitch: number, zoom: number, setProgress: (n: number | null) => void, toast: (s: string) => void) {
   const S = 1080;
-  const c = document.createElement("canvas");
-  c.width = S;
-  c.height = S;
-  const ctx = c.getContext("2d");
-  if (!ctx || typeof MediaRecorder === "undefined" || !c.captureStream) {
+  const out = document.createElement("canvas");
+  out.width = S;
+  out.height = S;
+  const ctx = out.getContext("2d");
+  if (!ctx || typeof MediaRecorder === "undefined" || !out.captureStream) {
     toast("This browser can't record video");
     return;
   }
   const p = PATTERN[draft.pattern];
+  const gl = document.createElement("canvas");
+  let scene: import("@/lib/motion/render3d").MotionScene | null = null;
+  try {
+    const mod = await import("@/lib/motion/render3d");
+    scene = new mod.MotionScene(gl, { preserve: true });
+    scene.resize(S, S, 1);
+    scene.look({ primary: draft.primary, secondary: draft.secondary, tool: draft.tool, pattern: p, rest: frameAtU(draft, 0).skel });
+  } catch {
+    scene = null;
+  }
+  const bounds = boundsOf(draft);
   const cam = camFor(draft, S, S, yaw, pitch, zoom);
-  const stream = c.captureStream(60);
-  const type = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find((t) => MediaRecorder.isTypeSupported(t)) ?? "video/webm";
-  const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 8_000_000 });
+  const stream = out.captureStream(60);
+  const type = ["video/mp4;codecs=avc1", "video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find((t) => MediaRecorder.isTypeSupported(t)) ?? "video/webm";
+  const ext = type.startsWith("video/mp4") ? "mp4" : "webm";
+  const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 10_000_000 });
   const chunks: Blob[] = [];
   rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
   rec.onstop = () => {
-    const url = URL.createObjectURL(new Blob(chunks, { type: "video/webm" }));
+    const url = URL.createObjectURL(new Blob(chunks, { type: type.split(";")[0] }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${draft.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.webm`;
+    a.download = `${draft.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.${ext}`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
+    scene?.dispose();
     setProgress(null);
     toast("Video saved");
   };
@@ -931,15 +992,27 @@ function exportVideo(draft: Draft, yaw: number, pitch: number, zoom: number, set
   const tick = (now: number) => {
     const t = (now - start) / 1000;
     const f = frame(draft, t);
-    drawFrame(ctx, f.skel, { cam, width: S, height: S, primary: draft.primary, secondary: draft.secondary, tool: draft.tool, pattern: p });
+    if (scene) {
+      scene.view(yaw, pitch, zoom, bounds.target, bounds.radius);
+      scene.frame(f.skel, t);
+      scene.render();
+      ctx.drawImage(gl, 0, 0, S, S);
+    } else {
+      drawFrame(ctx, f.skel, { cam, width: S, height: S, primary: draft.primary, secondary: draft.secondary, tool: draft.tool, pattern: p });
+    }
     ctx.save();
+    const shade = ctx.createLinearGradient(0, 0, 0, 220);
+    shade.addColorStop(0, "rgba(7,9,13,0.75)");
+    shade.addColorStop(1, "rgba(7,9,13,0)");
+    ctx.fillStyle = shade;
+    ctx.fillRect(0, 0, S, 220);
     ctx.fillStyle = "#c8f135";
     ctx.font = "600 22px ui-sans-serif, system-ui, sans-serif";
     ctx.fillText(p.name.toUpperCase(), 64, 92);
     ctx.fillStyle = "#ffffff";
     ctx.font = "800 54px ui-sans-serif, system-ui, sans-serif";
     ctx.fillText(draft.name, 64, 150);
-    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
     ctx.font = "600 26px ui-sans-serif, system-ui, sans-serif";
     ctx.fillText(f.label, 64, S - 64);
     ctx.textAlign = "right";
