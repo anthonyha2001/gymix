@@ -74,9 +74,9 @@ export function NotificationBell({ items, unread }: { items: NotificationItem[];
         aria-expanded={Boolean(pos)}
         className="relative grid size-9 place-items-center rounded-lg text-muted hover:bg-canvas hover:text-ink"
       >
-        <Bell className="size-5" />
+        <Bell className={`size-5 origin-top ${unread > 0 ? "bell-ring" : ""}`} />
         {unread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
+          <span className="nav-bounce absolute -top-0.5 -right-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
             {unread > 99 ? "99+" : unread}
           </span>
         )}

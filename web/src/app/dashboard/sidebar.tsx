@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
-import { createContext, use, useRef, useState, type ReactNode } from "react";
+import { createContext, use, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
   Trophy,
   Megaphone,
@@ -148,30 +148,64 @@ export function Sidebar({ gym, nav, account, bell }: { gym: ReactNode; nav: Reac
   );
 }
 
+// The active page sits on a dark pill that glides to the next link when you
+// navigate; links ease in one after another on first load, and the link being
+// opened shows a small spinner until its page arrives.
 export function NavLinks({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
   const close = use(CloseDrawer);
+  const list = useRef<HTMLUListElement>(null);
+  const [pill, setPill] = useState<{ top: number; height: number } | null>(null);
+  const [glide, setGlide] = useState(false);
+  const activeHref = items.find(({ href }) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href)))?.href;
+
+  useLayoutEffect(() => {
+    const el = list.current?.querySelector('[aria-current="page"]')?.closest("li");
+    if (!el) {
+      setPill(null);
+      return;
+    }
+    const place = () => setPill({ top: el.offsetTop, height: el.offsetHeight });
+    place();
+    const ro = new ResizeObserver(place);
+    ro.observe(el);
+    const id = requestAnimationFrame(() => setGlide(true));
+    return () => {
+      ro.disconnect();
+      cancelAnimationFrame(id);
+    };
+  }, [activeHref]);
 
   return (
-    <ul className="space-y-1">
-      {items.map(({ href, label, icon, badge }) => {
+    <ul ref={list} className="relative space-y-1">
+      {pill && (
+        <span
+          aria-hidden
+          className={`owner-nav-pill absolute inset-x-0 rounded-lg bg-ink ${glide ? "transition-[top,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none" : ""}`}
+          style={{ top: pill.top, height: pill.height }}
+        />
+      )}
+      {items.map(({ href, label, icon, badge }, i) => {
         const Icon = ICONS[icon];
-        const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+        const active = href === activeHref;
         return (
-          <li key={href}>
+          <li key={href} className="owner-nav-in relative" style={{ animationDelay: `${i * 28}ms` }}>
             <Link
               href={href}
               prefetch
               onClick={close}
               aria-current={active ? "page" : undefined}
-              className={`flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors ${
-                active ? "bg-ink font-medium text-white" : "text-ink/80 hover:bg-canvas hover:text-ink"
+              className={`group relative flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors duration-200 active:scale-[0.98] ${
+                active ? (pill ? "font-medium text-white" : "bg-ink font-medium text-white") : "text-ink/80 hover:bg-canvas hover:text-ink"
               }`}
             >
-              <Icon className={`size-[18px] ${active ? "text-brand" : "text-muted"}`} />
-              <span className="flex-1">{label}</span>
+              <Icon
+                className={`size-[18px] transition-[color,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${active ? "text-brand" : "text-muted group-hover:-translate-y-px group-hover:scale-110 group-hover:text-ink"}`}
+              />
+              <span className="flex-1 transition-transform duration-200 group-hover:translate-x-0.5">{label}</span>
+              <NavPending />
               {badge !== undefined && (
-                <span className="grid min-w-5 place-items-center rounded-full bg-brand px-1.5 text-xs font-semibold text-ink" aria-label={`${badge} new`}>
+                <span className="nav-bounce grid min-w-5 place-items-center rounded-full bg-brand px-1.5 text-xs font-semibold text-ink" aria-label={`${badge} new`}>
                   {badge}
                 </span>
               )}
@@ -181,6 +215,11 @@ export function NavLinks({ items }: { items: NavItem[] }) {
       })}
     </ul>
   );
+}
+
+function NavPending() {
+  const { pending } = useLinkStatus();
+  return <span aria-hidden className={`size-3.5 shrink-0 rounded-full border-2 border-current/25 border-t-current transition-opacity duration-200 ${pending ? "animate-spin opacity-70" : "opacity-0"}`} />;
 }
 
 export function NavSkeleton() {

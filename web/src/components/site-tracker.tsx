@@ -217,8 +217,8 @@ export function SiteTracker() {
     };
   }, [consent]);
 
-  // No banner over the control room: it's Gymix's own screen.
-  if (!ready || consent || path.startsWith("/admin")) return null;
+  // No banner over the control room or a gym's dashboard: those are work screens.
+  if (!ready || consent || path.startsWith("/admin") || path.startsWith("/dashboard")) return null;
   return (
     <ConsentBanner
       onChoose={(c) => {

@@ -24,7 +24,7 @@ import { SubscriptionGate } from "./subscription-gate";
 
 export default function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
   return (
-    <div className="flex flex-1 flex-col md:flex-row">
+    <div className="owner flex flex-1 flex-col md:flex-row">
       <Sidebar
         gym={
           <Suspense fallback={<Skeleton className="h-14" />}>
@@ -78,8 +78,8 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
 async function GymCard() {
   const { membership } = await requireStaff();
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-canvas px-3 py-2.5">
-      <span className="grid size-9 shrink-0 place-items-center rounded-md bg-ink text-sm font-semibold text-brand">
+    <div className="owner-gym group flex items-center gap-3 rounded-lg bg-canvas px-3 py-2.5">
+      <span className="owner-gym-mark relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-md bg-ink text-sm font-semibold text-brand">
         {initials(membership.gymName)}
       </span>
       <span className="min-w-0">
