@@ -1240,3 +1240,10 @@ html:not([data-splash]) #gx-splash { animation: gx-splash-leave 650ms 2.6s cubic
 /* Share bars grow in from the left. */
 .owner-share { transform-origin: left; animation: gx-room-grow 900ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
 @media (prefers-reduced-motion: reduce) { .owner-share { animation: none; } }
+
+/* Motion lab sliders: a lime track up to the value, a soft white knob. */
+.room-range { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px; background: linear-gradient(90deg, #c8f135 var(--p, 50%), rgb(255 255 255 / 0.08) var(--p, 50%)); cursor: pointer; }
+
+.room-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 4px rgb(200 241 53 / 0.18), 0 2px 6px rgb(0 0 0 / 0.5); transition: transform 150ms ease, box-shadow 150ms ease; }
+.room-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 999px; background: #fff; box-shadow: 0 0 0 4px rgb(200 241 53 / 0.18), 0 2px 6px rgb(0 0 0 / 0.5); }
+.room-range:hover::-webkit-slider-thumb, .room-range:active::-webkit-slider-thumb { transform: scale(1.15); box-shadow: 0 0 0 6px rgb(200 241 53 / 0.25), 0 2px 6px rgb(0 0 0 / 0.5); }

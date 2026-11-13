@@ -14,6 +14,7 @@ import {
   FlaskConical,
   Inbox,
   KeyRound,
+  PersonStanding,
   LayoutDashboard,
   Loader2,
   LogOut,
@@ -28,7 +29,7 @@ import { LogoMark } from "@/components/logo-mark";
 import { openGymAsSupport } from "./actions";
 import { liveNow } from "./room-actions";
 
-type NavItem = { href: string; label: string; icon: typeof Activity; exact?: boolean; count?: "requests" | "tickets" };
+type NavItem = { href: string; label: string; icon: typeof Activity; exact?: boolean; count?: "requests" | "tickets"; tag?: string };
 const GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: "Now",
@@ -58,6 +59,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { href: "/admin/app", label: "App & errors", icon: AppWindow },
       { href: "/admin/logins", label: "Sign-ins", icon: KeyRound },
       { href: "/admin/lab", label: "Lab", icon: FlaskConical },
+      { href: "/admin/motion", label: "Motion lab", icon: PersonStanding, tag: "Test" },
       { href: "/admin/settings", label: "Settings", icon: Settings2 },
     ],
   },
@@ -137,6 +139,7 @@ export function RoomShell({
                       {active && <span className="room-nav-mark absolute top-2 bottom-2 -left-3 w-1 rounded-r-full bg-brand shadow-[0_0_12px_rgb(200_241_53/0.8)]" />}
                       <n.icon className={`size-[18px] transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${active ? "text-brand" : "group-hover:-translate-y-px group-hover:scale-110"}`} />
                       <span className="flex-1 transition-transform duration-200 group-hover:translate-x-0.5">{n.label}</span>
+                      {n.tag && <span className="rounded-md bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-amber-200 uppercase">{n.tag}</span>}
                       <NavPending />
                       {c > 0 && <span className="room-badge grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[11px] font-bold text-ink tabular-nums">{c}</span>}
                     </Link>
