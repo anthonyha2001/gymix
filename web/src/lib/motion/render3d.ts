@@ -275,7 +275,7 @@ export class MotionScene {
     if (pk !== this.propKey) {
       this.propKey = pk;
       this.clear(this.props);
-      if (l.tool !== "roller") this.buildTool(l.tool);
+      if (l.tool !== "roller") this.buildTool(l.tool, l.pattern.equip === "cable" || l.pattern.equip === "tower");
     }
   }
 
@@ -289,7 +289,7 @@ export class MotionScene {
   }
 
   // Tools are built along +x around the origin; frame() moves them to the hands.
-  private buildTool(tool: Tool) {
+  private buildTool(tool: Tool, cable = false) {
     const cyl = (r: number, len: number, mat: THREE.Material, x = 0, seg = 32) => {
       const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, seg), mat);
       m.rotation.z = Math.PI / 2;
@@ -342,7 +342,16 @@ export class MotionScene {
       for (const s of [-1, 1]) g.add(cyl(0.02, 0.16, this.mats.rubber, s * 0.48));
       this.props.add(g);
     } else if (tool === "shortbar") {
-      const g = bar("mid", 0.21);
+      const g = bar("mid", cable ? 0.3 : 0.38);
+      // Off the cable it is a loaded curl bar: sleeves, collars and small plates.
+      if (!cable) {
+        for (const s of [-1, 1]) {
+          g.add(cyl(0.022, 0.16, this.mats.chrome, s * 0.46));
+          g.add(cyl(0.03, 0.02, this.mats.chrome, s * 0.39));
+          g.add(cyl(0.11, 0.035, this.mats.rubber, s * 0.42, 48));
+          g.add(cyl(0.085, 0.03, this.mats.rubber, s * 0.455, 48));
+        }
+      }
       this.props.add(g);
     } else if (tool === "vhandle") {
       const g = bar("mid", 0.07);

@@ -216,7 +216,7 @@ const LIBRARY: [string, Variant[]][] = [
     "goodmorning",
     [
       { name: "Barbell good morning" },
-      { name: "Bodyweight good morning", tool: "none", tweaks: { all: { ...PRISONER, handF: 0.04 } } },
+      { name: "Bodyweight good morning", tool: "none", tweaks: { all: { handL: -0.26, handU: -0.1, handF: 0.2 } } },
       { name: "Wide-stance good morning", stance: 0.12 },
     ],
   ],
@@ -424,7 +424,7 @@ const LIBRARY: [string, Variant[]][] = [
       { name: "Lat pulldown" },
       { name: "Wide-grip lat pulldown", grip: 0.12 },
       { name: "Shoulder-width pulldown", grip: -0.12, primary: ["back", "biceps"] },
-      { name: "Close-grip V-bar pulldown", tool: "vhandle", grip: -0.33 },
+      { name: "Close-grip V-bar pulldown", tool: "vhandle", grip: -0.33, tweaks: { start: { handF: 0.2, handU: -0.06 }, end: { handU: -0.12 } } },
       { name: "Lean-back pulldown", lean: -12 },
     ],
   ],

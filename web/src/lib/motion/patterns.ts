@@ -142,8 +142,8 @@ export const PATTERNS: Pattern[] = [
     name: "Bench press",
     rig: { legs: { mode: "planted", pole: v3(0.35, 1, 0.3) }, arms: { mode: "ik", pole: v3(1, -0.25, -0.6) } },
     keys: [
-      { id: "start", at: 0, pose: { pelvisY: 0.53, pelvisZ: 0, trunk: -90, head: 8, stance: 0.26, footLZ: 0.52, footRZ: 0.52, handL: 0.4, handU: -0.13, handF: 0.5 } },
-      { id: "end", at: 1, pose: { pelvisY: 0.53, pelvisZ: 0, trunk: -90, head: 8, stance: 0.26, footLZ: 0.52, footRZ: 0.52, handL: 0.4, handU: -0.13, handF: 0.13 } },
+      { id: "start", at: 0, pose: { pelvisY: 0.53, pelvisZ: 0, trunk: -90, head: 8, stance: 0.26, footLZ: 0.52, footRZ: 0.52, handL: 0.4, handU: -0.1, handF: 0.5 } },
+      { id: "end", at: 1, pose: { pelvisY: 0.53, pelvisZ: 0, trunk: -90, head: 8, stance: 0.26, footLZ: 0.52, footRZ: 0.52, handL: 0.4, handU: -0.24, handF: 0.13 } },
     ],
     verbs: { toEnd: "Lower", toStart: "Press" },
     tools: ["barbell", "dumbbells"],
@@ -165,7 +165,7 @@ export const PATTERNS: Pattern[] = [
     name: "Overhead press",
     rig: { legs: PLANTED, arms: { mode: "ik", pole: v3(0.45, -1, 0.55) } },
     keys: [
-      { id: "start", at: 0, pose: { ...STAND, stance: 0.15, trunk: -2, handL: 0.25, handU: 0.02, handF: 0.15 } },
+      { id: "start", at: 0, pose: { ...STAND, stance: 0.15, trunk: -2, head: -6, handL: 0.25, handU: -0.05, handF: 0.16 } },
       { id: "mid", at: 0.45, pose: { ...STAND, stance: 0.15, trunk: -4, head: -10, handL: 0.26, handU: 0.27, handF: 0.17 } },
       { id: "end", at: 1, pose: { ...STAND, stance: 0.15, trunk: -2, handL: 0.27, handU: 0.52, handF: 0.02 } },
     ],
@@ -477,8 +477,8 @@ export const PATTERNS: Pattern[] = [
     name: "Push-up",
     rig: { legs: { mode: "planted", pole: v3(0.15, -1, 0.3) }, arms: { mode: "ik", pole: v3(0.8, -1, 0), frame: "world" }, tiptoe: ["L", "R"] },
     keys: [
-      { id: "start", at: 0, pose: { pelvisY: 0.42, pelvisZ: -0.35, trunk: 68, head: 4, stance: 0.12, footLZ: -1.15, footRZ: -1.15, footLY: 0.018, footRY: 0.018, handL: 0.3, handU: 0.05, handF: 0.12 } },
-      { id: "end", at: 1, pose: { pelvisY: 0.18, pelvisZ: -0.29, trunk: 84, head: 4, stance: 0.12, footLZ: -1.15, footRZ: -1.15, footLY: 0.018, footRY: 0.018, handL: 0.3, handU: 0.05, handF: 0.12 } },
+      { id: "start", at: 0, pose: { pelvisY: 0.45, pelvisZ: -0.35, trunk: 70, head: 4, stance: 0.12, footLZ: -1.15, footRZ: -1.15, footLY: 0.018, footRY: 0.018, handL: 0.3, handU: 0.05, handF: 0.12 } },
+      { id: "end", at: 1, pose: { pelvisY: 0.3, pelvisZ: -0.29, trunk: 80, head: 4, stance: 0.12, footLZ: -1.15, footRZ: -1.15, footLY: 0.018, footRY: 0.018, handL: 0.3, handU: 0.05, handF: 0.12 } },
     ],
     verbs: { toEnd: "Lower", toStart: "Push" },
     tools: ["none"],
@@ -579,7 +579,7 @@ export const PATTERNS: Pattern[] = [
     rig: { legs: { mode: "angles" }, arms: { mode: "ik", pole: v3(0.3, -0.2, -1) } },
     keys: [
       { id: "start", at: 0, pose: { ...SEATED, trunk: 8, handL: 0.2, handU: -0.12, handF: 0.55 } },
-      { id: "end", at: 1, pose: { ...SEATED, trunk: 8, handL: 0.24, handU: -0.2, handF: 0.06 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: 8, handL: 0.24, handU: -0.2, handF: 0.22 } },
     ],
     verbs: { toEnd: "Row", toStart: "Reach" },
     tools: ["handles"],
@@ -697,8 +697,8 @@ export const PATTERNS: Pattern[] = [
     equip: "machine",
     rig: { legs: { mode: "angles" }, arms: { mode: "angles", hint: v3(0, 0, 1) } },
     keys: [
-      { id: "start", at: 0, pose: { ...SEATED, trunk: 14, shFlex: 42, shAbd: 8, elbow: 12 } },
-      { id: "end", at: 1, pose: { ...SEATED, trunk: 14, shFlex: 42, shAbd: 8, elbow: 128 } },
+      { id: "start", at: 0, pose: { ...SEATED, trunk: 14, shFlex: 46, shAbd: 8, elbow: 24 } },
+      { id: "end", at: 1, pose: { ...SEATED, trunk: 14, shFlex: 46, shAbd: 8, elbow: 128 } },
     ],
     verbs: { toEnd: "Curl", toStart: "Lower" },
     tools: ["shortbar", "dumbbells"],
@@ -825,7 +825,7 @@ export const PATTERNS: Pattern[] = [
     rig: { legs: { mode: "angles" }, arms: { mode: "ik", pole: v3(1, -0.3, 0.2), frame: "world" } },
     keys: [
       { id: "start", at: 0, pose: { ...HANG, pelvisY: 1.24, pelvisZ: 0.03, trunk: -6, head: 6, handL: 0.34, handU: 2.28, handF: 0.02 } },
-      { id: "end", at: 1, pose: { ...HANG, pelvisY: 1.62, pelvisZ: 0.05, trunk: -14, head: 10, handL: 0.34, handU: 2.28, handF: 0.02 } },
+      { id: "end", at: 1, pose: { ...HANG, pelvisY: 1.68, pelvisZ: -0.06, trunk: -14, head: 10, handL: 0.34, handU: 2.28, handF: 0.02 } },
     ],
     verbs: { toEnd: "Pull", toStart: "Lower" },
     tools: ["handles"],

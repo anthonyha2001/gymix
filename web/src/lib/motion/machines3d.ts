@@ -157,6 +157,7 @@ const gripMid = (s: Skeleton) => vec(s.grip.L).add(vec(s.grip.R)).multiplyScalar
 function squatStands(k: Kit, hookY: number) {
   k.floor(2.6, 2.4, -0.1);
   const m = k.m;
+  const first = k.group.children.length;
   for (const s of [-1, 1]) {
     const x = s * 0.62;
     // Foot: a wide base with rubber pads.
@@ -165,7 +166,6 @@ function squatStands(k: Kit, hookY: number) {
     for (const z of [-0.48, 0.24]) k.box([0.1, 0.012, 0.08], [x, 0.006, z], m.rubber, 0.004);
     // Upright with a lime stripe and hole marks.
     k.box([0.075, 1.75, 0.075], [x, 0.9, -0.12], m.frame, 0.01);
-    k.box([0.004, 1.5, 0.012], [x - s * 0.038, 0.95, -0.12], m.lime, 0.001);
     for (let y = 0.3; y < 1.65; y += 0.075) k.box([0.003, 0.012, 0.02], [x - s * 0.038, y, -0.093], m.seam, 0.001);
     k.box([0.085, 0.02, 0.085], [x, 1.785, -0.12], m.frame, 0.004);
     // J-hook and spotter arm.
@@ -189,6 +189,8 @@ function squatStands(k: Kit, hookY: number) {
       k.group.add(ring);
     }
   }
+  // Stepped back from the hooks: the bar never passes through an upright.
+  for (const o of k.group.children.slice(first)) o.position.z -= 0.62;
 }
 
 function platform(k: Kit) {
@@ -261,7 +263,6 @@ function bench(k: Kit, uprights = true) {
   k.box([0.08, 0.06, 0.5], [0, 0.03, -0.62 + 0.25], m.frame, 0.008);
   for (const s of [-1, 1]) {
     k.box([0.07, 1.22, 0.07], [s * 0.58, 0.64, -0.62], m.frame, 0.01);
-    k.box([0.004, 1.0, 0.012], [s * 0.58 - s * 0.037, 0.62, -0.62], m.lime, 0.001);
     k.box([0.06, 0.11, 0.085], [s * 0.55, 1.07, -0.56], m.frame, 0.01);
     k.box([0.05, 0.028, 0.05], [s * 0.55, 1.025, -0.52], m.rubber, 0.008);
     k.rod([s * 0.58, 0.35, -0.66], [s * 0.58, 0.35, -0.9], 0.025, m.chrome);
@@ -361,7 +362,6 @@ function cableTower(k: Kit, p: Pattern) {
   for (const s of [-1, 1]) k.box([0.08, 2.25, 0.08], [s * 0.24, 1.15, z], m.frame, 0.01);
   k.box([0.56, 0.08, 0.1], [0, 2.26, z], m.frame, 0.01);
   k.box([0.08, 0.08, 0.36], [0, 2.18, z - 0.16], m.frame, 0.01);
-  k.box([0.004, 1.9, 0.012], [0.2, 1.1, z - 0.04], m.lime, 0.001);
   const stack = k.stack([0, 0.06, z], 1.95, 16);
   k.box([0.46, 1.6, 0.006], [0, 1.0, z - 0.11], m.glass, 0.002);
   const pTop: [number, number, number] = [0, 2.2, z];
@@ -489,7 +489,6 @@ function stackTower(k: Kit, x: number, z: number, h = 1.7) {
   for (const s of [-1, 1]) k.box([0.07, h, 0.07], [x + s * 0.24, h / 2 + 0.02, z], m.frame, 0.01);
   k.box([0.56, 0.07, 0.1], [x, h + 0.02, z], m.frame, 0.01);
   k.box([0.6, 0.05, 0.36], [x, 0.03, z], m.frame, 0.01);
-  k.box([0.004, h - 0.3, 0.012], [x + 0.2, h / 2, z - 0.04], m.lime, 0.001);
   return k.stack([x, 0.06, z], h - 0.25, 14);
 }
 
@@ -502,14 +501,11 @@ function leverStation(k: Kit, p: Pattern, kind: "chest" | "shoulder" | "row") {
   else torsoPad(k, p, 0.36, -0.15, [0.42, 0.68, 0.08]);
   const fz = kind === "row" ? 0.86 : -0.58;
   const stack = stackTower(k, 0, fz + (kind === "row" ? 0.16 : -0.16));
-  for (const s of [-1, 1]) {
-    k.box([0.08, 1.62, 0.08], [s * 0.46, 0.81, fz], m.frame, 0.01);
-    k.box([0.004, 1.3, 0.012], [s * 0.46, 0.8, fz + (kind === "row" ? -0.042 : 0.042)], m.lime, 0.001);
-  }
-  k.box([1.0, 0.08, 0.1], [0, 1.62, fz], m.frame, 0.01);
+  for (const s of [-1, 1]) k.box([0.08, 1.62, 0.08], [s * 0.64, 0.81, fz], m.frame, 0.01);
+  k.box([1.36, 0.08, 0.1], [0, 1.62, fz], m.frame, 0.01);
   k.box([0.08, 0.05, Math.abs(fz) + 0.1], [0, 0.03, fz / 2], m.frame, 0.008);
   const py = kind === "chest" ? 1.52 : kind === "shoulder" ? 0.72 : 1.42;
-  const pivots = [1, -1].map((s) => new THREE.Vector3(s * 0.46, py, fz + (kind === "row" ? -0.06 : 0.06)));
+  const pivots = [1, -1].map((s) => new THREE.Vector3(s * 0.64, py, fz + (kind === "row" ? -0.06 : 0.06)));
   for (const pv of pivots) k.rod([pv.x - 0.05, pv.y, pv.z], [pv.x + 0.05, pv.y, pv.z], 0.04, m.steel);
   const arms = pivots.map(() => k.link(0.022, m.frame));
   const grips = pivots.map(() => k.link(0.017, m.rubber));
@@ -539,7 +535,6 @@ function legPress(k: Kit, p: Pattern) {
     k.rod([s * 0.34, 0.5, 0.2], [s * 0.34, 1.62, 1.37], 0.03, m.chrome);
     k.box([0.08, 1.6, 0.08], [s * 0.34, 0.8, 1.4], m.frame, 0.01);
     k.box([0.08, 0.5, 0.08], [s * 0.34, 0.25, 0.2], m.frame, 0.01);
-    k.box([0.004, 1.4, 0.012], [s * 0.34 - s * 0.042, 0.78, 1.4], m.lime, 0.001);
     // Side handles by the seat.
     k.rod([s * 0.25, 0.42, 0.1], [s * 0.34, 0.42, 0.1], 0.012, m.steel);
     k.rod([s * 0.34, 0.42, -0.02], [s * 0.34, 0.42, 0.22], 0.016, m.rubber);
@@ -572,7 +567,6 @@ function smith(k: Kit, withBench: boolean) {
     for (const z of [-0.46, 0.34]) k.box([0.07, 2.3, 0.07], [s * 0.7, 1.15, z], m.frame, 0.01);
     k.box([0.08, 0.06, 0.9], [s * 0.7, 2.3, -0.06], m.frame, 0.01);
     k.box([0.08, 0.05, 0.9], [s * 0.7, 0.03, -0.06], m.frame, 0.01);
-    k.box([0.004, 2.0, 0.012], [s * 0.7 - s * 0.037, 1.15, 0.34], m.lime, 0.001);
   }
   k.box([1.48, 0.06, 0.08], [0, 2.3, -0.46], m.frame, 0.01);
   const guides = new THREE.Group();
@@ -772,7 +766,6 @@ function crossover(k: Kit, p: Pattern, cross: boolean) {
     for (const dz of [-0.16, 0.16]) k.box([0.08, 2.3, 0.08], [x, 1.15, -0.08 + dz], m.frame, 0.01);
     k.box([0.1, 0.08, 0.44], [x, 2.3, -0.08], m.frame, 0.01);
     k.box([0.4, 0.05, 0.5], [x, 0.03, -0.08], m.frame, 0.01);
-    k.box([0.004, 2.0, 0.012], [x - s * 0.045, 1.15, 0.085], m.lime, 0.001);
     const g = new THREE.Group();
     g.position.set(x, 0, -0.08);
     g.rotation.y = Math.PI / 2;
@@ -807,7 +800,6 @@ function tower(k: Kit) {
   for (const s of [-1, 1]) {
     k.box([0.08, 2.46, 0.08], [s * 0.66, 1.23, -0.3], m.frame, 0.01);
     k.box([0.1, 0.05, 0.9], [s * 0.66, 0.03, -0.1], m.frame, 0.01);
-    k.box([0.004, 2.1, 0.012], [s * 0.66 - s * 0.042, 1.2, -0.26], m.lime, 0.001);
     k.box([0.06, 0.06, 0.4], [s * 0.6, 2.36, -0.12], m.frame, 0.008);
     k.box([0.05, 0.1, 0.05], [s * 0.6, 2.32, 0.02], m.frame, 0.008);
     // Dip bar on a bracket.
