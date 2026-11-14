@@ -1,14 +1,14 @@
 // Captures real Gymix screens from the live demo for marketing posts.
 //   node capture.mjs [baseUrl]   (default http://localhost:3123)
 // Starts a fresh demo (sample gym "Atlas Fitness"), then saves crisp (2x) PNGs to
-// out/screens/: the owner overview, a refused check-in at the desk, and the
+// assets/screens/: the owner overview, a refused check-in at the desk, and the
 // member app home on a phone. Only the demo's sample data is ever captured.
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
 const BASE = process.argv[2] ?? "http://localhost:3123";
-const OUT = "out/screens";
+const OUT = "assets/screens";
 fs.mkdirSync(OUT, { recursive: true });
 const CHROME = process.env.CHROME ?? "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
