@@ -42,6 +42,26 @@ export async function setTapSimulator(enabled: boolean): Promise<ActionState> {
   return { success: enabled ? "Tap simulator on (testing mode)." : "Tap simulator off. Only real stickers work now." };
 }
 
+// "Phone must be at the gym": taps on the check-in sticker (and door stickers)
+// only count within 150 m of the gym's saved location.
+export async function setStickerRadius(on: boolean): Promise<ActionState> {
+  const { membership } = await requireStaff(["owner"]);
+  const supabase = await createClient();
+  const { data: gym } = await supabase.from("gyms").select("door_lat, door_lng").eq("id", membership.gymId).single();
+  if (on && (gym?.door_lat == null || gym.door_lng == null)) {
+    return { error: "Set your gym's location first (Settings → Gym → Location)." };
+  }
+  const { error } = await supabase.rpc("set_door_location", {
+    p_gym_id: membership.gymId,
+    p_lat: on ? gym!.door_lat! : null,
+    p_lng: on ? gym!.door_lng! : null,
+    p_radius_m: 150,
+  });
+  if (error) return { error: errorMessage(error, "Couldn't save.") };
+  refresh();
+  return { success: on ? "Taps now only count within 150 m of the gym." : "Taps now work wherever the phone is." };
+}
+
 // The owner chooses which portal pages members see: every page left unticked is hidden.
 export async function setPortalPages(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const { membership } = await requireStaff(["owner"]);

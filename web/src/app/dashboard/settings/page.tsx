@@ -10,7 +10,7 @@ import { requireStaff } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { ActionButton } from "../members/action-button";
 import { activeTab, PageTabs, TabPanel } from "@/components/page-tabs";
-import { rotateStickerLink, saveGymLocation, setTapSimulator } from "./actions";
+import { rotateStickerLink, saveGymLocation, setStickerRadius, setTapSimulator } from "./actions";
 import { GymLocation } from "./gym-location";
 import { MapPin } from "lucide-react";
 import { CopyLink, PortalPagesForm, ProgramSharingForm, SettingsForm } from "./settings-form";
@@ -80,7 +80,7 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
             <MapPin className="size-4" /> Location
           </h2>
           <p className="text-sm text-muted">
-            Where your gym is. It puts you on the Gymix map, lets door stickers check the phone is at the gym (Access → Phone taps), and keeps
+            Where your gym is. It puts you on the Gymix map, lets check-in stickers check the phone is at the gym (Check-in sticker tab), and keeps
             the live count accurate.
           </p>
         </div>
@@ -159,6 +159,24 @@ async function SettingsContent({ searchParams }: { searchParams: PageProps<"/das
               Backup for phones without NFC: print this next to the sticker.
             </figcaption>
           </figure>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4">
+          <div className="max-w-xl">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold">Phone must be at the gym</h3>
+              {gym?.door_radius_m != null ? <Badge tone="green">On, within {gym.door_radius_m} m</Badge> : <Badge tone="gray">Off</Badge>}
+            </div>
+            <p className="text-sm text-muted">
+              A tap only checks the member in when their phone is within {gym?.door_radius_m ?? 150} m of your gym, so a photo of the
+              sticker or a shared link can&apos;t be used from home. Uses the location saved in the Gym tab.
+            </p>
+          </div>
+          <ActionButton
+            action={setStickerRadius.bind(null, gym?.door_radius_m == null)}
+            label={gym?.door_radius_m != null ? "Switch off" : "Switch on"}
+            variant={gym?.door_radius_m != null ? "danger" : "secondary"}
+          />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 border-t border-line pt-4">

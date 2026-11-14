@@ -2909,6 +2909,9 @@ isOneToOne: false
 "cancel_program_request":
 { Args: { "p_request_id": string }; Returns: undefined
                            },
+"checkin_needs_location":
+{ Args: { "p_token": string }; Returns: boolean
+                           },
 "check_in":
 { Args: { "p_code"?: string,"p_gym_id": string,"p_member_id"?: string }; Returns: {
               "allowed": boolean,"already_in": boolean,"balance_usd": number,"ends_on": string,"full_name": string,"member_id": string,"plan_name": string,"reason": string,"visits_left": number
@@ -3222,7 +3225,7 @@ isOneToOne: false
             }[]
                            },
 "self_check_in":
-{ Args: { "p_token": string }; Returns: {
+{ Args: { "p_accuracy_m"?: number,"p_lat"?: number,"p_lng"?: number,"p_token": string }; Returns: {
               "allowed": boolean,"already_in": boolean,"balance_usd": number,"ends_on": string,"full_name": string,"member_id": string,"plan_name": string,"reason": string,"visits_left": number
             }[]
                            },

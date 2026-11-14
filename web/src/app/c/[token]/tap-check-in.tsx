@@ -6,26 +6,28 @@ import { useEffect, useState, useTransition } from "react";
 import { Loader2, XCircle } from "lucide-react";
 import { LogoMark } from "@/components/logo-mark";
 import { formatDate } from "@/lib/format";
+import { locate } from "@/lib/locate";
 import { selfCheckIn, simulatedCheckIn, type TapResult } from "./actions";
 
 // Runs the check-in as soon as the page opens (the member just tapped), shows a
 // welcome screen, then moves on to the training screen.
 // Running twice is harmless: a repeat within 3 hours counts as "already in".
-export function TapCheckIn({ token, simulated = false }: { token?: string; simulated?: boolean }) {
+// needsLocation: the gym only accepts taps from phones at the gym (150 m by default).
+export function TapCheckIn({ token, simulated = false, needsLocation = false }: { token?: string; simulated?: boolean; needsLocation?: boolean }) {
   const [result, setResult] = useState<TapResult | null>(null);
   const [, startTransition] = useTransition();
   const router = useRouter();
 
   useEffect(() => {
     startTransition(async () => {
-      const r = simulated || !token ? await simulatedCheckIn() : await selfCheckIn(token);
+      const r = simulated || !token ? await simulatedCheckIn() : await selfCheckIn(token, needsLocation ? await locate() : null);
       setResult(r);
       if (r.ok && r.allowed) {
         navigator.vibrate?.(80);
         setTimeout(() => router.push("/portal/train"), 2500);
       }
     });
-  }, [token, simulated, router]);
+  }, [token, simulated, needsLocation, router]);
 
   if (!result) {
     return (

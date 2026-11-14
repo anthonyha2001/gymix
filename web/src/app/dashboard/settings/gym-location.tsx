@@ -126,7 +126,7 @@ export function GymLocation({
       <GymMap value={spot} onPick={setSpot} radius={doorRadius} className="h-80" />
       <p className="text-xs text-muted">
         {spot ? "Drag the pin, or tap the map, to put it exactly on your entrance." : "Tap the map where your gym is."}
-        {doorRadius ? ` The circle is the ${doorRadius} m within which door stickers open.` : ""}
+        {doorRadius ? ` The circle is the ${doorRadius} m within which sticker taps count.` : ""}
       </p>
 
       <input type="hidden" name="lat" value={spot?.lat ?? ""} />

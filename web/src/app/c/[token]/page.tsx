@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { getViewer } from "@/lib/session";
+import { createClient } from "@/lib/supabase/server";
 import { TapCheckIn } from "./tap-check-in";
 
 export const metadata: Metadata = { title: "Check in" };
@@ -27,5 +28,7 @@ async function Gate({ params }: { params: PageProps<"/c/[token]">["params"] }) {
   const viewer = await getViewer();
   // First tap on a new phone: log in once, then come straight back here.
   if (!viewer) redirect(`/login?next=${encodeURIComponent(`/c/${token}`)}`);
-  return <TapCheckIn token={token} />;
+  const supabase = await createClient();
+  const { data: needsLocation } = await supabase.rpc("checkin_needs_location", { p_token: token });
+  return <TapCheckIn token={token} needsLocation={needsLocation === true} />;
 }

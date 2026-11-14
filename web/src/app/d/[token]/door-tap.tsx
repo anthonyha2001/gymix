@@ -8,21 +8,8 @@ import { buttonClass } from "@/components/ui";
 import { waitForOpen } from "@/components/open-door-button";
 import { formatDate } from "@/lib/format";
 import { haptics } from "@/lib/haptics";
-import { doorTap, type DoorTapResult, type Spot } from "@/app/door-actions";
-
-// The phone's location, quickly: a recent or network-based fix is enough
-// (the gym's radius allows for it), so this takes well under a second once
-// the member has allowed location for the site.
-function locate(): Promise<Spot | null> {
-  return new Promise((resolve) => {
-    if (!("geolocation" in navigator)) return resolve(null);
-    navigator.geolocation.getCurrentPosition(
-      (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy }),
-      () => resolve(null),
-      { enableHighAccuracy: false, maximumAge: 60_000, timeout: 6_000 },
-    );
-  });
-}
+import { doorTap, type DoorTapResult } from "@/app/door-actions";
+import { locate } from "@/lib/locate";
 
 type Stage = "reading" | "opening" | "open" | "refused" | "failed";
 

@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { errorMessage } from "@/lib/action-result";
 import { requireMember, requireViewer } from "@/lib/session";
+import type { Spot } from "@/app/door-actions";
 
 export type TapResult =
   | { ok: true; allowed: boolean; alreadyIn: boolean; reason: string | null; fullName: string | null;
@@ -34,10 +35,14 @@ function toResult(data: Row | null, error: { message: string; code?: string } | 
 }
 
 // Real tap on the entrance sticker.
-export async function selfCheckIn(token: string): Promise<TapResult> {
+// spot: the phone's location, when the gym only accepts taps at the gym.
+export async function selfCheckIn(token: string, spot: Spot | null = null): Promise<TapResult> {
   await requireViewer();
+  const where = spot && [spot.lat, spot.lng, spot.accuracy].every(Number.isFinite) ? spot : null;
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("self_check_in", { p_token: token }).single();
+  const { data, error } = await supabase
+    .rpc("self_check_in", { p_token: token, p_lat: where?.lat, p_lng: where?.lng, p_accuracy_m: where?.accuracy })
+    .single();
   return toResult(data, error);
 }
 
