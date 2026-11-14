@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gymix · One tap (NFC reel)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@500;700&display=block" rel="stylesheet">
+<style>
+  :root { --lime: #c8f135; --lime2: #a9d10f; --ink: #0d1117; --canvas: #f4f5f2; --red: #e5484d; --green: #1f7a3f; --muted: #5d6470; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); font-family: Geist, Arial, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
+  #cam { position: absolute; inset: -60px; }
+  .layer { position: absolute; inset: 60px; visibility: hidden; }
+  .grid { position: absolute; inset: -200px; background-image: linear-gradient(rgb(255 255 255 / 0.04) 2px, transparent 2px), linear-gradient(90deg, rgb(255 255 255 / 0.04) 2px, transparent 2px); background-size: 90px 90px; }
+  #glow { position: absolute; left: 50%; top: 55%; width: 1700px; height: 1700px; margin: -850px 0 0 -850px; border-radius: 50%; background: radial-gradient(closest-side, rgb(200 241 53 / 0.18), transparent); }
+  .mono { font-family: "Geist Mono", monospace; }
+  .big { font-weight: 900; letter-spacing: -0.05em; line-height: 0.95; }
+  .lime { color: var(--lime); }
+  .red { color: var(--red); }
+  .tag { position: absolute; left: 80px; top: 250px; font-family: "Geist Mono", monospace; font-size: 34px; font-weight: 700; letter-spacing: 0.2em; color: var(--lime); }
+  .head { position: absolute; left: 80px; right: 80px; top: 305px; font-size: 100px; font-weight: 900; letter-spacing: -0.05em; line-height: 0.98; }
+  .phone { position: absolute; width: 500px; height: 1020px; border-radius: 70px; background: #000; padding: 16px; box-shadow: 0 0 0 3px rgb(255 255 255 / 0.14), 0 60px 140px rgb(0 0 0 / 0.6); }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 56px; overflow: hidden; background: var(--canvas); color: var(--ink); }
+  .notch { position: absolute; top: 16px; left: 50%; width: 140px; height: 38px; margin-left: -70px; border-radius: 30px; background: #000; z-index: 5; }
+  .card { background: #fff; color: var(--ink); border-radius: 32px; box-shadow: 0 24px 70px rgb(0 0 0 / 0.3); }
+  .row { display: flex; align-items: center; justify-content: space-between; }
+  .sticker { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f6f7f4, #d9dcd5); box-shadow: 0 30px 70px rgb(0 0 0 / 0.55), inset 0 0 0 10px #c8f135; display: flex; align-items: center; justify-content: center; }
+  .wave { position: absolute; border-radius: 50%; border: 6px solid var(--lime); pointer-events: none; }
+  .btn { display: flex; align-items: center; justify-content: center; height: 96px; border-radius: 28px; background: var(--lime); color: var(--ink); font-size: 36px; font-weight: 800; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 50; }
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="cam">
+  <div id="grid" class="grid"></div>
+  <div id="glow"></div>
+
+  <!-- 0. HOOK: one sticker -->
+  <div id="sHook" class="layer">
+    <div id="hk0" class="mono" style="position:absolute; left:80px; top:300px; font-size:38px; font-weight:700; letter-spacing:0.2em; color:var(--lime)">GYM OWNERS</div>
+    <div id="hkA" class="big" style="position:absolute; left:80px; right:80px; top:380px; font-size:130px">This <span class="lime">$1</span> sticker</div>
+    <div id="hkB" class="big" style="position:absolute; left:80px; right:80px; top:520px; font-size:130px">checks in</div>
+    <div id="hkC" class="big" style="position:absolute; left:80px; right:80px; top:660px; font-size:130px">my whole gym.</div>
+    <div id="hkSt" class="sticker" style="left:50%; top:1100px; width:440px; height:440px; margin-left:-220px">
+      <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="#0d1117" stroke-width="2.2" stroke-linecap="round"><path d="M6 8.5a6 6 0 0 1 0 7"/><path d="M9.5 6a10 10 0 0 1 0 12"/><path d="M13 3.5a14 14 0 0 1 0 17"/></svg>
+    </div>
+    <div id="hkWaves"></div>
+  </div>
+
+  <!-- TURN -->
+  <div id="sTurn" class="layer" style="background:var(--lime); color:var(--ink)">
+    <div id="tu1" class="big" style="position:absolute; left:80px; right:80px; top:720px; font-size:220px; text-align:center">One tap.</div>
+    <div id="tu2" class="mono" style="position:absolute; left:80px; right:80px; top:1000px; font-size:42px; font-weight:700; text-align:center; letter-spacing:0.12em">NO CARD · NO QR · NO LINE</div>
+  </div>
+
+  <!-- 1. ENTRANCE -->
+  <div id="s1" class="layer">
+    <div class="tag">01 · THE ENTRANCE</div>
+    <div class="head" id="s1h">Tap the door.<br><span class="lime">You're in.</span></div>
+    <div id="s1door" style="position:absolute; left:110px; top:640px; width:420px; height:1060px; border-radius:24px; background:linear-gradient(#232a33, #161b22); box-shadow: inset 0 0 0 6px #2f3742">
+      <div style="position:absolute; left:40px; right:40px; top:60px; font-size:34px; font-weight:800; letter-spacing:0.1em; color:#8b93a0" class="mono">ENTRANCE</div>
+      <div class="sticker" style="left:80px; top:330px">
+        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#0d1117" stroke-width="2.2" stroke-linecap="round"><path d="M6 8.5a6 6 0 0 1 0 7"/><path d="M9.5 6a10 10 0 0 1 0 12"/><path d="M13 3.5a14 14 0 0 1 0 17"/></svg>
+      </div>
+      <div style="position:absolute; left:40px; right:40px; top:640px; font-size:34px; font-weight:700; color:#c4c8c0; text-align:center">Tap your phone<br>here to check in</div>
+      <div style="position:absolute; right:30px; top:500px; width:24px; height:140px; border-radius:12px; background:#8e918b"></div>
+    </div>
+    <div id="s1waves"></div>
+    <div id="s1phone" class="phone" style="left:520px; top:700px; width:440px; height:900px">
+      <div class="notch"></div>
+      <div class="screen" id="s1scr" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; text-align:center; padding:40px">
+        <div id="s1icon" style="width:180px; height:180px; border-radius:50%; background:#e3f3e8; display:flex; align-items:center; justify-content:center">
+          <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#1f7a3f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        </div>
+        <div style="font-size:52px; font-weight:900; letter-spacing:-0.03em">Welcome,<br>Karim</div>
+        <div style="font-size:30px; color:var(--muted)">Checked in · 18:52</div>
+        <div style="padding:16px 26px; border-radius:999px; background:#f0f7d6; font-size:24px; font-weight:700; color:#4a5a0a; white-space:nowrap">Monthly · 12 days left</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 150 m -->
+  <div id="s2" class="layer">
+    <div class="tag">02 · ONLY AT THE GYM</div>
+    <div class="head" id="s2h">Shared the link?<br><span class="red">Not from home.</span></div>
+    <div id="s2map" style="position:absolute; left:80px; right:80px; top:640px; height:900px; border-radius:44px; overflow:hidden; background:#151b22; box-shadow: 0 0 0 3px rgb(255 255 255 / 0.08)">
+      <svg width="920" height="900" viewBox="0 0 920 900" style="position:absolute; inset:0">
+        <g stroke="#232b35" stroke-width="34" fill="none" stroke-linecap="round">
+          <path d="M-20 260 L940 200"/><path d="M-20 620 L940 700"/><path d="M220 -20 L300 920"/><path d="M640 -20 L600 920"/><path d="M-20 900 L520 -20"/>
+        </g>
+        <g fill="#1b222b"><rect x="330" y="300" width="230" height="140" rx="16"/><rect x="60" y="320" width="150" height="220" rx="16"/><rect x="680" y="290" width="200" height="160" rx="16"/><rect x="340" y="500" width="200" height="90" rx="16"/><rect x="690" y="740" width="200" height="140" rx="16"/></g>
+        <circle id="s2ring" cx="450" cy="420" r="200" fill="rgb(200 241 53 / 0.14)" stroke="#c8f135" stroke-width="5" stroke-dasharray="18 14"/>
+        <g id="s2pin"><circle cx="450" cy="420" r="46" fill="#c8f135"/><text x="450" y="436" text-anchor="middle" font-family="Geist" font-weight="900" font-size="44" fill="#0d1117">G</text></g>
+        <text id="s2lbl" x="450" y="660" text-anchor="middle" font-family="Geist Mono" font-weight="700" font-size="40" fill="#c8f135">150 m</text>
+        <g id="s2home"><rect x="780" y="790" width="90" height="70" rx="10" fill="#2f3742"/><path d="M770 795 L825 750 L880 795 Z" fill="#2f3742"/><text x="825" y="740" text-anchor="middle" font-family="Geist" font-weight="700" font-size="30" fill="#8b93a0">Home · 2 km</text></g>
+        <g id="s2me"><circle r="34" fill="#5dd6ff" stroke="#fff" stroke-width="8"/></g>
+      </svg>
+    </div>
+    <div id="s2card" class="card row" style="position:absolute; left:110px; right:110px; top:1580px; padding:34px 40px; gap:26px; justify-content:flex-start">
+      <div id="s2icon" style="flex:none; width:96px; height:96px; border-radius:50%; display:flex; align-items:center; justify-content:center"></div>
+      <div><div id="s2t" style="font-size:42px; font-weight:900; letter-spacing:-0.02em"></div><div id="s2s" style="font-size:30px; color:var(--muted)"></div></div>
+    </div>
+  </div>
+
+  <!-- 3. MACHINE -->
+  <div id="s3" class="layer">
+    <div class="tag">03 · EVERY MACHINE</div>
+    <div class="head" id="s3h">Tap a machine.<br><span class="lime">Your numbers.</span></div>
+    <div id="s3mach" style="position:absolute; left:70px; top:700px; width:520px; height:820px">
+      <svg width="520" height="820" viewBox="0 0 520 820">
+        <rect x="40" y="760" width="440" height="30" rx="12" fill="#2f3742"/>
+        <rect x="80" y="80" width="40" height="690" rx="14" fill="#3a434f"/>
+        <rect x="400" y="80" width="40" height="690" rx="14" fill="#3a434f"/>
+        <rect x="80" y="60" width="360" height="40" rx="14" fill="#3a434f"/>
+        <g id="s3stack"><rect x="160" y="520" width="200" height="34" rx="6" fill="#c8f135"/><rect x="160" y="560" width="200" height="34" rx="6" fill="#a9d10f"/><rect x="160" y="600" width="200" height="34" rx="6" fill="#8fb30a"/><rect x="160" y="640" width="200" height="34" rx="6" fill="#7a9a08"/><rect x="160" y="680" width="200" height="34" rx="6" fill="#6b8706"/></g>
+        <rect x="256" y="100" width="8" height="420" fill="#9aa3ad"/>
+      </svg>
+      <div style="position:absolute; left:150px; top:200px; font-size:30px; font-weight:800; letter-spacing:0.08em; color:#8b93a0" class="mono">LAT PULLDOWN</div>
+      <div class="sticker" style="left:170px; top:270px; width:180px; height:180px">
+        <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="#0d1117" stroke-width="2.2" stroke-linecap="round"><path d="M6 8.5a6 6 0 0 1 0 7"/><path d="M9.5 6a10 10 0 0 1 0 12"/><path d="M13 3.5a14 14 0 0 1 0 17"/></svg>
+      </div>
+    </div>
+    <div id="s3waves"></div>
+    <div id="s3phone" class="phone" style="left:540px; top:640px; width:460px; height:960px">
+      <div class="notch"></div>
+      <div class="screen">
+        <div style="position:absolute; inset:0; padding:80px 34px 0; background:#e9ebe6">
+          <div style="font-size:30px; font-weight:800; color:var(--muted)">Train</div>
+        </div>
+        <div id="s3sheet" style="position:absolute; left:0; right:0; bottom:0; height:860px; border-radius:40px 40px 0 0; background:#fff; padding:28px 30px; box-shadow: 0 -20px 50px rgb(0 0 0 / 0.15)">
+          <div style="width:80px; height:8px; border-radius:4px; background:#d5d8d1; margin:0 auto 20px"></div>
+          <div style="font-size:42px; font-weight:900; letter-spacing:-0.03em">Lat pulldown</div>
+          <div style="font-size:26px; color:var(--muted); margin-top:4px">Back · Biceps</div>
+          <svg id="s3fig" width="400" height="250" viewBox="0 0 400 250" style="display:block; margin:18px auto 0; border-radius:24px; background:#f4f5f2"></svg>
+          <div class="row" style="gap:16px; margin-top:20px">
+            <div style="flex:1; padding:18px; border-radius:22px; background:#f4f5f2"><div style="font-size:22px; color:var(--muted)">Last time</div><div style="font-size:30px; font-weight:900; white-space:nowrap">55 kg × 10</div></div>
+            <div style="flex:1; padding:18px; border-radius:22px; background:#f0f7d6"><div style="font-size:22px; color:#4a5a0a">Your best</div><div style="font-size:30px; font-weight:900">62.5 kg</div></div>
+          </div>
+          <div id="s3set" class="row" style="margin-top:18px; padding:18px 22px; border-radius:22px; background:#f4f5f2; font-size:28px; font-weight:800">
+            <span>Set 1</span><span>57.5 kg × 10</span><span id="s3chk" style="width:52px; height:52px; border-radius:50%; background:#e3e6df; display:flex; align-items:center; justify-content:center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0d1117" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+          </div>
+          <div id="s3pr" style="margin-top:18px; text-align:center; font-size:30px; font-weight:800; color:#4a5a0a">+2.5 kg on last time</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. STAFF WRITE THE STICKER -->
+  <div id="s4" class="layer">
+    <div class="tag">04 · SETUP</div>
+    <div class="head" id="s4h">Write the stickers<br><span class="lime">in the Gymix app.</span></div>
+    <div id="s4phone" class="phone" style="left:50%; margin-left:-250px; top:720px; height:960px">
+      <div class="notch"></div>
+      <div class="screen" style="padding:90px 34px 0">
+        <div style="font-size:28px; font-weight:800; color:var(--muted)">Settings · Check-in sticker</div>
+        <div style="font-size:40px; font-weight:900; letter-spacing:-0.03em; margin-top:10px">Check-in sticker</div>
+        <div id="s4btn" class="btn" style="margin-top:40px; font-size:32px">Write the sticker</div>
+        <div id="s4sheet" style="position:absolute; left:16px; right:16px; bottom:16px; height:520px; border-radius:46px; background:#fff; box-shadow: 0 -10px 60px rgb(0 0 0 / 0.2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; text-align:center; padding:30px">
+          <div id="s4ring" style="width:190px; height:190px; border-radius:50%; border:8px solid #5dd6ff; display:flex; align-items:center; justify-content:center">
+            <svg id="s4ico" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#0d1117" stroke-width="2.2" stroke-linecap="round"><path d="M6 8.5a6 6 0 0 1 0 7"/><path d="M9.5 6a10 10 0 0 1 0 12"/><path d="M13 3.5a14 14 0 0 1 0 17"/></svg>
+          </div>
+          <div id="s4txt" style="font-size:40px; font-weight:800; letter-spacing:-0.02em">Hold the top of your<br>phone on the sticker</div>
+        </div>
+      </div>
+    </div>
+    <div id="s4st" class="sticker" style="left:50%; margin-left:-110px; top:540px; width:220px; height:220px">
+      <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="#0d1117" stroke-width="2.2" stroke-linecap="round"><path d="M6 8.5a6 6 0 0 1 0 7"/><path d="M9.5 6a10 10 0 0 1 0 12"/><path d="M13 3.5a14 14 0 0 1 0 17"/></svg>
+    </div>
+    <div id="s4note" class="mono" style="position:absolute; left:80px; right:80px; top:1720px; text-align:center; font-size:34px; font-weight:700; color:#c4c8c0">iPhone + Android · nothing else to install</div>
+  </div>
+
+  <!-- 5. LIVE FEED -->
+  <div id="s5" class="layer">
+    <div class="tag">05 · YOUR DASHBOARD</div>
+    <div class="head" id="s5h">Every tap,<br><span class="lime">live.</span></div>
+    <div id="s5list" style="position:absolute; left:80px; right:80px; top:640px; display:flex; flex-direction:column; gap:24px"></div>
+    <div id="s5count" class="card" style="position:absolute; left:80px; right:80px; top:1500px; padding:36px 44px; display:flex; align-items:center; justify-content:space-between">
+      <div style="font-size:40px; font-weight:800">In the gym now</div>
+      <div style="display:flex; align-items:center; gap:18px"><span style="width:22px; height:22px; border-radius:50%; background:#2fb35b"></span><span id="s5n" class="big" style="font-size:96px">31</span></div>
+    </div>
+  </div>
+
+  <!-- OUTRO -->
+  <div id="sOut" class="layer">
+    <div id="o1" class="big" style="position:absolute; left:80px; right:80px; top:440px; font-size:150px; text-align:center">Tap.<br><span class="lime">Train.</span><br>Done.</div>
+    <div id="o2" style="position:absolute; left:50%; top:1000px; transform-origin:center; margin-left:-260px; width:520px; display:flex; align-items:center; justify-content:center; gap:26px">
+      <div style="width:120px; height:120px; border-radius:34px; background:var(--lime); display:flex; align-items:center; justify-content:center; font-size:84px; font-weight:900; color:var(--ink)">G</div>
+      <div class="big" style="font-size:120px">Gymix</div>
+    </div>
+    <div id="o3" style="position:absolute; left:80px; right:80px; top:1220px; text-align:center; font-size:48px; font-weight:800">14 days free · no card</div>
+    <div id="o4" class="mono" style="position:absolute; left:80px; right:80px; top:1320px; text-align:center; font-size:38px; font-weight:700; color:var(--lime)">LINK IN BIO</div>
+  </div>
+ </div>
+ <div id="flash"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const back = (x) => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const vis = (el, on) => (el.style.visibility = on ? "visible" : "hidden");
+const rise = (el, t, at, dur = 0.3, dist = 60) => { const p = eo(prog(t, at, at + dur)); el.style.opacity = p; el.style.transform = `translateY(${lerp(dist, 0, p)}px)`; };
+const pop = (el, t, at, dur = 0.35) => { const p = prog(t, at, at + dur); el.style.opacity = clamp(p * 4); el.style.transform = `scale(${lerp(0.5, 1, back(p))})`; };
+
+// NFC rings spreading from (x, y), starting at `at`.
+function waves(x, y, t, at, n = 4, size = 600) {
+  let w = "";
+  for (let i = 0; i < n; i++) {
+    const p = prog(t, at + i * 0.13, at + 0.75 + i * 0.13);
+    if (p > 0 && p < 1) { const d = 80 + p * size; w += `<div class="wave" style="left:${x - d / 2}px; top:${y - d / 2}px; width:${d}px; height:${d}px; opacity:${1 - p}"></div>`; }
+  }
+  return w;
+}
+
+// 120 bpm: a beat is half a second, a bar two seconds.
+const B = 0.5, BAR = 2;
+const T_TURN = 2.5, T_S1 = 4;
+const SCENES = ["s1", "s2", "s3", "s4", "s5"];
+const S_LEN = { s1: 1.5 * BAR, s2: 2 * BAR, s3: 2 * BAR, s4: 1.5 * BAR, s5: BAR };
+const S_AT = {}; let acc = T_S1;
+SCENES.forEach((s) => { S_AT[s] = acc; acc += S_LEN[s]; });
+const T_OUT = acc;
+window.DURATION = T_OUT + 4.5;
+const CUTS = [T_TURN, ...SCENES.map((s) => S_AT[s]), T_OUT];
+
+const FEED = [["Karim A.", "18:52", "Monthly"], ["Lara N.", "18:53", "10-visit pack · 6 left"], ["Rami H.", "18:53", "Yearly"], ["Nour K.", "18:54", "Monthly"]];
+$("s5list").innerHTML = FEED.map(([n, h, p], i) => `<div id="s5r${i}" class="card row" style="padding:30px 38px"><div style="display:flex; align-items:center; gap:24px"><div style="width:84px; height:84px; border-radius:50%; background:#f0f7d6; display:flex; align-items:center; justify-content:center; font-size:36px; font-weight:900; color:#4a5a0a">${n[0]}</div><div><div style="font-size:42px; font-weight:800">${n}</div><div style="font-size:28px; color:#5d6470">${p}</div></div></div><div style="text-align:right"><div class="mono" style="font-size:30px; color:#5d6470">${h}</div><div style="font-size:26px; font-weight:800; color:#1f7a3f">Tapped in</div></div></div>`).join("");
+
+// A side-view pulldown: the bar comes down to the chest and back.
+function pulldown(t) {
+  const s = (1 - Math.cos(t * Math.PI * 2 / 1.4)) / 2;
+  const sh = [200, 150], hip = [200, 215];
+  const hand = [lerp(150, 165, s), lerp(30, 120, s)], hand2 = [lerp(250, 235, s), lerp(30, 120, s)];
+  const el = [lerp(150, 135, s), lerp(80, 150, s)], el2 = [lerp(250, 265, s), lerp(80, 150, s)];
+  const L = (a, b, w, c) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+  return `<line x1="200" y1="0" x2="200" y2="${hand[1]}" stroke="#9aa3ad" stroke-width="4"/>
+    <rect x="${hand[0] - 40}" y="${hand[1] - 7}" width="${hand2[0] - hand[0] + 80}" height="14" rx="7" fill="#5d6470"/>
+    ${L([175, sh[1]], el, 20, "#a9d10f")}${L(el, hand, 18, "#a9d10f")}${L([225, sh[1]], el2, 20, "#a9d10f")}${L(el2, hand2, 18, "#a9d10f")}
+    ${L(sh, hip, 56, "#0d1117")}${L(hip, [250, 220], 34, "#3a434f")}${L([250, 220], [255, 250], 28, "#3a434f")}
+    <circle cx="200" cy="${sh[1] - 50}" r="30" fill="#0d1117"/>
+    <rect x="150" y="225" width="120" height="25" rx="8" fill="#c8f135"/>`;
+}
+
+window.renderAt = function (t) {
+  const ph = (t % B) / B;
+  const pulse = t > T_TURN && t < T_OUT + BAR ? Math.exp(-ph * 6) : 0;
+  let sx = 0, sy = 0, fl = 0, z = 0;
+  CUTS.forEach((at, k) => { const dt = t - at; if (dt >= 0 && dt < 0.5) { const a = Math.exp(-dt * 10); sx += Math.sin(dt * 70 + k) * 22 * a; sy += Math.cos(dt * 61 + k) * 16 * a; z += a * 0.035; fl = Math.max(fl, a * 0.35); } });
+  $("cam").style.transform = `translate(${sx}px, ${sy}px) scale(${1 + pulse * 0.012 + z})`;
+  $("glow").style.opacity = 0.35 + pulse * 0.55;
+  $("grid").style.transform = `translateY(${(-t * 80) % 90}px)`;
+  $("flash").style.opacity = fl;
+
+  // HOOK
+  const hk = t < T_TURN; vis($("sHook"), hk);
+  if (hk) {
+    rise($("hk0"), t, 0, 0.2);
+    ["hkA", "hkB", "hkC"].forEach((id, i) => { const at = 0.1 + i * 0.4; const p = prog(t, at, at + 0.16); $(id).style.opacity = p; $(id).style.transform = `scale(${lerp(1.4, 1, eo(p))})`; $(id).style.transformOrigin = "left center"; });
+    const sp = prog(t, 0.2, 0.7);
+    $("hkSt").style.opacity = clamp(sp * 3);
+    $("hkSt").style.transform = `scale(${lerp(0.3, 1, back(sp)) + Math.sin(t * 7) * 0.015}) rotate(${lerp(-40, 0, eo(sp))}deg)`;
+    $("hkWaves").innerHTML = waves(540 - 60, 1320 - 60, t, 1.3, 4, 900) + waves(540 - 60, 1320 - 60, t, 0.6, 2, 700);
+  }
+  // TURN
+  const tu = t >= T_TURN && t < T_S1; vis($("sTurn"), tu);
+  if (tu) { const lt = t - T_TURN; $("sTurn").style.clipPath = `circle(${eo(prog(lt, 0, 0.3)) * 150}% at 50% 60%)`; pop($("tu1"), lt, 0.05, 0.3); rise($("tu2"), lt, 0.4, 0.3); }
+
+  const on = (s) => { const a = S_AT[s], b = a + S_LEN[s]; const v = t >= a && t < b; vis($(s), v); return v ? t - a : -1; };
+
+  // 1. entrance: phone moves to the sticker, rings, welcome
+  let lt = on("s1");
+  if (lt >= 0) {
+    rise($("s1").querySelector(".tag"), lt, 0, 0.2); rise($("s1h"), lt, 0.05, 0.3);
+    const mv = eio(prog(lt, 0.2, 0.75));
+    $("s1phone").style.transform = `translate(${lerp(120, -260, mv)}px, ${lerp(200, -140, mv)}px) rotate(${lerp(14, -8, mv)}deg)`;
+    const done = lt >= 0.85;
+    $("s1scr").style.opacity = done ? 1 : 0.0;
+    $("s1scr").style.background = done ? "#f4f5f2" : "#000";
+    pop($("s1icon"), lt, 0.85, 0.35);
+    $("s1waves").innerHTML = waves(320, 1170, lt, 0.7, 4, 700);
+  }
+
+  // 2. 150 m: a tap from home is refused, a tap at the gym goes through
+  lt = on("s2");
+  if (lt >= 0) {
+    rise($("s2").querySelector(".tag"), lt, 0, 0.2);
+    const atGym = lt >= BAR;
+    const l = atGym ? lt - BAR : lt;
+    rise($("s2h"), l, 0.02, 0.28);
+    $("s2h").innerHTML = atGym ? `At the gym?<br><span class="lime">Checked in.</span>` : `Shared the link?<br><span class="red">Not from home.</span>`;
+    const r = lerp(40, 200, eo(prog(lt, 0.1, 0.6)));
+    $("s2ring").setAttribute("r", r);
+    $("s2lbl").style.opacity = prog(lt, 0.45, 0.7);
+    const me = atGym ? [lerp(825, 470, eio(prog(l, 0.05, 0.6))), lerp(820, 480, eio(prog(l, 0.05, 0.6)))] : [825, 820];
+    $("s2me").setAttribute("transform", `translate(${me[0]} ${me[1]}) scale(${1 + Math.sin(lt * 12) * 0.06})`);
+    const cp = prog(l, 0.7, 1.0);
+    $("s2card").style.opacity = clamp(cp * 3);
+    $("s2card").style.transform = `scale(${lerp(0.6, 1, back(cp))}) translateX(${!atGym && l > 1.0 && l < 1.3 ? Math.sin(l * 80) * 14 : 0}px)`;
+    $("s2icon").style.background = atGym ? "#e3f3e8" : "#fde8e8";
+    $("s2icon").innerHTML = atGym
+      ? `<svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#1f7a3f" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`
+      : `<svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#c0362c" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
+    $("s2t").textContent = atGym ? "Welcome, Lara" : "Your phone isn't at the gym";
+    $("s2s").textContent = atGym ? "Within 150 m · checked in 18:53" : "Tap the sticker when you're there";
+  }
+
+  // 3. machine: tap, the machine slides up with your numbers, log a set
+  lt = on("s3");
+  if (lt >= 0) {
+    rise($("s3").querySelector(".tag"), lt, 0, 0.2); rise($("s3h"), lt, 0.05, 0.3);
+    const mv = eio(prog(lt, 0.15, 0.65));
+    $("s3phone").style.transform = `translate(${lerp(140, -210, mv)}px, ${lerp(260, 120, mv) - (lt > 0.95 ? eio(prog(lt, 0.95, 1.3)) * 60 : 0)}px) rotate(${lerp(12, -6, mv)}deg)`;
+    $("s3waves").innerHTML = waves(330, 1020, lt, 0.6, 3, 520);
+    const sh = eo(prog(lt, 0.8, 1.15));
+    $("s3sheet").style.transform = `translateY(${lerp(900, 0, sh)}px)`;
+    $("s3fig").innerHTML = pulldown(lt);
+    const ok = lt >= 2.6;
+    $("s3chk").style.background = ok ? "#c8f135" : "#e3e6df";
+    $("s3chk").style.transform = `scale(${ok ? lerp(1.5, 1, eo(prog(lt, 2.6, 2.85))) : 1})`;
+    $("s3set").style.background = ok ? "#f0f7d6" : "#f4f5f2";
+    rise($("s3pr"), lt, 2.75, 0.3, 30);
+  }
+
+  // 4. staff writes a sticker from the app
+  lt = on("s4");
+  if (lt >= 0) {
+    rise($("s4").querySelector(".tag"), lt, 0, 0.2); rise($("s4h"), lt, 0.05, 0.3);
+    rise($("s4phone"), lt, 0.05, 0.35, 160);
+    $("s4btn").style.transform = `scale(${lt > 0.45 && lt < 0.6 ? 0.94 : 1})`;
+    const shP = eo(prog(lt, 0.55, 0.85));
+    $("s4sheet").style.transform = `translateY(${lerp(600, 0, shP)}px)`;
+    const stP = eio(prog(lt, 0.9, 1.5));
+    $("s4st").style.transform = `translateY(${lerp(-500, 0, stP)}px) rotate(${lerp(-30, 0, stP)}deg)`;
+    $("s4st").style.opacity = stP > 0 ? 1 : 0;
+    const wrote = lt >= 1.75;
+    $("s4ring").style.borderColor = wrote ? "#2fb35b" : "#5dd6ff";
+    $("s4ring").style.transform = `scale(${wrote ? lerp(1.25, 1, eo(prog(lt, 1.75, 2.0))) : 1 + Math.sin(lt * 10) * 0.04})`;
+    $("s4ico").innerHTML = wrote ? `<path d="M5 12.5l4.5 4.5L19 7.5" stroke="#1f7a3f" stroke-width="3"/>` : `<path d="M6 8.5a6 6 0 0 1 0 7"/><path d="M9.5 6a10 10 0 0 1 0 12"/><path d="M13 3.5a14 14 0 0 1 0 17"/>`;
+    $("s4txt").innerHTML = wrote ? `Sticker written.<br><span style="color:#1f7a3f">Stick it at the door.</span>` : `Hold the top of your<br>phone on the sticker`;
+    rise($("s4note"), lt, 1.9, 0.3, 30);
+  }
+
+  // 5. live feed
+  lt = on("s5");
+  if (lt >= 0) {
+    rise($("s5").querySelector(".tag"), lt, 0, 0.2); rise($("s5h"), lt, 0.05, 0.3);
+    FEED.forEach((_, i) => { const p = eo(prog(lt, 0.25 + i * 0.28, 0.5 + i * 0.28)); const el = $("s5r" + i); el.style.opacity = p; el.style.transform = `translateX(${lerp(-200, 0, p)}px)`; });
+    rise($("s5count"), lt, 0.2, 0.3);
+    $("s5n").textContent = 27 + FEED.filter((_, i) => lt >= 0.4 + i * 0.28).length;
+  }
+
+  // OUTRO
+  const ou = t >= T_OUT; vis($("sOut"), ou);
+  if (ou) {
+    const l = t - T_OUT;
+    pop($("o1"), l, 0.05, 0.4);
+    const p = prog(l, 0.9, 1.3); $("o2").style.opacity = clamp(p * 3); $("o2").style.transform = `scale(${lerp(0.6, 1, back(p))})`;
+    rise($("o3"), l, 1.4, 0.3); rise($("o4"), l, 1.7, 0.3);
+  }
+};
+
+// Sound: kick/snare/hats/bass on every bar from the turn, plus taps as bells.
+const A = [];
+A.push({ k: "pad", at: 0, dur: 2.5, notes: [57, 60, 64], gain: 0.6 });
+[0.1, 0.5, 0.9].forEach((at, i) => { A.push({ k: "thump", at, gain: 0.9 }); A.push({ k: "pluck", at, note: [64, 67, 71][i], gain: 0.75 }); });
+A.push({ k: "bell", at: 0.6, note: 88, gain: 0.6 });
+A.push({ k: "bell", at: 1.3, note: 93, gain: 0.7 });
+A.push({ k: "riser", at: 1.5, dur: 1.0, gain: 0.7 });
+A.push({ k: "impact", at: T_TURN, gain: 1 });
+A.push({ k: "pad", at: T_TURN, dur: 1.5, notes: [62, 65, 69, 74], gain: 0.9 });
+const PROG = [[50, [62, 65, 69]], [46, [58, 62, 65]], [53, [60, 65, 69]], [48, [60, 64, 67]]];
+for (let bar = 0, s = T_S1; s < T_OUT + BAR; bar++, s += BAR) {
+  const [root, ch] = PROG[bar % 4];
+  for (let q = 0; q < 4; q++) A.push({ k: "kick", at: s + q * B, gain: 1 });
+  A.push({ k: "snare", at: s + B, gain: 0.75 }); A.push({ k: "snare", at: s + 3 * B, gain: 0.75 });
+  for (let e = 0; e < 8; e++) A.push({ k: "hat", at: s + e * B / 2 + B / 4, gain: e % 2 ? 0.6 : 0.38 });
+  for (let e = 0; e < 8; e++) A.push({ k: "bass", at: s + e * B / 2, dur: B / 2 - 0.03, note: root - 12 + (e === 3 || e === 7 ? 12 : 0), gain: 0.85 });
+  A.push({ k: "stab", at: s, notes: ch, gain: 0.7 });
+}
+SCENES.forEach((s) => A.push({ k: "whoosh", at: S_AT[s] - 0.12, gain: 0.45 }));
+A.push({ k: "bell", at: S_AT.s1 + 0.75, note: 86, gain: 0.8 }); A.push({ k: "bell", at: S_AT.s1 + 0.9, note: 91, gain: 0.7 });
+A.push({ k: "buzz", at: S_AT.s2 + 0.75, gain: 0.8 });
+A.push({ k: "bell", at: S_AT.s2 + BAR + 0.75, note: 86, gain: 0.8 });
+A.push({ k: "bell", at: S_AT.s3 + 0.65, note: 86, gain: 0.7 }); A.push({ k: "whoosh", at: S_AT.s3 + 0.8, gain: 0.5 });
+A.push({ k: "pluck", at: S_AT.s3 + 2.6, note: 88, gain: 0.8 });
+A.push({ k: "bell", at: S_AT.s4 + 1.75, note: 91, gain: 0.8 });
+[0.25, 0.53, 0.81, 1.09].forEach((d) => A.push({ k: "pluck", at: S_AT.s5 + d, note: 81, gain: 0.5 }));
+A.push({ k: "impact", at: T_OUT, gain: 0.9 });
+A.push({ k: "pad", at: T_OUT, dur: 4.5, notes: [62, 65, 69, 74], gain: 0.8 });
+A.push({ k: "bell", at: T_OUT + 0.9, note: 86, gain: 0.8 });
+window.AUDIO = A;
+window.renderAt(0);
+</script>
+</body>
+</html>
